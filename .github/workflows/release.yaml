@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (1.0.0)'
+        required: true
+
+jobs:
+  release:
+    permissions:
+      contents: write
+      packages: write
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup dotnet 6/8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          6.x
+          8.x
+
+    - name: Install dependencies
+      run: >
+        dotnet
+        restore
+      
+    - name: Build
+      run: >
+        dotnet 
+        build
+        --no-restore
+        --configuration Release
+        --property:Version=${{ github.event.inputs.version }}
+
+    - name: Test
+      run: >
+        dotnet
+        test
+        --no-build
+        --configuration Release
+        --property:Version=${{ github.event.inputs.version }}
+
+    - name: Create Dotnet Tool
+      run: >
+        dotnet
+        pack
+        --no-build
+        --no-restore
+        --property:PackageVersion=${{ github.event.inputs.version }}
+
+    - name: Create release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+        generateReleaseNotes: true
+        tag: ${{ github.event.inputs.version }}
+
+    - name: Publish to Nuget
+      run: >
+        dotnet
+        nuget push
+        src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+        --source "https://api.nuget.org/v3/index.json"
+        --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
