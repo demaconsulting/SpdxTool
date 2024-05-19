@@ -70,7 +70,7 @@ jobs:
         src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
         to-markdown
         src/DemaConsulting.SpdxTool/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
-        summary.md
+        manifest.spdx.summary.md
 
     - name: Create Dotnet Tool
       run: >
@@ -83,14 +83,14 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: '**/*.nupkg,**/manifest.spdx.json,summary.md'
+        artifacts: '**/*.nupkg,**/manifest.spdx.json,manifest.spdx.summary.md'
         generateReleaseNotes: true
         tag: ${{ github.event.inputs.version }}
 
-#    - name: Publish to Nuget
-#      run: >
-#        dotnet
-#        nuget push
-#        src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
-#        --source "https://api.nuget.org/v3/index.json"
-#        --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
+    - name: Publish to Nuget
+      run: >
+        dotnet
+        nuget push
+        src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+        --source "https://api.nuget.org/v3/index.json"
+        --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
