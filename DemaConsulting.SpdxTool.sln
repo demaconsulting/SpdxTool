@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemaConsulting.SpdxTool", "src\DemaConsulting.SpdxTool\DemaConsulting.SpdxTool.csproj", "{3231A254-F367-475B-8386-AE4B613AFC28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemaConsulting.SpdxTool", "src\DemaConsulting.SpdxTool\DemaConsulting.SpdxTool.csproj", "{3231A254-F367-475B-8386-AE4B613AFC28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemaConsulting.SpdxTool.Tests", "test\DemaConsulting.SpdxTool.Tests\DemaConsulting.SpdxTool.Tests.csproj", "{96983F4D-6AE0-406E-902D-72E0BBE45836}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemaConsulting.SpdxTool.Tests", "test\DemaConsulting.SpdxTool.Tests\DemaConsulting.SpdxTool.Tests.csproj", "{96983F4D-6AE0-406E-902D-72E0BBE45836}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

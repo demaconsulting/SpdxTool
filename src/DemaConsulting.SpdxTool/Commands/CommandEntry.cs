@@ -6,6 +6,6 @@
 /// <param name="Name">Command name</param>
 /// <param name="CommandLine">Command line example</param>
 /// <param name="Summary">Command summary</param>
-/// <param name="Description">Command detailed description</param>
+/// <param name="Details">Command detailed description</param>
 /// <param name="Instance">Command instance</param>
-public record CommandEntry(string Name, string CommandLine, string Summary, string Description, Command Instance);
+public record CommandEntry(string Name, string CommandLine, string Summary, string[] Details, Command Instance);

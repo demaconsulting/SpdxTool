@@ -37,8 +37,11 @@ Options:
   -v, --version                          Show version information and exit
 
 Commands:
+  help <command>                         Display extended help about a command
   run-workflow <workflow.yaml>           Runs the workflow file
   to-markdown <spdx.yaml> <out.md>       Create Markdown summary for SPDX document
+  rename-id <arguments>                  Rename an element ID in an SPDX document.
+  copy-package <arguments>               Copy package information from one SPDX document to another.
 ```
 
 
@@ -70,4 +73,18 @@ steps:
 - command: to-markdown
   spdx: input.spdx.json
   markdown: output.md
+
+  # Rename the SPDX-ID of an element in an SPDX document
+- command: rename-id
+  spdx: <spdx.json>
+  old: <old-id>
+  new: <new-id>
+
+  # Copy a package from one SPDX document to another SPDX document  
+- command: copy-package
+  from: <from.spdx.json>
+  to: <to.spdx.json>
+  package: <package>
+  relationship: <relationship>
+  element: <element>
 ```

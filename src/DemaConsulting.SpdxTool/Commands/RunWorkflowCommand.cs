@@ -20,7 +20,17 @@ public class RunWorkflowCommand : Command
         "run-workflow",
         "run-workflow <workflow.yaml>",
         "Runs the workflow file",
-        "This command runs the steps specified in the workflow.yaml file.",
+        new[]
+        {
+            "This command runs the steps specified in the workflow.yaml file.",
+            "",
+            "From the command-line this can be used as:",
+            "  spdx-tool run-workflow <workflow.yaml>",
+            "",
+            "From a YAML file this can be used as:",
+            "  - command: run-workflow",
+            "    file: <workflow.yaml>"
+        },
         Instance);
 
     /// <summary>
@@ -35,7 +45,7 @@ public class RunWorkflowCommand : Command
     {
         // Report an error if the number of arguments is not 1
         if (args.Length != 1)
-            throw new CommandUsageException("Missing workflow filename");
+            throw new CommandUsageException("'run-workflow' command missing arguments");
 
         // Execute the workflow
         Execute(args[0]);
@@ -44,11 +54,12 @@ public class RunWorkflowCommand : Command
     /// <inheritdoc />
     public override void Run(YamlMappingNode step)
     {
-        // Get the workflow file
-        var file = step["file"]?.ToString() ?? throw new YamlException("Step missing file");
+        // Get the workflow filename
+        if (!step.Children.TryGetValue("file", out var file))
+            throw new YamlException(step.Start, step.End, "'run-workflow' command missing 'file' parameter");
 
         // Execute the workflow
-        Execute(file);
+        Execute(file.ToString());
     }
 
     /// <summary>
@@ -71,8 +82,8 @@ public class RunWorkflowCommand : Command
             using var input = new StreamReader(workflowFile);
             yaml.Load(input);
             var root = yaml.Documents[0].RootNode as YamlMappingNode ??
-                       throw new YamlException(
-                           "Invalid workflow file");
+                       throw new CommandErrorException(
+                           $"Workflow {workflowFile} missing root mapping node");
 
             // Get the steps
             var steps = root["steps"] as YamlSequenceNode ??
@@ -86,14 +97,15 @@ public class RunWorkflowCommand : Command
                                $"Workflow {workflowFile} step is not a map");
 
                 // Get the command
-                var command = step["command"]?.ToString() ??
-                              throw new YamlException(
-                                  $"Workflow {workflowFile} step missing command");
+                if (!step.Children.TryGetValue("command", out var commandNode))
+                    throw new CommandErrorException(
+                        $"Workflow {workflowFile} step missing command");
 
                 // Execute the step
+                var command = commandNode.ToString();
                 if (!CommandsRegistry.Commands.TryGetValue(command, out var entry))
                     throw new CommandUsageException(
-                        $"Unknown command: {command}");
+                        $"Unknown command: '{command}'");
 
                 // Run the command
                 entry.Instance.Run(step);
@@ -107,7 +119,7 @@ public class RunWorkflowCommand : Command
         catch (YamlException ex)
         {
             throw new CommandErrorException(
-                $"Workflow {workflowFile} invalid at {ex.Start}", ex);
+                $"Workflow {workflowFile} invalid at {ex.Start} - {ex.Message}", ex);
         }
     }
 }
