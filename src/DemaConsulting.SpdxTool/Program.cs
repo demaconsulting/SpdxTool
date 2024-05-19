@@ -50,7 +50,7 @@ public static class Program
             {
                 // Report unknown command
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Unknown command: {args[0]}");
+                Console.WriteLine($"Unknown command: '{args[0]}'");
                 Console.ResetColor();
                 Console.WriteLine();
                 PrintUsage();

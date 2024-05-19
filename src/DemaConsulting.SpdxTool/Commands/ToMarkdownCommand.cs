@@ -22,7 +22,18 @@ public class ToMarkdownCommand : Command
         "to-markdown",
         "to-markdown <spdx.yaml> <out.md>",
         "Create Markdown summary for SPDX document",
-        "This command produces a Markdown summary of an SPDX document.",
+        new[]
+        {
+            "This command produces a Markdown summary of an SPDX document.",
+            "",
+            "From the command-line this can be used as:",
+            "  spdx-tool to-markdown <spdx.yaml> <out.md>",
+            "",
+            "From a YAML file this can be used as:",
+            "  - command: to-markdown",
+            "    spdx: <spdx.yaml>",
+            "    markdown: <out.md>"
+        },
         Instance);
 
     /// <summary>
@@ -37,7 +48,7 @@ public class ToMarkdownCommand : Command
     {
         // Report an error if the number of arguments is not 2
         if (args.Length != 2)
-            throw new CommandUsageException("Missing command arguments");
+            throw new CommandUsageException("'to-markdown' command missing arguments");
 
         // Generate the markdown
         Generate(args[0], args[1]);
@@ -46,12 +57,16 @@ public class ToMarkdownCommand : Command
     /// <inheritdoc />
     public override void Run(YamlMappingNode step)
     {
-        // Get the workflow file
-        var spdxFile = step["spdx"]?.ToString() ?? throw new YamlException("Step missing spdx filename");
-        var markdownFile = step["markdown"]?.ToString() ?? throw new YamlException("Step missing markdown filename");
+        // Get the SPDX filename
+        if (!step.Children.TryGetValue("spdx", out var spdxFile))
+            throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' parameter");
+
+        // Get the Markdown filename
+        if (!step.Children.TryGetValue("markdown", out var markdownFile))
+            throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'markdown' parameter");
 
         // Generate the markdown
-        Generate(spdxFile, markdownFile);
+        Generate(spdxFile.ToString(), markdownFile.ToString());
     }
 
     /// <summary>
