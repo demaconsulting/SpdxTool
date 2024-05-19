@@ -11,7 +11,8 @@ public class TestVersion
         // Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe",
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
             "-v");
 
         // Check the output
@@ -27,7 +28,8 @@ public class TestVersion
         // Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe",
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
             "--version");
 
         // Check the output

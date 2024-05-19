@@ -9,7 +9,8 @@ public class TestUsage
         // Run the command
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe");
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll");
 
         // Verify an error was reported
         Assert.AreEqual(1, exitCode);
@@ -24,7 +25,8 @@ public class TestUsage
         // Run the command
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe",
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
             "-h");
 
         // Verify an error was reported
@@ -40,7 +42,8 @@ public class TestUsage
         // Run the command
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe",
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
             "--help");
 
         // Verify an error was reported

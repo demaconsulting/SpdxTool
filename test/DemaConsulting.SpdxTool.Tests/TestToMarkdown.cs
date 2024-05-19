@@ -39,7 +39,8 @@ public class TestToMarkdown
             // Run the tool
             var exitCode = Runner.Run(
                 out _,
-                "DemaConsulting.SpdxTool.exe",
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
                 "to-markdown",
                 "test.spdx.json",
                 "test.md");

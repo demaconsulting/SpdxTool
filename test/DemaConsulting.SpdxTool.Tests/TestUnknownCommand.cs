@@ -9,7 +9,8 @@ public class TestUnknownCommand
         // Run the command
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe",
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
             "unknown-command");
 
         // Verify error reported

@@ -9,7 +9,8 @@ public class TestRunWorkflow
         // Run the command
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe",
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
             "run-workflow");
 
         // Verify error reported
@@ -23,7 +24,8 @@ public class TestRunWorkflow
         // Run the command
         var exitCode = Runner.Run(
             out var output,
-            "DemaConsulting.SpdxTool.exe",
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
             "run-workflow",
             "does-not-exist.yaml");
 
@@ -45,7 +47,8 @@ public class TestRunWorkflow
             // Run the workflow
             var exitCode = Runner.Run(
                 out var output,
-                "DemaConsulting.SpdxTool.exe",
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
                 "run-workflow",
                 "invalid.yaml");
 
