@@ -25,6 +25,12 @@ jobs:
           6.x
           8.x
 
+    - name: Restore Tools
+      run: >
+        dotnet
+        tool
+        restore
+      
     - name: Install dependencies
       run: >
         dotnet
@@ -46,6 +52,25 @@ jobs:
         --configuration Release
         --property:Version=${{ github.event.inputs.version }}
 
+    - name: Generate SBOM
+      run: >
+        dotnet
+        sbom-tool
+        -b src/DemaConsulting.SpdxTool/bin/Release
+        -bc src/DemaConsulting.SpdxTool
+        -pn DemaConsulting.SpdxTool
+        -pv ${{ github.event.inputs.version }}
+        -ps DemaConsulting
+        -nsb https://DemaConsulting.com/SpdxTool
+
+    - name: Generate SBOM Summary
+      run: >
+        dotnet
+        src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
+        to-markdown
+        src/DemaConsulting.SpdxTool/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
+        summary.md
+
     - name: Create Dotnet Tool
       run: >
         dotnet
@@ -57,14 +82,14 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+        artifacts: **/*.nupkg,**/manifest.spdx.json,summary.md
         generateReleaseNotes: true
         tag: ${{ github.event.inputs.version }}
 
-    - name: Publish to Nuget
-      run: >
-        dotnet
-        nuget push
-        src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
-        --source "https://api.nuget.org/v3/index.json"
-        --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
+#    - name: Publish to Nuget
+#      run: >
+#        dotnet
+#        nuget push
+#        src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+#        --source "https://api.nuget.org/v3/index.json"
+#        --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
