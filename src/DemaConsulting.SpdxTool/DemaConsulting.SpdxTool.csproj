@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PackageId>DemaConsulting.SpdxTool</PackageId>
+    <Title>SPDX Tool</Title>
+    <Version>0.0.0</Version>
+    <Authors>DEMA Consulting</Authors>
+    <Company>DEMA Consulting</Company>
+    <Description>SPDX Manipulation Tool</Description>
+    <Copyright>Copyright DEMA Consulting</Copyright>
+    <PackageProjectUrl>https://github.com/demaconsulting/SpdxTool</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>spdx</PackageTags>
+    <PackAsTool>True</PackAsTool>
+    <ToolCommandName>spdx-tool</ToolCommandName>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DemaConsulting.SpdxTool.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DemaConsulting.SpdxModel" Version="0.1.0-alpha.1" />
+    <PackageReference Include="YamlDotNet" Version="15.1.4" />
+  </ItemGroup>
+
+</Project>
