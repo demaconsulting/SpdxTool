@@ -39,10 +39,10 @@ public class CopyPackageCommand : Command
             "      element: <element>",
             "",
             "The <package> argument is the name of a package in <from.spdx.json> to copy.",
-            "The <relationship> argument describes the <element> relationship to <package>.",
+            "The <relationship> argument describes the <package> relationship to <element>.",
             "The <element> argument is the name of an element in the <to.spdx.json> file.",
             "",
-            "The <relationship> is defined by the SPDX specification, and is usually one of:", 
+            "The <relationship> is defined by the SPDX specification, and is usually one of:",
             "  DESCRIBES, DESCRIBED_BY, CONTAINS, BUILD_TOOL_OF, ..."
         },
         Instance);
@@ -100,11 +100,11 @@ public class CopyPackageCommand : Command
     /// </summary>
     /// <param name="fromFile">Source SPDX document filename</param>
     /// <param name="toFile">Destination SPDX document filename</param>
-    /// <param name="packageName">Package to copy</param>
+    /// <param name="packageId">Package to copy</param>
     /// <param name="relationshipName">Relationship of package to element in destination</param>
-    /// <param name="elementName">Destination element</param>
-    public static void CopyPackage(string fromFile, string toFile, string packageName, string relationshipName,
-        string elementName)
+    /// <param name="elementId">Destination element</param>
+    public static void CopyPackage(string fromFile, string toFile, string packageId, string relationshipName,
+        string elementId)
     {
         // Verify from file exists
         if (!File.Exists(fromFile))
@@ -115,7 +115,7 @@ public class CopyPackageCommand : Command
             throw new CommandUsageException($"File not found: {toFile}");
 
         // Verify package name
-        if (packageName.Length == 0 || packageName == "SPDXRef-DOCUMENT")
+        if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
             throw new CommandUsageException("Invalid package name");
 
         // Parse the relationship
@@ -124,7 +124,7 @@ public class CopyPackageCommand : Command
             throw new CommandUsageException("Invalid relationship");
 
         // Verify element name
-        if (elementName.Length == 0)
+        if (elementId.Length == 0)
             throw new CommandUsageException("Invalid element name");
 
         // Read the SPDX documents
@@ -132,8 +132,8 @@ public class CopyPackageCommand : Command
         var toDoc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(toFile));
 
         // Verify the package exists in the source
-        var package = Array.Find(fromDoc.Packages, p => p.Id == packageName) ??
-                      throw new CommandErrorException($"Package {packageName} not found in {fromFile}");
+        var package = Array.Find(fromDoc.Packages, p => p.Id == packageId) ??
+                      throw new CommandErrorException($"Package {packageId} not found in {fromFile}");
 
         // Verify the package does not exist in the destination
         if (Array.Exists(toDoc.Packages, p => p.Id == package.Id))
@@ -160,9 +160,9 @@ public class CopyPackageCommand : Command
         // Append the relationship to the destination document
         var newRelationship = new SpdxRelationship
         {
-            Id = elementName,
+            Id = package.Id,
             RelationshipType = relationship,
-            RelatedSpdxElement = package.Id
+            RelatedSpdxElement = elementId
         };
         toDoc.Relationships = toDoc.Relationships.Append(newRelationship).ToArray();
 

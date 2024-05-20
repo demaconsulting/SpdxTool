@@ -70,7 +70,7 @@ public class RenameIdCommand : Command
                     throw new YamlException(step.Start, step.End, "'rename-id' command missing 'new' input");
 
         // Get the 'old' input
-        var oldId = GetMapString(inputs, "old", variables) ?? 
+        var oldId = GetMapString(inputs, "old", variables) ??
                     throw new YamlException(step.Start, step.End, "'rename-id' command missing 'spdx' input");
 
         // Rename the ID
