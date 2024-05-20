@@ -11,10 +11,13 @@ public static class CommandsRegistry
     private static readonly Dictionary<string, CommandEntry> InternalCommands = new()
     {
         { HelpCommand.Entry.Name, HelpCommand.Entry },
-        { RunWorkflowCommand.Entry.Name, RunWorkflowCommand.Entry },
-        { ToMarkdownCommand.Entry.Name, ToMarkdownCommand.Entry },
+        { AddPackageCommand.Entry.Name, AddPackageCommand.Entry },
+        { CopyPackageCommand.Entry.Name, CopyPackageCommand.Entry },
+        { QueryCommand.Entry.Name, QueryCommand.Entry },
         { RenameIdCommand.Entry.Name, RenameIdCommand.Entry },
-        { CopyPackageCommand.Entry.Name, CopyPackageCommand.Entry }
+        { RunWorkflowCommand.Entry.Name, RunWorkflowCommand.Entry },
+        { Sha256Command.Entry.Name, Sha256Command.Entry },
+        { ToMarkdownCommand.Entry.Name, ToMarkdownCommand.Entry }
     };
 
     /// <summary>

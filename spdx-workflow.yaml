@@ -1,0 +1,45 @@
+# This workflow demonstrates using spdx-tool to manipulate an SPDX document
+# adding new packages, updating the sha256 digest, and generating a
+# summary markdown document describing the contents.
+
+
+# Workflow Parameters
+parameters:
+  dotnet-version: unknown
+  spdx: src/DemaConsulting.SpdxTool/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
+  summary-markdown: manifest.spdx.summary.md
+
+# Steps
+steps:
+
+  # Query the version of dotnet
+- command: query
+  inputs:
+    output: dotnet-version
+    pattern: '(?<value>\d+\.\d+\.\d+)'
+    program: dotnet
+    arguments:
+    - '--version'
+
+  # Add DotNet SDK as a build tool of the package
+- command: add-package
+  inputs:
+    package:
+      id: SPDXRef-Package-DotNetSDK
+      name: DotNet SDK ${{ dotnet-version }}
+      version: ${{ dotnet-version }}
+      download: https://dotnet.microsoft.com/download
+    spdx: ${{ spdx }}
+    relationship: BUILD_TOOL_OF
+    element: SPDXRef-RootPackage
+
+  # Update the Sha256 digest on the SPDX document
+- command: sha256
+  inputs:
+    operation: generate
+    file: ${{ spdx }}
+
+- command: to-markdown
+  inputs:
+    spdx: ${{ spdx }}
+    markdown: ${{ summary-markdown }}

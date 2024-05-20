@@ -119,7 +119,7 @@ public class TestCopyPackageCommand
                 "from.spdx.json",
                 "to.spdx.json",
                 "SPDXRef-Package-2",
-                "CONTAINS",
+                "CONTAINED_BY",
                 "SPDXRef-Package-1");
 
             // Verify success
@@ -136,9 +136,9 @@ public class TestCopyPackageCommand
 
             // Verify the relationship
             Assert.AreEqual(2, doc.Relationships.Length);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[1].Id);
-            Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[1].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[1].RelatedSpdxElement);
+            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[1].Id);
+            Assert.AreEqual(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
+            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
         }
         finally
         {

@@ -77,13 +77,12 @@ public class RunWorkflowCommand : Command
         var inputs = GetMapMap(step, "input");
 
         // Get the 'file' input
-        var file = GetMapString(inputs, "file", variables) ?? 
+        var file = GetMapString(inputs, "file", variables) ??
                    throw new YamlException(step.Start, step.End, "'run-workflow' command missing 'file' input");
 
         // Get the parameters
         var parameters = new Dictionary<string, string>();
         if (GetMapMap(inputs, "parameters") is { } parametersMap)
-        {
             // Process all the parameters
             foreach (var (keyNode, valueNode) in parametersMap.Children)
             {
@@ -91,7 +90,6 @@ public class RunWorkflowCommand : Command
                 var value = valueNode.ToString();
                 parameters[key] = Expand(value, variables);
             }
-        }
 
         // Execute the workflow
         Execute(file, parameters);
@@ -124,7 +122,6 @@ public class RunWorkflowCommand : Command
             // Process the parameters definitions into local variables
             var variables = new Dictionary<string, string>();
             if (GetMapMap(root, "parameters") is { } parametersMap)
-            {
                 // Process all the parameters
                 foreach (var (keyNode, valueNode) in parametersMap.Children)
                 {
@@ -132,7 +129,6 @@ public class RunWorkflowCommand : Command
                     var value = Expand(valueNode.ToString(), variables);
                     variables[key] = Expand(value, parameters);
                 }
-            }
 
             // Apply the provided parameters to our variables
             foreach (var (key, value) in parameters)

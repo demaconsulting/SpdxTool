@@ -62,7 +62,7 @@ public class ToMarkdownCommand : Command
         var inputs = GetMapMap(step, "inputs");
 
         // Get the 'spdx' input
-        var spdxFile = GetMapString(inputs, "spdx", variables) ?? 
+        var spdxFile = GetMapString(inputs, "spdx", variables) ??
                        throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' input");
 
         // Get the 'markdown' input

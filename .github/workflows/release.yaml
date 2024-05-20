@@ -31,7 +31,7 @@ jobs:
         tool
         restore
       
-    - name: Install dependencies
+    - name: Restore Dependencies
       run: >
         dotnet
         restore
@@ -64,13 +64,12 @@ jobs:
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool
 
-    - name: Generate SBOM Summary
+    - name: Run SBOM Workflow
       run: >
         dotnet
         src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-        to-markdown
-        src/DemaConsulting.SpdxTool/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
-        manifest.spdx.summary.md
+        run-workflow
+        spdx-workflow.yaml
 
     - name: Create Dotnet Tool
       run: >
