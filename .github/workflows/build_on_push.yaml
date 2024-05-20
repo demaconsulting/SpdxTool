@@ -16,7 +16,13 @@ jobs:
           6.x
           8.x
 
-    - name: Install dependencies
+    - name: Restore Tools
+      run: >
+        dotnet
+        tool
+        restore
+      
+    - name: Restore Dependencies
       run: > 
         dotnet
         restore
