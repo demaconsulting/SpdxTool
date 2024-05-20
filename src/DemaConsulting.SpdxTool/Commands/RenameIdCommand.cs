@@ -30,9 +30,10 @@ public class RenameIdCommand : Command
             "",
             "From a YAML file this can be used as:",
             "  - command: rename-id",
-            "    spdx: <spdx.json>",
-            "    old: <old-id>",
-            "    new: <new-id>"
+            "    inputs:",
+            "      spdx: <spdx.json>",
+            "      old: <old-id>",
+            "      new: <new-id>"
         },
         Instance);
 
@@ -55,22 +56,25 @@ public class RenameIdCommand : Command
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step)
+    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
     {
-        // Get the spdx filename
-        if (!step.Children.TryGetValue("spdx", out var spdxFile))
-            throw new YamlException(step.Start, step.End, "'rename-id' command missing 'spdx' parameter");
+        // Get the step inputs
+        var inputs = GetMapMap(step, "inputs");
 
-        // Get the old ID
-        if (!step.Children.TryGetValue("old", out var oldId))
-            throw new YamlException(step.Start, step.End, "'rename-id' command missing 'old' parameter");
+        // Get the 'spdx' input
+        var spdxFile = GetMapString(inputs, "spdx", variables) ??
+                       throw new YamlException(step.Start, step.End, "'rename-id' command missing 'spdx' input");
 
-        // Get the new ID
-        if (!step.Children.TryGetValue("new", out var newId))
-            throw new YamlException(step.Start, step.End, "'rename-id' command missing 'new' parameter");
+        // Get the 'new' input
+        var newId = GetMapString(inputs, "new", variables) ??
+                    throw new YamlException(step.Start, step.End, "'rename-id' command missing 'new' input");
+
+        // Get the 'old' input
+        var oldId = GetMapString(inputs, "old", variables) ?? 
+                    throw new YamlException(step.Start, step.End, "'rename-id' command missing 'spdx' input");
 
         // Rename the ID
-        RenameId(spdxFile.ToString(), oldId.ToString(), newId.ToString());
+        RenameId(spdxFile, oldId, newId);
     }
 
     /// <summary>

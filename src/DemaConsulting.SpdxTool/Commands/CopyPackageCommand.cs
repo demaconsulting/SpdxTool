@@ -31,11 +31,12 @@ public class CopyPackageCommand : Command
             "",
             "From a YAML file this can be used as:",
             "  - command: copy-package",
-            "    from: <from.spdx.json>",
-            "    to: <to.spdx.json>",
-            "    package: <package>",
-            "    relationship: <relationship>",
-            "    element: <element>",
+            "    inputs:",
+            "      from: <from.spdx.json>",
+            "      to: <to.spdx.json>",
+            "      package: <package>",
+            "      relationship: <relationship>",
+            "      element: <element>",
             "",
             "The <package> argument is the name of a package in <from.spdx.json> to copy.",
             "The <relationship> argument describes the <element> relationship to <package>.",
@@ -65,31 +66,33 @@ public class CopyPackageCommand : Command
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step)
+    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
     {
-        // Get the from-filename
-        if (!step.Children.TryGetValue("from", out var fromFile))
-            throw new YamlException(step.Start, step.End, "'copy-package' command missing 'from' parameter");
+        // Get the step inputs
+        var inputs = GetMapMap(step, "inputs");
 
-        // Get the to-filename
-        if (!step.Children.TryGetValue("to", out var toFile))
-            throw new YamlException(step.Start, step.End, "'copy-package' command missing 'to' parameter");
+        // Get the 'from' input
+        var fromFile = GetMapString(inputs, "from", variables) ??
+                       throw new YamlException(step.Start, step.End, "'copy-package' missing 'from' input");
 
-        // Get the package name
-        if (!step.Children.TryGetValue("package", out var package))
-            throw new YamlException(step.Start, step.End, "'copy-package' command missing 'package' parameter");
+        // Get the 'to' input
+        var toFile = GetMapString(inputs, "to", variables) ??
+                     throw new YamlException(step.Start, step.End, "'copy-package' missing 'to' input");
 
-        // Get the relationship type
-        if (!step.Children.TryGetValue("relationship", out var relationship))
-            throw new YamlException(step.Start, step.End, "'copy-package' command missing 'relationship' parameter");
+        // Get the 'package' input
+        var package = GetMapString(inputs, "package", variables) ??
+                      throw new YamlException(step.Start, step.End, "'copy-package' missing 'package' input");
 
-        // Get the element name
-        if (!step.Children.TryGetValue("element", out var element))
-            throw new YamlException(step.Start, step.End, "'copy-package' command missing 'element' parameter");
+        // Get the 'relationship' input
+        var relationship = GetMapString(inputs, "relationship", variables) ??
+                           throw new YamlException(step.Start, step.End, "'copy-package' missing 'relationship' input");
+
+        // Get the 'element' input
+        var element = GetMapString(inputs, "element", variables) ??
+                      throw new YamlException(step.Start, step.End, "'copy-package' missing 'element' input");
 
         // Copy the package
-        CopyPackage(fromFile.ToString(), toFile.ToString(), package.ToString(), relationship.ToString(),
-            element.ToString());
+        CopyPackage(fromFile, toFile, package, relationship, element);
     }
 
     /// <summary>
