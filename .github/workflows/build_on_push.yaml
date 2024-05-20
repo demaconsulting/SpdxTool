@@ -49,7 +49,7 @@ jobs:
         -b src/DemaConsulting.SpdxTool/bin/Release
         -bc src/DemaConsulting.SpdxTool
         -pn DemaConsulting.SpdxTool
-        -pv ${{ github.event.inputs.version }}
+        -pv 0.0.0-cibuild
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool
 
