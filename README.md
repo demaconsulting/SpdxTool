@@ -52,10 +52,12 @@ The SpdxTool can be driven using workflow yaml files of the following format:
 ```yaml
 steps:
 - command: <command-name>
-  <arguments mapping>
+  inputs:
+    <arguments mapping>
 
 - command: <command-name>
-  <arguments mapping>
+  inputs:
+    <arguments mapping>
 ```
 
 ## YAML Commands
@@ -67,24 +69,30 @@ steps:
 
   # Run a separate workflow file
 - command: run-workflow
-  file: other-workflow-file.yaml
+  inputs:
+    file: other-workflow-file.yaml
+    parameters:
+      <optional parameters>
 
   # Create a summary markdown from the specified SPDX document
 - command: to-markdown
-  spdx: input.spdx.json
-  markdown: output.md
+  inputs:
+    spdx: input.spdx.json
+    markdown: output.md
 
   # Rename the SPDX-ID of an element in an SPDX document
 - command: rename-id
-  spdx: <spdx.json>
-  old: <old-id>
-  new: <new-id>
+  inputs:
+    spdx: <spdx.json>
+    old: <old-id>
+    new: <new-id>
 
   # Copy a package from one SPDX document to another SPDX document  
 - command: copy-package
-  from: <from.spdx.json>
-  to: <to.spdx.json>
-  package: <package>
-  relationship: <relationship>
-  element: <element>
+  inputs:
+    from: <from.spdx.json>
+    to: <to.spdx.json>
+    package: <package>
+    relationship: <relationship>
+    element: <element>
 ```

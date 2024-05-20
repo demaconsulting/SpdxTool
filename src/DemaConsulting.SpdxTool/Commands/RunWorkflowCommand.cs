@@ -25,11 +25,15 @@ public class RunWorkflowCommand : Command
             "This command runs the steps specified in the workflow.yaml file.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool run-workflow <workflow.yaml>",
+            "  spdx-tool run-workflow <workflow.yaml> [parameter=value] [parameter=value]...",
             "",
             "From a YAML file this can be used as:",
             "  - command: run-workflow",
-            "    file: <workflow.yaml>"
+            "    inputs:",
+            "      file: <workflow.yaml>",
+            "      parameters:",
+            "        name: value",
+            "        name: value"
         },
         Instance);
 
@@ -43,32 +47,64 @@ public class RunWorkflowCommand : Command
     /// <inheritdoc />
     public override void Run(string[] args)
     {
-        // Report an error if the number of arguments is not 1
-        if (args.Length != 1)
+        // Report an error if the number of arguments is less than 1
+        if (args.Length < 1)
             throw new CommandUsageException("'run-workflow' command missing arguments");
 
+        // Parse the parameters
+        var parameters = new Dictionary<string, string>();
+        foreach (var arg in args.Skip(1))
+        {
+            // Verify the parameter is in the form key=value
+            var sep = arg.IndexOf('=');
+            if (sep < 0)
+                throw new CommandUsageException($"Invalid argument: {arg}");
+
+            // Add the parameter
+            var key = arg[..sep];
+            var value = arg[(sep + 1)..];
+            parameters[key] = value;
+        }
+
         // Execute the workflow
-        Execute(args[0]);
+        Execute(args[0], parameters);
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step)
+    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
     {
-        // Get the workflow filename
-        if (!step.Children.TryGetValue("file", out var file))
-            throw new YamlException(step.Start, step.End, "'run-workflow' command missing 'file' parameter");
+        // Get the step inputs
+        var inputs = GetMapMap(step, "input");
+
+        // Get the 'file' input
+        var file = GetMapString(inputs, "file", variables) ?? 
+                   throw new YamlException(step.Start, step.End, "'run-workflow' command missing 'file' input");
+
+        // Get the parameters
+        var parameters = new Dictionary<string, string>();
+        if (GetMapMap(inputs, "parameters") is { } parametersMap)
+        {
+            // Process all the parameters
+            foreach (var (keyNode, valueNode) in parametersMap.Children)
+            {
+                var key = keyNode.ToString();
+                var value = valueNode.ToString();
+                parameters[key] = Expand(value, variables);
+            }
+        }
 
         // Execute the workflow
-        Execute(file.ToString());
+        Execute(file, parameters);
     }
 
     /// <summary>
     /// Execute the workflow
     /// </summary>
     /// <param name="workflowFile">Workflow file</param>
+    /// <param name="parameters">Workflow parameters</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
     /// <exception cref="YamlException">On workflow error</exception>
-    public static void Execute(string workflowFile)
+    public static void Execute(string workflowFile, Dictionary<string, string> parameters)
     {
         // Verify the file exists
         if (!File.Exists(workflowFile))
@@ -85,10 +121,35 @@ public class RunWorkflowCommand : Command
                        throw new CommandErrorException(
                            $"Workflow {workflowFile} missing root mapping node");
 
+            // Process the parameters definitions into local variables
+            var variables = new Dictionary<string, string>();
+            if (GetMapMap(root, "parameters") is { } parametersMap)
+            {
+                // Process all the parameters
+                foreach (var (keyNode, valueNode) in parametersMap.Children)
+                {
+                    var key = keyNode.ToString();
+                    var value = Expand(valueNode.ToString(), variables);
+                    variables[key] = Expand(value, parameters);
+                }
+            }
+
+            // Apply the provided parameters to our variables
+            foreach (var (key, value) in parameters)
+            {
+                if (!variables.ContainsKey(key))
+                    throw new CommandErrorException(
+                        $"Workflow {workflowFile} parameter {key} not defined");
+
+                variables[key] = Expand(value, variables);
+            }
+
             // Get the steps
-            var steps = root["steps"] as YamlSequenceNode ??
+            var steps = GetMapSequence(root, "steps") ??
                         throw new CommandErrorException(
                             $"Workflow {workflowFile} missing steps");
+
+            // Execute the steps
             foreach (var stepNode in steps)
             {
                 // Get the step
@@ -108,7 +169,7 @@ public class RunWorkflowCommand : Command
                         $"Unknown command: '{command}'");
 
                 // Run the command
-                entry.Instance.Run(step);
+                entry.Instance.Run(step, variables);
             }
         }
         catch (KeyNotFoundException ex)

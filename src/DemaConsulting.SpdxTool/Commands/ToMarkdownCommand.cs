@@ -31,8 +31,9 @@ public class ToMarkdownCommand : Command
             "",
             "From a YAML file this can be used as:",
             "  - command: to-markdown",
-            "    spdx: <spdx.yaml>",
-            "    markdown: <out.md>"
+            "    inputs:",
+            "      spdx: <spdx.yaml>",
+            "      markdown: <out.md>"
         },
         Instance);
 
@@ -55,18 +56,21 @@ public class ToMarkdownCommand : Command
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step)
+    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
     {
-        // Get the SPDX filename
-        if (!step.Children.TryGetValue("spdx", out var spdxFile))
-            throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' parameter");
+        // Get the step inputs
+        var inputs = GetMapMap(step, "inputs");
 
-        // Get the Markdown filename
-        if (!step.Children.TryGetValue("markdown", out var markdownFile))
-            throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'markdown' parameter");
+        // Get the 'spdx' input
+        var spdxFile = GetMapString(inputs, "spdx", variables) ?? 
+                       throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' input");
+
+        // Get the 'markdown' input
+        var markdownFile = GetMapString(inputs, "markdown", variables) ??
+                           throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' input");
 
         // Generate the markdown
-        Generate(spdxFile.ToString(), markdownFile.ToString());
+        Generate(spdxFile, markdownFile);
     }
 
     /// <summary>

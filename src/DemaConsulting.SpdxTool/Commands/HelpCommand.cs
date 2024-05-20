@@ -29,7 +29,8 @@ public class HelpCommand : Command
             "",
             "From a YAML file this can be used as:",
             "  - command: help",
-            "    about: <command>"
+            "    inputs:",
+            "      about: <command>"
         },
         Instance);
 
@@ -52,14 +53,17 @@ public class HelpCommand : Command
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step)
+    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
     {
-        // Get the about command
-        if (!step.Children.TryGetValue("about", out var about))
-            throw new YamlException(step.Start, step.End, "'help' command missing 'about' parameter");
+        // Get the step inputs
+        var inputs = GetMapMap(step, "inputs");
+
+        // Get the 'about' input
+        var about = GetMapString(inputs, "about", variables) ??
+                    throw new YamlException(step.Start, step.End, "'help' command missing 'about' input");
 
         // Generate the markdown
-        ShowUsage(about.ToString());
+        ShowUsage(about);
     }
 
     /// <summary>
