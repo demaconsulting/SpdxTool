@@ -34,3 +34,31 @@ jobs:
         test
         --no-build
         --configuration Release
+
+    - name: Generate SBOM
+      run: >
+        dotnet
+        sbom-tool
+        generate
+        -b src/DemaConsulting.SpdxTool/bin/Release
+        -bc src/DemaConsulting.SpdxTool
+        -pn DemaConsulting.SpdxTool
+        -pv ${{ github.event.inputs.version }}
+        -ps DemaConsulting
+        -nsb https://DemaConsulting.com/SpdxTool
+
+    - name: Run SBOM Workflow
+      run: >
+        dotnet
+        src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
+        run-workflow
+        spdx-workflow.yaml
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts
+        path: |
+          **/manifest.spdx.json
+          **/manifest.spdx.json.sha256
+          manifest.spdx.summary.md
