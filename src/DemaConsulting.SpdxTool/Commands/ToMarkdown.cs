@@ -8,12 +8,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to generate a Markdown summary of an SPDX document
 /// </summary>
-public class ToMarkdownCommand : Command
+public class ToMarkdown : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly ToMarkdownCommand Instance = new();
+    public static readonly ToMarkdown Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -40,7 +40,7 @@ public class ToMarkdownCommand : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private ToMarkdownCommand()
+    private ToMarkdown()
     {
     }
 
@@ -52,7 +52,7 @@ public class ToMarkdownCommand : Command
             throw new CommandUsageException("'to-markdown' command missing arguments");
 
         // Generate the markdown
-        Generate(args[0], args[1]);
+        GenerateSummaryMarkdown(args[0], args[1]);
     }
 
     /// <inheritdoc />
@@ -70,7 +70,7 @@ public class ToMarkdownCommand : Command
                            throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' input");
 
         // Generate the markdown
-        Generate(spdxFile, markdownFile);
+        GenerateSummaryMarkdown(spdxFile, markdownFile);
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public class ToMarkdownCommand : Command
     /// <param name="markdownFile">Markdown file</param>
     /// <param name="depth">Depth of the Markdown headers</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
-    public static void Generate(string spdxFile, string markdownFile, int depth = 2)
+    public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, int depth = 2)
     {
         // Verify the SPDX file exists
         if (!File.Exists(spdxFile))

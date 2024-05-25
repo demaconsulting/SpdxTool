@@ -52,7 +52,7 @@ public class RenameIdCommand : Command
             throw new CommandUsageException("'rename-id' command missing arguments");
 
         // Rename the ID
-        RenameId(args[0], args[1], args[2]);
+        RenameSpdxElementId(args[0], args[1], args[2]);
     }
 
     /// <inheritdoc />
@@ -74,7 +74,7 @@ public class RenameIdCommand : Command
                     throw new YamlException(step.Start, step.End, "'rename-id' command missing 'spdx' input");
 
         // Rename the ID
-        RenameId(spdxFile, oldId, newId);
+        RenameSpdxElementId(spdxFile, oldId, newId);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class RenameIdCommand : Command
     /// <param name="spdxFile">SPDX file name</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>
-    public static void RenameId(string spdxFile, string oldId, string newId)
+    public static void RenameSpdxElementId(string spdxFile, string oldId, string newId)
     {
         // Verify the file exists
         if (!File.Exists(spdxFile))

@@ -52,7 +52,7 @@ public class Sha256Command : Command
             throw new CommandUsageException("'sha256' command missing arguments");
 
         // Do the Sha256 operation
-        DoSha256(args[0], args[1]);
+        DoSha256Operation(args[0], args[1]);
     }
 
     /// <inheritdoc />
@@ -70,7 +70,7 @@ public class Sha256Command : Command
                    throw new YamlException(step.Start, step.End, "'sha256' command missing 'file' input");
 
         // Do the Sha256 operation
-        DoSha256(operation, file);
+        DoSha256Operation(operation, file);
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ public class Sha256Command : Command
     /// <param name="operation">Operation to perform (generate or verify)</param>
     /// <param name="file">File to perform operation on</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
-    public static void DoSha256(string operation, string file)
+    public static void DoSha256Operation(string operation, string file)
     {
         switch (operation)
         {

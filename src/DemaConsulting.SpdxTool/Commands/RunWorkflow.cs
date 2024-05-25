@@ -6,12 +6,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to run a workflow YAML file
 /// </summary>
-public class RunWorkflowCommand : Command
+public class RunWorkflow : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly RunWorkflowCommand Instance = new();
+    public static readonly RunWorkflow Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -40,7 +40,7 @@ public class RunWorkflowCommand : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private RunWorkflowCommand()
+    private RunWorkflow()
     {
     }
 
@@ -67,7 +67,7 @@ public class RunWorkflowCommand : Command
         }
 
         // Execute the workflow
-        Execute(args[0], parameters);
+        RunWorkflowFile(args[0], parameters);
     }
 
     /// <inheritdoc />
@@ -92,7 +92,7 @@ public class RunWorkflowCommand : Command
             }
 
         // Execute the workflow
-        Execute(file, parameters);
+        RunWorkflowFile(file, parameters);
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public class RunWorkflowCommand : Command
     /// <param name="parameters">Workflow parameters</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
     /// <exception cref="YamlException">On workflow error</exception>
-    public static void Execute(string workflowFile, Dictionary<string, string> parameters)
+    public static void RunWorkflowFile(string workflowFile, Dictionary<string, string> parameters)
     {
         // Verify the file exists
         if (!File.Exists(workflowFile))
