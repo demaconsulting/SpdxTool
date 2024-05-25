@@ -29,8 +29,8 @@ steps:
       id: SPDXRef-Package-DotNetSDK
       name: DotNet SDK
       download: https://dotnet.microsoft.com/download
-      supplier: Organization: Microsoft Corporation
-      originator: Organization: Microsoft Corporation
+      supplier: 'Organization: Microsoft Corporation'
+      originator: 'Organization: Microsoft Corporation'
       homepage: https://dotnet.microsoft.com/en-us/
       copyright: Copyright (c) 2019 Microsoft
       summary: .NET is a free, open-source cross-platform framework for building applications and cloud services.
