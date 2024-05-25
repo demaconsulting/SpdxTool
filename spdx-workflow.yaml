@@ -24,14 +24,21 @@ steps:
   # Add DotNet SDK as a build tool of the package
 - command: add-package
   inputs:
+    spdx: ${{ spdx }}
     package:
       id: SPDXRef-Package-DotNetSDK
-      name: DotNet SDK ${{ dotnet-version }}
-      version: ${{ dotnet-version }}
+      name: DotNet SDK
       download: https://dotnet.microsoft.com/download
-    spdx: ${{ spdx }}
-    relationship: BUILD_TOOL_OF
-    element: SPDXRef-RootPackage
+      supplier: 'Organization: Microsoft Corporation'
+      originator: 'Organization: Microsoft Corporation'
+      homepage: https://dotnet.microsoft.com/en-us/
+      copyright: Copyright (c) 2019 Microsoft
+      summary: .NET is a free, open-source cross-platform framework for building applications and cloud services.
+      license: MIT
+      version: ${{ dotnet-version }}
+    relationships:
+    - type: BUILD_TOOL_OF
+      element: SPDXRef-RootPackage
 
   # Update the Sha256 digest on the SPDX document
 - command: sha256

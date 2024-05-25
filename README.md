@@ -39,12 +39,15 @@ Options:
 Commands:
   help <command>                         Display extended help about a command
   add-package                            Add package to SPDX document (workflow only).
-  copy-package <arguments>               Copy package information from one SPDX document to another.
+  copy-package                           Copy package between SPDX documents (workflow only).
+  find-package <spdx.json> [criteria]    Find package ID in SPDX document
+  print <text>                           Print text to the console
   query <pattern> <command> [arguments]  Query program output for value
   rename-id <arguments>                  Rename an element ID in an SPDX document.
   run-workflow <workflow.yaml>           Runs the workflow file
   sha256 <operation> <file>              Generate or verify sha256 hashes of files
   to-markdown <spdx.yaml> <out.md>       Create Markdown summary for SPDX document
+  update-package                         Update package in SPDX document (workflow only).
 ```
 
 
@@ -125,27 +128,56 @@ steps:
   # Add a package to an SPDX document
 - command: add-package
   inputs:
-    package:
-      id: <id>
-      name: <name>
-      copyright: <copyright>
-      version: <version>
-      download: <download-url>
-      license: <license>       # optional
-      purl: <package-url>      # optional
-      cpe23: <cpe-identifier>  # optional
-    spdx: <spdx.json>
-    relationship: <relationship>
-    element: <element>
+    spdx: <spdx.json>             # SPDX file name
+    package:                      # New package information
+      id: <id>                    # New package ID
+      name: <name>                # New package name
+      download: <download-url>    # New package download URL
+      version: <version>          # Optional package version
+      filename: <filename>        # Optional package filename
+      supplier: <supplier>        # Optional package supplier
+      originator: <originator>    # Optional package originator
+      homepage: <homepage>        # Optional package homepage
+      copyright: <copyright>      # Optional package copyright
+      summary: <summary>          # Optional package summary
+      description: <description>  # Optional package description
+      license: <license>          # Optional package license
+      purl: <package-url>         # Optional package purl
+      cpe23: <cpe-identifier>     # Optional package cpe23
+    relationships:                # Relationships
+    - type: <relationship>        # Relationship type
+      element: <element>          # Related element
+    - type: <relationship>        # Relationship type
+      element: <element>          # Related element
 
   # Copy a package from one SPDX document to another SPDX document  
 - command: copy-package
   inputs:
-    from: <from.spdx.json>
-    to: <to.spdx.json>
-    package: <package>
-    relationship: <relationship>
-    element: <element>
+    from: <from.spdx.json>        # Source SPDX file name
+    to: <to.spdx.json>            # Destination SPDX file name
+    package: <package>            # Package ID
+    relationships:                # Relationships
+    - type: <relationship>        # Relationship type
+      element: <element>          # Related element
+    - type: <relationship>        # Relationship type
+      element: <element>          # Related element
+
+  # finds the package ID for a package in an SPDX document
+- command: find-package
+  inputs:
+    output: <variable>            # Output variable for package ID
+    spdx: <spdx.json>             # SPDX file name
+    name: <name>                  # Optional package name
+    version: <version>            # Optional package version
+    filename: <filename>          # Optional package filename
+    download: <url>               # Optional package download URL
+
+  # Print text to the console
+- command: print
+  inputs:
+    text:
+    - Some text to print
+    - The value of variable is ${{ variable }}
 
   # Query information from the output of a program
 - command: query
@@ -160,9 +192,9 @@ steps:
   # Rename the SPDX-ID of an element in an SPDX document
 - command: rename-id
   inputs:
-    spdx: <spdx.json>
-    old: <old-id>
-    new: <new-id>
+    spdx: <spdx.json>             # SPDX file name
+    old: <old-id>                 # Old element ID
+    new: <new-id>                 # New element ID
 
   # Run a separate workflow file
 - command: run-workflow
@@ -182,4 +214,22 @@ steps:
   inputs:
     spdx: input.spdx.json
     markdown: output.md
+
+  # Update a package in an SPDX document
+- command: update-package
+  inputs:
+    spdx: <spdx.json>             # SPDX filename
+    package:                      # Package information
+      id: <id>                    # Package ID
+      name: <name>                # Optional new package name
+      download: <download-url>    # Optional new package download URL
+      version: <version>          # Optional new package version
+      filename: <filename>        # Optional new package filename
+      supplier: <supplier>        # Optional new package supplier
+      originator: <originator>    # Optional new package originator
+      homepage: <homepage>        # Optional new package homepage
+      copyright: <copyright>      # Optional new package copyright
+      summary: <summary>          # Optional new package summary
+      description: <description>  # Optional new package description
+      license: <license>          # Optional new package license
 ```

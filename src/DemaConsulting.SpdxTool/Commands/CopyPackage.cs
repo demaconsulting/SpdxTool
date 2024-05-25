@@ -20,23 +20,22 @@ public class CopyPackage : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "copy-package",
-        "copy-package <arguments>",
-        "Copy package information from one SPDX document to another.",
+        "copy-package",
+        "Copy package between SPDX documents (workflow only).",
         new[]
         {
             "This command copies a package from one SPDX document to another.",
             "",
-            "From the command-line this can be used as:",
-            "  spdx-tool copy-package <from.spdx.json> <to.spdx.json> <package> <relationship> <element>",
-            "",
-            "From a YAML file this can be used as:",
             "  - command: copy-package",
             "    inputs:",
-            "      from: <from.spdx.json>",
-            "      to: <to.spdx.json>",
-            "      package: <package>",
-            "      relationship: <relationship>",
-            "      element: <element>",
+            "      from: <from.spdx.json>        # Source SPDX file name",
+            "      to: <to.spdx.json>            # Destination SPDX file name",
+            "      package: <package>            # Package ID",
+            "      relationships:                # Relationships",
+            "      - type: <relationship>        # Relationship type",
+            "        element: <element>          # Related element",
+            "      - type: <relationship>        # Relationship type",
+            "        element: <element>          # Related element",
             "",
             "The <package> argument is the name of a package in <from.spdx.json> to copy.",
             "The <relationship> argument describes the <package> relationship to <element>.",
@@ -57,12 +56,7 @@ public class CopyPackage : Command
     /// <inheritdoc />
     public override void Run(string[] args)
     {
-        // Report an error if the number of arguments is not 5
-        if (args.Length != 5)
-            throw new CommandUsageException("'copy-package' command missing arguments");
-
-        // Copy the package
-        CopyPackageBetweenSpdxFiles(args[0], args[1], args[2], args[3], args[4]);
+        throw new CommandUsageException("'copy-package' command is only valid in a workflow");
     }
 
     /// <inheritdoc />
@@ -80,19 +74,16 @@ public class CopyPackage : Command
                      throw new YamlException(step.Start, step.End, "'copy-package' missing 'to' input");
 
         // Get the 'package' input
-        var package = GetMapString(inputs, "package", variables) ??
+        var packageId = GetMapString(inputs, "package", variables) ??
                       throw new YamlException(step.Start, step.End, "'copy-package' missing 'package' input");
 
-        // Get the 'relationship' input
-        var relationship = GetMapString(inputs, "relationship", variables) ??
-                           throw new YamlException(step.Start, step.End, "'copy-package' missing 'relationship' input");
-
-        // Get the 'element' input
-        var element = GetMapString(inputs, "element", variables) ??
-                      throw new YamlException(step.Start, step.End, "'copy-package' missing 'element' input");
+        // Parse the relationships
+        var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
+                                    throw new YamlException(step.Start, step.End, "'copy-package' missing 'relationships' input");
+        var relationships = AddPackage.ParseRelationships("add-package", packageId, relationshipsSequence, variables);
 
         // Copy the package
-        CopyPackageBetweenSpdxFiles(fromFile, toFile, package, relationship, element);
+        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, relationships);
     }
 
     /// <summary>
@@ -101,10 +92,8 @@ public class CopyPackage : Command
     /// <param name="fromFile">Source SPDX document filename</param>
     /// <param name="toFile">Destination SPDX document filename</param>
     /// <param name="packageId">Package to copy</param>
-    /// <param name="relationshipName">Relationship of package to element in destination</param>
-    /// <param name="elementId">Destination element</param>
-    public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId, string relationshipName,
-        string elementId)
+    /// <param name="relationships">Relationships of package to elements in destination</param>
+    public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId, SpdxRelationship[] relationships)
     {
         // Verify from file exists
         if (!File.Exists(fromFile))
@@ -117,15 +106,6 @@ public class CopyPackage : Command
         // Verify package name
         if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
             throw new CommandUsageException("Invalid package name");
-
-        // Parse the relationship
-        var relationship = SpdxRelationshipTypeExtensions.FromText(relationshipName);
-        if (relationship == SpdxRelationshipType.Missing)
-            throw new CommandUsageException("Invalid relationship");
-
-        // Verify element name
-        if (elementId.Length == 0)
-            throw new CommandUsageException("Invalid element name");
 
         // Read the SPDX documents
         var fromDoc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(fromFile));
@@ -157,14 +137,8 @@ public class CopyPackage : Command
             toDoc.Files = toDoc.Files.Append(file).ToArray();
         }
 
-        // Append the relationship to the destination document
-        var newRelationship = new SpdxRelationship
-        {
-            Id = package.Id,
-            RelationshipType = relationship,
-            RelatedSpdxElement = elementId
-        };
-        toDoc.Relationships = toDoc.Relationships.Append(newRelationship).ToArray();
+        // Append the relationships to the destination document
+        toDoc.Relationships = toDoc.Relationships.Concat(relationships).ToArray();
 
         // Write the destination document
         File.WriteAllText(toFile, Spdx2JsonSerializer.Serialize(toDoc));

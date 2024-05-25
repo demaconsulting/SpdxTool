@@ -30,7 +30,7 @@ public class Sha256Command : Command
             "  spdx-tool sha256 verify <file>",
             "",
             "From a YAML file this can be used as:",
-            "  - command: help",
+            "  - command: sha256",
             "    inputs:",
             "      operation: generate | verify",
             "      file: <file>",

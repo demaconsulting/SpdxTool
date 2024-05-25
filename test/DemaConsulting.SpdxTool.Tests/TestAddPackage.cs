@@ -59,15 +59,16 @@ public class TestAddPackage
         const string workflowContents = "steps:\n" +
                                         "- command: add-package\n" +
                                         "  inputs:\n" +
+                                        "    spdx: spdx.json\n" +
                                         "    package:\n" +
                                         "      id: SPDXRef-Package-2\n" +
                                         "      name: Test Package 2\n" +
                                         "      version: 2.0.0\n" +
                                         "      download: https://dotnet.microsoft.com/download\n" +
                                         "      purl: pkg:nuget/BogusPackage@2.0.0\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    relationship: BUILD_TOOL_OF\n" +
-                                        "    element: SPDXRef-Package-1\n";
+                                        "    relationships:\n" +
+                                        "      - type: BUILD_TOOL_OF\n" +
+                                        "        element: SPDXRef-Package-1\n";
 
         try
         {
@@ -153,15 +154,16 @@ public class TestAddPackage
                                         "    - --version\n" +
                                         "- command: add-package\n" +
                                         "  inputs:\n" +
+                                        "    spdx: spdx.json\n" +
                                         "    package:\n" +
                                         "      id: SPDXRef-Package-DotNet\n" +
                                         "      name: DotNet SDK\n" +
                                         "      version: ${{ dotnet_version }}\n" +
                                         "      download: https://dotnet.microsoft.com/download\n" +
                                         "      license: MIT\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    relationship: BUILD_TOOL_OF\n" +
-                                        "    element: SPDXRef-Package-1\n";
+                                        "    relationships:\n" +
+                                        "      - type: BUILD_TOOL_OF\n" +
+                                        "        element: SPDXRef-Package-1\n";
 
         try
         {
@@ -171,7 +173,7 @@ public class TestAddPackage
 
             // Run the command
             var exitCode = Runner.Run(
-                out var output,
+                out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "run-workflow",

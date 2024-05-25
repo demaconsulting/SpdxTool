@@ -30,20 +30,20 @@ public class FindPackage : Command
             "  spdx-tool find-package <spdx.json> [criteria]",
             "",
             "  The supported criteria are:",
-            "    name=<name>             # Optional package name",
-            "    version=<version>       # Optional package version",
-            "    filename=<filename>     # Optional package filename",
-            "    download=<url>          # Optional package download URL",
+            "    name=<name>                     # Optional package name",
+            "    version=<version>               # Optional package version",
+            "    filename=<filename>             # Optional package filename",
+            "    download=<url>                  # Optional package download URL",
             "",
             "From a YAML file this can be used as:",
             "  - command: find-package",
             "    inputs:",
-            "      output: <variable>    # Output variable for package ID",
-            "      spdx: <spdx.json>     # SPDX file name",
-            "      name: <name>          # Optional package name",
-            "      version: <version>    # Optional package version",
-            "      filename: <filename>  # Optional package filename",
-            "      download: <url>       # Optional package download URL"
+            "      output: <variable>            # Output variable for package ID",
+            "      spdx: <spdx.json>             # SPDX file name",
+            "      name: <name>                  # Optional package name",
+            "      version: <version>            # Optional package version",
+            "      filename: <filename>          # Optional package filename",
+            "      download: <url>               # Optional package download URL"
         },
         Instance);
 
@@ -99,7 +99,7 @@ public class FindPackage : Command
 
         // Get the criteria
         var criteria = new Dictionary<string, string>();
-        ReadCriteria(inputs, variables, criteria);
+        ParseCriteria(inputs, variables, criteria);
 
         // Find the package ID
         var packageId = FindPackageByCriteria(spdxFile, criteria)?.Id ??
@@ -115,7 +115,7 @@ public class FindPackage : Command
     /// <param name="map">Criteria map</param>
     /// <param name="variables">Currently defined variables</param>
     /// <param name="criteria">Criteria dictionary to populate</param>
-    public static void ReadCriteria(
+    public static void ParseCriteria(
         YamlMappingNode? map,
         Dictionary<string, string> variables,
         Dictionary<string, string> criteria)
