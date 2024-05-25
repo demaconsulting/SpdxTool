@@ -28,10 +28,10 @@ public class Print : Command
             "  spdx-tool print <text>",
             "",
             "From a YAML file this can be used as:",
-            "  - command: help",
+            "  - command: print",
             "    inputs:",
-            "      text:" +
-            "      - Some text to print" +
+            "      text:",
+            "      - Some text to print",
             "      - The value of variable is ${{ variable }}"
         },
         Instance);

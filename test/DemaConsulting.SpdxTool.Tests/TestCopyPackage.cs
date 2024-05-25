@@ -7,7 +7,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class TestCopyPackage
 {
     [TestMethod]
-    public void CopyPackageMissingArguments()
+    public void CopyPackageCommandLine()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -18,31 +18,11 @@ public class TestCopyPackage
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'copy-package' command missing arguments"));
+        Assert.IsTrue(output.Contains("'copy-package' command is only valid in a workflow"));
     }
 
     [TestMethod]
-    public void CopyPackageMissingFile()
-    {
-        // Run the command
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "copy-package",
-            "missing.spdx.json",
-            "to.spdx.json",
-            "SPDXRef-Package-2",
-            "CONTAINS",
-            "SPDXRef-Package-1");
-
-        // Verify error reported
-        Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("File not found: missing.spdx.json"));
-    }
-
-    [TestMethod]
-    public void CopyPackage()
+    public void CopyPackageWorkflow()
     {
         const string toSpdxContents = "{\r\n" +
                                       "  \"files\": [],\r\n" +
@@ -104,23 +84,31 @@ public class TestCopyPackage
                                         "  \"documentDescribes\": [ \"SPDXRef-Package-2\" ]\r\n" +
                                         "}";
 
+        // Workflow contents
+        const string workflowContents = "steps:\n" +
+                                        "- command: copy-package\n" +
+                                        "  inputs:\n" +
+                                        "    from: from.spdx.json\n" +
+                                        "    to: to.spdx.json\n" +
+                                        "    package: SPDXRef-Package-2\n" +
+                                        "    relationships:\n" +
+                                        "      - type: CONTAINED_BY\n" +
+                                        "        element: SPDXRef-Package-1\n";
+
         try
         {
             // Write the SPDX files
             File.WriteAllText("to.spdx.json", toSpdxContents);
             File.WriteAllText("from.spdx.json", fromSpdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
 
             // Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "copy-package",
-                "from.spdx.json",
-                "to.spdx.json",
-                "SPDXRef-Package-2",
-                "CONTAINED_BY",
-                "SPDXRef-Package-1");
+                "run-workflow",
+                "workflow.yaml");
 
             // Verify success
             Assert.AreEqual(0, exitCode);
@@ -144,6 +132,7 @@ public class TestCopyPackage
         {
             File.Delete("to.spdx.json");
             File.Delete("from.spdx.json");
+            File.Delete("workflow.yaml");
         }
     }
 }

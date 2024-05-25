@@ -19,7 +19,8 @@ public static class CommandsRegistry
         { RenameIdCommand.Entry.Name, RenameIdCommand.Entry },
         { RunWorkflow.Entry.Name, RunWorkflow.Entry },
         { Sha256Command.Entry.Name, Sha256Command.Entry },
-        { ToMarkdown.Entry.Name, ToMarkdown.Entry }
+        { ToMarkdown.Entry.Name, ToMarkdown.Entry },
+        { UpdatePackage.Entry.Name, UpdatePackage.Entry }
     };
 
     /// <summary>

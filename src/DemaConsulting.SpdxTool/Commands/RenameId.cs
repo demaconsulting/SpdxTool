@@ -31,9 +31,9 @@ public class RenameIdCommand : Command
             "From a YAML file this can be used as:",
             "  - command: rename-id",
             "    inputs:",
-            "      spdx: <spdx.json>",
-            "      old: <old-id>",
-            "      new: <new-id>"
+            "      spdx: <spdx.json>             # SPDX file name",
+            "      old: <old-id>                 # Old element ID",
+            "      new: <new-id>                 # New element ID"
         },
         Instance);
 
