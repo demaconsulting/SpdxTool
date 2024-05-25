@@ -13,6 +13,8 @@ public static class CommandsRegistry
         { Help.Entry.Name, Help.Entry },
         { AddPackage.Entry.Name, AddPackage.Entry },
         { CopyPackage.Entry.Name, CopyPackage.Entry },
+        { FindPackage.Entry.Name, FindPackage.Entry },
+        { Print.Entry.Name, Print.Entry },
         { Query.Entry.Name, Query.Entry },
         { RenameIdCommand.Entry.Name, RenameIdCommand.Entry },
         { RunWorkflow.Entry.Name, RunWorkflow.Entry },

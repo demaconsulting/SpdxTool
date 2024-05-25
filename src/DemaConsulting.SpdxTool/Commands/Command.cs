@@ -101,4 +101,17 @@ public abstract class Command
         // Get the parameter
         return map.Children.TryGetValue(key, out var value) ? Expand(value.ToString(), variables) : null;
     }
+
+    /// <summary>
+    /// Get a sequence value from a sequence
+    /// </summary>
+    /// <param name="sequence">Sequence node</param>
+    /// <param name="index">Sequence index</param>
+    /// <param name="variables">Variables for expansion</param>
+    /// <returns>Sequence value or null</returns>
+    public static string? GetSequenceString(YamlSequenceNode? sequence, int index, Dictionary<string, string> variables)
+    {
+        // Get the parameter
+        return sequence?.Children.Count > index ? Expand(sequence.Children[index].ToString(), variables) : null;
+    }
 }
