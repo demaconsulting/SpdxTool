@@ -8,12 +8,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Add a package to an SPDX document
 /// </summary>
-public class AddPackageCommand : Command
+public class AddPackage : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly AddPackageCommand Instance = new();
+    public static readonly AddPackage Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -52,7 +52,7 @@ public class AddPackageCommand : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private AddPackageCommand()
+    private AddPackage()
     {
     }
 
@@ -133,7 +133,7 @@ public class AddPackageCommand : Command
                 }).ToArray();
 
         // Add the package
-        AddPackage(package, spdxFile, relationship, element);
+        AddPackageToSpdxFile(package, spdxFile, relationship, element);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public class AddPackageCommand : Command
     /// <param name="relationshipName">Relationship type</param>
     /// <param name="elementId">Element to relate package to</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
-    public static void AddPackage(SpdxPackage package, string spdxFile, string relationshipName, string elementId)
+    public static void AddPackageToSpdxFile(SpdxPackage package, string spdxFile, string relationshipName, string elementId)
     {
         // Verify to file exists
         if (!File.Exists(spdxFile))

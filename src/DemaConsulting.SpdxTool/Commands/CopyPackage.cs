@@ -8,12 +8,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to copy package from one SPDX document to another
 /// </summary>
-public class CopyPackageCommand : Command
+public class CopyPackage : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly CopyPackageCommand Instance = new();
+    public static readonly CopyPackage Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -50,7 +50,7 @@ public class CopyPackageCommand : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private CopyPackageCommand()
+    private CopyPackage()
     {
     }
 
@@ -62,7 +62,7 @@ public class CopyPackageCommand : Command
             throw new CommandUsageException("'copy-package' command missing arguments");
 
         // Copy the package
-        CopyPackage(args[0], args[1], args[2], args[3], args[4]);
+        CopyPackageBetweenSpdxFiles(args[0], args[1], args[2], args[3], args[4]);
     }
 
     /// <inheritdoc />
@@ -92,7 +92,7 @@ public class CopyPackageCommand : Command
                       throw new YamlException(step.Start, step.End, "'copy-package' missing 'element' input");
 
         // Copy the package
-        CopyPackage(fromFile, toFile, package, relationship, element);
+        CopyPackageBetweenSpdxFiles(fromFile, toFile, package, relationship, element);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public class CopyPackageCommand : Command
     /// <param name="packageId">Package to copy</param>
     /// <param name="relationshipName">Relationship of package to element in destination</param>
     /// <param name="elementId">Destination element</param>
-    public static void CopyPackage(string fromFile, string toFile, string packageId, string relationshipName,
+    public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId, string relationshipName,
         string elementId)
     {
         // Verify from file exists

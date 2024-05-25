@@ -1,7 +1,7 @@
 ﻿namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestSha256Command
+public class TestSha256
 {
     [TestMethod]
     public void Sha256CommandMissingArguments()

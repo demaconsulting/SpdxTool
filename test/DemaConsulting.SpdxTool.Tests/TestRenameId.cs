@@ -3,7 +3,7 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestRenameIdCommand
+public class TestRenameId
 {
     [TestMethod]
     public void RenameIdMissingArguments()

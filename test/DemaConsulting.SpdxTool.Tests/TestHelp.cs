@@ -1,7 +1,7 @@
 ﻿namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestHelpCommand
+public class TestHelp
 {
     [TestMethod]
     public void HelpMissingArguments()

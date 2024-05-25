@@ -8,12 +8,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Query a program output for a value
 /// </summary>
-public class QueryCommand : Command
+public class Query : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly QueryCommand Instance = new();
+    public static readonly Query Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -45,7 +45,7 @@ public class QueryCommand : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private QueryCommand()
+    private Query()
     {
     }
 
@@ -57,7 +57,7 @@ public class QueryCommand : Command
             throw new CommandUsageException("'query' command missing arguments");
 
         // Generate the markdown
-        var found = Query(args[0], args[1], args.Skip(2).ToArray());
+        var found = QueryProgramOutput(args[0], args[1], args.Skip(2).ToArray());
 
         // Write the found value to the console
         Console.WriteLine(found);
@@ -87,7 +87,7 @@ public class QueryCommand : Command
                         Array.Empty<string>();
 
         // Generate the markdown
-        var found = Query(pattern, program, arguments);
+        var found = QueryProgramOutput(pattern, program, arguments);
 
         // Save the output to the variables
         variables[output] = found;
@@ -102,7 +102,7 @@ public class QueryCommand : Command
     /// <returns>Captured value</returns>
     /// <exception cref="CommandUsageException">On bad usage</exception>
     /// <exception cref="CommandErrorException">On error</exception>
-    public static string Query(string pattern, string program, string[] arguments)
+    public static string QueryProgramOutput(string pattern, string program, string[] arguments)
     {
         // Construct the regular expression
         var regex = new Regex(pattern);

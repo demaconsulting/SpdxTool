@@ -4,7 +4,7 @@ using DemaConsulting.SpdxModel;
 namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestAddPackageCommand
+public class TestAddPackage
 {
     [TestMethod]
     public void AddPackageCommandLine()

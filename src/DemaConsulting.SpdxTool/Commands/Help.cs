@@ -6,12 +6,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to display extended help about a command
 /// </summary>
-public class HelpCommand : Command
+public class Help : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly HelpCommand Instance = new();
+    public static readonly Help Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -37,7 +37,7 @@ public class HelpCommand : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private HelpCommand()
+    private Help()
     {
     }
 

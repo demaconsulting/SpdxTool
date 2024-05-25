@@ -4,7 +4,7 @@ using DemaConsulting.SpdxModel.IO;
 namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestCopyPackageCommand
+public class TestCopyPackage
 {
     [TestMethod]
     public void CopyPackageMissingArguments()

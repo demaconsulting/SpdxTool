@@ -3,7 +3,7 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestQueryCommand
+public class TestQuery
 {
     [TestMethod]
     public void QueryCommandMissingArguments()
