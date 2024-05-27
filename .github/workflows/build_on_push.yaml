@@ -2,6 +2,9 @@ name: Build
 
 on: [push]
 
+env:
+  version: '0.0.0-run.${GITHUB_RUN_NUMBER}'
+
 jobs:
   build:
     strategy:
@@ -37,6 +40,7 @@ jobs:
         build
         --no-restore
         --configuration Release
+        --property:Version=${{ env.version }}
 
     - name: Test
       run: >
@@ -44,6 +48,7 @@ jobs:
         test
         --no-build
         --configuration Release
+        --property:Version=${{ env.version }}
 
     - name: Generate SBOM
       run: >
@@ -53,7 +58,7 @@ jobs:
         -b src/DemaConsulting.SpdxTool/bin/Release
         -bc src/DemaConsulting.SpdxTool
         -pn DemaConsulting.SpdxTool
-        -pv 0.0.0-cibuild
+        -pv ${{ env.version }}
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool
 
@@ -69,6 +74,7 @@ jobs:
       with:
         name: artifacts-${{ matrix.os }}
         path: |
+          **/*.nupkg
           **/manifest.spdx.json
           **/manifest.spdx.json.sha256
           manifest.spdx.summary.md
