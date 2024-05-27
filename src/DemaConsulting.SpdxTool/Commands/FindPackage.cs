@@ -1,5 +1,5 @@
 ﻿using DemaConsulting.SpdxModel;
-using DemaConsulting.SpdxModel.IO;
+using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -150,12 +150,8 @@ public class FindPackage : Command
     /// <exception cref="CommandUsageException"></exception>
     public static SpdxPackage? FindPackageByCriteria(string spdxFile, IReadOnlyDictionary<string, string> criteria)
     {
-        // Verify to file exists
-        if (!File.Exists(spdxFile))
-            throw new CommandUsageException($"File not found: {spdxFile}");
-
         // Load the SPDX document
-        var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(spdxFile));
+        var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
 
         // Find the package
         return FindPackageByCriteria(doc, criteria);

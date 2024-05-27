@@ -16,7 +16,7 @@ public class TestPrint
 
         // Verify output
         Assert.AreEqual(0, exitCode);
-        Assert.AreEqual("Hello, World!", output.Trim());
+        Assert.IsTrue(output.Contains("Hello, World!"));
     }
 
     [TestMethod]

@@ -1,4 +1,4 @@
-﻿using DemaConsulting.SpdxModel.IO;
+﻿using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -85,10 +85,6 @@ public class RenameIdCommand : Command
     /// <param name="newId">New element ID</param>
     public static void RenameSpdxElementId(string spdxFile, string oldId, string newId)
     {
-        // Verify the file exists
-        if (!File.Exists(spdxFile))
-            throw new CommandUsageException($"File not found: {spdxFile}");
-
         // Verify the old ID is valid
         if (oldId.Length == 0 || oldId == "SPDXRef-DOCUMENT")
             throw new CommandUsageException("Invalid old ID");
@@ -102,7 +98,7 @@ public class RenameIdCommand : Command
             throw new CommandUsageException("Old and new IDs are the same");
 
         // Load the SPDX document
-        var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(spdxFile));
+        var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
 
         // Verify ID is not in use
         if (Array.Exists(doc.Packages, p => p.Id == newId) ||
@@ -151,6 +147,6 @@ public class RenameIdCommand : Command
                 doc.Describes[i] = newId;
 
         // Save the SPDX document
-        File.WriteAllText(spdxFile, Spdx2JsonSerializer.Serialize(doc));
+        SpdxHelpers.SaveJsonDocument(doc, spdxFile);
     }
 }

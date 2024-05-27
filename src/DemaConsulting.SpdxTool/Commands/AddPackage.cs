@@ -1,5 +1,5 @@
 ﻿using DemaConsulting.SpdxModel;
-using DemaConsulting.SpdxModel.IO;
+using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -104,12 +104,8 @@ public class AddPackage : Command
     /// <exception cref="CommandUsageException">On usage error</exception>
     public static void AddPackageToSpdxFile(string spdxFile, SpdxPackage package, SpdxRelationship[] relationships)
     {
-        // Verify to file exists
-        if (!File.Exists(spdxFile))
-            throw new CommandUsageException($"File not found: {spdxFile}");
-
         // Load the SPDX document
-        var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(spdxFile));
+        var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
 
         // Add the package (if not already present)
         if (!Array.Exists(doc.Packages, p => p.Id == package.Id))
@@ -132,7 +128,7 @@ public class AddPackage : Command
         }
 
         // Save the SPDX document
-        File.WriteAllText(spdxFile, Spdx2JsonSerializer.Serialize(doc));
+        SpdxHelpers.SaveJsonDocument(doc, spdxFile);
     }
 
     /// <summary>
