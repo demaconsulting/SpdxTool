@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -21,7 +20,7 @@ public class Query : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "query",
-        "query <pattern> <command> [arguments]",
+        "query <pattern> <program> [arguments]",
         "Query program output for value",
         new[]
         {
@@ -29,14 +28,17 @@ public class Query : Command
             "When executed in a workflow this can be used to set a variable.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool query <pattern> <command> [arguments]",
+            "  spdx-tool query <pattern> <program> [arguments]",
             "",
             "From a YAML file this can be used as:",
             "  - command: query",
             "    inputs:",
             "      output: <variable>",
             "      pattern: <regex with 'value' capture>",
-            "      command: <command> [arguments]"
+            "      program: <program>",
+            "      arguments:",
+            "      - <argument>",
+            "      - <argument>"
         },
         Instance);
 
@@ -54,11 +56,8 @@ public class Query : Command
         if (args.Length < 2)
             throw new CommandUsageException("'query' command missing arguments");
 
-        // Assemble the arguments into a command
-        var command = string.Join(' ', args.Skip(1));
-
         // Generate the markdown
-        var found = QueryProgramOutput(args[0], command);
+        var found = QueryProgramOutput(args[0], args[1], args.Skip(2).ToArray());
 
         // Write the found value to the console
         Console.WriteLine(found);
@@ -78,12 +77,17 @@ public class Query : Command
         var pattern = GetMapString(inputs, "pattern", variables) ??
                       throw new YamlException(step.Start, step.End, "'query' command missing 'pattern' input");
 
-        // Get the 'command' input
-        var command = GetMapString(inputs, "command", variables) ??
-                      throw new YamlException(step.Start, step.End, "'query' command missing 'command' input");
+        // Get the 'program' input
+        var program = GetMapString(inputs, "program", variables) ??
+                      throw new YamlException(step.Start, step.End, "'query' command missing 'program' input");
+
+        // Get the arguments
+        var argumentsSequence = GetMapSequence(inputs, "arguments");
+        var arguments = argumentsSequence?.Children.Select(c => Expand(c.ToString(), variables)).ToArray() ??
+                        Array.Empty<string>();
 
         // Generate the markdown
-        var found = QueryProgramOutput(pattern, command);
+        var found = QueryProgramOutput(pattern, program, arguments);
 
         // Save the output to the variables
         variables[output] = found;
@@ -93,42 +97,41 @@ public class Query : Command
     /// Run a program and query the output for a value
     /// </summary>
     /// <param name="pattern">Regular expression pattern to capture 'value'</param>
-    /// <param name="command">Command line to execute</param>
+    /// <param name="program">Program to execute</param>
+    /// <param name="arguments">Program arguments</param>
     /// <returns>Captured value</returns>
     /// <exception cref="CommandUsageException">On bad usage</exception>
     /// <exception cref="CommandErrorException">On error</exception>
-    public static string QueryProgramOutput(string pattern, string command)
+    public static string QueryProgramOutput(string pattern, string program, string[] arguments)
     {
         // Construct the regular expression
         var regex = new Regex(pattern);
         if (!regex.GetGroupNames().Contains("value"))
             throw new CommandUsageException("Pattern must contain a 'value' capture group");
 
-        // Select the filename and arguments
-        string fileName;
-        string arguments;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            fileName = Environment.ExpandEnvironmentVariables("%COMSPEC%");
-            arguments = $"/c {command}";
-        }
-        else
-        {
-            fileName = Environment.ExpandEnvironmentVariables("%SHELL%");
-            var escaped = command.Replace("\"", "\\\"");
-            arguments = $"-c \"{escaped}\"";
-        }
-
         // Construct the process start information
-        var startInfo = new ProcessStartInfo(fileName, arguments)
+        var startInfo = new ProcessStartInfo(program)
         {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
             UseShellExecute = false,
-            RedirectStandardOutput = true
+            CreateNoWindow = true
         };
+
+        // Add the arguments
+        foreach (var argument in arguments)
+            startInfo.ArgumentList.Add(argument);
 
         // Start the process
         var process = new Process { StartInfo = startInfo };
-        process.Start();
+        try
+        {
+            process.Start();
+        }
+        catch
+        {
+            throw new CommandErrorException($"Unable to start program '{program}'");
+        }
 
         // Wait for the process to exit
         process.WaitForExit();

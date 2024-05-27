@@ -52,7 +52,7 @@ public class TestQuery
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains(@"Pattern '(?<value>\d+\.\d+\.\d+)' not found in program output"));
+        Assert.IsTrue(output.Contains("Unable to start program 'does-not-exist'"));
     }
 
     [TestMethod]
@@ -85,7 +85,9 @@ public class TestQuery
                                         "  inputs:\n" +
                                         "    output: version\n" +
                                         "    pattern: (?<value>\\d+\\.\\d+\\.\\d+)\n" +
-                                        "    command: dotnet --version\n" +
+                                        "    program: dotnet\n" +
+                                        "    arguments:\n" +
+                                        "    - '--version'\n" +
                                         "\n" +
                                         "- command: print\n" +
                                         "  inputs:\n" +

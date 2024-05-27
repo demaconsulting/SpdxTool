@@ -112,7 +112,9 @@ steps:
   inputs:
     output: dotnet-version
     pattern: '(?<value>\d+\.\d+\.\d+)'
-    command: dotnet --version
+    program: dotnet
+    arguments:
+    - '--version'
 ```
 
 
@@ -182,7 +184,10 @@ steps:
   inputs:
     output: <variable>
     pattern: <regex with 'value' capture>
-    command: <command> [arguments]
+    program: <program>
+    arguments:
+    - <argument>
+    - <argument>
 
   # Rename the SPDX-ID of an element in an SPDX document
 - command: rename-id
