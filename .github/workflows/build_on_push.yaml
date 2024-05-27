@@ -25,36 +25,29 @@ jobs:
 
     - name: Restore Tools
       run: >
-        dotnet
-        tool
-        restore
+        dotnet tool restore
       
     - name: Restore Dependencies
       run: > 
-        dotnet
-        restore
+        dotnet restore
       
     - name: Build
       run: >
-        dotnet
-        build
+        dotnet build
         --no-restore
         --configuration Release
         --property:Version=${{ env.version }}
 
     - name: Test
       run: >
-        dotnet
-        test
+        dotnet test
         --no-build
         --configuration Release
         --property:Version=${{ env.version }}
 
     - name: Generate SBOM
       run: >
-        dotnet
-        sbom-tool
-        generate
+        dotnet sbom-tool generate
         -b src/DemaConsulting.SpdxTool/bin/Release
         -bc src/DemaConsulting.SpdxTool
         -pn DemaConsulting.SpdxTool
@@ -71,8 +64,7 @@ jobs:
 
     - name: Create Dotnet Tool
       run: >
-        dotnet
-        pack
+        dotnet pack
         --no-build
         --no-restore
         --property:PackageVersion=${{ env.version }}
