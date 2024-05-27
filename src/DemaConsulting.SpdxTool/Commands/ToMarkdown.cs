@@ -109,7 +109,7 @@ public class ToMarkdown : Command
         markdown.AppendLine();
         markdown.AppendLine("| Name | Version | | License |");
         markdown.AppendLine("| :-------- | :--- | :--- | ");
-        foreach (var package in doc.Packages)
+        foreach (var package in doc.Packages.OrderBy(p => p.Name))
             markdown.AppendLine(
                 $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense ?? string.Empty} |");
         markdown.AppendLine();
