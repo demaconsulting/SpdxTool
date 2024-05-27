@@ -33,7 +33,7 @@ public class Sha256Command : Command
             "  - command: sha256",
             "    inputs:",
             "      operation: generate | verify",
-            "      file: <file>",
+            "      file: <file>"
         },
         Instance);
 

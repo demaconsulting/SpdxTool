@@ -44,7 +44,7 @@ public class TestSha256
 
             // Run the command
             var exitCode = Runner.Run(
-                out var output,
+                out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "sha256",

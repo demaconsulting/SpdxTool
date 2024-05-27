@@ -149,9 +149,10 @@ public class TestAddPackage
                                         "  inputs:\n" +
                                         "    output: dotnet_version\n" +
                                         "    pattern: '(?<value>\\d+\\.\\d+\\.\\d+)'\n" +
-                                        "    program: dotnet\n" +
-                                        "    arguments:\n" +
-                                        "    - --version\n" +
+                                        "    command: >\n" +
+                                        "      dotnet\n" +
+                                        "      --version\n" +
+                                        "\n" +
                                         "- command: add-package\n" +
                                         "  inputs:\n" +
                                         "    spdx: spdx.json\n" +

@@ -112,9 +112,7 @@ steps:
   inputs:
     output: dotnet-version
     pattern: '(?<value>\d+\.\d+\.\d+)'
-    program: dotnet
-    arguments:
-    - '--version'
+    command: dotnet --version
 ```
 
 
@@ -184,10 +182,7 @@ steps:
   inputs:
     output: <variable>
     pattern: <regex with 'value' capture>
-    program: <program>
-    arguments:
-    - <argument>
-    - <argument>
+    command: <command> [arguments]
 
   # Rename the SPDX-ID of an element in an SPDX document
 - command: rename-id
@@ -204,7 +199,7 @@ steps:
       <optional parameters>
 
   # Perform Sha256 operations on the specified file
-- command: help
+- command: sha256
   inputs:
     operation: generate | verify
     file: <file>

@@ -17,9 +17,7 @@ steps:
   inputs:
     output: dotnet-version
     pattern: '(?<value>\d+\.\d+\.\d+)'
-    program: dotnet
-    arguments:
-    - '--version'
+    command: dotnet --version
 
   # Add DotNet SDK as a build tool of the package
 - command: add-package

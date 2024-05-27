@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -35,10 +36,7 @@ public class Query : Command
             "    inputs:",
             "      output: <variable>",
             "      pattern: <regex with 'value' capture>",
-            "      program: <program>",
-            "      arguments:",
-            "      - <argument>",
-            "      - <argument>"
+            "      command: <command> [arguments]"
         },
         Instance);
 
@@ -56,8 +54,11 @@ public class Query : Command
         if (args.Length < 2)
             throw new CommandUsageException("'query' command missing arguments");
 
+        // Assemble the arguments into a command
+        var command = string.Join(' ', args.Skip(1));
+
         // Generate the markdown
-        var found = QueryProgramOutput(args[0], args[1], args.Skip(2).ToArray());
+        var found = QueryProgramOutput(args[0], command);
 
         // Write the found value to the console
         Console.WriteLine(found);
@@ -77,17 +78,12 @@ public class Query : Command
         var pattern = GetMapString(inputs, "pattern", variables) ??
                       throw new YamlException(step.Start, step.End, "'query' command missing 'pattern' input");
 
-        // Get the 'program' input
-        var program = GetMapString(inputs, "program", variables) ??
-                      throw new YamlException(step.Start, step.End, "'query' command missing 'program' input");
-
-        // Get the arguments
-        var argumentsSequence = GetMapSequence(inputs, "arguments");
-        var arguments = argumentsSequence?.Children.Select(c => Expand(c.ToString(), variables)).ToArray() ??
-                        Array.Empty<string>();
+        // Get the 'command' input
+        var command = GetMapString(inputs, "command", variables) ??
+                      throw new YamlException(step.Start, step.End, "'query' command missing 'command' input");
 
         // Generate the markdown
-        var found = QueryProgramOutput(pattern, program, arguments);
+        var found = QueryProgramOutput(pattern, command);
 
         // Save the output to the variables
         variables[output] = found;
@@ -97,12 +93,11 @@ public class Query : Command
     /// Run a program and query the output for a value
     /// </summary>
     /// <param name="pattern">Regular expression pattern to capture 'value'</param>
-    /// <param name="program">Program to execute</param>
-    /// <param name="arguments">Program arguments</param>
+    /// <param name="command">Command line to execute</param>
     /// <returns>Captured value</returns>
     /// <exception cref="CommandUsageException">On bad usage</exception>
     /// <exception cref="CommandErrorException">On error</exception>
-    public static string QueryProgramOutput(string pattern, string program, string[] arguments)
+    public static string QueryProgramOutput(string pattern, string command)
     {
         // Construct the regular expression
         var regex = new Regex(pattern);
@@ -110,44 +105,55 @@ public class Query : Command
             throw new CommandUsageException("Pattern must contain a 'value' capture group");
 
         // Construct the start information
-        var startInfo = new ProcessStartInfo(program)
+        ProcessStartInfo startInfo;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        // Add the arguments
-        foreach (var argument in arguments)
-            startInfo.ArgumentList.Add(argument);
+            // Construct the process start information
+            startInfo = new ProcessStartInfo(Environment.ExpandEnvironmentVariables("%COMSPEC%"), "/c " + command)
+            {
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+        }
+        else
+        {
+            // Construct the process start information
+            startInfo = new ProcessStartInfo(Environment.ExpandEnvironmentVariables("%SHELL%"), "-c " + command)
+            {
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+        }
 
         // Start the process
-        Process process;
-        try
-        {
-            process = Process.Start(startInfo) ??
-                      throw new CommandErrorException($"Unable to start program '{program}'");
-        }
-        catch
-        {
-            throw new CommandErrorException($"Unable to start program '{program}'");
-        }
+        var process = new Process { StartInfo = startInfo };
+        process.Start();
+
+        // Save the output
+        var output = process.StandardOutput.ReadToEnd().Trim();
 
         // Wait for the process to exit
         process.WaitForExit();
-        if (process.ExitCode != 0)
-            throw new CommandErrorException($"Program '{program}' exited with code {process.ExitCode}");
 
-        // Save the output and return the exit code
-        var output = process.StandardOutput.ReadToEnd().Trim();
+        // Process the output line-by-line
+        var outputLines = output.Split('\n').Select(l => l.Trim()).ToArray();
+        foreach (var line in outputLines)
+        {
+            // Test if this line contains a match
+            var match = regex.Match(line);
+            if (!match.Success)
+                continue;
+            
+            // Test if the match value is valid
+            var value = match.Groups["value"].Value;
+            if (string.IsNullOrEmpty(value))
+                continue;
 
-        // Find the match
-        var match = regex.Match(output);
-        if (match == null)
-            throw new CommandErrorException($"Pattern '{pattern}' not found in program output");
+            // Return the match value
+            return value;
+        }
 
-        // Return the captured value
-        return match.Groups["value"].Value;
+        // Match not found in program output
+        throw new CommandErrorException($"Pattern '{pattern}' not found in program output");
     }
 }
