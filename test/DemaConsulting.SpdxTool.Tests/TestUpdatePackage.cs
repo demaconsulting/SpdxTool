@@ -1,5 +1,4 @@
 ﻿using DemaConsulting.SpdxModel.IO;
-using DemaConsulting.SpdxModel;
 
 namespace DemaConsulting.SpdxTool.Tests;
 

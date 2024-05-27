@@ -204,7 +204,7 @@ steps:
       <optional parameters>
 
   # Perform Sha256 operations on the specified file
-- command: help
+- command: sha256
   inputs:
     operation: generate | verify
     file: <file>

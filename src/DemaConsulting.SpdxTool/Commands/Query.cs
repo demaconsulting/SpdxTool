@@ -20,7 +20,7 @@ public class Query : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "query",
-        "query <pattern> <command> [arguments]",
+        "query <pattern> <program> [arguments]",
         "Query program output for value",
         new[]
         {
@@ -28,7 +28,7 @@ public class Query : Command
             "When executed in a workflow this can be used to set a variable.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool query <pattern> <command> [arguments]",
+            "  spdx-tool query <pattern> <program> [arguments]",
             "",
             "From a YAML file this can be used as:",
             "  - command: query",
@@ -109,7 +109,7 @@ public class Query : Command
         if (!regex.GetGroupNames().Contains("value"))
             throw new CommandUsageException("Pattern must contain a 'value' capture group");
 
-        // Construct the start information
+        // Construct the process start information
         var startInfo = new ProcessStartInfo(program)
         {
             RedirectStandardOutput = true,
@@ -123,11 +123,10 @@ public class Query : Command
             startInfo.ArgumentList.Add(argument);
 
         // Start the process
-        Process process;
+        var process = new Process { StartInfo = startInfo };
         try
         {
-            process = Process.Start(startInfo) ??
-                      throw new CommandErrorException($"Unable to start program '{program}'");
+            process.Start();
         }
         catch
         {
@@ -136,18 +135,29 @@ public class Query : Command
 
         // Wait for the process to exit
         process.WaitForExit();
-        if (process.ExitCode != 0)
-            throw new CommandErrorException($"Program '{program}' exited with code {process.ExitCode}");
 
-        // Save the output and return the exit code
+        // Save the output
         var output = process.StandardOutput.ReadToEnd().Trim();
 
-        // Find the match
-        var match = regex.Match(output);
-        if (match == null)
-            throw new CommandErrorException($"Pattern '{pattern}' not found in program output");
+        // Process the output line-by-line
+        var outputLines = output.Split('\n').Select(l => l.Trim()).ToArray();
+        foreach (var line in outputLines)
+        {
+            // Test if this line contains a match
+            var match = regex.Match(line);
+            if (!match.Success)
+                continue;
+            
+            // Test if the match value is valid
+            var value = match.Groups["value"].Value;
+            if (string.IsNullOrEmpty(value))
+                continue;
 
-        // Return the captured value
-        return match.Groups["value"].Value;
+            // Return the match value
+            return value;
+        }
+
+        // Match not found in program output
+        throw new CommandErrorException($"Pattern '{pattern}' not found in program output");
     }
 }
