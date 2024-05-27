@@ -2,9 +2,16 @@ name: Build
 
 on: [push]
 
+env:
+  version: '0.0.0-run.${{ github.run_number }}'
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
@@ -18,38 +25,33 @@ jobs:
 
     - name: Restore Tools
       run: >
-        dotnet
-        tool
-        restore
+        dotnet tool restore
       
     - name: Restore Dependencies
       run: > 
-        dotnet
-        restore
+        dotnet restore
       
     - name: Build
       run: >
-        dotnet
-        build
+        dotnet build
         --no-restore
         --configuration Release
+        --property:Version=${{ env.version }}
 
     - name: Test
       run: >
-        dotnet
-        test
+        dotnet test
         --no-build
         --configuration Release
+        --property:Version=${{ env.version }}
 
     - name: Generate SBOM
       run: >
-        dotnet
-        sbom-tool
-        generate
+        dotnet sbom-tool generate
         -b src/DemaConsulting.SpdxTool/bin/Release
         -bc src/DemaConsulting.SpdxTool
         -pn DemaConsulting.SpdxTool
-        -pv 0.0.0-cibuild
+        -pv ${{ env.version }}
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool
 
@@ -60,11 +62,19 @@ jobs:
         run-workflow
         spdx-workflow.yaml
 
+    - name: Create Dotnet Tool
+      run: >
+        dotnet pack
+        --no-build
+        --no-restore
+        --property:PackageVersion=${{ env.version }}
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: artifacts
+        name: artifacts-${{ matrix.os }}
         path: |
+          **/*.nupkg
           **/manifest.spdx.json
           **/manifest.spdx.json.sha256
           manifest.spdx.summary.md
