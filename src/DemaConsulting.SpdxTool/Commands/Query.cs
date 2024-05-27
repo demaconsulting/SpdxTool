@@ -110,12 +110,13 @@ public class Query : Command
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             fileName = Environment.ExpandEnvironmentVariables("%COMSPEC%");
-            arguments = "/c " + command;
+            arguments = $"/c {command}";
         }
         else
         {
             fileName = Environment.ExpandEnvironmentVariables("%SHELL%");
-            arguments = "-c " + command;
+            var escaped = command.Replace("\"", "\\\"");
+            arguments = $"-c \"{escaped}\"";
         }
 
         // Construct the process start information
@@ -126,15 +127,14 @@ public class Query : Command
         };
 
         // Start the process
-        Console.WriteLine($"Executing '{fileName}' with arguments '{arguments}'");
         var process = new Process { StartInfo = startInfo };
         process.Start();
 
-        // Save the output
-        var output = process.StandardOutput.ReadToEnd().Trim();
-
         // Wait for the process to exit
         process.WaitForExit();
+
+        // Save the output
+        var output = process.StandardOutput.ReadToEnd().Trim();
 
         // Process the output line-by-line
         var outputLines = output.Split('\n').Select(l => l.Trim()).ToArray();
