@@ -3,7 +3,7 @@ name: Build
 on: [push]
 
 env:
-  version: '0.0.0-run.${GITHUB_RUN_NUMBER}'
+  version: '0.0.0-run.${{ github.run_number }}'
 
 jobs:
   build:
