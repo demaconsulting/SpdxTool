@@ -104,28 +104,29 @@ public class Query : Command
         if (!regex.GetGroupNames().Contains("value"))
             throw new CommandUsageException("Pattern must contain a 'value' capture group");
 
-        // Construct the start information
-        ProcessStartInfo startInfo;
+        // Select the filename and arguments
+        string fileName;
+        string arguments;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // Construct the process start information
-            startInfo = new ProcessStartInfo(Environment.ExpandEnvironmentVariables("%COMSPEC%"), "/c " + command)
-            {
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
+            fileName = Environment.ExpandEnvironmentVariables("%COMSPEC%");
+            arguments = "/c " + command;
         }
         else
         {
-            // Construct the process start information
-            startInfo = new ProcessStartInfo(Environment.ExpandEnvironmentVariables("%SHELL%"), "-c " + command)
-            {
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
+            fileName = Environment.ExpandEnvironmentVariables("%SHELL%");
+            arguments = "-c " + command;
         }
 
+        // Construct the process start information
+        var startInfo = new ProcessStartInfo(fileName, arguments)
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true
+        };
+
         // Start the process
+        Console.WriteLine($"Executing '{fileName}' with arguments '{arguments}'");
         var process = new Process { StartInfo = startInfo };
         process.Start();
 
