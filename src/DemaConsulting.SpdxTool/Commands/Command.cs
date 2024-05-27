@@ -44,8 +44,15 @@ public abstract class Command
             // Get the variable name
             var name = text[(start + 3)..end].Trim();
 
-            // Replace the variable
-            if (!variables.TryGetValue(name, out var value))
+            // Look up the value
+            string? value;
+            if (name.StartsWith("environment."))
+                value = Environment.GetEnvironmentVariable(name[12..]);
+            else
+                variables.TryGetValue(name, out value);
+
+            // Fail if the lookup failed
+            if (value == null)
                 throw new InvalidOperationException($"Undefined variable {name}");
 
             // Apply the replacement

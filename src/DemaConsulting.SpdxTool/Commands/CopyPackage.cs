@@ -1,5 +1,5 @@
 ﻿using DemaConsulting.SpdxModel;
-using DemaConsulting.SpdxModel.IO;
+using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -95,21 +95,13 @@ public class CopyPackage : Command
     /// <param name="relationships">Relationships of package to elements in destination</param>
     public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId, SpdxRelationship[] relationships)
     {
-        // Verify from file exists
-        if (!File.Exists(fromFile))
-            throw new CommandUsageException($"File not found: {fromFile}");
-
-        // Verify to file exists
-        if (!File.Exists(toFile))
-            throw new CommandUsageException($"File not found: {toFile}");
-
         // Verify package name
         if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
             throw new CommandUsageException("Invalid package name");
 
         // Read the SPDX documents
-        var fromDoc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(fromFile));
-        var toDoc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(toFile));
+        var fromDoc = SpdxHelpers.LoadJsonDocument(fromFile);
+        var toDoc = SpdxHelpers.LoadJsonDocument(toFile);
 
         // Verify the package exists in the source
         var package = Array.Find(fromDoc.Packages, p => p.Id == packageId) ??
@@ -141,6 +133,6 @@ public class CopyPackage : Command
         toDoc.Relationships = toDoc.Relationships.Concat(relationships).ToArray();
 
         // Write the destination document
-        File.WriteAllText(toFile, Spdx2JsonSerializer.Serialize(toDoc));
+        SpdxHelpers.SaveJsonDocument(toDoc, toFile);
     }
 }

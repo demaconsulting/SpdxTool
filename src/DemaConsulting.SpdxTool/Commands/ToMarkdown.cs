@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using DemaConsulting.SpdxModel.IO;
+using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -82,15 +82,11 @@ public class ToMarkdown : Command
     /// <exception cref="CommandUsageException">On usage error</exception>
     public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, int depth = 2)
     {
-        // Verify the SPDX file exists
-        if (!File.Exists(spdxFile))
-            throw new CommandUsageException($"File not found: {spdxFile}");
+        // Load the SPDX document
+        var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
 
         // Construct the Markdown text
         var markdown = new StringBuilder();
-
-        // Load the SPDX document
-        var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText(spdxFile));
 
         // Add the document information
         markdown.AppendLine($"{new string('#', depth)} SPDX Document");
@@ -99,10 +95,12 @@ public class ToMarkdown : Command
         markdown.AppendLine("| :--- | :-------- |");
         markdown.AppendLine($"| File Name | {Path.GetFileName(spdxFile)} |");
         markdown.AppendLine($"| Name | {doc.Name} |");
-        markdown.AppendLine($"| Created | {doc.CreationInformation.Created} |");
         markdown.AppendLine($"| Files | {doc.Files.Length} |");
         markdown.AppendLine($"| Packages | {doc.Packages.Length} |");
         markdown.AppendLine($"| Relationships | {doc.Relationships.Length} |");
+        markdown.AppendLine($"| Created | {doc.CreationInformation.Created} |");
+        foreach (var creator in doc.CreationInformation.Creators)
+            markdown.AppendLine($"| Creator | {creator} |");
         markdown.AppendLine();
         markdown.AppendLine();
 

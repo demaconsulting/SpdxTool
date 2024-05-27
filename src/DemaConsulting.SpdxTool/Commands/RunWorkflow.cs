@@ -154,12 +154,16 @@ public class RunWorkflow : Command
                                $"Workflow {workflowFile} step is not a map");
 
                 // Get the command
-                if (!step.Children.TryGetValue("command", out var commandNode))
+                var command = GetMapString(step, "command", variables) ??
                     throw new CommandErrorException(
                         $"Workflow {workflowFile} step missing command");
 
+                // Check for a displayName
+                var displayName = GetMapString(step, "displayName", variables);
+                if (displayName != null)
+                    Console.WriteLine(displayName);
+
                 // Execute the step
-                var command = commandNode.ToString();
                 if (!CommandsRegistry.Commands.TryGetValue(command, out var entry))
                     throw new CommandUsageException(
                         $"Unknown command: '{command}'");

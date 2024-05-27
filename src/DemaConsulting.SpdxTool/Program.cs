@@ -25,18 +25,22 @@ public static class Program
     /// <param name="args"></param>
     public static void Main(string[] args)
     {
-        // Handle printing usage information
-        if (args.Length == 0 || args[0] == "-h" || args[0] == "--help")
-        {
-            PrintUsage();
-            Environment.Exit(1);
-        }
-
         // Handle querying for version
         if (args.Length == 1 && (args[0] == "-v" || args[0] == "--version"))
         {
             Console.WriteLine(Version);
             Environment.Exit(0);
+        }
+
+        // Print version banner
+        Console.WriteLine($"DemaConsulting.SpdxTool {Version}");
+        Console.WriteLine();
+
+        // Handle printing usage information
+        if (args.Length == 0 || args[0] == "-h" || args[0] == "--help")
+        {
+            PrintUsage();
+            Environment.Exit(1);
         }
 
         try
