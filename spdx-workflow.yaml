@@ -46,6 +46,12 @@ steps:
     operation: generate
     file: ${{ spdx }}
 
+  # Validate the SPDX document
+- command: validate
+  inputs:
+    spdx: ${{ spdx }}
+
+  # Generate the summary
 - command: to-markdown
   inputs:
     spdx: ${{ spdx }}

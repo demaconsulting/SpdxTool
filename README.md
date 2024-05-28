@@ -42,12 +42,13 @@ Commands:
   copy-package                           Copy package between SPDX documents (workflow only).
   find-package <spdx.json> [criteria]    Find package ID in SPDX document
   print <text>                           Print text to the console
-  query <pattern> <command> [arguments]  Query program output for value
+  query <pattern> <program> [arguments]  Query program output for value
   rename-id <arguments>                  Rename an element ID in an SPDX document.
   run-workflow <workflow.yaml>           Runs the workflow file
   sha256 <operation> <file>              Generate or verify sha256 hashes of files
   to-markdown <spdx.yaml> <out.md>       Create Markdown summary for SPDX document
   update-package                         Update package in SPDX document (workflow only).
+  validate <spdx.json> [ntia]            Validate SPDX document for issues
 ```
 
 
@@ -232,4 +233,10 @@ steps:
       summary: <summary>          # Optional new package summary
       description: <description>  # Optional new package description
       license: <license>          # Optional new package license
+
+  # Validate an SPDX document
+- command: validate
+  inputs:
+    spdx: <spdx.json>             # SPDX file name
+    ntia: true                    # Optional NTIA checking
 ```
