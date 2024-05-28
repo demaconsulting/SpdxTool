@@ -107,7 +107,7 @@ public class ToMarkdown : Command
         // Print the packages
         markdown.AppendLine($"{new string('#', depth + 1)} Package Summary");
         markdown.AppendLine();
-        markdown.AppendLine("| Name | Version | | License |");
+        markdown.AppendLine("| Name | Version | License |");
         markdown.AppendLine("| :-------- | :--- | :--- | ");
         foreach (var package in doc.Packages.OrderBy(p => p.Name))
             markdown.AppendLine(
