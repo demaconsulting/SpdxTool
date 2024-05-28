@@ -20,7 +20,8 @@ public static class CommandsRegistry
         { RunWorkflow.Entry.Name, RunWorkflow.Entry },
         { Sha256Command.Entry.Name, Sha256Command.Entry },
         { ToMarkdown.Entry.Name, ToMarkdown.Entry },
-        { UpdatePackage.Entry.Name, UpdatePackage.Entry }
+        { UpdatePackage.Entry.Name, UpdatePackage.Entry },
+        { Validate.Entry.Name, Validate.Entry }
     };
 
     /// <summary>
