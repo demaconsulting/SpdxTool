@@ -20,20 +20,22 @@ public class ToMarkdown : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "to-markdown",
-        "to-markdown <spdx.yaml> <out.md>",
+        "to-markdown <spdx.json> <out.md> [title] [depth]",
         "Create Markdown summary for SPDX document",
         new[]
         {
             "This command produces a Markdown summary of an SPDX document.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool to-markdown <spdx.yaml> <out.md>",
+            "  spdx-tool to-markdown <spdx.json> <out.md> [title] [depth]",
             "",
             "From a YAML file this can be used as:",
             "  - command: to-markdown",
             "    inputs:",
-            "      spdx: <spdx.yaml>",
-            "      markdown: <out.md>"
+            "      spdx: <spdx.json>             # SPDX file name",
+            "      markdown: <out.md>            # Output markdown file",
+            "      title: <title>                # Optional title",
+            "      depth: <depth>                # Optional heading depth"
         },
         Instance);
 
@@ -47,12 +49,26 @@ public class ToMarkdown : Command
     /// <inheritdoc />
     public override void Run(string[] args)
     {
-        // Report an error if the number of arguments is not 2
-        if (args.Length != 2)
+        // Report an error if the number of arguments is less than 2
+        if (args.Length < 2)
             throw new CommandUsageException("'to-markdown' command missing arguments");
 
+        // Get the file names
+        var spdxFile = args[0];
+        var markdownFile = args[1];
+
+        // Get the title
+        var title = args.Length > 2 ? args[2] : "SPDX Document";
+        if (string.IsNullOrWhiteSpace(title))
+            throw new CommandUsageException("'to-markdown' command invalid 'title' argument");
+
+        // Get the depth
+        var depthText = args.Length > 3 ? args[3] : "2";
+        if (!int.TryParse(depthText, out var depth) || depth < 1)
+            throw new CommandUsageException("'to-markdown' command invalid 'depth' argument");
+
         // Generate the markdown
-        GenerateSummaryMarkdown(args[0], args[1]);
+        GenerateSummaryMarkdown(spdxFile, markdownFile, title, depth);
     }
 
     /// <inheritdoc />
@@ -69,8 +85,18 @@ public class ToMarkdown : Command
         var markdownFile = GetMapString(inputs, "markdown", variables) ??
                            throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' input");
 
+        // Get the 'title' input
+        var title = GetMapString(inputs, "title", variables) ?? "SPDX Document";
+        if (string.IsNullOrWhiteSpace(title))
+            throw new YamlException(step.Start, step.End, "'to-markdown' command invalid 'title' input");
+
+        // Get the 'depth' input
+        var depthText = GetMapString(inputs, "depth", variables) ?? "2";
+        if (!int.TryParse(depthText, out var depth) || depth < 1)
+            throw new YamlException(step.Start, step.End, "'to-markdown' command invalid 'depth' input");
+
         // Generate the markdown
-        GenerateSummaryMarkdown(spdxFile, markdownFile);
+        GenerateSummaryMarkdown(spdxFile, markdownFile, title, depth);
     }
 
     /// <summary>
@@ -78,9 +104,10 @@ public class ToMarkdown : Command
     /// </summary>
     /// <param name="spdxFile">SPDX file</param>
     /// <param name="markdownFile">Markdown file</param>
+    /// <param name="title">Markdown title</param>
     /// <param name="depth">Depth of the Markdown headers</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
-    public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, int depth = 2)
+    public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, string title = "SPDX Document", int depth = 2)
     {
         // Load the SPDX document
         var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
@@ -88,8 +115,11 @@ public class ToMarkdown : Command
         // Construct the Markdown text
         var markdown = new StringBuilder();
 
+        // Header indent
+        var header = new string('#', depth);
+
         // Add the document information
-        markdown.AppendLine($"{new string('#', depth)} SPDX Document");
+        markdown.AppendLine($"{header} {title}");
         markdown.AppendLine();
         markdown.AppendLine("| Item | Details |");
         markdown.AppendLine("| :--- | :-------- |");
@@ -105,10 +135,10 @@ public class ToMarkdown : Command
         markdown.AppendLine();
 
         // Print the packages
-        markdown.AppendLine($"{new string('#', depth + 1)} Package Summary");
+        markdown.AppendLine($"{header}# Package Summary");
         markdown.AppendLine();
         markdown.AppendLine("| Name | Version | License |");
-        markdown.AppendLine("| :-------- | :--- | :--- | ");
+        markdown.AppendLine("| :-------- | :--- | :--- |");
         foreach (var package in doc.Packages.OrderBy(p => p.Name))
             markdown.AppendLine(
                 $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense ?? string.Empty} |");
