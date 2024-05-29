@@ -141,7 +141,7 @@ public class ToMarkdown : Command
         markdown.AppendLine("| :-------- | :--- | :--- |");
         foreach (var package in doc.Packages.OrderBy(p => p.Name))
             markdown.AppendLine(
-                $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense ?? string.Empty} |");
+                $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense} |");
         markdown.AppendLine();
         markdown.AppendLine();
 
