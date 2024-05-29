@@ -47,7 +47,7 @@ jobs:
         --configuration Release
         --property:Version=${{ github.event.inputs.version }}
 
-    - name: Generate SBOM
+    - name: Generate Tool SBOM
       run: >
         dotnet sbom-tool generate
         -b src/DemaConsulting.SpdxTool/bin/Release
@@ -56,6 +56,16 @@ jobs:
         -pv ${{ github.event.inputs.version }}
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool
+
+    - name: Generate Tests SBOM
+      run: >
+        dotnet sbom-tool generate
+        -b test/DemaConsulting.SpdxTool.Tests/bin/Release
+        -bc test/DemaConsulting.SpdxTool.Tests
+        -pn DemaConsulting.SpdxTool.Tests
+        -pv ${{ github.event.inputs.version }}
+        -ps DemaConsulting
+        -nsb https://DemaConsulting.com/SpdxTool.Tests
 
     - name: Run SBOM Workflow
       run: >
@@ -74,7 +84,7 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: '**/*.nupkg,**/manifest.spdx.json,**/manifest.spdx.json.sha256,manifest.spdx.summary.md'
+        artifacts: '**/*.nupkg,**/manifest.spdx.json,**/manifest.spdx.json.sha256,*summary.md'
         generateReleaseNotes: true
         tag: ${{ github.event.inputs.version }}
 
