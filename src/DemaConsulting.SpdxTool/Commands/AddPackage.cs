@@ -182,7 +182,7 @@ public class AddPackage : Command
             HomePage = GetMapString(packageMap, "homepage", variables),
 
             // Get the package copyright (optional)
-            CopyrightText = GetMapString(packageMap, "copyright", variables),
+            CopyrightText = GetMapString(packageMap, "copyright", variables) ?? "NOASSERTION",
 
             // Get the package summary (optional)
             Summary = GetMapString(packageMap, "summary", variables),
