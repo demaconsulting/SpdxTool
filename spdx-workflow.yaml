@@ -6,8 +6,10 @@
 # Workflow Parameters
 parameters:
   dotnet-version: unknown
-  spdx: src/DemaConsulting.SpdxTool/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
-  summary-markdown: manifest.spdx.summary.md
+  tool-spdx: src/DemaConsulting.SpdxTool/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
+  tests-spdx: test/DemaConsulting.SpdxTool.Tests/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
+  tool-summary-md: tool-summary.md
+  tests-summary-md: tests-summary.md
 
 # Steps
 steps:
@@ -21,10 +23,10 @@ steps:
     arguments:
     - '--version'
 
-  # Add DotNet SDK as a build tool of the package
+  # Add DotNet SDK as a build tool of the tool package
 - command: add-package
   inputs:
-    spdx: ${{ spdx }}
+    spdx: ${{ tool-spdx }}
     package:
       id: SPDXRef-Package-DotNetSDK
       name: DotNet SDK
@@ -40,20 +42,57 @@ steps:
     - type: BUILD_TOOL_OF
       element: SPDXRef-RootPackage
 
-  # Update the Sha256 digest on the SPDX document
+  # Update the Sha256 digest on the tool SPDX document
 - command: sha256
   inputs:
     operation: generate
-    file: ${{ spdx }}
+    file: ${{ tool-spdx }}
 
-  # Validate the SPDX document
+  # Validate the tool SPDX document
 - command: validate
   inputs:
-    spdx: ${{ spdx }}
+    spdx: ${{ tool-spdx }}
 
-  # Generate the summary
+  # Generate the tool summary
 - command: to-markdown
   inputs:
-    spdx: ${{ spdx }}
-    markdown: ${{ summary-markdown }}
+    spdx: ${{ tool-spdx }}
+    markdown: ${{ tool-summary-md }}
     title: 'SpdxTool Package'
+
+  # Add DotNet SDK as a build tool of the tests package
+- command: add-package
+  inputs:
+    spdx: ${{ tests-spdx }}
+    package:
+      id: SPDXRef-Package-DotNetSDK
+      name: DotNet SDK
+      download: https://dotnet.microsoft.com/download
+      supplier: 'Organization: Microsoft Corporation'
+      originator: 'Organization: Microsoft Corporation'
+      homepage: https://dotnet.microsoft.com/en-us/
+      copyright: Copyright (c) 2019 Microsoft
+      summary: .NET is a free, open-source cross-platform framework for building applications and cloud services.
+      license: MIT
+      version: ${{ dotnet-version }}
+    relationships:
+    - type: BUILD_TOOL_OF
+      element: SPDXRef-RootPackage
+
+  # Update the Sha256 digest on the tests SPDX document
+- command: sha256
+  inputs:
+    operation: generate
+    file: ${{ tests-spdx }}
+
+  # Validate the tests SPDX document
+- command: validate
+  inputs:
+    spdx: ${{ tests-spdx }}
+
+  # Generate the tests summary
+- command: to-markdown
+  inputs:
+    spdx: ${{ tests-spdx }}
+    markdown: ${{ tests-summary-md }}
+    title: 'SpdxTool Tests'

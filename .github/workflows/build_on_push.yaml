@@ -45,7 +45,7 @@ jobs:
         --configuration Release
         --property:Version=${{ env.version }}
 
-    - name: Generate SBOM
+    - name: Generate Tool SBOM
       run: >
         dotnet sbom-tool generate
         -b src/DemaConsulting.SpdxTool/bin/Release
@@ -54,6 +54,16 @@ jobs:
         -pv ${{ env.version }}
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool
+
+    - name: Generate Tests SBOM
+      run: >
+        dotnet sbom-tool generate
+        -b test/DemaConsulting.SpdxTool.Tests/bin/Release
+        -bc test/DemaConsulting.SpdxTool.Tests
+        -pn DemaConsulting.SpdxTool.Tests
+        -pv ${{ env.version }}
+        -ps DemaConsulting
+        -nsb https://DemaConsulting.com/SpdxTool.Tests
 
     - name: Run SBOM Workflow
       run: >
@@ -77,4 +87,4 @@ jobs:
           **/*.nupkg
           **/manifest.spdx.json
           **/manifest.spdx.json.sha256
-          manifest.spdx.summary.md
+          *summary.md
