@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DemaConsulting.SpdxModel" Version="0.1.0-alpha.4" />
+    <PackageReference Include="DemaConsulting.SpdxModel" Version="0.1.0-alpha.5" />
     <PackageReference Include="YamlDotNet" Version="15.1.4" />
   </ItemGroup>
 
