@@ -213,8 +213,10 @@ steps:
   # Create a summary markdown from the specified SPDX document
 - command: to-markdown
   inputs:
-    spdx: input.spdx.json
-    markdown: output.md
+    spdx: <spdx.json>             # SPDX file name
+    markdown: <out.md>            # Output markdown file
+    title: <title>                # Optional title
+    depth: <depth>                # Optional heading depth
 
   # Update a package in an SPDX document
 - command: update-package

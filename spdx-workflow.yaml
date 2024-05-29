@@ -56,3 +56,4 @@ steps:
   inputs:
     spdx: ${{ spdx }}
     markdown: ${{ summary-markdown }}
+    title: 'SpdxTool Package'
