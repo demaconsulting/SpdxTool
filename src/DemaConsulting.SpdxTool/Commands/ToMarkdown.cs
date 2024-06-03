@@ -20,7 +20,7 @@ public class ToMarkdown : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "to-markdown",
-        "to-markdown <spdx.json> <out.md> [title] [depth]",
+        "to-markdown <spdx.json> <out.md> [args]",
         "Create Markdown summary for SPDX document",
         new[]
         {

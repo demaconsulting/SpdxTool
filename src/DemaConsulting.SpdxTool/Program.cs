@@ -89,11 +89,11 @@ public static class Program
         Console.WriteLine("Usage: spdx-tool [options] <command> [arguments]");
         Console.WriteLine();
         Console.WriteLine("Options:");
-        Console.WriteLine("  -h, --help                             Show this help message and exit");
-        Console.WriteLine("  -v, --version                          Show version information and exit");
+        Console.WriteLine("  -h, --help                               Show this help message and exit");
+        Console.WriteLine("  -v, --version                            Show version information and exit");
         Console.WriteLine();
         Console.WriteLine("Commands:");
         foreach (var command in CommandsRegistry.Commands.Values)
-            Console.WriteLine($"  {command.CommandLine,-38} {command.Summary}");
+            Console.WriteLine($"  {command.CommandLine,-40} {command.Summary}");
     }
 }

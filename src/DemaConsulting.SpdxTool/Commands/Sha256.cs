@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using YamlDotNet.Core;
+﻿using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
 namespace DemaConsulting.SpdxTool.Commands;
@@ -7,12 +6,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Sha256 command
 /// </summary>
-public class Sha256Command : Command
+public class Sha256 : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly Sha256Command Instance = new();
+    public static readonly Sha256 Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -40,7 +39,7 @@ public class Sha256Command : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private Sha256Command()
+    private Sha256()
     {
     }
 
@@ -142,7 +141,7 @@ public class Sha256Command : Command
         {
             // Calculate the Sha256 digest of the file
             using var stream = new FileStream(file, FileMode.Open);
-            using var sha256 = SHA256.Create();
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
             var hash = sha256.ComputeHash(stream);
             return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
         }

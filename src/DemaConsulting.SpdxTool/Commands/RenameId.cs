@@ -1,4 +1,5 @@
-﻿using DemaConsulting.SpdxTool.Spdx;
+﻿using DemaConsulting.SpdxModel;
+using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -7,12 +8,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Rename an element ID in an SPDX document
 /// </summary>
-public class RenameIdCommand : Command
+public class RenameId : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly RenameIdCommand Instance = new();
+    public static readonly RenameId Instance = new();
 
     /// <summary>
     /// Entry information for this command
@@ -40,7 +41,7 @@ public class RenameIdCommand : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private RenameIdCommand()
+    private RenameId()
     {
     }
 
@@ -52,7 +53,7 @@ public class RenameIdCommand : Command
             throw new CommandUsageException("'rename-id' command missing arguments");
 
         // Rename the ID
-        RenameSpdxElementId(args[0], args[1], args[2]);
+        Rename(args[0], args[1], args[2]);
     }
 
     /// <inheritdoc />
@@ -74,7 +75,7 @@ public class RenameIdCommand : Command
                     throw new YamlException(step.Start, step.End, "'rename-id' command missing 'spdx' input");
 
         // Rename the ID
-        RenameSpdxElementId(spdxFile, oldId, newId);
+        Rename(spdxFile, oldId, newId);
     }
 
     /// <summary>
@@ -83,8 +84,32 @@ public class RenameIdCommand : Command
     /// <param name="spdxFile">SPDX file name</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>
-    public static void RenameSpdxElementId(string spdxFile, string oldId, string newId)
+    public static void Rename(string spdxFile, string oldId, string newId)
     {
+        // Load the SPDX document
+        var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
+
+        // Rename the element
+        Rename(doc, oldId, newId);
+
+        // Save the SPDX document
+        SpdxHelpers.SaveJsonDocument(doc, spdxFile);
+    }
+
+    /// <summary>
+    /// Rename an element ID in an SPDX document
+    /// </summary>
+    /// <param name="doc">SPDX document</param>
+    /// <param name="oldId">Old element ID</param>
+    /// <param name="newId">New element ID</param>
+    /// <exception cref="CommandUsageException">On invalid usage</exception>
+    /// <exception cref="CommandErrorException">On error</exception>
+    public static void Rename(SpdxDocument doc, string oldId, string newId)
+    {
+        // Skip if no rename
+        if (oldId == newId)
+            return;
+
         // Verify the old ID is valid
         if (oldId.Length == 0 || oldId == "SPDXRef-DOCUMENT")
             throw new CommandUsageException("Invalid old ID");
@@ -97,14 +122,11 @@ public class RenameIdCommand : Command
         if (oldId == newId)
             throw new CommandUsageException("Old and new IDs are the same");
 
-        // Load the SPDX document
-        var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
-
         // Verify ID is not in use
         if (Array.Exists(doc.Packages, p => p.Id == newId) ||
             Array.Exists(doc.Files, f => f.Id == newId) ||
             Array.Exists(doc.Snippets, s => s.Id == newId))
-            throw new CommandErrorException($"Element ID {newId} is already used in {spdxFile}");
+            throw new CommandErrorException($"Element ID {newId} is already used");
 
         // Update packages
         foreach (var package in doc.Packages)
@@ -145,8 +167,5 @@ public class RenameIdCommand : Command
         for (var i = 0; i < doc.Describes.Length; ++i)
             if (doc.Describes[i] == oldId)
                 doc.Describes[i] = newId;
-
-        // Save the SPDX document
-        SpdxHelpers.SaveJsonDocument(doc, spdxFile);
     }
 }
