@@ -6,6 +6,16 @@ on:
       version:
         description: 'Release version (1.0.0)'
         required: true
+        type: string
+      publish:
+        description: 'Publish Type'
+        required: true
+        default: 'publish'
+        type: choice
+        options:
+        - none
+        - release
+        - publish
 
 jobs:
   release:
@@ -69,10 +79,8 @@ jobs:
 
     - name: Run SBOM Workflow
       run: >
-        dotnet
-        src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-        run-workflow
-        spdx-workflow.yaml
+        dotnet src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
+        run-workflow spdx-workflow.yaml
 
     - name: Create Dotnet Tool
       run: >
@@ -81,14 +89,26 @@ jobs:
         --no-restore
         --property:PackageVersion=${{ github.event.inputs.version }}
 
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-release
+        path: |
+          **/*.nupkg
+          **/manifest.spdx.json
+          **/manifest.spdx.json.sha256
+          *summary.md
+
     - name: Create release
+      if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
       uses: ncipollo/release-action@v1
       with:
-        artifacts: '**/*.nupkg,**/manifest.spdx.json,**/manifest.spdx.json.sha256,*summary.md'
+        artifacts: 'src/**/*.nupkg,src/**/manifest.spdx.json,src/**/manifest.spdx.json.sha256,*summary.md'
         generateReleaseNotes: true
         tag: ${{ github.event.inputs.version }}
 
     - name: Publish to Nuget
+      if: ${{ inputs.publish == 'publish' }}
       run: >
         dotnet nuget push
         src/DemaConsulting.SpdxTool/bin/Release/*.nupkg

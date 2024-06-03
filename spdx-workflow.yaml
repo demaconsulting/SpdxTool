@@ -7,15 +7,16 @@
 parameters:
   dotnet-version: unknown
   tool-spdx: src/DemaConsulting.SpdxTool/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
+  tool-summary-md: spdx-tool-summary.md
   tests-spdx: test/DemaConsulting.SpdxTool.Tests/bin/Release/_manifest/spdx_2.2/manifest.spdx.json
-  tool-summary-md: tool-summary.md
-  tests-summary-md: tests-summary.md
+  tests-summary-md: spdx-tool-tests-summary.md
 
 # Steps
 steps:
 
   # Query the version of dotnet
 - command: query
+  displayName: Query DotNet SDK Version
   inputs:
     output: dotnet-version
     pattern: '(?<value>\d+\.\d+\.\d+)'
@@ -23,8 +24,17 @@ steps:
     arguments:
     - '--version'
 
+  # Rename the package ID for the platform library
+- command: rename-id
+  displayName: Rename SpdxTool Package ID
+  inputs:
+    spdx: ${{ tool-spdx }}
+    old: SPDXRef-RootPackage
+    new: SPDXRef-DemaConsulting-SpdxTool
+
   # Add DotNet SDK as a build tool of the tool package
 - command: add-package
+  displayName: Add DotNet SDK as Build Tool of SpdxTool
   inputs:
     spdx: ${{ tool-spdx }}
     package:
@@ -40,28 +50,41 @@ steps:
       version: ${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
-      element: SPDXRef-RootPackage
+      element: SPDXRef-DemaConsulting-SpdxTool
+      comment: The DotNet SDK is used to build SpdxTool
 
   # Update the Sha256 digest on the tool SPDX document
 - command: sha256
+  displayName: Update SpdxTool Sha256
   inputs:
     operation: generate
     file: ${{ tool-spdx }}
 
   # Validate the tool SPDX document
 - command: validate
+  displayName: Validate SpdxTool SBOM
   inputs:
     spdx: ${{ tool-spdx }}
 
   # Generate the tool summary
 - command: to-markdown
+  displayName: Generate SpdxTool SBOM Summary
   inputs:
     spdx: ${{ tool-spdx }}
     markdown: ${{ tool-summary-md }}
     title: 'SpdxTool Package'
 
+  # Rename the package ID for the platform library
+- command: rename-id
+  displayName: Rename SpdxTool Tests Package ID
+  inputs:
+    spdx: ${{ tests-spdx }}
+    old: SPDXRef-RootPackage
+    new: SPDXRef-DemaConsulting-SpdxTool-Tests
+
   # Add DotNet SDK as a build tool of the tests package
 - command: add-package
+  displayName: Add DotNet SDK as Build and Test Tool of SpdxTool Tests
   inputs:
     spdx: ${{ tests-spdx }}
     package:
@@ -77,21 +100,28 @@ steps:
       version: ${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
-      element: SPDXRef-RootPackage
+      element: SPDXRef-DemaConsulting-SpdxTool-Tests
+      comment: The DotNet SDK is used to build the SpdxTool Tests
+    - type: TEST_TOOL_OF
+      element: SPDXRef-DemaConsulting-SpdxTool-Tests
+      comment: The DotNet SDK is used to run the SpdxTool Tests
 
   # Update the Sha256 digest on the tests SPDX document
 - command: sha256
+  displayName: Update SpdxTool Tests Sha256
   inputs:
     operation: generate
     file: ${{ tests-spdx }}
 
   # Validate the tests SPDX document
 - command: validate
+  displayName: Validate SpdxTool Tests SBOM
   inputs:
     spdx: ${{ tests-spdx }}
 
   # Generate the tests summary
 - command: to-markdown
+  displayName: Generate SpdxTool Tests SBOM Summary
   inputs:
     spdx: ${{ tests-spdx }}
     markdown: ${{ tests-summary-md }}
