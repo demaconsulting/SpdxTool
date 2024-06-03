@@ -23,6 +23,14 @@ steps:
     arguments:
     - '--version'
 
+  # Rename the package ID for the platform library
+- command: rename-id
+  displayName: Rename SpdxModel Package ID
+  inputs:
+    spdx: ${{ tool-spdx }}
+    old: SPDXRef-RootPackage
+    new: SPDXRef-DemaConsulting-SpdxTool
+
   # Add DotNet SDK as a build tool of the tool package
 - command: add-package
   inputs:
@@ -40,7 +48,8 @@ steps:
       version: ${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
-      element: SPDXRef-RootPackage
+      element: SPDXRef-DemaConsulting-SpdxTool
+      comment: The DotNet SDK is used to build SpdxTool
 
   # Update the Sha256 digest on the tool SPDX document
 - command: sha256
@@ -60,6 +69,14 @@ steps:
     markdown: ${{ tool-summary-md }}
     title: 'SpdxTool Package'
 
+  # Rename the package ID for the platform library
+- command: rename-id
+  displayName: Rename SpdxModel Package ID
+  inputs:
+    spdx: ${{ tests-spdx }}
+    old: SPDXRef-RootPackage
+    new: SPDXRef-DemaConsulting-SpdxTool-Tests
+
   # Add DotNet SDK as a build tool of the tests package
 - command: add-package
   inputs:
@@ -77,7 +94,11 @@ steps:
       version: ${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
-      element: SPDXRef-RootPackage
+      element: SPDXRef-DemaConsulting-SpdxTool-Tests
+      comment: The DotNet SDK is used to build the SpdxTool Tests
+    - type: TEST_TOOL_OF
+      element: SPDXRef-DemaConsulting-SpdxTool-Tests
+      comment: The DotNet SDK is used to run the SpdxTool Tests
 
   # Update the Sha256 digest on the tests SPDX document
 - command: sha256
