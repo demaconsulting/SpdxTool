@@ -33,22 +33,23 @@ The following shows the command-line usage of SpdxTool:
 Usage: spdx-tool [options] <command> [arguments]
 
 Options:
-  -h, --help                             Show this help message and exit
-  -v, --version                          Show version information and exit
+  -h, --help                               Show this help message and exit
+  -v, --version                            Show version information and exit
 
 Commands:
-  help <command>                         Display extended help about a command
-  add-package                            Add package to SPDX document (workflow only).
-  copy-package                           Copy package between SPDX documents (workflow only).
-  find-package <spdx.json> [criteria]    Find package ID in SPDX document
-  print <text>                           Print text to the console
-  query <pattern> <program> [arguments]  Query program output for value
-  rename-id <arguments>                  Rename an element ID in an SPDX document.
-  run-workflow <workflow.yaml>           Runs the workflow file
-  sha256 <operation> <file>              Generate or verify sha256 hashes of files
-  to-markdown <spdx.yaml> <out.md>       Create Markdown summary for SPDX document
-  update-package                         Update package in SPDX document (workflow only).
-  validate <spdx.json> [ntia]            Validate SPDX document for issues
+  help <command>                           Display extended help about a command
+  add-package                              Add package to SPDX document (workflow only).
+  add-relationship <spdx.json> <args>      Add relationship between elements.
+  copy-package <spdx.json> <args>          Copy package between SPDX documents (workflow only).
+  find-package <spdx.json> <criteria>      Find package ID in SPDX document
+  print <text>                             Print text to the console
+  query <pattern> <program> [args]         Query program output for value
+  rename-id <arguments>                    Rename an element ID in an SPDX document.
+  run-workflow <workflow.yaml>             Runs the workflow file
+  sha256 <operation> <file>                Generate or verify sha256 hashes of files
+  to-markdown <spdx.json> <out.md> [args]  Create Markdown summary for SPDX document
+  update-package                           Update package in SPDX document (workflow only).
+  validate <spdx.json> [ntia]              Validate SPDX document for issues
 ```
 
 
@@ -148,8 +149,23 @@ steps:
     relationships:                # Relationships
     - type: <relationship>        # Relationship type
       element: <element>          # Related element
+      comment: <comment>          # Optional comment
     - type: <relationship>        # Relationship type
       element: <element>          # Related element
+      comment: <comment>          # Optional comment
+
+  # Add a relationship to an SPDX document
+- command: add-relationship
+  inputs:
+    spdx: <spdx.json>             # SPDX file name
+    id: <id>                      # Element ID
+    relationships:
+    - type: <relationship>        # Relationship type
+      element: <element>          # Related element
+      comment: <comment>          # Optional comment
+    - type: <relationship>        # Relationship type
+      element: <element>          # Related element
+      comment: <comment>          # Optional comment
 
   # Copy a package from one SPDX document to another SPDX document  
 - command: copy-package
@@ -160,8 +176,10 @@ steps:
     relationships:                # Relationships
     - type: <relationship>        # Relationship type
       element: <element>          # Related element
+      comment: <comment>          # Optional comment
     - type: <relationship>        # Relationship type
       element: <element>          # Related element
+      comment: <comment>          # Optional comment
 
   # finds the package ID for a package in an SPDX document
 - command: find-package

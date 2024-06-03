@@ -47,8 +47,10 @@ public class AddPackage : Command
             "      relationships:                # Relationships",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
+            "        comment: <comment>          # Optional comment",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
+            "        comment: <comment>          # Optional comment",
             "",
             "The <relationship> argument describes the <package> relationship to <element>.",
             "The <element> argument is the name of an element in the <to.spdx.json> file.",
@@ -89,7 +91,7 @@ public class AddPackage : Command
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
                                     throw new YamlException(step.Start, step.End, "'add-package' missing 'relationships' input");
-        var relationships = ParseRelationships("add-package", package.Id, relationshipsSequence, variables);
+        var relationships = AddRelationship.Parse("add-package", package.Id, relationshipsSequence, variables);
 
         // Add the package
         AddPackageToSpdxFile(spdxFile, package, relationships);
@@ -107,28 +109,37 @@ public class AddPackage : Command
         // Load the SPDX document
         var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
 
-        // Add the package (if not already present)
-        if (!Array.Exists(doc.Packages, p => p.Id == package.Id))
-            doc.Packages = doc.Packages.Append(package).ToArray();
+        // Add the package
+        Add(doc, package);
 
         // Add the relationships
-        foreach (var relationship in relationships)
-        {
-            // Verify the relationship is not already present
-            if (Array.Exists(
-                    doc.Relationships,
-                    r =>
-                        r.Id == relationship.Id &&
-                        r.RelationshipType == relationship.RelationshipType &&
-                        r.RelatedSpdxElement == relationship.RelatedSpdxElement))
-                continue;
-
-            // Add the relationship
-            doc.Relationships = doc.Relationships.Append(relationship).ToArray();
-        }
+        AddRelationship.Add(doc, relationships);
 
         // Save the SPDX document
         SpdxHelpers.SaveJsonDocument(doc, spdxFile);
+    }
+
+    /// <summary>
+    /// Add SPDX package to document with optional enhance.
+    /// </summary>
+    /// <param name="doc">SPDX document</param>
+    /// <param name="package">SPDX package to add</param>
+    public static void Add(SpdxDocument doc, SpdxPackage package)
+    {
+        // Look for the same package
+        var p = Array.Find(doc.Packages, p => SpdxPackage.Same.Equals(p, package));
+        if (p != null)
+        {
+            // Enhance the existing package and rename it
+            p.Enhance(package);
+            RenameId.Rename(doc, p.Id, package.Id);
+        }
+        else
+        {
+            // Copy the new package
+            p = package.DeepCopy();
+            doc.Packages = doc.Packages.Append(p).ToArray();
+        }
     }
 
     /// <summary>
@@ -219,69 +230,5 @@ public class AddPackage : Command
 
         // Return the package
         return package;
-    }
-
-    /// <summary>
-    /// Parse SPDX relationships from a YAML sequence node
-    /// </summary>
-    /// <param name="command">Command to blame for errors</param>
-    /// <param name="packageId">Package ID</param>
-    /// <param name="relationships">Relationships YAML sequence node</param>
-    /// <param name="variables">Variables for expansion</param>
-    /// <returns>Array of SPDX relationships</returns>
-    /// <exception cref="YamlException">On error</exception>
-    public static SpdxRelationship[] ParseRelationships(
-        string command,
-        string packageId,
-        YamlSequenceNode relationships,
-        Dictionary<string, string> variables)
-    {
-        // Parse each relationship
-        return relationships.Children.Select(node =>
-        {
-            // Get the relationship map
-            if (node is not YamlMappingNode relationshipMap)
-                throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping");
-
-            // Parse the relationship
-            return ParseRelationship(command, packageId, relationshipMap, variables);
-        }).ToArray();
-    }
-
-    /// <summary>
-    /// Parse an SPDX relationship from a YAML mapping node
-    /// </summary>
-    /// <param name="command">Command to blame for errors</param>
-    /// <param name="packageId">Package ID</param>
-    /// <param name="relationshipMap">Relationship YAML mapping node</param>
-    /// <param name="variables">Variables for expansion</param>
-    /// <returns>SPDX relationship</returns>
-    /// <exception cref="YamlException">On error</exception>
-    public static SpdxRelationship ParseRelationship(
-        string command, 
-        string packageId,
-        YamlMappingNode relationshipMap,
-        Dictionary<string, string> variables)
-    {
-        // Construct the relationship
-        var relationship = new SpdxRelationship
-        {
-            // Package ID
-            Id = packageId,
-
-            // Get the relationship type
-            RelationshipType = SpdxRelationshipTypeExtensions.FromText(
-                GetMapString(relationshipMap, "type", variables) ??
-                throw new YamlException(relationshipMap.Start, relationshipMap.End,
-                    $"'{command}' missing relationship 'type' input")),
-
-            // Get the related element
-            RelatedSpdxElement = GetMapString(relationshipMap, "element", variables) ??
-                                 throw new YamlException(relationshipMap.Start, relationshipMap.End,
-                                     $"'{command}' missing relationship 'element' input")
-        };
-
-        // Return the relationship
-        return relationship;
     }
 }

@@ -20,7 +20,7 @@ public class FindPackage : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "find-package",
-        "find-package <spdx.json> [criteria]",
+        "find-package <spdx.json> <criteria>",
         "Find package ID in SPDX document",
         new[]
         {

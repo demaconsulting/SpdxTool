@@ -20,7 +20,7 @@ public class Query : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "query",
-        "query <pattern> <program> [arguments]",
+        "query <pattern> <program> [args]",
         "Query program output for value",
         new[]
         {
@@ -28,7 +28,7 @@ public class Query : Command
             "When executed in a workflow this can be used to set a variable.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool query <pattern> <program> [arguments]",
+            "  spdx-tool query <pattern> <program> [args]",
             "",
             "From a YAML file this can be used as:",
             "  - command: query",

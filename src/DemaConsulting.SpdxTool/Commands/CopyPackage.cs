@@ -20,12 +20,16 @@ public class CopyPackage : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "copy-package",
-        "copy-package",
+        "copy-package <spdx.json> <args>",
         "Copy package between SPDX documents (workflow only).",
         new[]
         {
             "This command copies a package from one SPDX document to another.",
             "",
+            "From the command-line this can be used as:",
+            "  spdx-tool copy-package <from.spdx.json> <to.spdx.json> <package>",
+            "",
+            "From a YAML file this can be used as:",
             "  - command: copy-package",
             "    inputs:",
             "      from: <from.spdx.json>        # Source SPDX file name",
@@ -34,8 +38,10 @@ public class CopyPackage : Command
             "      relationships:                # Relationships",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
+            "        comment: <comment>          # Optional comment",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
+            "        comment: <comment>          # Optional comment",
             "",
             "The <package> argument is the name of a package in <from.spdx.json> to copy.",
             "The <relationship> argument describes the <package> relationship to <element>.",
@@ -56,7 +62,16 @@ public class CopyPackage : Command
     /// <inheritdoc />
     public override void Run(string[] args)
     {
-        throw new CommandUsageException("'copy-package' command is only valid in a workflow");
+        // Report an error if the number of arguments not 3
+        if (args.Length != 3)
+            throw new CommandUsageException("'copy-package' command missing arguments");
+
+        var fromFile = args[0];
+        var toFile = args[1];
+        var packageId = args[2];
+
+        // Copy the package
+        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, Array.Empty<SpdxRelationship>());
     }
 
     /// <inheritdoc />
@@ -80,7 +95,7 @@ public class CopyPackage : Command
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
                                     throw new YamlException(step.Start, step.End, "'copy-package' missing 'relationships' input");
-        var relationships = AddPackage.ParseRelationships("add-package", packageId, relationshipsSequence, variables);
+        var relationships = AddRelationship.Parse("add-package", packageId, relationshipsSequence, variables);
 
         // Copy the package
         CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, relationships);
@@ -103,36 +118,42 @@ public class CopyPackage : Command
         var fromDoc = SpdxHelpers.LoadJsonDocument(fromFile);
         var toDoc = SpdxHelpers.LoadJsonDocument(toFile);
 
-        // Verify the package exists in the source
-        var package = Array.Find(fromDoc.Packages, p => p.Id == packageId) ??
-                      throw new CommandErrorException($"Package {packageId} not found in {fromFile}");
-
-        // Verify the package does not exist in the destination
-        if (Array.Exists(toDoc.Packages, p => p.Id == package.Id))
-            throw new CommandErrorException($"Package {package} already exists in {toFile}");
-
-        // Append the package to the destination document
-        toDoc.Packages = toDoc.Packages.Append(package).ToArray();
-
-        // Append any files from the package to the destination document
-        foreach (var fileId in package.HasFiles)
-        {
-            // Find the file
-            var file = Array.Find(fromDoc.Files, f => f.Id == fileId) ??
-                       throw new CommandErrorException($"File {fileId} not found in {fromFile}");
-
-            // Skip if the file already exists in the destination
-            if (Array.Exists(toDoc.Files, f => f.Id == file.Id))
-                throw new CommandErrorException($"File {fileId} already exists in {toFile}");
-
-            // Append the file to the destination document
-            toDoc.Files = toDoc.Files.Append(file).ToArray();
-        }
+        // Copy the package, and rename if necessary
+        Copy(fromDoc, toDoc, packageId);
 
         // Append the relationships to the destination document
-        toDoc.Relationships = toDoc.Relationships.Concat(relationships).ToArray();
+        AddRelationship.Add(toDoc, relationships);
 
         // Write the destination document
         SpdxHelpers.SaveJsonDocument(toDoc, toFile);
+    }
+
+    /// <summary>
+    /// Copy the package from one SPDX document to another
+    /// </summary>
+    /// <param name="fromDoc">SPDX document to copy from</param>
+    /// <param name="toDoc">SPDX document to copy to</param>
+    /// <param name="packageId">ID of the SPDX package to copy</param>
+    /// <exception cref="CommandErrorException">On error</exception>
+    public static void Copy(SpdxDocument fromDoc, SpdxDocument toDoc, string packageId)
+    {
+        // Verify the package exists in the source
+        var fromPackage = Array.Find(fromDoc.Packages, p => p.Id == packageId) ??
+                      throw new CommandErrorException($"Package {packageId} not found");
+
+        // Test if the to-package exists
+        var toPackage = Array.Find(toDoc.Packages, p => SpdxPackage.Same.Equals(p, fromPackage));
+        if (toPackage != null)
+        {
+            // Enhance the to-package and rename if necessary
+            toPackage.Enhance(fromPackage);
+            RenameId.Rename(toDoc, toPackage.Id, packageId);
+        }
+        else
+        {
+            // Append copy to the to-document
+            toPackage = fromPackage.DeepCopy();
+            toDoc.Packages = toDoc.Packages.Append(toPackage).ToArray();
+        }
     }
 }
