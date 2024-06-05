@@ -15,6 +15,7 @@ public static class CommandsRegistry
         { AddRelationship.Entry.Name, AddRelationship.Entry },
         { CopyPackage.Entry.Name, CopyPackage.Entry },
         { FindPackage.Entry.Name, FindPackage.Entry },
+        { GetVersion.Entry.Name, GetVersion.Entry },
         { Hash.Entry.Name, Hash.Entry },
         { Print.Entry.Name, Print.Entry },
         { Query.Entry.Name, Query.Entry },

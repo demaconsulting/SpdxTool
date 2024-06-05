@@ -108,10 +108,17 @@ Variables can be changed at runtime by some steps:
 ```yaml
 # Workflow parameters
 parameters:
+  reported-version: unknown
   dotnet-version: unknown
   pretty-version: unknown
 
 steps:
+- command: get-version
+  inputs:
+    spdx: manifest.spdx.json
+    id: SPDXRef-DotNetSDK
+    output: reported-version
+
 - command: query
   inputs:
     output: dotnet-version
@@ -198,6 +205,13 @@ steps:
     version: <version>            # Optional package version
     filename: <filename>          # Optional package filename
     download: <url>               # Optional package download URL
+
+  # Get the version of a package in an SPDX document
+- command: get-version
+  inputs:
+    spdx: <spdx.json>             # SPDX file name
+    id: <id>                      # Package ID
+    output: <variable>            # Output variable
 
   # Perform hash operations on the specified file
 - command: hash
