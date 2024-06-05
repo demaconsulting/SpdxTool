@@ -15,11 +15,11 @@ public static class CommandsRegistry
         { AddRelationship.Entry.Name, AddRelationship.Entry },
         { CopyPackage.Entry.Name, CopyPackage.Entry },
         { FindPackage.Entry.Name, FindPackage.Entry },
+        { Hash.Entry.Name, Hash.Entry },
         { Print.Entry.Name, Print.Entry },
         { Query.Entry.Name, Query.Entry },
         { RenameId.Entry.Name, RenameId.Entry },
         { RunWorkflow.Entry.Name, RunWorkflow.Entry },
-        { Sha256.Entry.Name, Sha256.Entry },
         { ToMarkdown.Entry.Name, ToMarkdown.Entry },
         { UpdatePackage.Entry.Name, UpdatePackage.Entry },
         { Validate.Entry.Name, Validate.Entry }

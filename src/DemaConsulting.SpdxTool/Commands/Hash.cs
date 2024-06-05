@@ -4,34 +4,35 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Sha256 command
+/// Hash command
 /// </summary>
-public class Sha256 : Command
+public class Hash : Command
 {
     /// <summary>
     /// Singleton instance of this command
     /// </summary>
-    public static readonly Sha256 Instance = new();
+    public static readonly Hash Instance = new();
 
     /// <summary>
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "sha256",
-        "sha256 <operation> <file>",
-        "Generate or verify sha256 hashes of files",
+        "hash",
+        "hash <operation> <algorithm> <file>",
+        "Generate or verify hashes of files",
         new[]
         {
-            "This command generates or verifies sha256 hashes.",
+            "This command generates or verifies hashes.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool sha256 generate <file>",
-            "  spdx-tool sha256 verify <file>",
+            "  spdx-tool hash generate sha256 <file>",
+            "  spdx-tool hash verify sha256 <file>",
             "",
             "From a YAML file this can be used as:",
-            "  - command: sha256",
+            "  - command: hash",
             "    inputs:",
             "      operation: generate | verify",
+            "      algorithm: sha256",
             "      file: <file>"
         },
         Instance);
@@ -39,19 +40,22 @@ public class Sha256 : Command
     /// <summary>
     /// Private constructor - this is a singleton
     /// </summary>
-    private Sha256()
+    private Hash()
     {
     }
 
     /// <inheritdoc />
     public override void Run(string[] args)
     {
-        // Report an error if the number of arguments is not 2
-        if (args.Length != 2)
-            throw new CommandUsageException("'sha256' command missing arguments");
+        // Report an error if the number of arguments is not 3
+        if (args.Length != 3)
+            throw new CommandUsageException("'hash' command missing arguments");
 
-        // Do the Sha256 operation
-        DoSha256Operation(args[0], args[1]);
+        // Do the hash operation
+        var operation = args[0];
+        var algorithm = args[1];
+        var file = args[2];
+        DoHashOperation(operation, algorithm, file);
     }
 
     /// <inheritdoc />
@@ -62,24 +66,34 @@ public class Sha256 : Command
 
         // Get the 'operation' input
         var operation = GetMapString(inputs, "operation", variables) ??
-                        throw new YamlException(step.Start, step.End, "'sha256' command missing 'operation' input");
+                        throw new YamlException(step.Start, step.End, "'hash' command missing 'operation' input");
+
+        // Get the 'algorithm' input
+        var algorithm = GetMapString(inputs, "algorithm", variables) ??
+                   throw new YamlException(step.Start, step.End, "'hash' command missing 'algorithm' input");
 
         // Get the 'file' input
         var file = GetMapString(inputs, "file", variables) ??
-                   throw new YamlException(step.Start, step.End, "'sha256' command missing 'file' input");
+                   throw new YamlException(step.Start, step.End, "'hash' command missing 'file' input");
 
-        // Do the Sha256 operation
-        DoSha256Operation(operation, file);
+        // Do the hash operation
+        DoHashOperation(operation, algorithm, file);
     }
 
     /// <summary>
     /// Do the requested Sha256 operation
     /// </summary>
     /// <param name="operation">Operation to perform (generate or verify)</param>
+    /// <param name="algorithm">Hash algorithm</param>
     /// <param name="file">File to perform operation on</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
-    public static void DoSha256Operation(string operation, string file)
+    public static void DoHashOperation(string operation, string algorithm, string file)
     {
+        // Check the algorithm
+        if (algorithm != "sha256")
+            throw new CommandUsageException($"'hash' command invalid algorithm '{algorithm}'");
+
+        // Process the operation
         switch (operation)
         {
             case "generate":
@@ -91,7 +105,7 @@ public class Sha256 : Command
                 break;
 
             default:
-                throw new CommandUsageException($"'sha256' command invalid operation '{operation}'");
+                throw new CommandUsageException($"'hash' command invalid operation '{operation}'");
         }
     }
 
