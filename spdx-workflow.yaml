@@ -54,10 +54,11 @@ steps:
       comment: The DotNet SDK is used to build SpdxTool
 
   # Update the Sha256 digest on the tool SPDX document
-- command: sha256
+- command: hash
   displayName: Update SpdxTool Sha256
   inputs:
     operation: generate
+    algorithm: sha256
     file: ${{ tool-spdx }}
 
   # Validate the tool SPDX document
@@ -107,10 +108,11 @@ steps:
       comment: The DotNet SDK is used to run the SpdxTool Tests
 
   # Update the Sha256 digest on the tests SPDX document
-- command: sha256
+- command: hash
   displayName: Update SpdxTool Tests Sha256
   inputs:
     operation: generate
+    algorithm: sha256
     file: ${{ tests-spdx }}
 
   # Validate the tests SPDX document
