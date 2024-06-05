@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using DemaConsulting.SpdxModel;
 using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -131,19 +132,48 @@ public class ToMarkdown : Command
         markdown.AppendLine($"| Created | {doc.CreationInformation.Created} |");
         foreach (var creator in doc.CreationInformation.Creators)
             markdown.AppendLine($"| Creator | {creator} |");
+        foreach (var package in doc.GetRootPackages())
+            markdown.AppendLine($"| Root Package | {package.Name} |");
         markdown.AppendLine();
         markdown.AppendLine();
 
+        // Find tool package IDs
+        var toolIds = new HashSet<string>();
+        foreach (var relationship in doc.Relationships)
+            if (relationship.RelationshipType is SpdxRelationshipType.BuildToolOf or SpdxRelationshipType.DevToolOf or SpdxRelationshipType.TestToolOf)
+                toolIds.Add(relationship.Id);
+
+        // Find the tools and packages
+        var tools = doc.Packages.Where(p => toolIds.Contains(p.Id)).OrderBy(p => p.Name).ToArray();
+        var packages = doc.Packages.Except(tools).OrderBy(p => p.Name).ToArray();
+
         // Print the packages
-        markdown.AppendLine($"{header}# Package Summary");
-        markdown.AppendLine();
-        markdown.AppendLine("| Name | Version | License |");
-        markdown.AppendLine("| :-------- | :--- | :--- |");
-        foreach (var package in doc.Packages.OrderBy(p => p.Name))
-            markdown.AppendLine(
-                $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense} |");
-        markdown.AppendLine();
-        markdown.AppendLine();
+        if (packages.Length > 0)
+        {
+            markdown.AppendLine($"{header}# Package Summary");
+            markdown.AppendLine();
+            markdown.AppendLine("| Name | Version | License |");
+            markdown.AppendLine("| :-------- | :--- | :--- |");
+            foreach (var package in packages)
+                markdown.AppendLine(
+                    $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense} |");
+            markdown.AppendLine();
+            markdown.AppendLine();
+        }
+
+        // Print the tools
+        if (tools.Length > 0)
+        {
+            markdown.AppendLine($"{header}# Tool Summary");
+            markdown.AppendLine();
+            markdown.AppendLine("| Name | Version | License |");
+            markdown.AppendLine("| :-------- | :--- | :--- |");
+            foreach (var package in tools)
+                markdown.AppendLine(
+                    $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense} |");
+            markdown.AppendLine();
+            markdown.AppendLine();
+        }
 
         // Save the Markdown text to file
         File.WriteAllText(markdownFile, markdown.ToString());
