@@ -1,4 +1,5 @@
-﻿using YamlDotNet.Core;
+﻿using System.Net;
+using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
 namespace DemaConsulting.SpdxTool.Commands;
@@ -19,10 +20,10 @@ public class RunWorkflow : Command
     public static readonly CommandEntry Entry = new(
         "run-workflow",
         "run-workflow <workflow.yaml>",
-        "Runs the workflow file",
+        "Runs the workflow file/url",
         new[]
         {
-            "This command runs the steps specified in the workflow.yaml file.",
+            "This command runs the steps specified in the workflow file/url.",
             "",
             "From the command-line this can be used as:",
             "  spdx-tool run-workflow <workflow.yaml> [parameter=value] [parameter=value]...",
@@ -30,10 +31,15 @@ public class RunWorkflow : Command
             "From a YAML file this can be used as:",
             "  - command: run-workflow",
             "    inputs:",
-            "      file: <workflow.yaml>",
+            "      file: <workflow.yaml>         # Optional workflow file",
+            "      url: <url>                    # Optional workflow url",
+            "      integrity: <sha256>           # Optional workflow integrity check",
             "      parameters:",
-            "        name: value",
-            "        name: value"
+            "        name: <value>               # Optional workflow parameter",
+            "        name: <value>               # Optional workflow parameter",
+            "      outputs:",
+            "        name: <variable>            # Optional output to save to variable",
+            "        name: <variable>            # Optional output to save to variable"
         },
         Instance);
 
@@ -51,10 +57,20 @@ public class RunWorkflow : Command
         if (args.Length < 1)
             throw new CommandUsageException("'run-workflow' command missing arguments");
 
+        var name = args[0];
+
         // Parse the parameters
+        var verbose = false;
         var parameters = new Dictionary<string, string>();
         foreach (var arg in args.Skip(1))
         {
+            // Check for verbose flag
+            if (arg == "--verbose")
+            {
+                verbose = true;
+                continue;
+            }
+
             // Verify the parameter is in the form key=value
             var sep = arg.IndexOf('=');
             if (sep < 0)
@@ -67,18 +83,30 @@ public class RunWorkflow : Command
         }
 
         // Execute the workflow
-        RunWorkflowFile(args[0], parameters);
+        var outputs = name.StartsWith("http") ? RunUrl(name, null, parameters) : RunFile(name, null, parameters);
+
+        // Skip if not verbose
+        if (!verbose)
+            return;
+
+        // Print the outputs
+        Console.WriteLine("Outputs:");
+        foreach (var (key, value) in outputs)
+            Console.WriteLine($"  {key} = {value}");
     }
 
     /// <inheritdoc />
     public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
-        var inputs = GetMapMap(step, "input");
+        var inputs = GetMapMap(step, "inputs");
 
-        // Get the 'file' input
-        var file = GetMapString(inputs, "file", variables) ??
-                   throw new YamlException(step.Start, step.End, "'run-workflow' command missing 'file' input");
+        // Get the 'integrity' input
+        var integrity = GetMapString(inputs, "integrity", variables);
+
+        // Get the 'file' and 'url' inputs
+        var file = GetMapString(inputs, "file", variables);
+        var url = GetMapString(inputs, "url", variables);
 
         // Get the parameters
         var parameters = new Dictionary<string, string>();
@@ -91,33 +119,132 @@ public class RunWorkflow : Command
                 parameters[key] = Expand(value, variables);
             }
 
-        // Execute the workflow
-        RunWorkflowFile(file, parameters);
+        // Run the workflow
+        var outputs = Run(step, file, url, integrity, parameters);
+        
+        // Save any outputs
+        if (GetMapMap(inputs, "outputs") is { } outputsMap)
+            // Process all the outputs
+            foreach (var (keyNode, valueNode) in outputsMap.Children)
+            {
+                var key = keyNode.ToString();
+                var value = valueNode.ToString();
+                if (!outputs.TryGetValue(key, out var output))
+                    throw new CommandUsageException($"Workflow did not produce {key} output");
+
+                variables[value] = output;
+            }
+    }
+
+    /// <summary>
+    /// Execute the workflow
+    /// </summary>
+    /// <param name="step">Step for reporting errors</param>
+    /// <param name="file">Optional file</param>
+    /// <param name="url">Optional URL</param>
+    /// <param name="integrity">Optional integrity</param>
+    /// <param name="parameters">Workflow parameters</param>
+    /// <returns>Workflow outputs</returns>
+    /// <exception cref="YamlException">on error</exception>
+    public static Dictionary<string, string> Run(YamlMappingNode step, string? file, string? url, string? integrity, Dictionary<string, string> parameters)
+    {
+        // Fail if no source
+        if (file != null && url != null)
+            throw new YamlException(step.Start, step.End, "'run-workflow' command cannot specify both 'file' and 'url' inputs");
+
+        // Run the file if specified
+        if (file != null)
+            return RunFile(file, integrity, parameters);
+
+        // Run the URL if specified
+        if (url != null)
+            return RunUrl(url, integrity, parameters);
+
+        // No source provided
+        throw new YamlException(step.Start, step.End, "'run-workflow' command must specify either 'file' or 'url' input");
     }
 
     /// <summary>
     /// Execute the workflow
     /// </summary>
     /// <param name="workflowFile">Workflow file</param>
+    /// <param name="integrity">Optional integrity hash</param>
     /// <param name="parameters">Workflow parameters</param>
+    /// <returns>Workflow outputs</returns>
     /// <exception cref="CommandUsageException">On usage error</exception>
     /// <exception cref="YamlException">On workflow error</exception>
-    public static void RunWorkflowFile(string workflowFile, Dictionary<string, string> parameters)
+    public static Dictionary<string, string> RunFile(string workflowFile, string? integrity, Dictionary<string, string> parameters)
     {
         // Verify the file exists
         if (!File.Exists(workflowFile))
             throw new CommandUsageException(
                 $"File not found: {workflowFile}");
 
+        // Get the file bytes
+        var bytes = File.ReadAllBytes(workflowFile);
+
+        // Run the workflow
+        return RunBytes(workflowFile, bytes, integrity, parameters);
+    }
+
+    /// <summary>
+    /// Run workflow from URL
+    /// </summary>
+    /// <param name="url">Workflow URL</param>
+    /// <param name="integrity">Optional integrity hash</param>
+    /// <param name="parameters">Workflow parameters</param>
+    /// <returns>Workflow outputs</returns>
+    /// <exception cref="CommandErrorException">on error</exception>
+    public static Dictionary<string, string> RunUrl(string url, string? integrity, Dictionary<string, string> parameters)
+    {
+        // Construct the HTTP client
+        using var client = new HttpClient();
+
+        // Execute the Get request on the server
+        var getTask = client.GetAsync(url);
+
+        // Get the result (blocks until result available)
+        var responseMessage = getTask.Result;
+        if (responseMessage.StatusCode != HttpStatusCode.OK)
+            throw new CommandErrorException($"Error {responseMessage.StatusCode} fetching {url}");
+
+        // Get the content bytes (blocks until data available)
+        var bytesTask = responseMessage.Content.ReadAsByteArrayAsync();
+        var bytes = bytesTask.Result;
+
+        // Run the workflow
+        return RunBytes(url, bytes, integrity, parameters);
+    }
+
+    /// <summary>
+    /// Execute the workflow from Yaml bytes (from file, url, etc.)
+    /// </summary>
+    /// <param name="source">Yaml source</param>
+    /// <param name="bytes">Yaml bytes</param>
+    /// <param name="integrity">Optional integrity hash</param>
+    /// <param name="parameters">Parameters</param>
+    /// <returns>Workflow outputs</returns>
+    public static Dictionary<string, string> RunBytes(string source, byte[] bytes, string? integrity, Dictionary<string, string> parameters)
+    {
+        // Optionally check the integrity before running
+        if (integrity != null)
+        {
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashBytes = sha256.ComputeHash(bytes);
+            var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            if (hash != integrity)
+                throw new CommandErrorException($"Integrity check of {source} failed");
+        }
+
         try
         {
             // Load the document
             var yaml = new YamlStream();
-            using var input = new StreamReader(workflowFile);
+            using var input = new StreamReader(new MemoryStream(bytes));
             yaml.Load(input);
             var root = yaml.Documents[0].RootNode as YamlMappingNode ??
                        throw new CommandErrorException(
-                           $"Workflow {workflowFile} missing root mapping node");
+                           $"Workflow {source} missing root mapping node");
 
             // Process the parameters definitions into local variables
             var variables = new Dictionary<string, string>();
@@ -135,7 +262,7 @@ public class RunWorkflow : Command
             {
                 if (!variables.ContainsKey(key))
                     throw new CommandErrorException(
-                        $"Workflow {workflowFile} parameter {key} not defined");
+                        $"Workflow {source} parameter {key} not defined");
 
                 variables[key] = Expand(value, variables);
             }
@@ -143,7 +270,7 @@ public class RunWorkflow : Command
             // Get the steps
             var steps = GetMapSequence(root, "steps") ??
                         throw new CommandErrorException(
-                            $"Workflow {workflowFile} missing steps");
+                            $"Workflow {source} missing steps");
 
             // Execute the steps
             foreach (var stepNode in steps)
@@ -151,12 +278,12 @@ public class RunWorkflow : Command
                 // Get the step
                 var step = stepNode as YamlMappingNode ??
                            throw new CommandErrorException(
-                               $"Workflow {workflowFile} step is not a map");
+                               $"Workflow {source} step is not a map");
 
                 // Get the command
                 var command = GetMapString(step, "command", variables) ??
-                    throw new CommandErrorException(
-                        $"Workflow {workflowFile} step missing command");
+                              throw new CommandErrorException(
+                                  $"Workflow {source} step missing command");
 
                 // Check for a displayName
                 var displayName = GetMapString(step, "displayName", variables);
@@ -171,16 +298,19 @@ public class RunWorkflow : Command
                 // Run the command
                 entry.Instance.Run(step, variables);
             }
+
+            // Return our variables as the output
+            return variables;
         }
         catch (KeyNotFoundException ex)
         {
             throw new CommandErrorException(
-                $"Workflow {workflowFile} invalid", ex);
+                $"Workflow {source} invalid", ex);
         }
         catch (YamlException ex)
         {
             throw new CommandErrorException(
-                $"Workflow {workflowFile} invalid at {ex.Start} - {ex.Message}", ex);
+                $"Workflow {source} invalid at {ex.Start} - {ex.Message}", ex);
         }
     }
 }
