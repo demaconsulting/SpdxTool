@@ -20,6 +20,7 @@ public static class CommandsRegistry
         { Query.Entry.Name, Query.Entry },
         { RenameId.Entry.Name, RenameId.Entry },
         { RunWorkflow.Entry.Name, RunWorkflow.Entry },
+        { SetVariable.Entry.Name, SetVariable.Entry },
         { ToMarkdown.Entry.Name, ToMarkdown.Entry },
         { UpdatePackage.Entry.Name, UpdatePackage.Entry },
         { Validate.Entry.Name, Validate.Entry }

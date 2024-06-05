@@ -47,6 +47,7 @@ Commands:
   query <pattern> <program> [args]         Query program output for value
   rename-id <arguments>                    Rename an element ID in an SPDX document.
   run-workflow <workflow.yaml>             Runs the workflow file
+  set-variable                             Set workflow variable (workflow only).
   to-markdown <spdx.json> <out.md> [args]  Create Markdown summary for SPDX document
   update-package                           Update package in SPDX document (workflow only).
   validate <spdx.json> [ntia]              Validate SPDX document for issues
@@ -108,6 +109,7 @@ Variables can be changed at runtime by some steps:
 # Workflow parameters
 parameters:
   dotnet-version: unknown
+  pretty-version: unknown
 
 steps:
 - command: query
@@ -117,6 +119,11 @@ steps:
     program: dotnet
     arguments:
     - '--version'
+
+- command: set-variable
+  inputs:
+    value: DotNet Version is ${{ dotnet-version }}
+    output: pretty-version
 ```
 
 
@@ -229,6 +236,12 @@ steps:
     file: other-workflow-file.yaml
     parameters:
       <optional parameters>
+
+  # Set a workflow variable
+- command: set-variable
+  inputs:
+    value: <value>                # New value
+    output: <variable>            # Variable to set
 
   # Create a summary markdown from the specified SPDX document
 - command: to-markdown
