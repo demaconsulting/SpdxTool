@@ -42,11 +42,11 @@ Commands:
   add-relationship <spdx.json> <args>      Add relationship between elements.
   copy-package <spdx.json> <args>          Copy package between SPDX documents (workflow only).
   find-package <spdx.json> <criteria>      Find package ID in SPDX document
+  hash <operation> <algorithm> <file>      Generate or verify hashes of files
   print <text>                             Print text to the console
   query <pattern> <program> [args]         Query program output for value
   rename-id <arguments>                    Rename an element ID in an SPDX document.
   run-workflow <workflow.yaml>             Runs the workflow file
-  sha256 <operation> <file>                Generate or verify sha256 hashes of files
   to-markdown <spdx.json> <out.md> [args]  Create Markdown summary for SPDX document
   update-package                           Update package in SPDX document (workflow only).
   validate <spdx.json> [ntia]              Validate SPDX document for issues
@@ -192,6 +192,13 @@ steps:
     filename: <filename>          # Optional package filename
     download: <url>               # Optional package download URL
 
+  # Perform hash operations on the specified file
+- command: hash
+  inputs:
+    operation: generate | verify
+    algorithm: sha256
+    file: <file>
+
   # Print text to the console
 - command: print
   inputs:
@@ -222,12 +229,6 @@ steps:
     file: other-workflow-file.yaml
     parameters:
       <optional parameters>
-
-  # Perform Sha256 operations on the specified file
-- command: sha256
-  inputs:
-    operation: generate | verify
-    file: <file>
 
   # Create a summary markdown from the specified SPDX document
 - command: to-markdown

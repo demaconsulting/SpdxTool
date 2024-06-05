@@ -1,33 +1,34 @@
 ﻿namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestSha256
+public class TestHash
 {
     [TestMethod]
-    public void Sha256CommandMissingArguments()
+    public void HashCommandMissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "sha256");
+            "hash");
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'sha256' command missing arguments"));
+        Assert.IsTrue(output.Contains("'hash' command missing arguments"));
     }
 
     [TestMethod]
-    public void Sha256CommandGenerateMissingFile()
+    public void HashCommandGenerateMissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "sha256",
+            "hash",
             "generate",
+            "sha256",
             "missing-file.txt");
 
         // Verify error reported
@@ -36,7 +37,7 @@ public class TestSha256
     }
 
     [TestMethod]
-    public void Sha256CommandGenerate()
+    public void HashCommandGenerate()
     {
         try
         {
@@ -47,8 +48,9 @@ public class TestSha256
                 out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "sha256",
+                "hash",
                 "generate",
+                "sha256",
                 "test.txt");
 
             // Verify success reported
@@ -67,15 +69,16 @@ public class TestSha256
     }
 
     [TestMethod]
-    public void Sha256CommandVerifyMissingFile()
+    public void HashCommandVerifyMissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "sha256",
+            "hash",
             "verify",
+            "sha256",
             "missing-file.txt");
 
         // Verify error reported
@@ -84,7 +87,7 @@ public class TestSha256
     }
 
     [TestMethod]
-    public void Sha256CommandVerifyBad()
+    public void HashCommandVerifyBad()
     {
         try
         {
@@ -96,8 +99,9 @@ public class TestSha256
                 out var output,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "sha256",
+                "hash",
                 "verify",
+                "sha256",
                 "test.txt");
 
             // Verify error reported
@@ -112,7 +116,7 @@ public class TestSha256
     }
 
     [TestMethod]
-    public void Sha256CommandVerifyGood()
+    public void HashCommandVerifyGood()
     {
         try
         {
@@ -124,8 +128,9 @@ public class TestSha256
                 out var output,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "sha256",
+                "hash",
                 "verify",
+                "sha256",
                 "test.txt");
 
             // Verify success reported
