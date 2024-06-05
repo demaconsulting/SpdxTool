@@ -47,6 +47,6 @@ public class TestHelp
 
         // Verify success
         Assert.AreEqual(0, exitCode);
-        Assert.IsTrue(output.Contains("This command runs the steps specified in the workflow.yaml file"));
+        Assert.IsTrue(output.Contains("This command runs the steps specified in the workflow file/url."));
     }
 }
