@@ -110,6 +110,73 @@ public class TestAddPackage
     }
 
     [TestMethod]
+    public void AddPackageNoRelationship()
+    {
+        // SPDX contents
+        const string spdxContents = "{\r\n" +
+                                    "  \"files\": [],\r\n" +
+                                    "  \"packages\": [],\r\n" +
+                                    "  \"relationships\": [],\r\n" +
+                                    "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
+                                    "  \"dataLicense\": \"CC0-1.0\",\r\n" +
+                                    "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
+                                    "  \"name\": \"Test Document\",\r\n" +
+                                    "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
+                                    "  \"creationInfo\": {\r\n" +
+                                    "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
+                                    "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
+                                    "  },\r\n" +
+                                    "  \"documentDescribes\": []\r\n" +
+                                    "}";
+
+        // Workflow contents
+        const string workflowContents = "steps:\n" +
+                                        "- command: add-package\n" +
+                                        "  inputs:\n" +
+                                        "    spdx: spdx.json\n" +
+                                        "    package:\n" +
+                                        "      id: SPDXRef-Package-1\n" +
+                                        "      name: Test Package 1\n" +
+                                        "      version: 1.0.0\n" +
+                                        "      download: https://dotnet.microsoft.com/download\n" +
+                                        "      purl: pkg:nuget/BogusPackage@1.0.0\n";
+
+        try
+        {
+            // Write the SPDX files
+            File.WriteAllText("spdx.json", spdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Verify success
+            Assert.AreEqual(0, exitCode);
+
+            // Read the SPDX document
+            Assert.IsTrue(File.Exists("spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
+
+            // Verify package present
+            Assert.AreEqual(1, doc.Packages.Length);
+            Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
+
+            // Verify no relationships
+            Assert.AreEqual(0, doc.Relationships.Length);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    [TestMethod]
     public void AddPackageFromQuery()
     {
         // SPDX contents

@@ -44,7 +44,7 @@ public class AddPackage : Command
             "        license: <license>          # Optional package license",
             "        purl: <package-url>         # Optional package purl",
             "        cpe23: <cpe-identifier>     # Optional package cpe23",
-            "      relationships:                # Relationships",
+            "      relationships:                # Optional relationships",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
             "        comment: <comment>          # Optional comment",
@@ -89,8 +89,7 @@ public class AddPackage : Command
         var package = ParsePackage("add-package", packageMap, variables);
 
         // Parse the relationships
-        var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
-                                    throw new YamlException(step.Start, step.End, "'add-package' missing 'relationships' input");
+        var relationshipsSequence = GetMapSequence(inputs, "relationships");
         var relationships = AddRelationship.Parse("add-package", package.Id, relationshipsSequence, variables);
 
         // Add the package

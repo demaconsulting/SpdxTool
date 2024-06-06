@@ -36,7 +36,7 @@ public class CopyPackage : Command
             "      to: <to.spdx.json>            # Destination SPDX file name",
             "      package: <package>            # Package ID",
             "      recursive: true               # Optional recursive flag",
-            "      relationships:                # Relationships",
+            "      relationships:                # Optional relationships",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
             "        comment: <comment>          # Optional comment",
@@ -109,8 +109,7 @@ public class CopyPackage : Command
             throw new YamlException(step.Start, step.End, "'copy-package' invalid 'recursive' input");
 
         // Parse the relationships
-        var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
-                                    throw new YamlException(step.Start, step.End, "'copy-package' missing 'relationships' input");
+        var relationshipsSequence = GetMapSequence(inputs, "relationships");
         var relationships = AddRelationship.Parse("add-package", packageId, relationshipsSequence, variables);
 
         // Copy the package
