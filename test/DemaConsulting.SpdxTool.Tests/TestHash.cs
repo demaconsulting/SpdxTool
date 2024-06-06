@@ -33,7 +33,7 @@ public class TestHash
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("Error calculating sha256 hash for 'missing-file.txt'"));
+        Assert.IsTrue(output.Contains("Error: Could not find file 'missing-file.txt'"));
     }
 
     [TestMethod]

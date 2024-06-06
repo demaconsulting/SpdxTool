@@ -129,8 +129,13 @@ public class Hash : Command
     /// <exception cref="CommandErrorException"></exception>
     public static void VerifySha256(string file)
     {
+        // Check the hash file exists
+        var hashFile = file + ".sha256";
+        if (!File.Exists(hashFile))
+            throw new CommandErrorException($"Error: Could not find file '{hashFile}'");
+
         // Read the digest
-        var digest = File.ReadAllText(file + ".sha256").Trim();
+        var digest = File.ReadAllText(hashFile).Trim();
 
         // Calculate the digest
         var calculated = CalculateSha256(file);
@@ -151,6 +156,10 @@ public class Hash : Command
     /// <exception cref="CommandErrorException">On error</exception>
     public static string CalculateSha256(string file)
     {
+        // Check the hash file exists
+        if (!File.Exists(file))
+            throw new CommandErrorException($"Error: Could not find file '{file}'");
+
         try
         {
             // Calculate the Sha256 digest of the file

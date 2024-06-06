@@ -63,7 +63,7 @@ public static class Program
         }
         catch (CommandUsageException ex)
         {
-            // Report usage exception
+            // Report usage exception and usage information
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Error: {ex.Message}");
             Console.ResetColor();
@@ -71,11 +71,19 @@ public static class Program
             PrintUsage();
             Environment.Exit(1);
         }
-        catch (Exception ex)
+        catch (CommandErrorException ex)
         {
-            // Report exception
+            // Report error exception
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Error: {ex.Message}");
+            Console.ResetColor();
+            Environment.Exit(1);
+        }
+        catch (Exception ex)
+        {
+            // Report unknown exception
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"{ex}");
             Console.ResetColor();
             Environment.Exit(1);
         }
