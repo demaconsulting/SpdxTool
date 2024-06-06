@@ -197,8 +197,20 @@ public class RunWorkflow : Command
     /// <exception cref="CommandErrorException">on error</exception>
     public static Dictionary<string, string> RunUrl(string url, string? integrity, Dictionary<string, string> parameters)
     {
+        // Construct the client handler to use the system proxy
+        var handler = new HttpClientHandler
+        {
+            DefaultProxyCredentials = CredentialCache.DefaultCredentials,
+            Proxy = WebRequest.GetSystemWebProxy(),
+            PreAuthenticate = true
+        };
+
+        Console.WriteLine($"Handler = {handler}");
+        Console.WriteLine($"DefaultProxyCredentials = {handler.DefaultProxyCredentials}");
+        Console.WriteLine($"Proxy = {handler.Proxy}");
+
         // Construct the HTTP client
-        using var client = new HttpClient();
+        using var client = new HttpClient(handler);
 
         // Execute the Get request on the server
         var getTask = client.GetAsync(url);
