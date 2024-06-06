@@ -75,7 +75,7 @@ public static class Program
         {
             // Report exception
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Error: {ex}");
             Console.ResetColor();
             Environment.Exit(1);
         }

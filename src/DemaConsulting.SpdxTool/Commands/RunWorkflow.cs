@@ -205,10 +205,6 @@ public class RunWorkflow : Command
             PreAuthenticate = true
         };
 
-        Console.WriteLine($"Handler = {handler}");
-        Console.WriteLine($"DefaultProxyCredentials = {handler.DefaultProxyCredentials}");
-        Console.WriteLine($"Proxy = {handler.Proxy}");
-
         // Construct the HTTP client
         using var client = new HttpClient(handler);
 
