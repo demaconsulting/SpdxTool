@@ -161,7 +161,7 @@ steps:
       license: <license>          # Optional package license
       purl: <package-url>         # Optional package purl
       cpe23: <cpe-identifier>     # Optional package cpe23
-    relationships:                # Relationships
+    relationships:                # Optional relationships
     - type: <relationship>        # Relationship type
       element: <element>          # Related element
       comment: <comment>          # Optional comment
@@ -189,7 +189,7 @@ steps:
     to: <to.spdx.json>            # Destination SPDX file name
     package: <package>            # Package ID
     recursive: true               # Optional recursive flag
-    relationships:                # Relationships
+    relationships:                # Optional relationships
     - type: <relationship>        # Relationship type
       element: <element>          # Related element
       comment: <comment>          # Optional comment

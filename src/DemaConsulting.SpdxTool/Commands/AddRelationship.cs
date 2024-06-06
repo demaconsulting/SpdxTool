@@ -161,9 +161,13 @@ public class AddRelationship : Command
     public static SpdxRelationship[] Parse(
         string command,
         string packageId,
-        YamlSequenceNode relationships,
+        YamlSequenceNode? relationships,
         Dictionary<string, string> variables)
     {
+        // Handle no relationships
+        if (relationships == null)
+            return Array.Empty<SpdxRelationship>();
+
         // Parse each relationship
         return relationships.Children.Select(node =>
         {
