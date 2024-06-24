@@ -156,7 +156,7 @@ public class ToMarkdown : Command
             markdown.AppendLine("| :-------- | :--- | :--- |");
             foreach (var package in rootPackages)
                 markdown.AppendLine(
-                    $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense} |");
+                    $"| {package.Name} | {package.Version ?? string.Empty} | {License(package)} |");
             markdown.AppendLine();
             markdown.AppendLine();
         }
@@ -170,7 +170,7 @@ public class ToMarkdown : Command
             markdown.AppendLine("| :-------- | :--- | :--- |");
             foreach (var package in packages)
                 markdown.AppendLine(
-                    $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense} |");
+                    $"| {package.Name} | {package.Version ?? string.Empty} | {License(package)} |");
             markdown.AppendLine();
             markdown.AppendLine();
         }
@@ -184,12 +184,31 @@ public class ToMarkdown : Command
             markdown.AppendLine("| :-------- | :--- | :--- |");
             foreach (var package in tools)
                 markdown.AppendLine(
-                    $"| {package.Name} | {package.Version ?? string.Empty} | {package.ConcludedLicense} |");
+                    $"| {package.Name} | {package.Version ?? string.Empty} | {License(package)} |");
             markdown.AppendLine();
             markdown.AppendLine();
         }
 
         // Save the Markdown text to file
         File.WriteAllText(markdownFile, markdown.ToString());
+    }
+
+    /// <summary>
+    /// Get a license for a package
+    /// </summary>
+    /// <param name="package">SPDX package</param>
+    /// <returns>License</returns>
+    private static string License(SpdxPackage package)
+    {
+        // Use the concluded license if available
+        if (!string.IsNullOrEmpty(package.ConcludedLicense) && package.ConcludedLicense != "NOASSERTION")
+            return package.ConcludedLicense;
+
+        // Use the declared license if available
+        if (!string.IsNullOrEmpty(package.DeclaredLicense) && package.DeclaredLicense != "NOASSERTION")
+            return package.DeclaredLicense;
+
+        // Could not find license
+        return "NOASSERTION";
     }
 }
