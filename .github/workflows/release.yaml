@@ -66,6 +66,8 @@ jobs:
         -pv ${{ github.event.inputs.version }}
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool
+        -li true
+        -pm true
 
     - name: Generate Tests SBOM
       run: >
@@ -76,6 +78,8 @@ jobs:
         -pv ${{ github.event.inputs.version }}
         -ps DemaConsulting
         -nsb https://DemaConsulting.com/SpdxTool.Tests
+        -li true
+        -pm true
 
     - name: Run SBOM Workflow
       run: >
