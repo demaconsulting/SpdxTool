@@ -1,17 +1,10 @@
-# SPDX Tool
-
-![GitHub forks](https://img.shields.io/github/forks/demaconsulting/SpdxTool?style=plastic)
-![GitHub Repo stars](https://img.shields.io/github/stars/demaconsulting/SpdxTool?style=plastic)
-![GitHub contributors](https://img.shields.io/github/contributors/demaconsulting/SpdxTool?style=plastic)
-![GitHub](https://img.shields.io/github/license/demaconsulting/SpdxTool?style=plastic)
-![Build](https://github.com/demaconsulting/SpdxTool/actions/workflows/build_on_push.yaml/badge.svg)
-
-Dotnet tool for manipulating SPDX SBOM files
-
+# SPDX Tool Command Line
 
 ## Installation
 
-The following will add SpdxTool to a Dotnet tool manifest file:
+SPDX Tool is distributed as a nuget package on [nuget.org](https://www.nuget.org/packages/DemaConsulting.SpdxTool).
+
+The following will add SPDX Tool to a Dotnet tool manifest file:
 
 ```
 dotnet new tool-manifest # if you are setting up this repo
@@ -24,12 +17,13 @@ The tool can then be executed by:
 dotnet spdx-tool <arguments>
 ```
 
-
 ## Usage
 
-The following shows the command-line usage of SpdxTool:
+The following usage information is printed by running the tool with no arguments, or requesting help information.
 
 ```
+DemaConsulting.SpdxTool 0.1.0-beta.1
+
 Usage: spdx-tool [options] <command> [arguments]
 
 Options:
@@ -54,37 +48,31 @@ Commands:
   validate <spdx.json> [ntia]              Validate SPDX document for issues
 ```
 
-A more detailed description of the usage can be found [here](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-command-line.md)
+## Command Specific Usage
 
+Querying for usage information on a specific command can be performed using the help command. For example:
 
-## Workflow YAML Files
+```
+> dotnet spdx-tool help run-workflow
 
-The SpdxTool can be driven using workflow yaml files of the following format:
+DemaConsulting.SpdxTool 0.1.0-beta.1
 
-```yaml
-# Workflow parameters
-parameters:
-  parameter-name: value
+This command runs the steps specified in the workflow file/url.
 
-# Workflow steps
-steps:
-- command: <command-name>
-  inputs:
-    <arguments mapping>
+From the command-line this can be used as:
+  spdx-tool run-workflow <workflow.yaml> [parameter=value] [parameter=value]...
 
-- command: <command-name>
-  inputs:
-    input1: value
-    input2: ${{ parameter-name }}
+From a YAML file this can be used as:
+  - command: run-workflow
+    inputs:
+      file: <workflow.yaml>         # Optional workflow file
+      url: <url>                    # Optional workflow url
+      integrity: <sha256>           # Optional workflow integrity check
+      parameters:
+        name: <value>               # Optional workflow parameter
+        name: <value>               # Optional workflow parameter
+      outputs:
+        name: <variable>            # Optional output to save to variable
+        name: <variable>            # Optional output to save to variable
 ```
 
-A more detailed description of workflow YAML files can be found [here](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md)
-
-
-## Additional Information
-
-Additional information can be found at:
-
-- [SPDX Site](https://spdx.dev/)
-- [GitHub CI](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md)
-- [Using with Microsoft SBOM Tool](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md)
