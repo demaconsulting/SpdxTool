@@ -152,17 +152,22 @@ steps:
   inputs:
     output: <variable>            # Output variable for package ID
     spdx: <spdx.json>             # SPDX file name
-    name: <name>                  # Optional package name
-    version: <version>            # Optional package version
-    filename: <filename>          # Optional package filename
-    download: <url>               # Optional package download URL
+    id: <id>                      # Optional package ID header
+    name: <name>                  # Optional package name header
+    version: <version>            # Optional package version header
+    filename: <filename>          # Optional package filename header
+    download: <url>               # Optional package download URL header
 
   # Get the version of a package in an SPDX document
 - command: get-version
   inputs:
-    spdx: <spdx.json>             # SPDX file name
-    id: <id>                      # Package ID
     output: <variable>            # Output variable
+    spdx: <spdx.json>             # SPDX file name
+    id: <id>                      # Optional package ID header
+    name: <name>                  # Optional package name header
+    version: <version>            # Optional package version header
+    filename: <filename>          # Optional package filename header
+    download: <url>               # Optional package download URL header
 
   # Perform hash operations on the specified file
 - command: hash

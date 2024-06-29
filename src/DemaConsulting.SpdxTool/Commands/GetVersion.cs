@@ -1,5 +1,4 @@
-﻿using DemaConsulting.SpdxTool.Spdx;
-using YamlDotNet.Core;
+﻿using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
 namespace DemaConsulting.SpdxTool.Commands;
@@ -19,21 +18,32 @@ public class GetVersion : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         "get-version",
-        "get-version <spdx.json> <id>",
+        "get-version <spdx.json> <criteria>",
         "Get the version of an SPDX package.",
         new[]
         {
             "This command gets the version of an SPDX package.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool get-version <spdx.json> <id>",
+            "  spdx-tool get-version <spdx.json> [criteria]",
+            "",
+            "  The supported criteria are:",
+            "    id=<id>                         # Optional package ID header",
+            "    name=<name>                     # Optional package name header",
+            "    version=<version>               # Optional package version header",
+            "    filename=<filename>             # Optional package filename header",
+            "    download=<url>                  # Optional package download URL header",
             "",
             "From a YAML file this can be used as:",
             "  - command: get-version",
             "    inputs:",
+            "      output: <variable>            # Output variable",
             "      spdx: <spdx.json>             # SPDX file name",
-            "      id: <id>                      # Package ID",
-            "      output: <variable>            # Output variable"
+            "      id: <id>                      # Optional package ID header",
+            "      name: <name>                  # Optional package name header",
+            "      version: <version>            # Optional package version header",
+            "      filename: <filename>          # Optional package filename header",
+            "      download: <url>               # Optional package download URL header"
         },
         Instance);
 
@@ -47,12 +57,21 @@ public class GetVersion : Command
     /// <inheritdoc />
     public override void Run(string[] args)
     {
-        // Report an error if the number of arguments is not 2
-        if (args.Length != 2)
+        // Report an error if insufficient arguments
+        if (args.Length < 2)
             throw new CommandUsageException("'get-version' command missing arguments");
 
+        // Parse the arguments
+        var spdxFile = args[0];
+        var criteria = new Dictionary<string, string>();
+        FindPackage.ParseCriteria(args.Skip(1), criteria);
+
+        // Find the package version
+        var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria)?.Version ??
+                             throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria");
+
         // Print the version
-        Console.WriteLine(Get(args[0], args[1]));
+        Console.WriteLine(packageVersion);
     }
 
     /// <inheritdoc />
@@ -65,36 +84,19 @@ public class GetVersion : Command
         var spdxFile = GetMapString(inputs, "spdx", variables) ??
                        throw new YamlException(step.Start, step.End, "'get-version' command missing 'spdx' input");
 
-        // Get the 'id' input
-        var id = GetMapString(inputs, "id", variables) ??
-                 throw new YamlException(step.Start, step.End, "'get-version' command missing 'id' input");
+        // Get the criteria
+        var criteria = new Dictionary<string, string>();
+        FindPackage.ParseCriteria(inputs, variables, criteria);
+
+        // Find the package version
+        var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria)?.Version ??
+                        throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria");
 
         // Get the 'output' input
         var output = GetMapString(inputs, "output", variables) ??
                      throw new YamlException(step.Start, step.End, "'get-version' command missing 'output' input");
 
         // Save the version
-        variables[output] = Get(spdxFile, id);
-    }
-
-    /// <summary>
-    /// Get the version of a package in an SPDX document
-    /// </summary>
-    /// <param name="spdxFile">SPDX document file name</param>
-    /// <param name="id">SPDX package ID</param>
-    /// <returns>Version</returns>
-    /// <exception cref="CommandErrorException">on error</exception>
-    public static string Get(string spdxFile, string id)
-    {
-        // Load the document
-        var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
-
-        // Find the package
-        var package = Array.Find(doc.Packages, p => p.Id == id) ??
-                      throw new CommandErrorException($"Package {id} not found in {spdxFile}");
-
-        // Return the version
-        return package.Version ??
-               throw new CommandErrorException($"Package {id} in {spdxFile} has no version");
+        variables[output] = packageVersion;
     }
 }

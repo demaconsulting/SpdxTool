@@ -22,7 +22,7 @@ dotnet spdx-tool <arguments>
 The following usage information is printed by running the tool with no arguments, or requesting help information.
 
 ```
-DemaConsulting.SpdxTool 0.1.0-beta.1
+DemaConsulting.SpdxTool 0.0.0
 
 Usage: spdx-tool [options] <command> [arguments]
 
@@ -36,7 +36,7 @@ Commands:
   add-relationship <spdx.json> <args>      Add relationship between elements.
   copy-package <spdx.json> <args>          Copy package between SPDX documents (workflow only).
   find-package <spdx.json> <criteria>      Find package ID in SPDX document
-  get-version <spdx.json> <id>             Get the version of an SPDX package.
+  get-version <spdx.json> <criteria>       Get the version of an SPDX package.
   hash <operation> <algorithm> <file>      Generate or verify hashes of files
   print <text>                             Print text to the console
   query <pattern> <program> [args]         Query program output for value

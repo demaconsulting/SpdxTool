@@ -70,7 +70,7 @@ public class TestGetVersion
             "DemaConsulting.SpdxTool.dll",
             "get-version",
             "missing.spdx.json",
-            "SPDXRef-Package");
+            "id=SPDXRef-Package");
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
@@ -92,7 +92,7 @@ public class TestGetVersion
                 "DemaConsulting.SpdxTool.dll",
                 "get-version",
                 "spdx.json",
-                "SPDXRef-Package-2");
+                "id=SPDXRef-Package-2");
 
             // Verify package ID
             Assert.AreEqual(0, exitCode);
