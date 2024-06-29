@@ -134,6 +134,14 @@ public class AddRelationship : Command
     /// <param name="relationship">SPDX relationship</param>
     public static void Add(SpdxDocument doc, SpdxRelationship relationship)
     {
+        // Ensure the relationship ID matches an element
+        if (doc.GetElement(relationship.Id) == null)
+            throw new CommandErrorException($"Unable to find element {relationship.Id} for relationship");
+
+        // Ensure the relationship related-element ID matches an element
+        if (doc.GetElement(relationship.RelatedSpdxElement) == null)
+            throw new CommandErrorException($"Unable to find element {relationship.RelatedSpdxElement} for relationship");
+
         // Look for the same relationship
         var r = Array.Find(doc.Relationships, r => SpdxRelationship.Same.Equals(r, relationship));
         if (r != null)
