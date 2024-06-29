@@ -30,20 +30,22 @@ public class FindPackage : Command
             "  spdx-tool find-package <spdx.json> [criteria]",
             "",
             "  The supported criteria are:",
-            "    name=<name>                     # Optional package name",
-            "    version=<version>               # Optional package version",
-            "    filename=<filename>             # Optional package filename",
-            "    download=<url>                  # Optional package download URL",
+            "    id=<id>                         # Optional package ID header",
+            "    name=<name>                     # Optional package name header",
+            "    version=<version>               # Optional package version header",
+            "    filename=<filename>             # Optional package filename header",
+            "    download=<url>                  # Optional package download URL header",
             "",
             "From a YAML file this can be used as:",
             "  - command: find-package",
             "    inputs:",
             "      output: <variable>            # Output variable for package ID",
             "      spdx: <spdx.json>             # SPDX file name",
-            "      name: <name>                  # Optional package name",
-            "      version: <version>            # Optional package version",
-            "      filename: <filename>          # Optional package filename",
-            "      download: <url>               # Optional package download URL"
+            "      id: <id>                      # Optional package ID header",
+            "      name: <name>                  # Optional package name header",
+            "      version: <version>            # Optional package version header",
+            "      filename: <filename>          # Optional package filename header",
+            "      download: <url>               # Optional package download URL header"
         },
         Instance);
 
@@ -57,25 +59,16 @@ public class FindPackage : Command
     /// <inheritdoc />
     public override void Run(string[] args)
     {
-        // Report an error if the number of arguments is not 1
+        // Report an error if insufficient arguments
         if (args.Length < 2)
             throw new CommandUsageException("'find-package' command missing arguments");
 
-        // Parse the criteria
+        // Parse the arguments
+        var spdxFile = args[0];
         var criteria = new Dictionary<string, string>();
-        foreach (var arg in args.Skip(1))
-        {
-            // Split the argument into key and value
-            var parts = arg.Split('=', 2);
-            if (parts.Length != 2)
-                throw new CommandUsageException($"Invalid criteria '{arg}'");
-
-            // Add to the criteria
-            criteria[parts[0]] = parts[1];
-        }
+        ParseCriteria(args.Skip(1), criteria);
     
         // Find the package ID
-        var spdxFile = args[0];
         var packageId = FindPackageByCriteria(spdxFile, criteria)?.Id ?? 
                         throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria");
 
@@ -110,6 +103,28 @@ public class FindPackage : Command
     }
 
     /// <summary>
+    /// Parse the package criteria from the arguments
+    /// </summary>
+    /// <param name="args">Arguments</param>
+    /// <param name="criteria">Criteria dictionary to populate</param>
+    /// <exception cref="CommandUsageException">on error</exception>
+    public static void ParseCriteria(
+        IEnumerable<string> args,
+        Dictionary<string, string> criteria)
+    {
+        foreach (var arg in args)
+        {
+            // Split the argument into key and value
+            var parts = arg.Split('=', 2);
+            if (parts.Length != 2)
+                throw new CommandUsageException($"Invalid criteria '{arg}'");
+
+            // Add to the criteria
+            criteria[parts[0]] = parts[1];
+        }
+    }
+
+    /// <summary>
     /// Read the package criteria from the inputs
     /// </summary>
     /// <param name="map">Criteria map</param>
@@ -120,6 +135,11 @@ public class FindPackage : Command
         Dictionary<string, string> variables,
         Dictionary<string, string> criteria)
     {
+        // Get the 'id' input
+        var id = GetMapString(map, "id", variables);
+        if (id != null)
+            criteria["id"] = id;
+
         // Get the 'name' input
         var name = GetMapString(map, "name", variables);
         if (name != null)
@@ -177,6 +197,10 @@ public class FindPackage : Command
     /// <returns></returns>
     public static bool IsPackageMatch(SpdxPackage package, IReadOnlyDictionary<string, string> criteria)
     {
+        // Check the id
+        if (criteria.TryGetValue("id", out var id) && !package.Id.StartsWith(id))
+            return false;
+
         // Check the name
         if (criteria.TryGetValue("name", out var name) && !package.Name.StartsWith(name))
             return false;
