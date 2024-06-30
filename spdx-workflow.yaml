@@ -14,15 +14,12 @@ parameters:
 # Steps
 steps:
 
-  # Query the version of dotnet
-- command: query
-  displayName: Query DotNet SDK Version
+  # Get the version of a package in an SPDX document
+- command: get-version
   inputs:
-    output: dotnet-version
-    pattern: '(?<value>\d+\.\d+\.\d+)'
-    program: dotnet
-    arguments:
-    - '--version'
+    output: spdxtool-version
+    spdx: ${{ tool-spdx }}
+    name: DemaConsulting.SpdxTool
 
   # Rename the package ID for the platform library
 - command: rename-id
@@ -30,28 +27,36 @@ steps:
   inputs:
     spdx: ${{ tool-spdx }}
     old: SPDXRef-RootPackage
-    new: SPDXRef-DemaConsulting-SpdxTool
+    new: SPDXRef-DemaConsulting-SpdxTool-${{ spdxtool-version }}
 
-  # Add DotNet SDK as a build tool of the tool package
-- command: add-package
-  displayName: Add DotNet SDK as Build Tool of SpdxTool
+  # Query for DotNet version
+- command: run-workflow
+  displayName: Query DotNet Version
   inputs:
-    spdx: ${{ tool-spdx }}
-    package:
-      id: SPDXRef-Package-DotNetSDK
-      name: DotNet SDK
-      download: https://dotnet.microsoft.com/download
-      supplier: 'Organization: Microsoft Corporation'
-      originator: 'Organization: Microsoft Corporation'
-      homepage: https://dotnet.microsoft.com/en-us/
-      copyright: Copyright (c) 2019 Microsoft
-      summary: .NET is a free, open-source cross-platform framework for building applications and cloud services.
-      license: MIT
+    url: https://raw.githubusercontent.com/demaconsulting/SpdxWorkflows/main/GetDotNetVersion.yaml
+    outputs:
+      version: dotnet-version
+
+  # Add DotNet package
+- command: run-workflow
+  displayName: Add DotNet Package ${{ dotnet-version }}
+  inputs:
+    url: https://raw.githubusercontent.com/demaconsulting/SpdxWorkflows/main/AddDotNetPackage.yaml
+    parameters:
+      spdx: ${{ tool-spdx }}
+      id: SPDXRef-Package-DotNet-${{ dotnet-version }}
       version: ${{ dotnet-version }}
+
+  # Add DotNet relationships
+- command: add-relationship
+  displayName: Add DotNet Relationships
+  inputs:
+      spdx: ${{ tool-spdx }}
+    id: SPDXRef-Package-DotNet-${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
-      element: SPDXRef-DemaConsulting-SpdxTool
-      comment: The DotNet SDK is used to build SpdxTool
+      element: SPDXRef-DemaConsulting-SpdxTool-${{ spdxtool-version }}
+      comment: DemaConsulting.SpdxModel compiled by DotNet ${{ dotnet-version }}
 
   # Update the Sha256 digest on the tool SPDX document
 - command: hash
@@ -81,31 +86,31 @@ steps:
   inputs:
     spdx: ${{ tests-spdx }}
     old: SPDXRef-RootPackage
-    new: SPDXRef-DemaConsulting-SpdxTool-Tests
+    new: SPDXRef-DemaConsulting-SpdxTool-Tests-${{ spdxtool-version }}
 
-  # Add DotNet SDK as a build tool of the tests package
-- command: add-package
-  displayName: Add DotNet SDK as Build and Test Tool of SpdxTool Tests
+  # Add DotNet package
+- command: run-workflow
+  displayName: Add DotNet Package ${{ dotnet-version }}
   inputs:
-    spdx: ${{ tests-spdx }}
-    package:
-      id: SPDXRef-Package-DotNetSDK
-      name: DotNet SDK
-      download: https://dotnet.microsoft.com/download
-      supplier: 'Organization: Microsoft Corporation'
-      originator: 'Organization: Microsoft Corporation'
-      homepage: https://dotnet.microsoft.com/en-us/
-      copyright: Copyright (c) 2019 Microsoft
-      summary: .NET is a free, open-source cross-platform framework for building applications and cloud services.
-      license: MIT
+    url: https://raw.githubusercontent.com/demaconsulting/SpdxWorkflows/main/AddDotNetPackage.yaml
+    parameters:
+      spdx: ${{ tests-spdx }}
+      id: SPDXRef-Package-DotNet-${{ dotnet-version }}
       version: ${{ dotnet-version }}
+
+  # Add DotNet relationships
+- command: add-relationship
+  displayName: Add DotNet Relationships
+  inputs:
+      spdx: ${{ tests-spdx }}
+    id: SPDXRef-Package-DotNet-${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
-      element: SPDXRef-DemaConsulting-SpdxTool-Tests
-      comment: The DotNet SDK is used to build the SpdxTool Tests
+      element: SPDXRef-DemaConsulting-SpdxTool-Tests-${{ spdxtool-version }}
+      comment: DemaConsulting.SpdxModel.Tests compiled by DotNet ${{ dotnet-version }}
     - type: TEST_TOOL_OF
-      element: SPDXRef-DemaConsulting-SpdxTool-Tests
-      comment: The DotNet SDK is used to run the SpdxTool Tests
+      element: SPDXRef-DemaConsulting-SpdxTool-Tests-${{ spdxtool-version }}
+      comment: DemaConsulting.SpdxModel.Tests executed by DotNet ${{ dotnet-version }}
 
   # Update the Sha256 digest on the tests SPDX document
 - command: hash
