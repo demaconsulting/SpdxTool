@@ -51,7 +51,7 @@ steps:
 - command: add-relationship
   displayName: Add DotNet Relationships
   inputs:
-      spdx: ${{ tool-spdx }}
+    spdx: ${{ tool-spdx }}
     id: SPDXRef-Package-DotNet-${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
@@ -102,7 +102,7 @@ steps:
 - command: add-relationship
   displayName: Add DotNet Relationships
   inputs:
-      spdx: ${{ tests-spdx }}
+    spdx: ${{ tests-spdx }}
     id: SPDXRef-Package-DotNet-${{ dotnet-version }}
     relationships:
     - type: BUILD_TOOL_OF
