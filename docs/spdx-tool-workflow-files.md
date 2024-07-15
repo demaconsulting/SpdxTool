@@ -139,6 +139,7 @@ steps:
     to: <to.spdx.json>            # Destination SPDX file name
     package: <package>            # Package ID
     recursive: true               # Optional recursive flag
+    files: true                   # Optional copy-files flag
     relationships:                # Optional relationships
     - type: <relationship>        # Relationship type
       element: <element>          # Related element

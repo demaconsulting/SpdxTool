@@ -44,7 +44,7 @@ public class TestCopyPackage
     {
         const string toSpdxContents = "{\r\n" +
                                       "  \"files\": [],\r\n" +
-                                      "  \"packages\": [" +
+                                      "  \"packages\": [\r\n" +
                                       "    {\r\n" +
                                       "      \"SPDXID\": \"SPDXRef-Package-1\",\r\n" +
                                       "      \"name\": \"Test Package\",\r\n" +
@@ -74,7 +74,7 @@ public class TestCopyPackage
 
         const string fromSpdxContents = "{\r\n" +
                                         "  \"files\": [],\r\n" +
-                                        "  \"packages\": [" +
+                                        "  \"packages\": [\r\n" +
                                         "    {\r\n" +
                                         "      \"SPDXID\": \"SPDXRef-Package-2\",\r\n" +
                                         "      \"name\": \"Another Package\",\r\n" +
@@ -142,7 +142,7 @@ public class TestCopyPackage
     {
         const string toSpdxContents = "{\r\n" +
                                       "  \"files\": [],\r\n" +
-                                      "  \"packages\": [" +
+                                      "  \"packages\": [\r\n" +
                                       "    {\r\n" +
                                       "      \"SPDXID\": \"SPDXRef-Package-1\",\r\n" +
                                       "      \"name\": \"Test Package\",\r\n" +
@@ -172,7 +172,7 @@ public class TestCopyPackage
 
         const string fromSpdxContents = "{\r\n" +
                                         "  \"files\": [],\r\n" +
-                                        "  \"packages\": [" +
+                                        "  \"packages\": [\r\n" +
                                         "    {\r\n" +
                                         "      \"SPDXID\": \"SPDXRef-Package-2\",\r\n" +
                                         "      \"name\": \"Another Package\",\r\n" +
@@ -257,7 +257,7 @@ public class TestCopyPackage
     {
         const string toSpdxContents = "{\r\n" +
                                       "  \"files\": [],\r\n" +
-                                      "  \"packages\": [" +
+                                      "  \"packages\": [\r\n" +
                                       "    {\r\n" +
                                       "      \"SPDXID\": \"SPDXRef-MainPackage\",\r\n" +
                                       "      \"name\": \"Main Package\",\r\n" +
@@ -287,7 +287,7 @@ public class TestCopyPackage
 
         const string fromSpdxContents = "{\r\n" +
                                         "  \"files\": [],\r\n" +
-                                        "  \"packages\": [" +
+                                        "  \"packages\": [\r\n" +
                                         "    {\r\n" +
                                         "      \"SPDXID\": \"SPDXRef-Application\",\r\n" +
                                         "      \"name\": \"Test Application\",\r\n" +
@@ -405,6 +405,139 @@ public class TestCopyPackage
             Assert.AreEqual("SPDXRef-Compiler", doc.Relationships[3].Id);
             Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[3].RelationshipType);
             Assert.AreEqual("SPDXRef-Application", doc.Relationships[3].RelatedSpdxElement);
+        }
+        finally
+        {
+            File.Delete("to.spdx.json");
+            File.Delete("from.spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    [TestMethod]
+    public void CopyPackageFiles()
+    {
+        const string toSpdxContents = "{\r\n" +
+                                      "  \"files\": [],\r\n" +
+                                      "  \"packages\": [\r\n" +
+                                      "    {\r\n" +
+                                      "      \"SPDXID\": \"SPDXRef-MainPackage\",\r\n" +
+                                      "      \"name\": \"Main Package\",\r\n" +
+                                      "      \"versionInfo\": \"1.0.0\",\r\n" +
+                                      "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
+                                      "      \"licenseConcluded\": \"MIT\"\r\n" +
+                                      "    }\r\n" +
+                                      "  ],\r\n" +
+                                      "  \"relationships\": [" +
+                                      "    {\r\n" +
+                                      "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
+                                      "      \"relatedSpdxElement\": \"SPDXRef-MainPackage\",\r\n" +
+                                      "      \"relationshipType\": \"DESCRIBES\"\r\n" +
+                                      "    }\r\n" +
+                                      "  ],\r\n" +
+                                      "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
+                                      "  \"dataLicense\": \"CC0-1.0\",\r\n" +
+                                      "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
+                                      "  \"name\": \"Test Document\",\r\n" +
+                                      "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
+                                      "  \"creationInfo\": {\r\n" +
+                                      "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
+                                      "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
+                                      "  },\r\n" +
+                                      "  \"documentDescribes\": [ \"SPDXRef-MainPackage\" ]\r\n" +
+                                      "}";
+
+        const string fromSpdxContents = "{\r\n" +
+                                        "  \"files\": [\r\n" +
+                                        "    {\r\n" +
+                                        "      \"SPDXID\" : \"SPDXRef-File1\",\r\n" +
+                                        "      \"checksums\" : [ {\r\n" +
+                                        "        \"algorithm\" : \"SHA1\",\r\n" +
+                                        "        \"checksumValue\" : \"d6a770ba38583ed4bb4525bd96e50461655d2758\"\r\n" +
+                                        "      } ],\r\n" +
+                                        "      \"fileName\" : \"file1\"\r\n" +
+                                        "    },\r\n" +
+                                        "    {\r\n" +
+                                        "      \"SPDXID\" : \"SPDXRef-File2\",\r\n" +
+                                        "      \"checksums\" : [ {\r\n" +
+                                        "        \"algorithm\" : \"SHA1\",\r\n" +
+                                        "        \"checksumValue\" : \"d6a770ba38583ed4bb4525bd96e50461655d2758\"\r\n" +
+                                        "      } ],\r\n" +
+                                        "      \"fileName\" : \"file2\"\r\n" +
+                                        "    }\r\n" +
+                                        "  ],\r\n" +
+                                        "  \"packages\": [\r\n" +
+                                        "    {\r\n" +
+                                        "      \"SPDXID\": \"SPDXRef-Application\",\r\n" +
+                                        "      \"name\": \"Test Application\",\r\n" +
+                                        "      \"versionInfo\": \"1.2.3\",\r\n" +
+                                        "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxModel\",\r\n" +
+                                        "      \"licenseConcluded\": \"MIT\",\r\n" +
+                                        "      \"filesAnalyzed\" : true,\r\n" +
+                                        "      \"hasFiles\" : [ \"SPDXRef-File1\", \"SPDXRef-File2\" ]\r\n" +
+                                        "    }\r\n" +
+                                        "  ],\r\n" +
+                                        "  \"relationships\": [" +
+                                        "    {\r\n" +
+                                        "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
+                                        "      \"relatedSpdxElement\": \"SPDXRef-Application\",\r\n" +
+                                        "      \"relationshipType\": \"DESCRIBES\"\r\n" +
+                                        "    }\r\n" +
+                                        "  ],\r\n" +
+                                        "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
+                                        "  \"dataLicense\": \"CC0-1.0\",\r\n" +
+                                        "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
+                                        "  \"name\": \"Test Document\",\r\n" +
+                                        "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
+                                        "  \"creationInfo\": {\r\n" +
+                                        "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
+                                        "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
+                                        "  },\r\n" +
+                                        "  \"documentDescribes\": [ \"SPDXRef-Application\", \"SPDXRef-Unrelated-Application\" ]\r\n" +
+                                        "}";
+
+        // Workflow contents
+        const string workflowContents = "steps:\n" +
+                                        "- command: copy-package\n" +
+                                        "  inputs:\n" +
+                                        "    from: from.spdx.json\n" +
+                                        "    to: to.spdx.json\n" +
+                                        "    package: SPDXRef-Application\n" +
+                                        "    files: true\n" +
+                                        "    relationships:\n" +
+                                        "      - type: CONTAINED_BY\n" +
+                                        "        element: SPDXRef-MainPackage\n";
+        try
+        {
+            // Write the SPDX files
+            File.WriteAllText("to.spdx.json", toSpdxContents);
+            File.WriteAllText("from.spdx.json", fromSpdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Verify success
+            Assert.AreEqual(0, exitCode);
+
+            // Read the SPDX document
+            Assert.IsTrue(File.Exists("to.spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
+
+            // Verify expected packages
+            Assert.AreEqual(2, doc.Packages.Length);
+            Assert.AreEqual("SPDXRef-MainPackage", doc.Packages[0].Id);
+            Assert.AreEqual("SPDXRef-Application", doc.Packages[1].Id);
+
+            // Verify expected files
+            Assert.AreEqual(2, doc.Files.Length);
+            Assert.AreEqual("SPDXRef-File1", doc.Files[0].Id);
+            Assert.AreEqual("SPDXRef-File2", doc.Files[1].Id);
         }
         finally
         {

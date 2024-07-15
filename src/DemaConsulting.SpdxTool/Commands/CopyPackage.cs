@@ -27,7 +27,7 @@ public class CopyPackage : Command
             "This command copies a package from one SPDX document to another.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool copy-package <from.spdx.json> <to.spdx.json> <package> [recursive]",
+            "  spdx-tool copy-package <from.spdx.json> <to.spdx.json> <package> [recursive] [files]",
             "",
             "From a YAML file this can be used as:",
             "  - command: copy-package",
@@ -36,6 +36,7 @@ public class CopyPackage : Command
             "      to: <to.spdx.json>            # Destination SPDX file name",
             "      package: <package>            # Package ID",
             "      recursive: true               # Optional recursive flag",
+            "      files: true                   # Optional copy-files flag",
             "      relationships:                # Optional relationships",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
@@ -74,15 +75,26 @@ public class CopyPackage : Command
 
         // Check for recursive option
         var recursive = false;
-        if (args.Length > 3)
+        var files = false;
+        foreach (var option in args.Skip(3))
         {
-            if (args[3] != "recursive")
-                throw new CommandUsageException($"'copy-package' command invalid option {args[3]}");
-            recursive = true;
+            switch (option)
+            {
+                case "recursive":
+                    recursive = true;
+                    break;
+
+                case "files":
+                    files = true;
+                    break;
+
+                default:
+                    throw new CommandUsageException($"'copy-package' command invalid option {option}");
+            }
         }
 
         // Copy the package
-        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, Array.Empty<SpdxRelationship>(), recursive);
+        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, Array.Empty<SpdxRelationship>(), recursive, files);
     }
 
     /// <inheritdoc />
@@ -108,12 +120,17 @@ public class CopyPackage : Command
         if (!bool.TryParse(recursiveText, out var recursive))
             throw new YamlException(step.Start, step.End, "'copy-package' invalid 'recursive' input");
 
+        // Get the 'files' input
+        var filesText = GetMapString(inputs, "files", variables) ?? "false";
+        if (!bool.TryParse(filesText, out var files))
+            throw new YamlException(step.Start, step.End, "'copy-package' invalid 'files' input");
+
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships");
         var relationships = AddRelationship.Parse("add-package", packageId, relationshipsSequence, variables);
 
         // Copy the package
-        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, relationships, recursive);
+        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, relationships, recursive, files);
     }
 
     /// <summary>
@@ -124,7 +141,8 @@ public class CopyPackage : Command
     /// <param name="packageId">Package to copy</param>
     /// <param name="relationships">Relationships of package to elements in destination</param>
     /// <param name="recursive">Recursive copy option</param>
-    public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId, SpdxRelationship[] relationships, bool recursive)
+    /// <param name="files">Copy files option</param>
+    public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId, SpdxRelationship[] relationships, bool recursive, bool files)
     {
         // Verify package name
         if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
@@ -135,7 +153,7 @@ public class CopyPackage : Command
         var toDoc = SpdxHelpers.LoadJsonDocument(toFile);
 
         // Copy the package
-        Copy(fromDoc, toDoc, packageId);
+        Copy(fromDoc, toDoc, packageId, files);
 
         // Append the root relationships to the destination document
         AddRelationship.Add(toDoc, relationships);
@@ -144,7 +162,7 @@ public class CopyPackage : Command
         if (recursive)
         {
             var copied = new HashSet<string> { packageId };
-            CopyChildren(fromDoc, toDoc, packageId, copied);
+            CopyChildren(fromDoc, toDoc, packageId, copied, files);
         }
 
         // Write the destination document
@@ -157,8 +175,9 @@ public class CopyPackage : Command
     /// <param name="fromDoc">SPDX document to copy from</param>
     /// <param name="toDoc">SPDX document to copy to</param>
     /// <param name="packageId">ID of the SPDX package to copy</param>
+    /// <param name="files">Copy files option</param>
     /// <exception cref="CommandErrorException">On error</exception>
-    public static void Copy(SpdxDocument fromDoc, SpdxDocument toDoc, string packageId)
+    public static void Copy(SpdxDocument fromDoc, SpdxDocument toDoc, string packageId, bool files)
     {
         // Verify the package exists in the source
         var fromPackage = Array.Find(fromDoc.Packages, p => p.Id == packageId) ??
@@ -174,10 +193,50 @@ public class CopyPackage : Command
         }
         else
         {
-            // Append copy to the to-document
+            // Append copy to the to-document (without files)
             toPackage = fromPackage.DeepCopy();
+            toPackage.FilesAnalyzed = false;
+            toPackage.HasFiles = Array.Empty<string>();
             toDoc.Packages = toDoc.Packages.Append(toPackage).ToArray();
         }
+
+        // Skip if we don't need to copy files
+        if (!files || fromPackage.FilesAnalyzed == false || fromPackage.HasFiles.Length == 0)
+            return;
+
+        // Indicate the to-package has had analyzed files
+        toPackage.FilesAnalyzed = true;
+
+        // Get the new file IDs
+        var newFiles = fromPackage.HasFiles.Except(toPackage.HasFiles).ToArray();
+        if (newFiles.Length == 0)
+            return;
+
+        // Copy the files
+        foreach (var file in newFiles)
+        {
+            // Find the file in the source
+            var fromFile = Array.Find(fromDoc.Files, f => f.Id == file) ??
+                           throw new CommandErrorException($"Package {packageId} refers to missing file {file}");
+
+            // Test if the to-file exists
+            var toFile = Array.Find(toDoc.Files, f => SpdxFile.Same.Equals(f, fromFile));
+            if (toFile != null)
+            {
+                // Enhance the to-file and rename if necessary
+                toFile.Enhance(fromFile);
+                RenameId.Rename(toDoc, toFile.Id, fromFile.Id);
+            }
+            else
+            {
+                // Append copy to the to-document
+                toFile = fromFile.DeepCopy();
+                toDoc.Files = toDoc.Files.Append(toFile).ToArray();
+            }
+        }
+
+        // Add the new files
+        toPackage.HasFiles = toPackage.HasFiles.Concat(newFiles).ToArray();
     }
 
     /// <summary>
@@ -187,7 +246,8 @@ public class CopyPackage : Command
     /// <param name="toDoc">SPDX document to copy to</param>
     /// <param name="parentId">ID of the parent package</param>
     /// <param name="copied">Packages already copied</param>
-    public static void CopyChildren(SpdxDocument fromDoc, SpdxDocument toDoc, string parentId, HashSet<string> copied)
+    /// <param name="files">Copy files option</param>
+    public static void CopyChildren(SpdxDocument fromDoc, SpdxDocument toDoc, string parentId, HashSet<string> copied, bool files)
     {
         // Process each relationship dealing with the parent package
         foreach (var relationship in fromDoc.Relationships)
@@ -201,14 +261,14 @@ public class CopyPackage : Command
                 continue;
 
             // Copy/enhance the child-package
-            Copy(fromDoc, toDoc, childId);
+            Copy(fromDoc, toDoc, childId, files);
 
             // Add/enhance the relationship
             AddRelationship.Add(toDoc, relationship);
 
             // Report copied, and process children if not already processed
             if (copied.Add(childId))
-                CopyChildren(fromDoc, toDoc, childId, copied);
+                CopyChildren(fromDoc, toDoc, childId, copied, files);
         }
     }
 
