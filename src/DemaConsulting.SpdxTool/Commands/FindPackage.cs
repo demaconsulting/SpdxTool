@@ -89,8 +89,7 @@ public class FindPackage : Command
         ParseCriteria(args.Skip(1), criteria);
     
         // Find the package ID
-        var packageId = FindPackageByCriteria(spdxFile, criteria)?.Id ?? 
-                        throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria");
+        var packageId = FindPackageByCriteria(spdxFile, criteria).Id;
 
         // Write the package ID to the console
         Console.WriteLine(packageId);
@@ -115,8 +114,7 @@ public class FindPackage : Command
         ParseCriteria(inputs, variables, criteria);
 
         // Find the package ID
-        var packageId = FindPackageByCriteria(spdxFile, criteria)?.Id ??
-                        throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria");
+        var packageId = FindPackageByCriteria(spdxFile, criteria).Id;
 
         // Save the package ID to the variables
         variables[output] = packageId;
@@ -188,25 +186,21 @@ public class FindPackage : Command
     /// <param name="criteria">Search criteria</param>
     /// <returns>SPDX package or null</returns>
     /// <exception cref="CommandUsageException"></exception>
-    public static SpdxPackage? FindPackageByCriteria(string spdxFile, IReadOnlyDictionary<string, string> criteria)
+    public static SpdxPackage FindPackageByCriteria(string spdxFile, IReadOnlyDictionary<string, string> criteria)
     {
         // Load the SPDX document
         var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
 
-        // Find the package
-        return FindPackageByCriteria(doc, criteria);
-    }
+        // Find the packages
+        var matches = doc.Packages.Where(p => IsPackageMatch(p, criteria)).ToArray();
 
-    /// <summary>
-    /// Find the package in the SPDX document matching the specified criteria
-    /// </summary>
-    /// <param name="doc">SPDX document</param>
-    /// <param name="criteria">Search criteria</param>
-    /// <returns>SPDX package or null</returns>
-    public static SpdxPackage? FindPackageByCriteria(SpdxDocument doc, IReadOnlyDictionary<string, string> criteria)
-    {
-        // Find the package
-        return Array.Find(doc.Packages, p => IsPackageMatch(p, criteria));
+        // Return the package
+        return matches.Length switch
+        {
+            0 => throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria"),
+            1 => matches[0],
+            _ => throw new CommandErrorException($"Multiple packages found in {spdxFile} matching search criteria")
+        };
     }
 
     /// <summary>
