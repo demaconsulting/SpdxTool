@@ -22,6 +22,8 @@
     <PackageIcon>Icon.png</PackageIcon>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Product>DemaConsulting.SpdxTool</Product>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
