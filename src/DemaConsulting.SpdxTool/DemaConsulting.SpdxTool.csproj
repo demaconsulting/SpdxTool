@@ -15,14 +15,22 @@
     <Copyright>Copyright DEMA Consulting</Copyright>
     <PackageProjectUrl>https://github.com/demaconsulting/SpdxTool</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>spdx</PackageTags>
+    <PackageTags>spdx;sbom</PackageTags>
     <PackAsTool>True</PackAsTool>
     <ToolCommandName>spdx-tool</ToolCommandName>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Icon.png</PackageIcon>
-    <RepositoryUrl>https://github.com/demaconsulting/SpdxTool.git</RepositoryUrl>
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <Product>DemaConsulting.SpdxTool</Product>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="DemaConsulting.SpdxTool.csproj.DotSettings" />
