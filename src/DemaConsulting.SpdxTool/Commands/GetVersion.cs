@@ -87,8 +87,7 @@ public class GetVersion : Command
         FindPackage.ParseCriteria(args.Skip(1), criteria);
 
         // Find the package version
-        var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria)?.Version ??
-                             throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria");
+        var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria).Version;
 
         // Print the version
         Console.WriteLine(packageVersion);
@@ -109,14 +108,13 @@ public class GetVersion : Command
         FindPackage.ParseCriteria(inputs, variables, criteria);
 
         // Find the package version
-        var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria)?.Version ??
-                        throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria");
+        var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria).Version;
 
         // Get the 'output' input
         var output = GetMapString(inputs, "output", variables) ??
                      throw new YamlException(step.Start, step.End, "'get-version' command missing 'output' input");
 
         // Save the version
-        variables[output] = packageVersion;
+        variables[output] = packageVersion ?? string.Empty;
     }
 }
