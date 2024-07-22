@@ -18,6 +18,13 @@ on:
         - publish
 
 jobs:
+  build:
+    name: Build Linux
+    uses: ./.github/workflows/build.yaml
+    with:
+      os: ubuntu-latest
+      version: ${{ inputs.version }}
+
   release:
     permissions:
       contents: write
@@ -25,89 +32,30 @@ jobs:
 
     runs-on: ubuntu-latest
     
+    needs: build
+    
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup dotnet 6/8
-      uses: actions/setup-dotnet@v4
+    - uses: nuget/setup-nuget@v2
       with:
-        dotnet-version: |
-          6.x
-          8.x
+        nuget-version: '6.x'
 
-    - name: Restore Tools
-      run: >
-        dotnet tool restore
-      
-    - name: Restore Dependencies
-      run: >
-        dotnet restore
-      
-    - name: Build
-      run: >
-        dotnet build
-        --no-restore
-        --configuration Release
-        --property:Version=${{ github.event.inputs.version }}
-
-    - name: Test
-      run: >
-        dotnet test
-        --no-build
-        --configuration Release
-        --property:Version=${{ github.event.inputs.version }}
-
-    - name: Generate Tool SBOM
-      run: >
-        dotnet sbom-tool generate
-        -b src/DemaConsulting.SpdxTool/bin/Release
-        -bc src/DemaConsulting.SpdxTool
-        -pn DemaConsulting.SpdxTool
-        -pv ${{ github.event.inputs.version }}
-        -ps DemaConsulting
-        -nsb https://DemaConsulting.com/SpdxTool
-        -li true
-        -pm true
-
-    - name: Generate Tests SBOM
-      run: >
-        dotnet sbom-tool generate
-        -b test/DemaConsulting.SpdxTool.Tests/bin/Release
-        -bc test/DemaConsulting.SpdxTool.Tests
-        -pn DemaConsulting.SpdxTool.Tests
-        -pv ${{ github.event.inputs.version }}
-        -ps DemaConsulting
-        -nsb https://DemaConsulting.com/SpdxTool.Tests
-        -li true
-        -pm true
-
-    - name: Run SBOM Workflow
-      run: >
-        dotnet src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-        run-workflow spdx-workflow.yaml
-
-    - name: Create Dotnet Tool
-      run: >
-        dotnet pack
-        --no-build
-        --no-restore
-        --property:PackageVersion=${{ github.event.inputs.version }}
-
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v4
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
       with:
-        name: artifacts-release
-        path: |
-          **/*.nupkg
-          **/manifest.spdx.json
-          **/manifest.spdx.json.sha256
-          *summary.md
+        name: artifacts-ubuntu-latest
+        path: artifacts
 
+    - name: Clean Artifacts
+      shell: bash
+      run: rm -rf artifacts/test
+      
     - name: Create release
       if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'src/**/*.nupkg,src/**/manifest.spdx.json,src/**/manifest.spdx.json.sha256,*summary.md'
+        artifacts: 'artifacts/**/*'
         generateReleaseNotes: true
         tag: ${{ github.event.inputs.version }}
 
@@ -115,6 +63,6 @@ jobs:
       if: ${{ inputs.publish == 'publish' }}
       run: >
         dotnet nuget push
-        src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+        artifacts/src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
         --source "https://api.nuget.org/v3/index.json"
         --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
