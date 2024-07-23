@@ -29,6 +29,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class SetVariable : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "set-variable";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly SetVariable Instance = new();
@@ -37,7 +42,7 @@ public class SetVariable : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "set-variable",
+        Command,
         "set-variable",
         "Set workflow variable (workflow only).",
         new[]

@@ -29,6 +29,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class Print : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "print";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly Print Instance = new();
@@ -37,7 +42,7 @@ public class Print : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "print",
+        Command,
         "print <text>",
         "Print text to the console",
         new[]

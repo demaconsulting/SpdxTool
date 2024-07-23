@@ -29,6 +29,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class Help : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "help";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly Help Instance = new();
@@ -37,7 +42,7 @@ public class Help : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "help",
+        Command,
         "help <command>",
         "Display extended help about a command",
         new[]

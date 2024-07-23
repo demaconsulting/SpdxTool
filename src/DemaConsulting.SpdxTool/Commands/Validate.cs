@@ -30,6 +30,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class Validate : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "validate";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly Validate Instance = new();
@@ -38,7 +43,7 @@ public class Validate : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "validate",
+        Command,
         "validate <spdx.json> [ntia]",
         "Validate SPDX document for issues",
         new[]

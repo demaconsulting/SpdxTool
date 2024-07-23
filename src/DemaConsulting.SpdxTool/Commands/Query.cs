@@ -31,6 +31,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class Query : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "query";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly Query Instance = new();
@@ -39,7 +44,7 @@ public class Query : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "query",
+        Command,
         "query <pattern> <program> [args]",
         "Query program output for value",
         new[]
@@ -125,7 +130,7 @@ public class Query : Command
     public static string QueryProgramOutput(string pattern, string program, string[] arguments)
     {
         // Construct the regular expression
-        var regex = new Regex(pattern);
+        var regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
         if (!regex.GetGroupNames().Contains("value"))
             throw new CommandUsageException("Pattern must contain a 'value' capture group");
 

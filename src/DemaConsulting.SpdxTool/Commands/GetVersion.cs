@@ -29,6 +29,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class GetVersion : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "get-version";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly GetVersion Instance = new();
@@ -37,7 +42,7 @@ public class GetVersion : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "get-version",
+        Command,
         "get-version <spdx.json> <criteria>",
         "Get the version of an SPDX package.",
         new[]

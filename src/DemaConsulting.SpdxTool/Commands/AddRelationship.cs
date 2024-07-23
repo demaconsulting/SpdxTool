@@ -31,6 +31,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class AddRelationship : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "add-relationship";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly AddRelationship Instance = new();
@@ -39,7 +44,7 @@ public class AddRelationship : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "add-relationship",
+        Command,
         "add-relationship <spdx.json> <args>",
         "Add relationship between elements.",
         new[]
@@ -113,7 +118,7 @@ public class AddRelationship : Command
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
                                     throw new YamlException(step.Start, step.End, "'add-package' missing 'relationships' input");
-        var relationships = Parse("add-package", id, relationshipsSequence, variables);
+        var relationships = Parse(Command, id, relationshipsSequence, variables);
 
         // Add the relationship
         Add(spdxFile, relationships);

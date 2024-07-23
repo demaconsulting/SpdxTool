@@ -31,6 +31,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class FindPackage : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "find-package";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly FindPackage Instance = new();
@@ -39,7 +44,7 @@ public class FindPackage : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "find-package",
+        Command,
         "find-package <spdx.json> <criteria>",
         "Find package ID in SPDX document",
         new[]

@@ -31,6 +31,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class RenameId : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "rename-id";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly RenameId Instance = new();
@@ -39,7 +44,7 @@ public class RenameId : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "rename-id",
+        Command,
         "rename-id <arguments>",
         "Rename an element ID in an SPDX document.",
         new[]

@@ -31,6 +31,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class AddPackage : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "add-package";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly AddPackage Instance = new();
@@ -39,7 +44,7 @@ public class AddPackage : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "add-package",
+        Command,
         "add-package",
         "Add package to SPDX document (workflow only).",
         new[]
@@ -106,11 +111,11 @@ public class AddPackage : Command
         // Parse the package
         var packageMap = GetMapMap(inputs, "package") ??
                          throw new YamlException(step.Start, step.End, "'add-package' missing 'package' input");
-        var package = ParsePackage("add-package", packageMap, variables);
+        var package = ParsePackage(Command, packageMap, variables);
 
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships");
-        var relationships = AddRelationship.Parse("add-package", package.Id, relationshipsSequence, variables);
+        var relationships = AddRelationship.Parse(Command, package.Id, relationshipsSequence, variables);
 
         // Add the package
         AddPackageToSpdxFile(spdxFile, package, relationships);
