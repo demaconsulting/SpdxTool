@@ -32,6 +32,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class ToMarkdown : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "to-markdown";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly ToMarkdown Instance = new();
@@ -40,7 +45,7 @@ public class ToMarkdown : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "to-markdown",
+        Command,
         "to-markdown <spdx.json> <out.md> [args]",
         "Create Markdown summary for SPDX document",
         new[]

@@ -30,6 +30,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class RunWorkflow : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "run-workflow";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly RunWorkflow Instance = new();
@@ -38,7 +43,7 @@ public class RunWorkflow : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "run-workflow",
+        Command,
         "run-workflow <workflow.yaml>",
         "Runs the workflow file/url",
         new[]

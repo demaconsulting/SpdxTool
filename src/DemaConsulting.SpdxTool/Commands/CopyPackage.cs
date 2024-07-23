@@ -31,6 +31,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class CopyPackage : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "copy-package";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly CopyPackage Instance = new();
@@ -39,7 +44,7 @@ public class CopyPackage : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "copy-package",
+        Command,
         "copy-package <spdx.json> <args>",
         "Copy package between SPDX documents (workflow only).",
         new[]
@@ -147,7 +152,7 @@ public class CopyPackage : Command
 
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships");
-        var relationships = AddRelationship.Parse("add-package", packageId, relationshipsSequence, variables);
+        var relationships = AddRelationship.Parse(Command, packageId, relationshipsSequence, variables);
 
         // Copy the package
         CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, relationships, recursive, files);

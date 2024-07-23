@@ -29,6 +29,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class Hash : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "hash";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly Hash Instance = new();
@@ -37,7 +42,7 @@ public class Hash : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "hash",
+        Command,
         "hash <operation> <algorithm> <file>",
         "Generate or verify hashes of files",
         new[]

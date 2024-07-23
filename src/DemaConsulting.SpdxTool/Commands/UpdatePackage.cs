@@ -30,6 +30,11 @@ namespace DemaConsulting.SpdxTool.Commands;
 public class UpdatePackage : Command
 {
     /// <summary>
+    /// Command name
+    /// </summary>
+    private const string Command = "update-package";
+
+    /// <summary>
     /// Singleton instance of this command
     /// </summary>
     public static readonly UpdatePackage Instance = new();
@@ -38,7 +43,7 @@ public class UpdatePackage : Command
     /// Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        "update-package",
+        Command,
         "update-package",
         "Update package in SPDX document (workflow only).",
         new[]
