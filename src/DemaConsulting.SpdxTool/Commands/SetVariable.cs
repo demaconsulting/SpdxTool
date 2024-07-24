@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Set Variable Command
 /// </summary>
-public class SetVariable : Command
+public sealed class SetVariable : Command
 {
     /// <summary>
     /// Command name

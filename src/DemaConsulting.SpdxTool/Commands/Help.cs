@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to display extended help about a command
 /// </summary>
-public class Help : Command
+public sealed class Help : Command
 {
     /// <summary>
     /// Command name

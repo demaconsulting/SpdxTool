@@ -27,7 +27,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to validate SPDX documents
 /// </summary>
-public class Validate : Command
+public sealed class Validate : Command
 {
     /// <summary>
     /// Command name

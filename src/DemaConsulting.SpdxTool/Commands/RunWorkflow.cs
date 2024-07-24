@@ -27,7 +27,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to run a workflow YAML file
 /// </summary>
-public class RunWorkflow : Command
+public sealed class RunWorkflow : Command
 {
     /// <summary>
     /// Command name

@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Hash command
 /// </summary>
-public class Hash : Command
+public sealed class Hash : Command
 {
     /// <summary>
     /// Command name

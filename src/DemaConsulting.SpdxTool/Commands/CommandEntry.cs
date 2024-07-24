@@ -28,4 +28,4 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <param name="Summary">Command summary</param>
 /// <param name="Details">Command detailed description</param>
 /// <param name="Instance">Command instance</param>
-public record CommandEntry(string Name, string CommandLine, string Summary, string[] Details, Command Instance);
+public sealed record CommandEntry(string Name, string CommandLine, string Summary, string[] Details, Command Instance);
