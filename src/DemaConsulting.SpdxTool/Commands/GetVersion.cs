@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Get Version Command
 /// </summary>
-public class GetVersion : Command
+public sealed class GetVersion : Command
 {
     /// <summary>
     /// Command name

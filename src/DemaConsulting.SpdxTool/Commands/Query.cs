@@ -28,7 +28,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Query a program output for a value
 /// </summary>
-public class Query : Command
+public sealed class Query : Command
 {
     /// <summary>
     /// Command name

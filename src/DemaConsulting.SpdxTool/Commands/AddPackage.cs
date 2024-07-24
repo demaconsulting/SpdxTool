@@ -28,7 +28,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Add a package to an SPDX document
 /// </summary>
-public class AddPackage : Command
+public sealed class AddPackage : Command
 {
     /// <summary>
     /// Command name

@@ -28,7 +28,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Rename an element ID in an SPDX document
 /// </summary>
-public class RenameId : Command
+public sealed class RenameId : Command
 {
     /// <summary>
     /// Command name

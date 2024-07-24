@@ -28,7 +28,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Find the ID of a package in an SPDX file
 /// </summary>
-public class FindPackage : Command
+public sealed class FindPackage : Command
 {
     /// <summary>
     /// Command name

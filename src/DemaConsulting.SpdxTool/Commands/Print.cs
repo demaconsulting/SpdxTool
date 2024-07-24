@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Print command
 /// </summary>
-public class Print : Command
+public sealed class Print : Command
 {
     /// <summary>
     /// Command name

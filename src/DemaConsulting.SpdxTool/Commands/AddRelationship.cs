@@ -28,7 +28,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Add a relationship between SPDX elements
 /// </summary>
-public class AddRelationship : Command
+public sealed class AddRelationship : Command
 {
     /// <summary>
     /// Command name

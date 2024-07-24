@@ -28,7 +28,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to copy package from one SPDX document to another
 /// </summary>
-public class CopyPackage : Command
+public sealed class CopyPackage : Command
 {
     /// <summary>
     /// Command name

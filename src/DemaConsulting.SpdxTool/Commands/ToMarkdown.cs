@@ -29,7 +29,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 /// Command to generate a Markdown summary of an SPDX document
 /// </summary>
-public class ToMarkdown : Command
+public sealed class ToMarkdown : Command
 {
     /// <summary>
     /// Command name
@@ -109,7 +109,7 @@ public class ToMarkdown : Command
 
         // Get the 'markdown' input
         var markdownFile = GetMapString(inputs, "markdown", variables) ??
-                           throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'spdx' input");
+                           throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'markdown' input");
 
         // Get the 'title' input
         var title = GetMapString(inputs, "title", variables) ?? "SPDX Document";
