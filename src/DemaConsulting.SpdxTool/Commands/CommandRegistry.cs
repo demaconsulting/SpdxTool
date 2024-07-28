@@ -34,6 +34,7 @@ public static class CommandsRegistry
         { AddPackage.Entry.Name, AddPackage.Entry },
         { AddRelationship.Entry.Name, AddRelationship.Entry },
         { CopyPackage.Entry.Name, CopyPackage.Entry },
+        { Diagram.Entry.Name, Diagram.Entry },
         { FindPackage.Entry.Name, FindPackage.Entry },
         { GetVersion.Entry.Name, GetVersion.Entry },
         { Hash.Entry.Name, Hash.Entry },
