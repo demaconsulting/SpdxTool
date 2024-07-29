@@ -289,7 +289,7 @@ public sealed class CopyPackage : Command
             Copy(fromDoc, toDoc, childId, files);
 
             // Add/enhance the relationship
-            AddRelationship.Add(toDoc, relationship);
+            SpdxModel.Transform.SpdxRelationships.Add(toDoc, relationship);
 
             // Report copied, and process children if not already processed
             if (copied.Add(childId))
