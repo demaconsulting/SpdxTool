@@ -59,6 +59,7 @@ public sealed class AddRelationship : Command
             "    inputs:",
             "      spdx: <spdx.json>             # SPDX file name",
             "      id: <id>                      # Element ID",
+            "      replace: false                # Replace existing relationships (default: true)",
             "      relationships:",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
@@ -115,13 +116,18 @@ public sealed class AddRelationship : Command
         var id = GetMapString(inputs, "id", variables) ??
                     throw new YamlException(step.Start, step.End, "'add-relationship' command missing 'id' input");
 
+        // Get the 'replace' input
+        var replaceText = GetMapString(inputs, "replace", variables) ?? "true";
+        if (!bool.TryParse(replaceText, out var replace))
+            throw new YamlException(step.Start, step.End, "'add-relationship' invalid 'replace' input");
+
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
                                     throw new YamlException(step.Start, step.End, "'add-package' missing 'relationships' input");
         var relationships = Parse(Command, id, relationshipsSequence, variables);
 
         // Add the relationship
-        Add(spdxFile, relationships);
+        Add(spdxFile, relationships, replace);
     }
 
     /// <summary>
@@ -129,12 +135,13 @@ public sealed class AddRelationship : Command
     /// </summary>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="relationships">SPDX relationships</param>
-    public static void Add(string spdxFile, SpdxRelationship[] relationships)
+    /// <param name="replace">Replace existing relationships</param>
+    public static void Add(string spdxFile, SpdxRelationship[] relationships, bool replace = false)
     {
         // Load the SPDX document
         var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
 
-        Add(doc, relationships);
+        Add(doc, relationships, replace);
 
         // Save the SPDX document
         SpdxHelpers.SaveJsonDocument(doc, spdxFile);
@@ -145,40 +152,16 @@ public sealed class AddRelationship : Command
     /// </summary>
     /// <param name="doc">SPDX document</param>
     /// <param name="relationships">SPDX relationships</param>
-    public static void Add(SpdxDocument doc, SpdxRelationship[] relationships)
+    /// <param name="replace">Replace existing relationships</param>
+    public static void Add(SpdxDocument doc, SpdxRelationship[] relationships, bool replace = false)
     {
-        // Add all relationships
-        foreach (var relationship in relationships)
-            Add(doc, relationship);
-    }
-
-    /// <summary>
-    /// Add the SPDX relationship to the SPDX document
-    /// </summary>
-    /// <param name="doc">SPDX document</param>
-    /// <param name="relationship">SPDX relationship</param>
-    public static void Add(SpdxDocument doc, SpdxRelationship relationship)
-    {
-        // Ensure the relationship ID matches an element
-        if (doc.GetElement(relationship.Id) == null)
-            throw new CommandErrorException($"Unable to find element {relationship.Id} for relationship");
-
-        // Ensure the relationship related-element ID matches an element
-        if (doc.GetElement(relationship.RelatedSpdxElement) == null)
-            throw new CommandErrorException($"Unable to find element {relationship.RelatedSpdxElement} for relationship");
-
-        // Look for the same relationship
-        var r = Array.Find(doc.Relationships, r => SpdxRelationship.Same.Equals(r, relationship));
-        if (r != null)
+        try
         {
-            // Enhance the existing relationship
-            r.Enhance(relationship);
+            SpdxModel.Transform.SpdxRelationships.Add(doc, relationships, replace);
         }
-        else
+        catch (Exception ex)
         {
-            // Copy the new relationship
-            r = relationship.DeepCopy();
-            doc.Relationships = doc.Relationships.Append(r).ToArray();
+            throw new CommandErrorException(ex.Message, ex);
         }
     }
 

@@ -124,6 +124,7 @@ steps:
   inputs:
     spdx: <spdx.json>             # SPDX file name
     id: <id>                      # Element ID
+    replace: false                # Replace existing relationships (default: true)
     relationships:
     - type: <relationship>        # Relationship type
       element: <element>          # Related element

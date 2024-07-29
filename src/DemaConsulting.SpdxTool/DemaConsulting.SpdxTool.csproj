@@ -51,7 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DemaConsulting.SpdxModel" Version="1.3.2" />
+    <PackageReference Include="DemaConsulting.SpdxModel" Version="1.4.0" />
     <PackageReference Include="YamlDotNet" Version="16.0.0" />
   </ItemGroup>
 

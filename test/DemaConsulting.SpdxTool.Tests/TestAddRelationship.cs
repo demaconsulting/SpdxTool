@@ -180,4 +180,93 @@ public class TestAddRelationship
             File.Delete("workflow.yaml");
         }
     }
+
+    [TestMethod]
+    public void AddRelationshipReplace()
+    {
+        // Workflow1 contents
+        const string workflow1Contents = "steps:\n" +
+                                        "- command: add-relationship\n" +
+                                        "  inputs:\n" +
+                                        "    spdx: spdx.json\n" +
+                                        "    id: SPDXRef-Package-1\n" +
+                                        "    relationships:\n" +
+                                        "    - type: CONTAINS\n" +
+                                        "      element: SPDXRef-Package-2\n" +
+                                        "      comment: Package 1 contains Package 2\n" +
+                                        "    - type: DESCRIBES\n" +
+                                        "      element: SPDXRef-Package-2\n" +
+                                        "      comment: Package 1 describes Package 2";
+
+        // Workflow2 contents
+        const string workflow2Contents = "steps:\n" +
+                                         "- command: add-relationship\n" +
+                                         "  inputs:\n" +
+                                         "    spdx: spdx.json\n" +
+                                         "    id: SPDXRef-Package-1\n" +
+                                         "    replace: true\n" +
+                                         "    relationships:\n" +
+                                         "    - type: BUILD_TOOL_OF\n" +
+                                         "      element: SPDXRef-Package-2\n" +
+                                         "      comment: Package 1 builds Package 2";
+        try
+        {
+            // Write the SPDX files
+            File.WriteAllText("spdx.json", SpdxContents);
+            File.WriteAllText("workflow1.yaml", workflow1Contents);
+            File.WriteAllText("workflow2.yaml", workflow2Contents);
+
+            // Run the first workflow
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow1.yaml");
+
+            // Verify error reported
+            Assert.AreEqual(0, exitCode);
+
+            // Read the SPDX document
+            Assert.IsTrue(File.Exists("spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
+
+            Assert.AreEqual(2, doc.Relationships.Length);
+            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
+            Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
+            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.AreEqual("Package 1 contains Package 2", doc.Relationships[0].Comment);
+            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[1].Id);
+            Assert.AreEqual(SpdxRelationshipType.Describes, doc.Relationships[1].RelationshipType);
+            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[1].RelatedSpdxElement);
+            Assert.AreEqual("Package 1 describes Package 2", doc.Relationships[1].Comment);
+
+            // Run the second workflow
+            exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow2.yaml");
+
+            // Verify error reported
+            Assert.AreEqual(0, exitCode);
+
+            // Read the SPDX document
+            Assert.IsTrue(File.Exists("spdx.json"));
+            doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
+
+            Assert.AreEqual(1, doc.Relationships.Length);
+            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
+            Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[0].RelationshipType);
+            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.AreEqual("Package 1 builds Package 2", doc.Relationships[0].Comment);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+            File.Delete("workflow1.yaml");
+            File.Delete("workflow2.yaml");
+        }
+    }
 }
