@@ -7,6 +7,10 @@ on:
       version:
         required: true
         type: string
+    secrets:
+      SONAR_TOKEN:
+        required: true
+
 
 jobs:
   build:
@@ -32,6 +36,18 @@ jobs:
       run: > 
         dotnet restore
       
+    - name: Start Sonar Scanner
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: >
+        dotnet dotnet-sonarscanner
+        begin
+        /k:"demaconsulting_SpdxTool"
+        /o:"demaconsulting"
+        /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        /d:sonar.host.url="https://sonarcloud.io"
+        /d:sonar.cs.opencover.reportsPaths=**/*.opencover.xml
+
     - name: Build
       run: >
         dotnet build
@@ -45,7 +61,16 @@ jobs:
         --no-build
         --configuration Release
         --property:Version=${{ inputs.version }}
+        --collect "XPlat Code Coverage;Format=opencover"
 
+    - name: End Sonar Scanner
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: >
+        dotnet dotnet-sonarscanner
+        end
+        /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+ 
     - name: Generate Tool SBOM
       run: >
         dotnet sbom-tool generate
