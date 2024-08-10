@@ -2,8 +2,14 @@
   "version": 1,
   "isRoot": true,
   "tools": {
+    "dotnet-sonarscanner": {
+      "version": "7.1.1",
+      "commands": [
+        "dotnet-sonarscanner"
+      ]
+    },
     "microsoft.sbom.dotnettool": {
-      "version": "2.2.6",
+      "version": "2.2.7",
       "commands": [
         "sbom-tool"
       ]
