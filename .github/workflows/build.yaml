@@ -20,6 +20,8 @@ jobs:
 
     - name: Checkout 
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Setup dotnet 6/8
       uses: actions/setup-dotnet@v4
@@ -47,6 +49,7 @@ jobs:
         /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
         /d:sonar.host.url="https://sonarcloud.io"
         /d:sonar.cs.opencover.reportsPaths=**/*.opencover.xml
+        /d:sonar.scanner.scanAll=false
 
     - name: Build
       run: >
