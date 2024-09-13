@@ -158,11 +158,13 @@ public sealed class Query : Command
             throw new CommandErrorException($"Unable to start program '{program}'");
         }
 
+        // Save the output
+        var output = 
+            process.StandardOutput.ReadToEnd().Trim() + 
+            process.StandardError.ReadToEnd().Trim();
+
         // Wait for the process to exit
         process.WaitForExit();
-
-        // Save the output
-        var output = process.StandardOutput.ReadToEnd().Trim();
 
         // Process the output line-by-line
         var outputLines = output.Split('\n').Select(l => l.Trim()).ToArray();
