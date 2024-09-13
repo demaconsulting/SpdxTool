@@ -47,8 +47,7 @@ public sealed class RenameId : Command
         Command,
         "rename-id <arguments>",
         "Rename an element ID in an SPDX document.",
-        new[]
-        {
+        [
             "This command renames an element ID in an SPDX document.",
             "",
             "From the command-line this can be used as:",
@@ -60,7 +59,7 @@ public sealed class RenameId : Command
             "      spdx: <spdx.json>             # SPDX file name",
             "      old: <old-id>                 # Old element ID",
             "      new: <new-id>                 # New element ID"
-        },
+        ],
         Instance);
 
     /// <summary>

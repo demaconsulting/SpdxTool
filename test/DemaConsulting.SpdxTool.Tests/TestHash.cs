@@ -35,7 +35,7 @@ public class TestHash
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'hash' command missing arguments"));
+        StringAssert.Contains(output, "'hash' command missing arguments");
     }
 
     [TestMethod]
@@ -53,7 +53,7 @@ public class TestHash
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("Error: Could not find file 'missing-file.txt'"));
+        StringAssert.Contains(output, "Error: Could not find file 'missing-file.txt'");
     }
 
     [TestMethod]
@@ -103,7 +103,7 @@ public class TestHash
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("Error: Could not find file"));
+        StringAssert.Contains(output, "Error: Could not find file");
     }
 
     [TestMethod]
@@ -126,7 +126,7 @@ public class TestHash
 
             // Verify error reported
             Assert.AreEqual(1, exitCode);
-            Assert.IsTrue(output.Contains("Sha256 hash mismatch for 'test.txt'"));
+            StringAssert.Contains(output, "Sha256 hash mismatch for 'test.txt'");
         }
         finally
         {
@@ -155,7 +155,7 @@ public class TestHash
 
             // Verify success reported
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("Sha256 Digest OK for 'test.txt'"));
+            StringAssert.Contains(output, "Sha256 Digest OK for 'test.txt'");
         }
         finally
         {

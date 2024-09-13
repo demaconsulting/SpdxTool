@@ -35,7 +35,7 @@ public class TestToMarkdown
 
         // Verify the conversion failed
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'to-markdown' command missing arguments"));
+        StringAssert.Contains(output, "'to-markdown' command missing arguments");
     }
 
     [TestMethod]
@@ -52,65 +52,67 @@ public class TestToMarkdown
 
         // Verify the conversion failed
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("File not found: missing.spdx.json"));
+        StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
     [TestMethod]
     public void ToMarkdown()
     {
-        const string spdxContents = "{\r\n" +
-                                    "  \"files\": [],\r\n" +
-                                    "  \"packages\": [" +
-                                    "    {\r\n" +
-                                    "      \"SPDXID\": \"SPDXRef-Application\",\r\n" +
-                                    "      \"name\": \"Test Application\",\r\n" +
-                                    "      \"versionInfo\": \"1.2.3\",\r\n" +
-                                    "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                    "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                    "    },\r\n" +
-                                    "    {\r\n" +
-                                    "      \"SPDXID\": \"SPDXRef-Library\",\r\n" +
-                                    "      \"name\": \"Test Library\",\r\n" +
-                                    "      \"versionInfo\": \"2.3.4\",\r\n" +
-                                    "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                    "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                    "    },\r\n" +
-                                    "    {\r\n" +
-                                    "      \"SPDXID\": \"SPDXRef-Tool\",\r\n" +
-                                    "      \"name\": \"Test Tool\",\r\n" +
-                                    "      \"versionInfo\": \"3.4.5\",\r\n" +
-                                    "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                    "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"relationships\": [\r\n" +
-                                    "    {\r\n" +
-                                    "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "      \"relatedSpdxElement\": \"SPDXRef-Application\",\r\n" +
-                                    "      \"relationshipType\": \"DESCRIBES\"\r\n" +
-                                    "    },\r\n" +
-                                    "    {\r\n" +
-                                    "      \"spdxElementId\": \"SPDXRef-Application\",\r\n" +
-                                    "      \"relatedSpdxElement\": \"SPDXRef-Library\",\r\n" +
-                                    "      \"relationshipType\": \"CONTAINS\"\r\n" +
-                                    "    },\r\n" +
-                                    "    {\r\n" +
-                                    "      \"spdxElementId\": \"SPDXRef-Tool\",\r\n" +
-                                    "      \"relatedSpdxElement\": \"SPDXRef-Application\",\r\n" +
-                                    "      \"relationshipType\": \"BUILD_TOOL_OF\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
-                                    "  \"dataLicense\": \"CC0-1.0\",\r\n" +
-                                    "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "  \"name\": \"Test Document\",\r\n" +
-                                    "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
-                                    "  \"creationInfo\": {\r\n" +
-                                    "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
-                                    "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
-                                    "  },\r\n" +
-                                    "  \"documentDescribes\": [ \"SPDXRef-Package-1\" ]\r\n" +
-                                    "}";
+        const string spdxContents = 
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-Library",
+                  "name": "Test Library",
+                  "versionInfo": "2.3.4",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-Tool",
+                  "name": "Test Tool",
+                  "versionInfo": "3.4.5",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-Application",
+                  "relatedSpdxElement": "SPDXRef-Library",
+                  "relationshipType": "CONTAINS"
+                },
+                {
+                  "spdxElementId": "SPDXRef-Tool",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "BUILD_TOOL_OF"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
+            }
+            """;
 
         try
         {

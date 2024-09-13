@@ -47,8 +47,7 @@ public sealed class CopyPackage : Command
         Command,
         "copy-package <spdx.json> <args>",
         "Copy package between SPDX documents (workflow only).",
-        new[]
-        {
+        [
             "This command copies a package from one SPDX document to another.",
             "",
             "From the command-line this can be used as:",
@@ -76,7 +75,7 @@ public sealed class CopyPackage : Command
             "",
             "The <relationship> is defined by the SPDX specification, and is usually one of:",
             "  DESCRIBES, DESCRIBED_BY, CONTAINS, BUILD_TOOL_OF, ..."
-        },
+        ],
         Instance);
 
     /// <summary>
@@ -119,7 +118,7 @@ public sealed class CopyPackage : Command
         }
 
         // Copy the package
-        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, Array.Empty<SpdxRelationship>(), recursive, files);
+        CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, [], recursive, files);
     }
 
     /// <inheritdoc />
@@ -221,7 +220,7 @@ public sealed class CopyPackage : Command
             // Append copy to the to-document (without files)
             toPackage = fromPackage.DeepCopy();
             toPackage.FilesAnalyzed = false;
-            toPackage.HasFiles = Array.Empty<string>();
+            toPackage.HasFiles = [];
             toDoc.Packages = toDoc.Packages.Append(toPackage).ToArray();
         }
 

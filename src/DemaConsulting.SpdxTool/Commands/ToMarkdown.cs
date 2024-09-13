@@ -48,8 +48,7 @@ public sealed class ToMarkdown : Command
         Command,
         "to-markdown <spdx.json> <out.md> [args]",
         "Create Markdown summary for SPDX document",
-        new[]
-        {
+        [
             "This command produces a Markdown summary of an SPDX document.",
             "",
             "From the command-line this can be used as:",
@@ -62,7 +61,7 @@ public sealed class ToMarkdown : Command
             "      markdown: <out.md>            # Output markdown file",
             "      title: <title>                # Optional title",
             "      depth: <depth>                # Optional heading depth"
-        },
+        ],
         Instance);
 
     /// <summary>
@@ -161,10 +160,12 @@ public sealed class ToMarkdown : Command
         markdown.AppendLine();
 
         // Find tool package IDs
-        var toolIds = new HashSet<string>();
-        foreach (var relationship in doc.Relationships)
-            if (relationship.RelationshipType is SpdxRelationshipType.BuildToolOf or SpdxRelationshipType.DevToolOf or SpdxRelationshipType.TestToolOf)
-                toolIds.Add(relationship.Id);
+        var toolIds = 
+            doc
+                .Relationships
+                .Where(r => r.RelationshipType is SpdxRelationshipType.BuildToolOf or SpdxRelationshipType.DevToolOf or SpdxRelationshipType.TestToolOf)
+                .Select(r => r.Id)
+                .ToHashSet();
 
         // Classify the packages
         var rootPackages = doc.GetRootPackages().OrderBy(p => p.Name).ToArray();

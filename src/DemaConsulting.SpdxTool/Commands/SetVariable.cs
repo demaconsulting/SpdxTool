@@ -45,15 +45,14 @@ public sealed class SetVariable : Command
         Command,
         "set-variable",
         "Set workflow variable (workflow only).",
-        new[]
-        {
+        [
             "This command sets a workflow variable.",
             "",
             "  - command: set-variable",
             "    inputs:",
             "      value: <value>                # New value",
             "      output: <variable>            # Variable to set"
-        },
+        ],
         Instance);
 
     /// <summary>

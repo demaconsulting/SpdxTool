@@ -26,44 +26,45 @@ public class TestFindPackage
     /// <summary>
     /// SPDX file for finding packages
     /// </summary>
-    private const string SpdxContents = "{\r\n" +
-                                        "  \"files\": [],\r\n" +
-                                        "  \"packages\": [" +
-                                        "    {\r\n" +
-                                        "      \"SPDXID\": \"SPDXRef-Package-1\",\r\n" +
-                                        "      \"name\": \"Test Package\",\r\n" +
-                                        "      \"versionInfo\": \"1.0.0\",\r\n" +
-                                        "      \"packageFileName\": \"package1.zip\",\r\n" +
-                                        "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                        "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                        "    },\r\n" +
-                                        "    {\r\n" +
-                                        "      \"SPDXID\": \"SPDXRef-Package-2\",\r\n" +
-                                        "      \"name\": \"Another Test Package\",\r\n" +
-                                        "      \"versionInfo\": \"2.0.0\",\r\n" +
-                                        "      \"packageFileName\": \"package2.tar\",\r\n" +
-                                        "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxModel\",\r\n" +
-                                        "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                        "    }\r\n" +
-                                        "  ],\r\n" +
-                                        "  \"relationships\": [" +
-                                        "    {\r\n" +
-                                        "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                        "      \"relatedSpdxElement\": \"SPDXRef-Package-1\",\r\n" +
-                                        "      \"relationshipType\": \"DESCRIBES\"\r\n" +
-                                        "    }\r\n" +
-                                        "  ],\r\n" +
-                                        "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
-                                        "  \"dataLicense\": \"CC0-1.0\",\r\n" +
-                                        "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                        "  \"name\": \"Test Document\",\r\n" +
-                                        "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
-                                        "  \"creationInfo\": {\r\n" +
-                                        "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
-                                        "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
-                                        "  },\r\n" +
-                                        "  \"documentDescribes\": [ \"SPDXRef-Package-1\" ]\r\n" +
-                                        "}";
+    private const string SpdxContents = 
+        """
+        {
+          "files": [],
+          "packages": [    {
+              "SPDXID": "SPDXRef-Package-1",
+              "name": "Test Package",
+              "versionInfo": "1.0.0",
+              "packageFileName": "package1.zip",
+              "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+              "licenseConcluded": "MIT"
+            },
+            {
+              "SPDXID": "SPDXRef-Package-2",
+              "name": "Another Test Package",
+              "versionInfo": "2.0.0",
+              "packageFileName": "package2.tar",
+              "downloadLocation": "https://github.com/demaconsulting/SpdxModel",
+              "licenseConcluded": "MIT"
+            }
+          ],
+          "relationships": [    {
+              "spdxElementId": "SPDXRef-DOCUMENT",
+              "relatedSpdxElement": "SPDXRef-Package-1",
+              "relationshipType": "DESCRIBES"
+            }
+          ],
+          "spdxVersion": "SPDX-2.2",
+          "dataLicense": "CC0-1.0",
+          "SPDXID": "SPDXRef-DOCUMENT",
+          "name": "Test Document",
+          "documentNamespace": "https://sbom.spdx.org",
+          "creationInfo": {
+            "created": "2021-10-01T00:00:00Z",
+            "creators": [ "Person: Malcolm Nixon" ]
+          },
+          "documentDescribes": [ "SPDXRef-Package-1" ]
+        }
+        """;
 
     [TestMethod]
     public void FindPackageMissingArguments()
@@ -77,7 +78,7 @@ public class TestFindPackage
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'find-package' command missing arguments"));
+        StringAssert.Contains(output, "'find-package' command missing arguments");
     }
 
     [TestMethod]
@@ -94,7 +95,7 @@ public class TestFindPackage
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("File not found: missing.spdx.json"));
+        StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
     [TestMethod]
@@ -116,7 +117,7 @@ public class TestFindPackage
 
             // Verify package ID
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("SPDXRef-Package-2"));
+            StringAssert.Contains(output, "SPDXRef-Package-2");
         }
         finally
         {
@@ -128,17 +129,19 @@ public class TestFindPackage
     public void FindPackageByName()
     {
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: find-package\n" +
-                                        "  inputs:\n" +
-                                        "    output: packageId\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    name: Test Package\n" +
-                                        "" +
-                                        "- command: print\n" +
-                                        "  inputs:\n" +
-                                        "    text:\n"+
-                                        "    - Found package ${{ packageId }}";
+        const string workflowContents = 
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: spdx.json
+                name: Test Package
+            - command: print
+              inputs:
+                text:
+                - Found package ${{ packageId }}
+            """;
 
         try
         {
@@ -156,7 +159,7 @@ public class TestFindPackage
 
             // Verify package ID
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("Found package SPDXRef-Package-1"));
+            StringAssert.Contains(output, "Found package SPDXRef-Package-1");
         }
         finally
         {
@@ -169,17 +172,19 @@ public class TestFindPackage
     public void FindPackageByVersion()
     {
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: find-package\n" +
-                                        "  inputs:\n" +
-                                        "    output: packageId\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    version: 2.0.0\n" +
-                                        "" +
-                                        "- command: print\n" +
-                                        "  inputs:\n" +
-                                        "    text:\n" +
-                                        "    - Found package ${{ packageId }}";
+        const string workflowContents = 
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: spdx.json
+                version: 2.0.0
+            - command: print
+              inputs:
+                text:
+                - Found package ${{ packageId }}
+            """;
 
         try
         {
@@ -197,7 +202,7 @@ public class TestFindPackage
 
             // Verify package ID
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("Found package SPDXRef-Package-2"));
+            StringAssert.Contains(output, "Found package SPDXRef-Package-2");
         }
         finally
         {
@@ -210,17 +215,19 @@ public class TestFindPackage
     public void FindPackageByFileName()
     {
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: find-package\n" +
-                                        "  inputs:\n" +
-                                        "    output: packageId\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    filename: package1.zip\n" +
-                                        "" +
-                                        "- command: print\n" +
-                                        "  inputs:\n" +
-                                        "    text:\n" +
-                                        "    - Found package ${{ packageId }}";
+        const string workflowContents = 
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: spdx.json
+                filename: package1.zip
+            - command: print
+              inputs:
+                text:
+                - Found package ${{ packageId }}
+            """;
 
         try
         {
@@ -238,7 +245,7 @@ public class TestFindPackage
 
             // Verify package ID
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("Found package SPDXRef-Package-1"));
+            StringAssert.Contains(output, "Found package SPDXRef-Package-1");
         }
         finally
         {
@@ -251,17 +258,19 @@ public class TestFindPackage
     public void FindPackageByDownload()
     {
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: find-package\n" +
-                                        "  inputs:\n" +
-                                        "    output: packageId\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    download: https://github.com/demaconsulting/SpdxModel\n" +
-                                        "" +
-                                        "- command: print\n" +
-                                        "  inputs:\n" +
-                                        "    text:\n" +
-                                        "    - Found package ${{ packageId }}";
+        const string workflowContents = 
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: spdx.json
+                download: https://github.com/demaconsulting/SpdxModel
+            - command: print
+              inputs:
+                text:
+                - Found package ${{ packageId }}
+            """;
 
         try
         {
@@ -279,7 +288,7 @@ public class TestFindPackage
 
             // Verify package ID
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("Found package SPDXRef-Package-2"));
+            StringAssert.Contains(output, "Found package SPDXRef-Package-2");
         }
         finally
         {

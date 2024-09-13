@@ -47,8 +47,7 @@ public sealed class FindPackage : Command
         Command,
         "find-package <spdx.json> <criteria>",
         "Find package ID in SPDX document",
-        new[]
-        {
+        [
             "This command finds the package ID for a package in an SPDX document.",
             "",
             "From the command-line this can be used as:",
@@ -71,7 +70,7 @@ public sealed class FindPackage : Command
             "      version: <version>            # Optional package version header",
             "      filename: <filename>          # Optional package filename header",
             "      download: <url>               # Optional package download URL header"
-        },
+        ],
         Instance);
 
     /// <summary>

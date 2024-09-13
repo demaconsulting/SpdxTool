@@ -45,8 +45,7 @@ public sealed class GetVersion : Command
         Command,
         "get-version <spdx.json> <criteria>",
         "Get the version of an SPDX package.",
-        new[]
-        {
+        [
             "This command gets the version of an SPDX package.",
             "",
             "From the command-line this can be used as:",
@@ -69,7 +68,7 @@ public sealed class GetVersion : Command
             "      version: <version>            # Optional package version header",
             "      filename: <filename>          # Optional package filename header",
             "      download: <url>               # Optional package download URL header"
-        },
+        ],
         Instance);
 
     /// <summary>

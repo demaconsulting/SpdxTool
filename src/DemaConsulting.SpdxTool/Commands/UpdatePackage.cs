@@ -46,8 +46,7 @@ public sealed class UpdatePackage : Command
         Command,
         "update-package",
         "Update package in SPDX document (workflow only).",
-        new[]
-        {
+        [
             "This command updates a package in an SPDX document.",
             "",
             "  - command: update-package",
@@ -66,7 +65,7 @@ public sealed class UpdatePackage : Command
             "        summary: <summary>          # Optional new package summary",
             "        description: <description>  # Optional new package description",
             "        license: <license>          # Optional new package license"
-        },
+        ],
         Instance);
 
     /// <summary>

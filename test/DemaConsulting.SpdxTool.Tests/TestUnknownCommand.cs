@@ -35,6 +35,6 @@ public class TestUnknownCommand
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("Unknown command: 'unknown-command'"));
+        StringAssert.Contains(output, "Unknown command: 'unknown-command'");
     }
 }

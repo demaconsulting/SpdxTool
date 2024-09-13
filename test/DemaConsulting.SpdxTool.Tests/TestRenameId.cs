@@ -37,7 +37,7 @@ public class TestRenameId
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'rename-id' command missing arguments"));
+        StringAssert.Contains(output, "'rename-id' command missing arguments");
     }
 
     [TestMethod]
@@ -55,41 +55,42 @@ public class TestRenameId
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("File not found: missing.spdx.json"));
+        StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
     [TestMethod]
     public void RenameId()
     {
-        const string spdxContents = "{\r\n" +
-                                    "  \"files\": [],\r\n" +
-                                    "  \"packages\": [" +
-                                    "    {\r\n" +
-                                    "      \"SPDXID\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"name\": \"Test Package\",\r\n" +
-                                    "      \"versionInfo\": \"1.0.0\",\r\n" +
-                                    "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                    "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"relationships\": [" +
-                                    "    {\r\n" +
-                                    "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "      \"relatedSpdxElement\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"relationshipType\": \"DESCRIBES\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
-                                    "  \"dataLicense\": \"CC0-1.0\",\r\n" +
-                                    "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "  \"name\": \"Test Document\",\r\n" +
-                                    "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
-                                    "  \"creationInfo\": {\r\n" +
-                                    "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
-                                    "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
-                                    "  },\r\n" +
-                                    "  \"documentDescribes\": [ \"SPDXRef-Package-1\" ]\r\n" +
-                                    "}";
+        const string spdxContents = 
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
+            }
+            """;
 
         try
         {
