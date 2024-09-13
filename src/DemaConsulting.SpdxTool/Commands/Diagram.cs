@@ -69,8 +69,7 @@ public sealed class Diagram : Command
         Command,
         "diagram <spdx.json> <mermaid.txt> [tools]",
         "Generate mermaid diagram.",
-        new[]
-        {
+        [
             "This command generates a mermaid diagram from an SPDX document.",
             "",
             "  - command: diagram",
@@ -78,7 +77,7 @@ public sealed class Diagram : Command
             "      spdx: <spdx.json>             # SPDX file name",
             "      mermaid: <mermaid.txt>        # Mermaid file name",
             "      tools: true                   # Optionally include tools"
-        },
+        ],
         Instance);
 
     /// <summary>

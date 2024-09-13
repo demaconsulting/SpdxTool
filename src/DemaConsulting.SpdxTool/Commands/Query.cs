@@ -47,8 +47,7 @@ public sealed class Query : Command
         Command,
         "query <pattern> <program> [args]",
         "Query program output for value",
-        new[]
-        {
+        [
             "This command executes a program and inspects the output for a value.",
             "When executed in a workflow this can be used to set a variable.",
             "",
@@ -64,7 +63,7 @@ public sealed class Query : Command
             "      arguments:",
             "      - <argument>",
             "      - <argument>"
-        },
+        ],
         Instance);
 
     /// <summary>
@@ -109,7 +108,7 @@ public sealed class Query : Command
         // Get the arguments
         var argumentsSequence = GetMapSequence(inputs, "arguments");
         var arguments = argumentsSequence?.Children.Select(c => Expand(c.ToString(), variables)).ToArray() ??
-                        Array.Empty<string>();
+                        [];
 
         // Generate the markdown
         var found = QueryProgramOutput(pattern, program, arguments);

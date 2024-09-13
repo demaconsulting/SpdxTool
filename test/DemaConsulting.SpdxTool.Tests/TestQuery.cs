@@ -23,8 +23,15 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestQuery
+public partial class TestQuery
 {
+    /// <summary>
+    /// Regular expression to check for version
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"\d+\.\d+\.\d+")]
+    private static partial Regex VersionRegex();
+
     [TestMethod]
     public void QueryCommandMissingArguments()
     {
@@ -37,7 +44,7 @@ public class TestQuery
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'query' command missing arguments"));
+        StringAssert.Contains(output, "'query' command missing arguments");
     }
 
     [TestMethod]
@@ -55,7 +62,7 @@ public class TestQuery
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("Pattern must contain a 'value' capture group"));
+        StringAssert.Contains(output, "Pattern must contain a 'value' capture group");
     }
 
     [TestMethod]
@@ -72,7 +79,7 @@ public class TestQuery
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("Unable to start program 'does-not-exist'"));
+        StringAssert.Contains(output, "Unable to start program 'does-not-exist'");
     }
 
     [TestMethod]
@@ -90,29 +97,32 @@ public class TestQuery
 
         // Verify error reported
         Assert.AreEqual(0, exitCode);
-        Assert.IsTrue(Regex.IsMatch(output, @"\d+\.\d+\.\d+"));
+        StringAssert.Matches(output, VersionRegex());
     }
 
     [TestMethod]
     public void QueryDotNetWorkflow()
     {
         // Workflow contents
-        const string workflowContents = "parameters:\n" +
-                                        "  version: unknown\n" +
-                                        "" +
-                                        "steps:\n" +
-                                        "- command: query\n" +
-                                        "  inputs:\n" +
-                                        "    output: version\n" +
-                                        "    pattern: (?<value>\\d+\\.\\d+\\.\\d+)\n" +
-                                        "    program: dotnet\n" +
-                                        "    arguments:\n" +
-                                        "    - '--version'\n" +
-                                        "\n" +
-                                        "- command: print\n" +
-                                        "  inputs:\n" +
-                                        "    text:\n" +
-                                        "    - ${{ version }}";
+        const string workflowContents = 
+            """
+            parameters:
+              version: unknown
+            
+            steps:
+            - command: query
+              inputs:
+                output: version
+                pattern: (?<value>\d+\.\d+\.\d+)
+                program: dotnet
+                arguments:
+                - '--version'
+            
+            - command: print
+              inputs:
+                text:
+                - ${{ version }}
+            """;
 
         try
         {
@@ -129,7 +139,7 @@ public class TestQuery
 
             // Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(Regex.IsMatch(output, @"\d+\.\d+\.\d+"));
+            StringAssert.Matches(output, VersionRegex());
         }
         finally
         {

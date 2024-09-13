@@ -46,8 +46,7 @@ public sealed class Validate : Command
         Command,
         "validate <spdx.json> [ntia]",
         "Validate SPDX document for issues",
-        new[]
-        {
+        [
             "This command validates an SPDX document for issues.",
             "",
             "From the command-line this can be used as:",
@@ -58,7 +57,7 @@ public sealed class Validate : Command
             "    inputs:",
             "      spdx: <spdx.json>             # SPDX file name",
             "      ntia: true                    # Optional NTIA checking"
-        },
+        ],
         Instance);
 
     /// <summary>

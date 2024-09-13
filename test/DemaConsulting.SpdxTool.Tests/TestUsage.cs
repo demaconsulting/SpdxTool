@@ -36,7 +36,8 @@ public class TestUsage
         Assert.AreEqual(1, exitCode);
 
         // Verify the output contains the usage information
-        Assert.IsTrue(output.Contains("Usage: spdx-tool"));
+        StringAssert.Contains(output, "No arguments specified");
+        StringAssert.Contains(output, "Usage: spdx-tool");
     }
 
     [TestMethod]
@@ -49,11 +50,11 @@ public class TestUsage
             "DemaConsulting.SpdxTool.dll",
             "-h");
 
-        // Verify an error was reported
-        Assert.AreEqual(1, exitCode);
+        // Verify success
+        Assert.AreEqual(0, exitCode);
 
         // Verify the output contains the usage information
-        Assert.IsTrue(output.Contains("Usage: spdx-tool"));
+        StringAssert.Contains(output, "Usage: spdx-tool");
     }
 
     [TestMethod]
@@ -66,10 +67,10 @@ public class TestUsage
             "DemaConsulting.SpdxTool.dll",
             "--help");
 
-        // Verify an error was reported
-        Assert.AreEqual(1, exitCode);
+        // Verify success
+        Assert.AreEqual(0, exitCode);
 
         // Verify the output contains the usage information
-        Assert.IsTrue(output.Contains("Usage: spdx-tool"));
+        StringAssert.Contains(output, "Usage: spdx-tool");
     }
 }

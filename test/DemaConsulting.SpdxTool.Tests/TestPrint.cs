@@ -36,23 +36,26 @@ public class TestPrint
 
         // Verify output
         Assert.AreEqual(0, exitCode);
-        Assert.IsTrue(output.Contains("Hello, World!"));
+        StringAssert.Contains(output, "Hello, World!");
     }
 
     [TestMethod]
     public void PrintWorkflow()
     {
         // Workflow contents
-        const string workflowContents = "parameters:\n" +
-                                        "  p1: Hello\n" +
-                                        "  p2: World\n" +
-                                        "" +
-                                        "steps:\n" +
-                                        "- command: print\n" +
-                                        "  inputs:\n" +
-                                        "    text:\n" +
-                                        "    - The first parameter is ${{ p1 }}." +
-                                        "    - ${{ p2 }} is the second parameter.";
+        const string workflowContents = 
+            """
+            parameters:
+              p1: Hello
+              p2: World
+            
+            steps:
+            - command: print
+              inputs:
+                text:
+                - The first parameter is ${{ p1 }}.
+                - ${{ p2 }} is the second parameter.
+            """;
 
         try
         {
@@ -69,8 +72,8 @@ public class TestPrint
 
             // Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("The first parameter is Hello."));
-            Assert.IsTrue(output.Contains("World is the second parameter."));
+            StringAssert.Contains(output, "The first parameter is Hello.");
+            StringAssert.Contains(output, "World is the second parameter.");
         }
         finally
         {

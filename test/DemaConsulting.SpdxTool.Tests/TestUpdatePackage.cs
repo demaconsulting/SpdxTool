@@ -37,61 +37,65 @@ public class TestUpdatePackage
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'update-package' command is only valid in a workflow"));
+        StringAssert.Contains(output, "'update-package' command is only valid in a workflow");
     }
 
     [TestMethod]
     public void UpdatePackageWorkflow()
     {
         // SPDX contents
-        const string spdxContents = "{\r\n" +
-                                    "  \"files\": [],\r\n" +
-                                    "  \"packages\": [" +
-                                    "    {\r\n" +
-                                    "      \"SPDXID\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"name\": \"Test Package\",\r\n" +
-                                    "      \"versionInfo\": \"1.0.0\",\r\n" +
-                                    "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                    "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"relationships\": [" +
-                                    "    {\r\n" +
-                                    "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "      \"relatedSpdxElement\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"relationshipType\": \"DESCRIBES\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
-                                    "  \"dataLicense\": \"CC0-1.0\",\r\n" +
-                                    "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "  \"name\": \"Test Document\",\r\n" +
-                                    "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
-                                    "  \"creationInfo\": {\r\n" +
-                                    "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
-                                    "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
-                                    "  },\r\n" +
-                                    "  \"documentDescribes\": [ \"SPDXRef-Package-1\" ]\r\n" +
-                                    "}";
+        const string spdxContents = 
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
+            }
+            """;
 
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: update-package\n" +
-                                        "  inputs:\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    package:\n" +
-                                        "      id: SPDXRef-Package-1\n" +
-                                        "      name: New package name\n" +
-                                        "      download: https://new.package.download\n" +
-                                        "      version: 2.0.0\n" +
-                                        "      filename: new.zip\n" +
-                                        "      supplier: New Supplier\n" +
-                                        "      originator: New Originator\n" +
-                                        "      homepage: https://new.package.org\n" +
-                                        "      copyright: Copyright New Package Maker\n" +
-                                        "      summary: New Package\n" +
-                                        "      description: A new package description\n" +
-                                        "      license: MIT v2\n";
+        const string workflowContents = 
+            """
+            steps:
+            - command: update-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-Package-1
+                  name: New package name
+                  download: https://new.package.download
+                  version: 2.0.0
+                  filename: new.zip
+                  supplier: New Supplier
+                  originator: New Originator
+                  homepage: https://new.package.org
+                  copyright: Copyright New Package Maker
+                  summary: New Package
+                  description: A new package description
+                  license: MIT v2
+            """;
 
         try
         {

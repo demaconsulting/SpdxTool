@@ -45,8 +45,7 @@ public sealed class Hash : Command
         Command,
         "hash <operation> <algorithm> <file>",
         "Generate or verify hashes of files",
-        new[]
-        {
+        [
             "This command generates or verifies hashes.",
             "",
             "From the command-line this can be used as:",
@@ -59,7 +58,7 @@ public sealed class Hash : Command
             "      operation: generate | verify",
             "      algorithm: sha256",
             "      file: <file>"
-        },
+        ],
         Instance);
 
     /// <summary>

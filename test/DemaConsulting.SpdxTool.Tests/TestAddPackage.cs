@@ -38,57 +38,61 @@ public class TestAddPackage
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'add-package' command is only valid in a workflow"));
+        StringAssert.Contains(output, "'add-package' command is only valid in a workflow");
     }
 
     [TestMethod]
     public void AddPackageSimple()
     {
         // SPDX contents
-        const string spdxContents = "{\r\n" +
-                                    "  \"files\": [],\r\n" +
-                                    "  \"packages\": [" +
-                                    "    {\r\n" +
-                                    "      \"SPDXID\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"name\": \"Test Package\",\r\n" +
-                                    "      \"versionInfo\": \"1.0.0\",\r\n" +
-                                    "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                    "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"relationships\": [" +
-                                    "    {\r\n" +
-                                    "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "      \"relatedSpdxElement\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"relationshipType\": \"DESCRIBES\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
-                                    "  \"dataLicense\": \"CC0-1.0\",\r\n" +
-                                    "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "  \"name\": \"Test Document\",\r\n" +
-                                    "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
-                                    "  \"creationInfo\": {\r\n" +
-                                    "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
-                                    "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
-                                    "  },\r\n" +
-                                    "  \"documentDescribes\": [ \"SPDXRef-Package-1\" ]\r\n" +
-                                    "}";
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
+            }
+            """;
 
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: add-package\n" +
-                                        "  inputs:\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    package:\n" +
-                                        "      id: SPDXRef-Package-2\n" +
-                                        "      name: Test Package 2\n" +
-                                        "      version: 2.0.0\n" +
-                                        "      download: https://dotnet.microsoft.com/download\n" +
-                                        "      purl: pkg:nuget/BogusPackage@2.0.0\n" +
-                                        "    relationships:\n" +
-                                        "      - type: BUILD_TOOL_OF\n" +
-                                        "        element: SPDXRef-Package-1\n";
+        const string workflowContents =
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-Package-2
+                  name: Test Package 2
+                  version: 2.0.0
+                  download: https://dotnet.microsoft.com/download
+                  purl: pkg:nuget/BogusPackage@2.0.0
+                relationships:
+                  - type: BUILD_TOOL_OF
+                    element: SPDXRef-Package-1
+            """;
 
         try
         {
@@ -133,33 +137,39 @@ public class TestAddPackage
     public void AddPackageNoRelationship()
     {
         // SPDX contents
-        const string spdxContents = "{\r\n" +
-                                    "  \"files\": [],\r\n" +
-                                    "  \"packages\": [],\r\n" +
-                                    "  \"relationships\": [],\r\n" +
-                                    "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
-                                    "  \"dataLicense\": \"CC0-1.0\",\r\n" +
-                                    "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "  \"name\": \"Test Document\",\r\n" +
-                                    "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
-                                    "  \"creationInfo\": {\r\n" +
-                                    "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
-                                    "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
-                                    "  },\r\n" +
-                                    "  \"documentDescribes\": []\r\n" +
-                                    "}";
+        const string spdxContents = 
+            """
+            {
+              "files": [],
+              "packages": [],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
 
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: add-package\n" +
-                                        "  inputs:\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    package:\n" +
-                                        "      id: SPDXRef-Package-1\n" +
-                                        "      name: Test Package 1\n" +
-                                        "      version: 1.0.0\n" +
-                                        "      download: https://dotnet.microsoft.com/download\n" +
-                                        "      purl: pkg:nuget/BogusPackage@1.0.0\n";
+        const string workflowContents = 
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-Package-1
+                  name: Test Package 1
+                  version: 1.0.0
+                  download: https://dotnet.microsoft.com/download
+                  purl: pkg:nuget/BogusPackage@1.0.0
+            """;
 
         try
         {
@@ -200,58 +210,62 @@ public class TestAddPackage
     public void AddPackageFromQuery()
     {
         // SPDX contents
-        const string spdxContents = "{\r\n" +
-                                    "  \"files\": [],\r\n" +
-                                    "  \"packages\": [" +
-                                    "    {\r\n" +
-                                    "      \"SPDXID\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"name\": \"Test Package\",\r\n" +
-                                    "      \"versionInfo\": \"1.0.0\",\r\n" +
-                                    "      \"downloadLocation\": \"https://github.com/demaconsulting/SpdxTool\",\r\n" +
-                                    "      \"licenseConcluded\": \"MIT\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"relationships\": [" +
-                                    "    {\r\n" +
-                                    "      \"spdxElementId\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "      \"relatedSpdxElement\": \"SPDXRef-Package-1\",\r\n" +
-                                    "      \"relationshipType\": \"DESCRIBES\"\r\n" +
-                                    "    }\r\n" +
-                                    "  ],\r\n" +
-                                    "  \"spdxVersion\": \"SPDX-2.2\",\r\n" +
-                                    "  \"dataLicense\": \"CC0-1.0\",\r\n" +
-                                    "  \"SPDXID\": \"SPDXRef-DOCUMENT\",\r\n" +
-                                    "  \"name\": \"Test Document\",\r\n" +
-                                    "  \"documentNamespace\": \"https://sbom.spdx.org\",\r\n" +
-                                    "  \"creationInfo\": {\r\n" +
-                                    "    \"created\": \"2021-10-01T00:00:00Z\",\r\n" +
-                                    "    \"creators\": [ \"Person: Malcolm Nixon\" ]\r\n" +
-                                    "  },\r\n" +
-                                    "  \"documentDescribes\": [ \"SPDXRef-Package-1\" ]\r\n" +
-                                    "}";
+        const string spdxContents = 
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
+            }
+            """;
 
         // Workflow contents
-        const string workflowContents = "steps:\n" +
-                                        "- command: query\n" +
-                                        "  inputs:\n" +
-                                        "    output: dotnet_version\n" +
-                                        "    pattern: '(?<value>\\d+\\.\\d+\\.\\d+)'\n" +
-                                        "    program: dotnet\n" +
-                                        "    arguments:\n" +
-                                        "    - '--version'\n" +
-                                        "\n" +
-                                        "- command: add-package\n" +
-                                        "  inputs:\n" +
-                                        "    spdx: spdx.json\n" +
-                                        "    package:\n" +
-                                        "      id: SPDXRef-Package-DotNet\n" +
-                                        "      name: DotNet SDK\n" +
-                                        "      version: ${{ dotnet_version }}\n" +
-                                        "      download: https://dotnet.microsoft.com/download\n" +
-                                        "      license: MIT\n" +
-                                        "    relationships:\n" +
-                                        "      - type: BUILD_TOOL_OF\n" +
-                                        "        element: SPDXRef-Package-1\n";
+        const string workflowContents = 
+            """
+            steps:
+            - command: query
+              inputs:
+                output: dotnet_version
+                pattern: '(?<value>\d+\.\d+\.\d+)'
+                program: dotnet
+                arguments:
+                - '--version'
+            
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-Package-DotNet
+                  name: DotNet SDK
+                  version: ${{ dotnet_version }}
+                  download: https://dotnet.microsoft.com/download
+                  license: MIT
+                relationships:
+                  - type: BUILD_TOOL_OF
+                    element: SPDXRef-Package-1
+            """;
 
         try
         {

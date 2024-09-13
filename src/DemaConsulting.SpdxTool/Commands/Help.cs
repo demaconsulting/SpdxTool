@@ -45,8 +45,7 @@ public sealed class Help : Command
         Command,
         "help <command>",
         "Display extended help about a command",
-        new[]
-        {
+        [
             "This command displays extended help information about the specified command.",
             "",
             "From the command-line this can be used as:",
@@ -56,7 +55,7 @@ public sealed class Help : Command
             "  - command: help",
             "    inputs:",
             "      about: <command>"
-        },
+        ],
         Instance);
 
     /// <summary>

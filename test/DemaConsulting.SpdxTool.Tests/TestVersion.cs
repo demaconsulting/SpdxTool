@@ -23,8 +23,15 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestVersion
+public partial class TestVersion
 {
+    /// <summary>
+    /// Regular expression to check for version
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
+    private static partial Regex VersionRegex();
+
     [TestMethod]
     public void VersionShort()
     {
@@ -39,7 +46,7 @@ public class TestVersion
         Assert.AreEqual(0, exitCode);
 
         // Verify version response
-        Assert.IsTrue(Regex.IsMatch(output, @"\d.\d.\d.*"));
+        StringAssert.Matches(output, VersionRegex());
     }
 
     [TestMethod]
@@ -56,6 +63,6 @@ public class TestVersion
         Assert.AreEqual(0, exitCode);
 
         // Verify version response
-        Assert.IsTrue(Regex.IsMatch(output, @"\d.\d.\d.*"));
+        StringAssert.Matches(output, VersionRegex());
     }
 }

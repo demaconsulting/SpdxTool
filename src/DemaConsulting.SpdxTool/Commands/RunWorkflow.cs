@@ -46,8 +46,7 @@ public sealed class RunWorkflow : Command
         Command,
         "run-workflow <workflow.yaml>",
         "Runs the workflow file/url",
-        new[]
-        {
+        [
             "This command runs the steps specified in the workflow file/url.",
             "",
             "From the command-line this can be used as:",
@@ -65,7 +64,7 @@ public sealed class RunWorkflow : Command
             "      outputs:",
             "        name: <variable>            # Optional output to save to variable",
             "        name: <variable>            # Optional output to save to variable"
-        },
+        ],
         Instance);
 
     /// <summary>
@@ -262,8 +261,7 @@ public sealed class RunWorkflow : Command
         // Optionally check the integrity before running
         if (integrity != null)
         {
-            using var sha256 = System.Security.Cryptography.SHA256.Create();
-            var hashBytes = sha256.ComputeHash(bytes);
+            var hashBytes = System.Security.Cryptography.SHA256.HashData(bytes);
             var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
             if (hash != integrity)
                 throw new CommandErrorException($"Integrity check of {source} failed");

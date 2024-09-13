@@ -47,8 +47,7 @@ public sealed class AddRelationship : Command
         Command,
         "add-relationship <spdx.json> <args>",
         "Add relationship between elements.",
-        new[]
-        {
+        [
             "This command adds a relationship between SPDX elements.",
             "",
             "From the command-line this can be used as:",
@@ -72,7 +71,7 @@ public sealed class AddRelationship : Command
             "",
             "The <relationship> is defined by the SPDX specification, and is usually one of:",
             "  DESCRIBES, DESCRIBED_BY, CONTAINS, BUILD_TOOL_OF, ..."
-        },
+        ],
         Instance);
 
     /// <summary>
@@ -99,7 +98,7 @@ public sealed class AddRelationship : Command
         };
 
         // Add the relationship
-        Add(spdxFile, new[] { relationship });
+        Add(spdxFile, [relationship]);
     }
 
     /// <inheritdoc />
@@ -182,7 +181,7 @@ public sealed class AddRelationship : Command
     {
         // Handle no relationships
         if (relationships == null)
-            return Array.Empty<SpdxRelationship>();
+            return [];
 
         // Parse each relationship
         return relationships.Children.Select(node =>

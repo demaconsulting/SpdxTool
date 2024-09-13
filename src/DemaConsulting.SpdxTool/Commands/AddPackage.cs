@@ -47,8 +47,7 @@ public sealed class AddPackage : Command
         Command,
         "add-package",
         "Add package to SPDX document (workflow only).",
-        new[]
-        {
+        [
             "This command adds a package to an SPDX document.",
             "",
             "  - command: add-package",
@@ -82,7 +81,7 @@ public sealed class AddPackage : Command
             "",
             "The <relationship> is defined by the SPDX specification, and is usually one of:",
             "  DESCRIBES, DESCRIBED_BY, CONTAINS, BUILD_TOOL_OF, ..."
-        },
+        ],
         Instance);
 
     /// <summary>

@@ -53,14 +53,29 @@ public static class Program
         }
 
         // Print version banner
-        Console.WriteLine($"DemaConsulting.SpdxTool {Version}");
-        Console.WriteLine();
+        Console.WriteLine(
+            $"""
+             DemaConsulting.SpdxTool {Version}
+             
+             """);
 
-        // Handle printing usage information
-        if (args.Length == 0 || args[0] == "-h" || args[0] == "--help")
+        // Fail if no arguments specified
+        if (args.Length == 0)
         {
+            Console.WriteLine(
+                """
+                No arguments specified
+                
+                """);
             PrintUsage();
             Environment.Exit(1);
+        }
+
+        // Handle printing usage information
+        if (args[0] == "-h" || args[0] == "--help")
+        {
+            PrintUsage();
+            Environment.Exit(0);
         }
 
         try

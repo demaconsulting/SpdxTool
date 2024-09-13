@@ -45,8 +45,7 @@ public sealed class Print : Command
         Command,
         "print <text>",
         "Print text to the console",
-        new[]
-        {
+        [
             "This command prints text to the console.",
             "",
             "From the command-line this can be used as:",
@@ -58,7 +57,7 @@ public sealed class Print : Command
             "      text:",
             "      - Some text to print",
             "      - The value of variable is ${{ variable }}"
-        },
+        ],
         Instance);
 
     /// <summary>

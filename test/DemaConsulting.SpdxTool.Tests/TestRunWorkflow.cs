@@ -23,8 +23,15 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Tests;
 
 [TestClass]
-public class TestRunWorkflow
+public partial class TestRunWorkflow
 {
+    /// <summary>
+    /// Regular expression to check for dotnet version
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"DotNet version is \d+\.\d+\.\d+")]
+    private static partial Regex DotnetVersionRegex();
+
     [TestMethod]
     public void RunWorkflowMissingArguments()
     {
@@ -37,7 +44,7 @@ public class TestRunWorkflow
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("'run-workflow' command missing arguments"));
+        StringAssert.Contains(output, "'run-workflow' command missing arguments");
     }
 
     [TestMethod]
@@ -53,13 +60,14 @@ public class TestRunWorkflow
 
         // Verify error reported
         Assert.AreEqual(1, exitCode);
-        Assert.IsTrue(output.Contains("File not found: does-not-exist.yaml"));
+        StringAssert.Contains(output, "File not found: does-not-exist.yaml");
     }
 
     [TestMethod]
     public void RunWorkflowFileInvalid()
     {
-        const string fileContents = "missing-steps: 123\n";
+        const string fileContents =
+            "missing-steps: 123";
 
         try
         {
@@ -76,7 +84,7 @@ public class TestRunWorkflow
 
             // Verify error reported
             Assert.AreEqual(1, exitCode);
-            Assert.IsTrue(output.Contains("Error: Workflow invalid.yaml missing steps"));
+            StringAssert.Contains(output, "Error: Workflow invalid.yaml missing steps");
         }
         finally
         {
@@ -88,8 +96,11 @@ public class TestRunWorkflow
     [TestMethod]
     public void RunWorkflowMissingParameterInFile()
     {
-        const string fileContents = "steps:\n" +
-                                    "- command: help\n";
+        const string fileContents =
+            """
+            steps:
+            - command: help
+            """;
 
         try
         {
@@ -106,7 +117,7 @@ public class TestRunWorkflow
 
             // Verify error reported
             Assert.AreEqual(1, exitCode);
-            Assert.IsTrue(output.Contains("'help' command missing 'about' input"));
+            StringAssert.Contains(output, "'help' command missing 'about' input");
         }
         finally
         {
@@ -118,10 +129,13 @@ public class TestRunWorkflow
     [TestMethod]
     public void RunWorkflow()
     {
-        const string fileContents = "steps:\n" +
-                                    "- command: help\n" +
-                                    "  inputs:\n" +
-                                    "    about: help\n";
+        const string fileContents = 
+            """
+            steps:
+            - command: help
+              inputs:
+                about: help
+            """;
 
         try
         {
@@ -138,8 +152,7 @@ public class TestRunWorkflow
 
             // Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(
-                output.Contains("This command displays extended help information about the specified command"));
+            StringAssert.Contains(output, "This command displays extended help information about the specified command");
         }
         finally
         {
@@ -151,13 +164,16 @@ public class TestRunWorkflow
     [TestMethod]
     public void RunWorkflowWithDefaultParameters()
     {
-        const string fileContents = "parameters:\n" +
-                                    "  about: help\n" +
-                                    "\n" +
-                                    "steps:\n" +
-                                    "- command: help\n" +
-                                    "  inputs:\n" +
-                                    "    about: ${{ about }}\n";
+        const string fileContents = 
+            """
+            parameters:
+              about: help
+            
+            steps:
+            - command: help
+              inputs:
+                about: ${{ about }}
+            """;
 
         try
         {
@@ -174,8 +190,7 @@ public class TestRunWorkflow
 
             // Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(
-                output.Contains("This command displays extended help information about the specified command"));
+            StringAssert.Contains(output, "This command displays extended help information about the specified command");
         }
         finally
         {
@@ -187,13 +202,16 @@ public class TestRunWorkflow
     [TestMethod]
     public void RunWorkflowWithSpecifiedParameters()
     {
-        const string fileContents = "parameters:\n" +
-                                    "  about: help\n" +
-                                    "\n" +
-                                    "steps:\n" +
-                                    "- command: help\n" +
-                                    "  inputs:\n" +
-                                    "    about: ${{ about }}\n";
+        const string fileContents = 
+            """
+            parameters:
+              about: help
+            
+            steps:
+            - command: help
+              inputs:
+                about: ${{ about }}
+            """;
 
         try
         {
@@ -211,8 +229,7 @@ public class TestRunWorkflow
 
             // Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(
-                output.Contains("This command produces a Markdown summary of an SPDX document"));
+            StringAssert.Contains(output, "This command produces a Markdown summary of an SPDX document");
         }
         finally
         {
@@ -224,33 +241,37 @@ public class TestRunWorkflow
     [TestMethod]
     public void RunWorkflowWithOutputs()
     {
-        const string workflow1 = "parameters:\n" +
-                                 "  arg: unknown\n" +
-                                 "\n" +
-                                 "steps:\n" +
-                                 "- command: run-workflow\n" +
-                                 "  inputs:\n" +
-                                 "    file: workflow2.yaml\n" +
-                                 "    integrity: 7c8cbebe55ab1094e513bd50e05823820c4b0229c19d4e8edfbfa3a3765b2be2\n" +
-                                 "    parameters:\n" +
-                                 "      in: ${{ arg }}\n" +
-                                 "    outputs:\n" +
-                                 "      out: out-var\n" +
-                                 "\n" +
-                                 "- command: print\n" +
-                                 "  inputs:\n" +
-                                 "    text:\n" +
-                                 "    - Output is ${{ out-var }}\n" +
-                                 "";
+        const string workflow1 = 
+            """
+            parameters:
+              arg: unknown
+            
+            steps:
+            - command: run-workflow
+              inputs:
+                file: workflow2.yaml
+                integrity: 7c8cbebe55ab1094e513bd50e05823820c4b0229c19d4e8edfbfa3a3765b2be2
+                parameters:
+                  in: ${{ arg }}
+                outputs:
+                  out: out-var
+            
+            - command: print
+              inputs:
+                text:
+                - Output is ${{ out-var }}
+            """;
 
-        const string workflow2 = "parameters:\n" +
-                                 "  in: unknown\n" +
-                                 "\n" +
-                                 "steps:\n" +
-                                 "- command: set-variable\n" +
-                                 "  inputs:\n" +
-                                 "    value: Got ${{ in }} Param\n" +
-                                 "    output: out\n";
+        // Workflow2 file with exact string representation
+        const string workflow2 = 
+            "parameters:\n" +
+            "  in: unknown\n" +
+            "\n" +
+            "steps:\n" +
+            "- command: set-variable\n" +
+            "  inputs:\n" +
+            "    value: Got ${{ in }} Param\n" +
+            "    output: out\n";
 
         try
         {
@@ -269,7 +290,7 @@ public class TestRunWorkflow
 
             // Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(output.Contains("Output is Got Fred Param"));
+            StringAssert.Contains(output, "Output is Got Fred Param");
         }
         finally
         {
@@ -282,33 +303,38 @@ public class TestRunWorkflow
     [TestMethod]
     public void RunWorkflowWithBadIntegrity()
     {
-        const string workflow1 = "parameters:\n" +
-                                 "  arg: unknown\n" +
-                                 "\n" +
-                                 "steps:\n" +
-                                 "- command: run-workflow\n" +
-                                 "  inputs:\n" +
-                                 "    file: workflow2.yaml\n" +
-                                 "    integrity: 0000000000000000000000000000000000000000000000000000000000000000\n" +
-                                 "    parameters:\n" +
-                                 "      in: ${{ arg }}\n" +
-                                 "    outputs:\n" +
-                                 "      out: out-var\n" +
-                                 "\n" +
-                                 "- command: print\n" +
-                                 "  inputs:\n" +
-                                 "    text:\n" +
-                                 "    - Output is ${{ out-var }}\n" +
-                                 "";
+        const string workflow1 = 
+            """
+            parameters:
+              arg: unknown
+            
+            steps:
+            - command: run-workflow
+              inputs:
+                file: workflow2.yaml
+                integrity: 0000000000000000000000000000000000000000000000000000000000000000
+                parameters:
+                  in: ${{ arg }}
+                outputs:
+                  out: out-var
+            
+            - command: print
+              inputs:
+                text:
+                - Output is ${{ out-var }}
+            """;
 
-        const string workflow2 = "parameters:\n" +
-                                 "  in: unknown\n" +
-                                 "\n" +
-                                 "steps:\n" +
-                                 "- command: set-variable\n" +
-                                 "  inputs:\n" +
-                                 "    value: Got ${{ in }} Param\n" +
-                                 "    output: out\n";
+        const string workflow2 = 
+            """
+            parameters:
+              in: unknown
+            
+            steps:
+            - command: set-variable
+              inputs:
+                value: Got ${{ in }} Param
+                output: out
+            """;
 
         try
         {
@@ -327,7 +353,7 @@ public class TestRunWorkflow
 
             // Verify success
             Assert.AreEqual(1, exitCode);
-            Assert.IsTrue(output.Contains("Error: Integrity check of workflow2.yaml failed"));
+            StringAssert.Contains(output, "Error: Integrity check of workflow2.yaml failed");
         }
         finally
         {
@@ -340,17 +366,20 @@ public class TestRunWorkflow
     [TestMethod]
     public void RunWorkflowUrl()
     {
-        const string workflow = "steps:\n" +
-                                "- command: run-workflow\n" +
-                                "  inputs:\n" +
-                                "    url: 'https://raw.githubusercontent.com/demaconsulting/SpdxWorkflows/main/GetDotNetVersion.yaml'\n" +
-                                "    outputs:\n" +
-                                "      version: dotnet-version\n" +
-                                "\n" +
-                                "- command: print\n" +
-                                "  inputs:\n" +
-                                "    text:\n" +
-                                "    - DotNet version is ${{ dotnet-version }}\n";
+        const string workflow = 
+            """
+            steps:
+            - command: run-workflow
+              inputs:
+                url: 'https://raw.githubusercontent.com/demaconsulting/SpdxWorkflows/main/GetDotNetVersion.yaml'
+                outputs:
+                  version: dotnet-version
+            
+            - command: print
+              inputs:
+                text:
+                - DotNet version is ${{ dotnet-version }}
+            """;
 
         try
         {
@@ -367,7 +396,7 @@ public class TestRunWorkflow
 
             // Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(Regex.IsMatch(output, @"DotNet version is \d+\.\d+\.\d+"));
+            StringAssert.Matches(output, DotnetVersionRegex());
         }
         finally
         {
