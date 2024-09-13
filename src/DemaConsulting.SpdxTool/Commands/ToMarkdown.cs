@@ -160,10 +160,12 @@ public sealed class ToMarkdown : Command
         markdown.AppendLine();
 
         // Find tool package IDs
-        var toolIds = new HashSet<string>();
-        foreach (var relationship in doc.Relationships)
-            if (relationship.RelationshipType is SpdxRelationshipType.BuildToolOf or SpdxRelationshipType.DevToolOf or SpdxRelationshipType.TestToolOf)
-                toolIds.Add(relationship.Id);
+        var toolIds = 
+            doc
+                .Relationships
+                .Where(r => r.RelationshipType is SpdxRelationshipType.BuildToolOf or SpdxRelationshipType.DevToolOf or SpdxRelationshipType.TestToolOf)
+                .Select(r => r.Id)
+                .ToHashSet();
 
         // Classify the packages
         var rootPackages = doc.GetRootPackages().OrderBy(p => p.Name).ToArray();
