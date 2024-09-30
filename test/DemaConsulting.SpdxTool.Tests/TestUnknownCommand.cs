@@ -20,9 +20,15 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for unknown command handling.
+/// </summary>
 [TestClass]
 public class TestUnknownCommand
 {
+    /// <summary>
+    /// Test unknown commands are reported.
+    /// </summary>
     [TestMethod]
     public void UnknownCommand()
     {

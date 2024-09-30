@@ -31,51 +31,41 @@ public static class Program
     /// <summary>
     /// Gets the version of this assembly.
     /// </summary>
-    public static string Version =>
+    public static readonly string Version =
         typeof(Program)
             .Assembly
-            .GetCustomAttributes(false)
-            .OfType<AssemblyInformationalVersionAttribute>()
-            .FirstOrDefault()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion ?? "Unknown";
 
     /// <summary>
     /// Application entry point
     /// </summary>
-    /// <param name="args"></param>
+    /// <param name="args">Program arguments</param>
     public static void Main(string[] args)
     {
         // Handle querying for version
         if (args.Length == 1 && (args[0] == "-v" || args[0] == "--version"))
         {
             Console.WriteLine(Version);
-            Environment.Exit(0);
+            return;
         }
 
         // Print version banner
-        Console.WriteLine(
-            $"""
-             DemaConsulting.SpdxTool {Version}
-             
-             """);
+        Console.WriteLine($"DemaConsulting.SpdxTool {Version}\n");
 
         // Fail if no arguments specified
         if (args.Length == 0)
         {
-            Console.WriteLine(
-                """
-                No arguments specified
-                
-                """);
+            ReportError("No arguments specified");
             PrintUsage();
-            Environment.Exit(1);
+            return;
         }
 
         // Handle printing usage information
         if (args[0] == "-h" || args[0] == "--help")
         {
             PrintUsage();
-            Environment.Exit(0);
+            return;
         }
 
         try
@@ -88,39 +78,25 @@ public static class Program
             else
             {
                 // Report unknown command
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Unknown command: '{args[0]}'");
-                Console.ResetColor();
-                Console.WriteLine();
+                ReportError($"Unknown command: '{args[0]}'");
                 PrintUsage();
-                Environment.Exit(1);
             }
         }
         catch (CommandUsageException ex)
         {
             // Report usage exception and usage information
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Error: {ex.Message}");
-            Console.ResetColor();
-            Console.WriteLine();
+            ReportError(ex.Message);
             PrintUsage();
-            Environment.Exit(1);
         }
         catch (CommandErrorException ex)
         {
             // Report error exception
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Error: {ex.Message}");
-            Console.ResetColor();
-            Environment.Exit(1);
+            ReportError(ex.Message);
         }
         catch (Exception ex)
         {
             // Report unknown exception
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"{ex}");
-            Console.ResetColor();
-            Environment.Exit(1);
+            ReportError(ex.ToString());
         }
     }
 
@@ -138,5 +114,21 @@ public static class Program
         Console.WriteLine("Commands:");
         foreach (var command in CommandsRegistry.Commands.Values)
             Console.WriteLine($"  {command.CommandLine,-40} {command.Summary}");
+    }
+
+    /// <summary>
+    /// Report an error message to the console in red
+    /// </summary>
+    /// <param name="message">Error message</param>
+    private static void ReportError(string message)
+    {
+        // Write an error message to the console
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"Error: {message}");
+        Console.ResetColor();
+        Console.WriteLine();
+
+        // Set the exit code to 1 as an error has occurred
+        Environment.ExitCode = 1;
     }
 }

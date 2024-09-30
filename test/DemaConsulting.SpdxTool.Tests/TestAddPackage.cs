@@ -23,11 +23,17 @@ using DemaConsulting.SpdxModel;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'add-package' command.
+/// </summary>
 [TestClass]
 public class TestAddPackage
 {
+    /// <summary>
+    /// Test that the 'add-package' command is only valid in a workflow.
+    /// </summary>
     [TestMethod]
-    public void AddPackageCommandLine()
+    public void AddPackage_CommandLine()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -41,8 +47,11 @@ public class TestAddPackage
         StringAssert.Contains(output, "'add-package' command is only valid in a workflow");
     }
 
+    /// <summary>
+    /// Test that the 'add-package' command from a workflow on a simple SPDX document.
+    /// </summary>
     [TestMethod]
-    public void AddPackageSimple()
+    public void AddPackage_Simple()
     {
         // SPDX contents
         const string spdxContents =
@@ -133,8 +142,11 @@ public class TestAddPackage
         }
     }
 
+    /// <summary>
+    /// Test that the 'add-package' command from a workflow with no relationships.
+    /// </summary>
     [TestMethod]
-    public void AddPackageNoRelationship()
+    public void AddPackage_NoRelationship()
     {
         // SPDX contents
         const string spdxContents = 
@@ -206,8 +218,11 @@ public class TestAddPackage
         }
     }
 
+    /// <summary>
+    /// Test that the 'add-package' command from a workflow with a query.
+    /// </summary>
     [TestMethod]
-    public void AddPackageFromQuery()
+    public void AddPackage_FromQuery()
     {
         // SPDX contents
         const string spdxContents = 

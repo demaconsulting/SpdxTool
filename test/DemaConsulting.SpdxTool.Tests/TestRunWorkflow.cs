@@ -22,6 +22,9 @@ using System.Text.RegularExpressions;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'run-workflow' command.
+/// </summary>
 [TestClass]
 public partial class TestRunWorkflow
 {
@@ -32,8 +35,11 @@ public partial class TestRunWorkflow
     [GeneratedRegex(@"DotNet version is \d+\.\d+\.\d+")]
     private static partial Regex DotnetVersionRegex();
 
+    /// <summary>
+    /// Test the 'run-workflow' command with missing arguments.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowMissingArguments()
+    public void RunWorkflow_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -47,8 +53,11 @@ public partial class TestRunWorkflow
         StringAssert.Contains(output, "'run-workflow' command missing arguments");
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with missing file.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowMissingFile()
+    public void RunWorkflow_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -63,8 +72,11 @@ public partial class TestRunWorkflow
         StringAssert.Contains(output, "File not found: does-not-exist.yaml");
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with invalid file.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowFileInvalid()
+    public void RunWorkflow_FileInvalid()
     {
         const string fileContents =
             "missing-steps: 123";
@@ -93,8 +105,11 @@ public partial class TestRunWorkflow
         }
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with missing parameter in file.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowMissingParameterInFile()
+    public void RunWorkflow_MissingParameterInFile()
     {
         const string fileContents =
             """
@@ -126,6 +141,9 @@ public partial class TestRunWorkflow
         }
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with a basic workflow file.
+    /// </summary>
     [TestMethod]
     public void RunWorkflow()
     {
@@ -161,8 +179,11 @@ public partial class TestRunWorkflow
         }
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with default parameters.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowWithDefaultParameters()
+    public void RunWorkflow_WithDefaultParameters()
     {
         const string fileContents = 
             """
@@ -199,8 +220,11 @@ public partial class TestRunWorkflow
         }
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with specified parameters.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowWithSpecifiedParameters()
+    public void RunWorkflow_WithSpecifiedParameters()
     {
         const string fileContents = 
             """
@@ -238,8 +262,11 @@ public partial class TestRunWorkflow
         }
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with outputs.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowWithOutputs()
+    public void RunWorkflow_WithOutputs()
     {
         const string workflow1 = 
             """
@@ -300,8 +327,11 @@ public partial class TestRunWorkflow
         }
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with bad file integrity.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowWithBadIntegrity()
+    public void RunWorkflow_WithBadIntegrity()
     {
         const string workflow1 = 
             """
@@ -363,8 +393,11 @@ public partial class TestRunWorkflow
         }
     }
 
+    /// <summary>
+    /// Test the 'run-workflow' command with workflow URL.
+    /// </summary>
     [TestMethod]
-    public void RunWorkflowUrl()
+    public void RunWorkflow_Url()
     {
         const string workflow = 
             """

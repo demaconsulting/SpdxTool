@@ -23,6 +23,9 @@ using DemaConsulting.SpdxModel.IO;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'add-relationship' command
+/// </summary>
 [TestClass]
 public class TestAddRelationship
 {
@@ -63,8 +66,11 @@ public class TestAddRelationship
         }
         """;
 
+    /// <summary>
+    /// Test the add-relationship command with missing arguments
+    /// </summary>
     [TestMethod]
-    public void AddRelationshipMissingArguments()
+    public void AddRelationship_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -78,8 +84,11 @@ public class TestAddRelationship
         StringAssert.Contains(output, "'add-relationship' command missing arguments");
     }
 
+    /// <summary>
+    /// Test the add-relationship command with missing SPDX file
+    /// </summary>
     [TestMethod]
-    public void AddRelationshipMissingFile()
+    public void AddRelationship_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -97,8 +106,11 @@ public class TestAddRelationship
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
+    /// <summary>
+    /// Test the add-relationship command from the command-line
+    /// </summary>
     [TestMethod]
-    public void AddRelationshipCommandLine()
+    public void AddRelationship_CommandLine()
     {
         try
         {
@@ -136,8 +148,11 @@ public class TestAddRelationship
         }
     }
 
+    /// <summary>
+    /// Test the add-relationship command from a workflow
+    /// </summary>
     [TestMethod]
-    public void AddRelationshipWorkflow()
+    public void AddRelationship_Workflow()
     {
         // Workflow contents
         const string workflowContents = 
@@ -187,8 +202,11 @@ public class TestAddRelationship
         }
     }
 
+    /// <summary>
+    /// Test the add-relationship command from a workflow replacing an existing relationship
+    /// </summary>
     [TestMethod]
-    public void AddRelationshipReplace()
+    public void AddRelationship_Replace()
     {
         // Workflow1 contents
         const string workflow1Contents = 

@@ -22,11 +22,17 @@ using DemaConsulting.SpdxModel.IO;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'rename-id' command.
+/// </summary>
 [TestClass]
 public class TestRenameId
 {
+    /// <summary>
+    /// Test the 'rename-id' command with missing arguments.
+    /// </summary>
     [TestMethod]
-    public void RenameIdMissingArguments()
+    public void RenameId_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -40,8 +46,11 @@ public class TestRenameId
         StringAssert.Contains(output, "'rename-id' command missing arguments");
     }
 
+    /// <summary>
+    /// Test the 'rename-id' command with missing SPDX file.
+    /// </summary>
     [TestMethod]
-    public void RenameIdMissingFile()
+    public void RenameId_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -58,6 +67,9 @@ public class TestRenameId
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
+    /// <summary>
+    /// Test the 'rename-id' command.
+    /// </summary>
     [TestMethod]
     public void RenameId()
     {

@@ -22,6 +22,9 @@ using System.Text.RegularExpressions;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for version information.
+/// </summary>
 [TestClass]
 public partial class TestVersion
 {
@@ -32,8 +35,11 @@ public partial class TestVersion
     [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
     private static partial Regex VersionRegex();
 
+    /// <summary>
+    /// Test that version information is printed when '-v' is specified
+    /// </summary>
     [TestMethod]
-    public void VersionShort()
+    public void Version_Short()
     {
         // Run the SPDX tool
         var exitCode = Runner.Run(
@@ -49,8 +55,11 @@ public partial class TestVersion
         StringAssert.Matches(output, VersionRegex());
     }
 
+    /// <summary>
+    /// Test that version information is printed when '--version' is specified
+    /// </summary>
     [TestMethod]
-    public void VersionLong()
+    public void Version_Long()
     {
         // Run the SPDX tool
         var exitCode = Runner.Run(

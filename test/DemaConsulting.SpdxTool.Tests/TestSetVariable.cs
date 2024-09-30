@@ -20,11 +20,17 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'set-variable' command.
+/// </summary>
 [TestClass]
 public class TestSetVariable
 {
+    /// <summary>
+    /// Test the 'set-variable' command does not work from the command line.
+    /// </summary>
     [TestMethod]
-    public void SetVariableCommandLine()
+    public void SetVariable_CommandLine()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -38,8 +44,11 @@ public class TestSetVariable
         StringAssert.Contains(output, "'set-variable' command is only valid in a workflow");
     }
 
+    /// <summary>
+    /// Test the 'set-variable' command.
+    /// </summary>
     [TestMethod]
-    public void PrintWorkflow()
+    public void SetVariable()
     {
         // Workflow contents
         const string workflowContents = 

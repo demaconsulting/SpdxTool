@@ -22,6 +22,9 @@ using System.Text.RegularExpressions;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'query' command
+/// </summary>
 [TestClass]
 public partial class TestQuery
 {
@@ -32,8 +35,11 @@ public partial class TestQuery
     [GeneratedRegex(@"\d+\.\d+\.\d+")]
     private static partial Regex VersionRegex();
 
+    /// <summary>
+    /// Tests the 'query' command with missing arguments
+    /// </summary>
     [TestMethod]
-    public void QueryCommandMissingArguments()
+    public void Query_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -47,8 +53,11 @@ public partial class TestQuery
         StringAssert.Contains(output, "'query' command missing arguments");
     }
 
+    /// <summary>
+    /// Tests the 'query' command with bad pattern
+    /// </summary>
     [TestMethod]
-    public void QueryCommandBadPattern()
+    public void Query_BadPattern()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -65,8 +74,11 @@ public partial class TestQuery
         StringAssert.Contains(output, "Pattern must contain a 'value' capture group");
     }
 
+    /// <summary>
+    /// Tests the 'query' command with invalid program
+    /// </summary>
     [TestMethod]
-    public void QueryCommandInvalidProgram()
+    public void Query_InvalidProgram()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -82,8 +94,11 @@ public partial class TestQuery
         StringAssert.Contains(output, "Unable to start program 'does-not-exist'");
     }
 
+    /// <summary>
+    /// Tests the 'query' command for dotnet version from the command line
+    /// </summary>
     [TestMethod]
-    public void QueryDotNetConsole()
+    public void Query_DotNet_CommandLine()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -100,8 +115,11 @@ public partial class TestQuery
         StringAssert.Matches(output, VersionRegex());
     }
 
+    /// <summary>
+    /// Tests the 'query' command for dotnet version from a workflow
+    /// </summary>
     [TestMethod]
-    public void QueryDotNetWorkflow()
+    public void Query_DotNet_Workflow()
     {
         // Workflow contents
         const string workflowContents = 
