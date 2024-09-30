@@ -20,6 +20,9 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'find-package' command
+/// </summary>
 [TestClass]
 public class TestFindPackage
 {
@@ -66,8 +69,11 @@ public class TestFindPackage
         }
         """;
 
+    /// <summary>
+    /// Test the 'find-package' command with missing arguments
+    /// </summary>
     [TestMethod]
-    public void FindPackageMissingArguments()
+    public void FindPackage_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -81,8 +87,11 @@ public class TestFindPackage
         StringAssert.Contains(output, "'find-package' command missing arguments");
     }
 
+    /// <summary>
+    /// Test the 'find-package' command with missing SPDX file
+    /// </summary>
     [TestMethod]
-    public void FindPackageMissingFile()
+    public void FindPackage_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -98,8 +107,11 @@ public class TestFindPackage
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
+    /// <summary>
+    /// Test the 'find-package' command from the command-line
+    /// </summary>
     [TestMethod]
-    public void FindPackageCommandLine()
+    public void FindPackage_CommandLine()
     {
         try
         {
@@ -125,8 +137,11 @@ public class TestFindPackage
         }
     }
 
+    /// <summary>
+    /// Test the 'find-package' command to find a package by name
+    /// </summary>
     [TestMethod]
-    public void FindPackageByName()
+    public void FindPackage_ByName()
     {
         // Workflow contents
         const string workflowContents = 
@@ -168,8 +183,11 @@ public class TestFindPackage
         }
     }
 
+    /// <summary>
+    /// Test the 'find-package' command to find a package by version
+    /// </summary>
     [TestMethod]
-    public void FindPackageByVersion()
+    public void FindPackage_ByVersion()
     {
         // Workflow contents
         const string workflowContents = 
@@ -211,8 +229,11 @@ public class TestFindPackage
         }
     }
 
+    /// <summary>
+    /// Test the 'find-package' command to find a package by file name
+    /// </summary>
     [TestMethod]
-    public void FindPackageByFileName()
+    public void FindPackage_ByFileName()
     {
         // Workflow contents
         const string workflowContents = 
@@ -254,8 +275,11 @@ public class TestFindPackage
         }
     }
 
+    /// <summary>
+    /// Test the 'find-package' command to find a package by download location
+    /// </summary>
     [TestMethod]
-    public void FindPackageByDownload()
+    public void FindPackage_ByDownload()
     {
         // Workflow contents
         const string workflowContents = 

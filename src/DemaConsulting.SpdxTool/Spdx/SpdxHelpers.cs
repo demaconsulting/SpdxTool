@@ -41,7 +41,8 @@ public static class SpdxHelpers
             throw new CommandUsageException($"File not found: {spdxFile}");
 
         // Load the SPDX document
-        return Spdx2JsonDeserializer.Deserialize(File.ReadAllText(spdxFile));
+        var fileContent = File.ReadAllText(spdxFile);
+        return Spdx2JsonDeserializer.Deserialize(fileContent);
     }
 
     /// <summary>
@@ -56,9 +57,10 @@ public static class SpdxHelpers
 
         // Add this tool if missing
         if (!doc.CreationInformation.Creators.Contains(toolName))
-            doc.CreationInformation.Creators = doc.CreationInformation.Creators.Append(toolName).ToArray();
+            doc.CreationInformation.Creators = [..doc.CreationInformation.Creators.Append(toolName)];
 
         // Save the document
-        File.WriteAllText(spdxFile, Spdx2JsonSerializer.Serialize(doc));
+        var serializedContent = Spdx2JsonSerializer.Serialize(doc);
+        File.WriteAllText(spdxFile, serializedContent);
     }
 }

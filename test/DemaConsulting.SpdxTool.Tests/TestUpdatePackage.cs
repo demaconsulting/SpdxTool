@@ -22,11 +22,17 @@ using DemaConsulting.SpdxModel.IO;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'update-package' command.
+/// </summary>
 [TestClass]
 public class TestUpdatePackage
 {
+    /// <summary>
+    /// Test the 'update-package' command does not work from the command line.
+    /// </summary>
     [TestMethod]
-    public void UpdatePackageCommandLine()
+    public void UpdatePackage_CommandLine()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -40,8 +46,11 @@ public class TestUpdatePackage
         StringAssert.Contains(output, "'update-package' command is only valid in a workflow");
     }
 
+    /// <summary>
+    /// Test the 'update-package' command.
+    /// </summary>
     [TestMethod]
-    public void UpdatePackageWorkflow()
+    public void UpdatePackage_Workflow()
     {
         // SPDX contents
         const string spdxContents = 

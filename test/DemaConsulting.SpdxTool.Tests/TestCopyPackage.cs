@@ -23,11 +23,17 @@ using DemaConsulting.SpdxModel.IO;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'copy-package' command.
+/// </summary>
 [TestClass]
 public class TestCopyPackage
 {
+    /// <summary>
+    /// Test the 'copy-package' command with missing arguments.
+    /// </summary>
     [TestMethod]
-    public void CopyPackageMissingArguments()
+    public void CopyPackage_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -41,8 +47,11 @@ public class TestCopyPackage
         StringAssert.Contains(output, "'copy-package' command missing arguments");
     }
 
+    /// <summary>
+    /// Test the 'copy-package' command with missing file.
+    /// </summary>
     [TestMethod]
-    public void CopyPackageMissingFile()
+    public void CopyPackage_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -59,8 +68,11 @@ public class TestCopyPackage
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
+    /// <summary>
+    /// Test the 'copy-package' command from the command-line.
+    /// </summary>
     [TestMethod]
-    public void CopyPackageCommandLine()
+    public void CopyPackage_CommandLine()
     {
         const string toSpdxContents = 
             """
@@ -161,8 +173,11 @@ public class TestCopyPackage
         }
     }
 
+    /// <summary>
+    /// Test the 'copy-package' command from a workflow.
+    /// </summary>
     [TestMethod]
-    public void CopyPackageWorkflow()
+    public void CopyPackage_Workflow()
     {
         const string toSpdxContents = 
             """
@@ -283,8 +298,11 @@ public class TestCopyPackage
         }
     }
 
+    /// <summary>
+    /// Test the 'copy-package' command with recursive package copying.
+    /// </summary>
     [TestMethod]
-    public void CopyPackageRecursive()
+    public void CopyPackage_Recursive()
     {
         const string toSpdxContents =
             """
@@ -453,8 +471,11 @@ public class TestCopyPackage
         }
     }
 
+    /// <summary>
+    /// Test the 'copy-package' command with copying of package file information.
+    /// </summary>
     [TestMethod]
-    public void CopyPackageFiles()
+    public void CopyPackage_Files()
     {
         const string toSpdxContents = 
             """

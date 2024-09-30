@@ -23,11 +23,17 @@ using YamlDotNet.RepresentationModel;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the <see cref="Command"/> class.
+/// </summary>
 [TestClass]
 public class TestCommand
 {
+    /// <summary>
+    /// Test the <see cref="Command.Expand"/> method with a missing variable.
+    /// </summary>
     [TestMethod]
-    public void CommandExpandMissing()
+    public void Command_Expand_MissingVariable()
     {
         // Test expanding a missing variable
         const string text = "Hello, ${{ name }}!";
@@ -35,8 +41,11 @@ public class TestCommand
         Assert.ThrowsException<InvalidOperationException>(() => Command.Expand(text, variables));
     }
 
+    /// <summary>
+    /// Test the <see cref="Command.Expand"/> method with nothing to expand.
+    /// </summary>
     [TestMethod]
-    public void CommandExpandNothing()
+    public void Command_Expand_NoVariables()
     {
         // Test expanding nothing
         const string text = "Hello, world!";
@@ -45,8 +54,11 @@ public class TestCommand
         Assert.AreEqual(text, result);
     }
 
+    /// <summary>
+    /// Test the <see cref="Command.Expand"/> method for basic expansion.
+    /// </summary>
     [TestMethod]
-    public void CommandExpandBasic()
+    public void Command_Expand_BasicVariable()
     {
         // Test expanding a basic variable
         const string text = "Hello, ${{ name }}!";
@@ -55,8 +67,11 @@ public class TestCommand
         Assert.AreEqual("Hello, world!", result);
     }
 
+    /// <summary>
+    /// Test the <see cref="Command.Expand"/> method for double expansion.
+    /// </summary>
     [TestMethod]
-    public void CommandExpandDouble()
+    public void Command_Expand_DoubleVariableExpansion()
     {
         // Test expanding a nested variable
         const string text = "Hello, ${{ name }}!";
@@ -65,8 +80,11 @@ public class TestCommand
         Assert.AreEqual("Hello, world!", result);
     }
 
+    /// <summary>
+    /// Test the <see cref="Command.Expand"/> method for nested expansion.
+    /// </summary>
     [TestMethod]
-    public void CommandExpandNested()
+    public void Command_Expand_NestedVariableExpansion()
     {
         // Test expanding a nested variable
         const string text = "Hello, ${{ variable_${{ test }} }}!";
@@ -75,8 +93,11 @@ public class TestCommand
         Assert.AreEqual("Hello, world!", result);
     }
 
+    /// <summary>
+    /// Test the <see cref="Command.GetMapString"/> method for a missing entry.
+    /// </summary>
     [TestMethod]
-    public void CommandGetMapStringMissing()
+    public void Command_GetMapString_MissingEntry()
     {
         // Test getting a missing parameter
         var map = new YamlMappingNode();
@@ -84,8 +105,11 @@ public class TestCommand
         Assert.IsNull(Command.GetMapString(map, "parameter", variables));
     }
 
+    /// <summary>
+    /// Test the <see cref="Command.GetMapString"/> method with a value requiring expansion.
+    /// </summary>
     [TestMethod]
-    public void CommandGetMapString()
+    public void Command_GetMapString_WithExpansion()
     {
         // Test getting a parameter
         var map = new YamlMappingNode { { "parameter", "Hello, ${{ name }}!" } };

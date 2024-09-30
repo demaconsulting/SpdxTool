@@ -20,11 +20,17 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'help' command
+/// </summary>
 [TestClass]
 public class TestHelp
 {
+    /// <summary>
+    /// Tests the 'help' command with missing arguments
+    /// </summary>
     [TestMethod]
-    public void HelpMissingArguments()
+    public void Help_MissingArguments()
     {
         // Run the help command with no arguments
         var exitCode = Runner.Run(
@@ -38,8 +44,11 @@ public class TestHelp
         StringAssert.Contains(output, "'help' command missing arguments");
     }
 
+    /// <summary>
+    /// Tests the 'help' command with an unknown command
+    /// </summary>
     [TestMethod]
-    public void HelpUnknownCommand()
+    public void Help_UnknownCommand()
     {
         // Run the help command with an unknown command
         var exitCode = Runner.Run(
@@ -54,8 +63,11 @@ public class TestHelp
         StringAssert.Contains(output, "Unknown command: 'unknown-command'");
     }
 
+    /// <summary>
+    /// Tests the 'help' command with the 'run-workflow' command
+    /// </summary>
     [TestMethod]
-    public void HelpRunWorkflow()
+    public void Help_RunWorkflow()
     {
         // Run the help command with an unknown command
         var exitCode = Runner.Run(

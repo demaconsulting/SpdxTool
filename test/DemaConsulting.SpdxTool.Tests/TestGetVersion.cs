@@ -20,6 +20,9 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'get-version' command
+/// </summary>
 [TestClass]
 public class TestGetVersion
 {
@@ -66,8 +69,11 @@ public class TestGetVersion
         }
         """;
 
+    /// <summary>
+    /// Test the 'get-version' command with missing arguments
+    /// </summary>
     [TestMethod]
-    public void GetVersionMissingArguments()
+    public void GetVersion_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -81,8 +87,11 @@ public class TestGetVersion
         StringAssert.Contains(output, "'get-version' command missing arguments");
     }
 
+    /// <summary>
+    /// Test the 'get-version' command with missing SPDX file
+    /// </summary>
     [TestMethod]
-    public void GetVersionGenerateMissingFile()
+    public void GetVersion_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -98,8 +107,11 @@ public class TestGetVersion
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
+    /// <summary>
+    /// Test the 'get-version' command from the command line
+    /// </summary>
     [TestMethod]
-    public void GetVersionCommandLine()
+    public void GetVersion_CommandLine()
     {
         try
         {
@@ -125,8 +137,11 @@ public class TestGetVersion
         }
     }
 
+    /// <summary>
+    /// Test the 'get-version' command from a workflow
+    /// </summary>
     [TestMethod]
-    public void GetVersionWorkflow()
+    public void GetVersion_Workflow()
     {
         // Workflow contents
         const string workflowContents = 

@@ -20,11 +20,17 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for usage information.
+/// </summary>
 [TestClass]
 public class TestUsage
 {
+    /// <summary>
+    /// Test that usage information is printed when no command line arguments are specified
+    /// </summary>
     [TestMethod]
-    public void UsageNoArguments()
+    public void Usage_NoArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -40,8 +46,11 @@ public class TestUsage
         StringAssert.Contains(output, "Usage: spdx-tool");
     }
 
+    /// <summary>
+    /// Test that usage information is printed when '-h' is specified
+    /// </summary>
     [TestMethod]
-    public void UsageHelpShort()
+    public void Usage_HelpShort()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -57,8 +66,11 @@ public class TestUsage
         StringAssert.Contains(output, "Usage: spdx-tool");
     }
 
+    /// <summary>
+    /// Test that usage information is printed when '--help' is specified
+    /// </summary>
     [TestMethod]
-    public void UsageHelpLong()
+    public void Usage_HelpLong()
     {
         // Run the command
         var exitCode = Runner.Run(

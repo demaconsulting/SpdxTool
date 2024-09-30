@@ -20,11 +20,17 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'hash' command
+/// </summary>
 [TestClass]
 public class TestHash
 {
+    /// <summary>
+    /// Tests the 'hash' command with missing arguments
+    /// </summary>
     [TestMethod]
-    public void HashCommandMissingArguments()
+    public void HashCommand_MissingArguments()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -38,8 +44,11 @@ public class TestHash
         StringAssert.Contains(output, "'hash' command missing arguments");
     }
 
+    /// <summary>
+    /// Tests the 'hash' command with missing file
+    /// </summary>
     [TestMethod]
-    public void HashCommandGenerateMissingFile()
+    public void HashCommand_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -56,8 +65,11 @@ public class TestHash
         StringAssert.Contains(output, "Error: Could not find file 'missing-file.txt'");
     }
 
+    /// <summary>
+    /// Tests the 'hash' command to generate a hash file
+    /// </summary>
     [TestMethod]
-    public void HashCommandGenerate()
+    public void HashCommand_Generate()
     {
         try
         {
@@ -88,8 +100,11 @@ public class TestHash
         }
     }
 
+    /// <summary>
+    /// Tests the 'hash' command to verify a hash file with a missing file
+    /// </summary>
     [TestMethod]
-    public void HashCommandVerifyMissingFile()
+    public void HashCommand_Verify_MissingFile()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -106,8 +121,11 @@ public class TestHash
         StringAssert.Contains(output, "Error: Could not find file");
     }
 
+    /// <summary>
+    /// Tests the 'hash' command to verify a hash file with a bad hash
+    /// </summary>
     [TestMethod]
-    public void HashCommandVerifyBad()
+    public void HashCommand_Verify_Bad()
     {
         try
         {
@@ -135,8 +153,11 @@ public class TestHash
         }
     }
 
+    /// <summary>
+    /// Tests the 'hash' command to verify a hash file with a good hash
+    /// </summary>
     [TestMethod]
-    public void HashCommandVerifyGood()
+    public void HashCommand_Verify_Good()
     {
         try
         {

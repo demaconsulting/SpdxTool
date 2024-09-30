@@ -20,11 +20,17 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'to-markdown' command.
+/// </summary>
 [TestClass]
 public class TestToMarkdown
 {
+    /// <summary>
+    /// Test the 'to-markdown' command with missing arguments.
+    /// </summary>
     [TestMethod]
-    public void ToMarkdownMissingArguments()
+    public void ToMarkdown_MissingArguments()
     {
         // Run the tool
         var exitCode = Runner.Run(
@@ -38,8 +44,11 @@ public class TestToMarkdown
         StringAssert.Contains(output, "'to-markdown' command missing arguments");
     }
 
+    /// <summary>
+    /// Test the 'to-markdown' command with missing SPDX file.
+    /// </summary>
     [TestMethod]
-    public void ToMarkdownMissingSpdx()
+    public void ToMarkdown_MissingSpdx()
     {
         // Run the tool
         var exitCode = Runner.Run(
@@ -55,6 +64,9 @@ public class TestToMarkdown
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
+    /// <summary>
+    /// Test the 'to-markdown' command.
+    /// </summary>
     [TestMethod]
     public void ToMarkdown()
     {

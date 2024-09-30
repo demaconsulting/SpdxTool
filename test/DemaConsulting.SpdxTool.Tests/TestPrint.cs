@@ -20,11 +20,17 @@
 
 namespace DemaConsulting.SpdxTool.Tests;
 
+/// <summary>
+/// Tests for the 'print' command
+/// </summary>
 [TestClass]
 public class TestPrint
 {
+    /// <summary>
+    /// Tests the 'print' command from the command line
+    /// </summary>
     [TestMethod]
-    public void PrintConsole()
+    public void Print_CommandLine()
     {
         // Run the command
         var exitCode = Runner.Run(
@@ -39,8 +45,11 @@ public class TestPrint
         StringAssert.Contains(output, "Hello, World!");
     }
 
+    /// <summary>
+    /// Tests the 'print' command from a workflow
+    /// </summary>
     [TestMethod]
-    public void PrintWorkflow()
+    public void Print_Workflow()
     {
         // Workflow contents
         const string workflowContents = 
