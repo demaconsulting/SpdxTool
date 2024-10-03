@@ -20,6 +20,7 @@
 
 using DemaConsulting.SpdxModel;
 using DemaConsulting.SpdxTool.Spdx;
+using DemaConsulting.SpdxTool.Utility;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -216,23 +217,23 @@ public sealed class FindPackage : Command
     public static bool IsPackageMatch(SpdxPackage package, IReadOnlyDictionary<string, string> criteria)
     {
         // Check the id
-        if (criteria.TryGetValue("id", out var id) && !package.Id.StartsWith(id))
+        if (criteria.TryGetValue("id", out var id) && !Wildcard.IsMatch(package.Id, id))
             return false;
 
         // Check the name
-        if (criteria.TryGetValue("name", out var name) && !package.Name.StartsWith(name))
+        if (criteria.TryGetValue("name", out var name) && !Wildcard.IsMatch(package.Name, name))
             return false;
 
         // Check the version
-        if (criteria.TryGetValue("version", out var version) && (package.Version == null || !package.Version.StartsWith(version)))
+        if (criteria.TryGetValue("version", out var version) && (package.Version == null || !Wildcard.IsMatch(package.Version, version)))
             return false;
 
         // Check the filename
-        if (criteria.TryGetValue("filename", out var filename) && (package.FileName == null || !package.FileName.StartsWith(filename)))
+        if (criteria.TryGetValue("filename", out var filename) && (package.FileName == null || !Wildcard.IsMatch(package.FileName, filename)))
             return false;
 
         // Check the download location
-        if (criteria.TryGetValue("download", out var download) && !package.DownloadLocation.StartsWith(download))
+        if (criteria.TryGetValue("download", out var download) && !Wildcard.IsMatch(package.DownloadLocation, download))
             return false;
 
         // Package matches all specified criteria
