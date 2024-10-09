@@ -98,15 +98,11 @@ public sealed class Diagram : Command
         var tools = false;
         foreach (var option in args.Skip(2))
         {
-            switch (option)
+            tools = option switch
             {
-                case "tools":
-                    tools = true;
-                    break;
-
-                default:
-                    throw new CommandUsageException($"'diagram' command invalid option {option}");
-            }
+                "tools" => true,
+                _ => throw new CommandUsageException($"'diagram' command invalid option {option}")
+            };
         }
 
         // Generate the diagram

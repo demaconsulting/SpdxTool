@@ -161,7 +161,7 @@ public sealed class AddPackage : Command
         {
             // Copy the new package
             p = package.DeepCopy();
-            doc.Packages = doc.Packages.Append(p).ToArray();
+            doc.Packages = [..doc.Packages.Append(p)];
         }
     }
 
@@ -232,24 +232,24 @@ public sealed class AddPackage : Command
         // Append the PURL if specified
         var purl = GetMapString(packageMap, "purl", variables);
         if (!string.IsNullOrEmpty(purl))
-            package.ExternalReferences = package.ExternalReferences.Append(
+            package.ExternalReferences = [..package.ExternalReferences.Append(
                 new SpdxExternalReference
                 {
                     Category = SpdxReferenceCategory.PackageManager,
                     Type = "purl",
                     Locator = purl
-                }).ToArray();
+                })];
 
         // Append the CPE23 if specified
         var cpe23 = GetMapString(packageMap, "cpe23", variables);
         if (!string.IsNullOrEmpty(cpe23))
-            package.ExternalReferences = package.ExternalReferences.Append(
+            package.ExternalReferences = [..package.ExternalReferences.Append(
                 new SpdxExternalReference
                 {
                     Category = SpdxReferenceCategory.Security,
                     Type = "cpe23Type",
                     Locator = cpe23
-                }).ToArray();
+                })];
 
         // Return the package
         return package;
