@@ -57,6 +57,16 @@ public sealed class Context : IDisposable
     public bool Silent { get; private init; }
 
     /// <summary>
+    ///     Gets a value indicating whether to perform self-validation
+    /// </summary>
+    public bool Validate { get; private init; }
+
+    /// <summary>
+    ///     Gets the depth of the validation report
+    /// </summary>
+    public int Depth { get; private init; }
+
+    /// <summary>
     ///     Gets the arguments
     /// </summary>
     public IReadOnlyCollection<string> Arguments { get; private init; }
@@ -65,6 +75,11 @@ public sealed class Context : IDisposable
     ///     Gets the number of errors reported
     /// </summary>
     public int Errors { get; private set; }
+
+    /// <summary>
+    ///     Gets the proposed exit code
+    /// </summary>
+    public int ExitCode => Errors > 0 ? 1 : 0;
 
     /// <summary>
     ///     Dispose of this context
@@ -139,6 +154,8 @@ public sealed class Context : IDisposable
         var version = false;
         var help = false;
         var silent = false;
+        var validate = false;
+        var depth = 1;
         string? logFile = null;
         var extra = new List<string>();
         using var arg = args.AsEnumerable().GetEnumerator();
@@ -161,7 +178,20 @@ public sealed class Context : IDisposable
 
                 case "-s":
                 case "--silent":
+                    // Handle silent flag
                     silent = true;
+                    break;
+
+                case "--validate":
+                    // Handle self-validation
+                    validate = true;
+                    break;
+
+                case "--depth":
+                    // Handle depth argument
+                    if (!arg.MoveNext())
+                        throw new InvalidOperationException("Missing depth argument");
+                    depth = int.Parse(arg.Current);
                     break;
 
                 case "-l":
@@ -187,7 +217,9 @@ public sealed class Context : IDisposable
         {
             Version = version,
             Help = help,
-            Silent = silent
+            Silent = silent,
+            Validate = validate,
+            Depth = depth
         };
     }
 }

@@ -47,7 +47,7 @@ public static class Program
         {
             using var context = Context.Create(args);
             Run(context);
-            Environment.ExitCode = context.Errors > 0 ? 1 : 0;
+            Environment.ExitCode = context.ExitCode;
         }
         catch (InvalidOperationException e)
         {
@@ -86,6 +86,13 @@ public static class Program
         if (context.Help)
         {
             PrintUsage(context);
+            return;
+        }
+
+        // Handle self-validation
+        if (context.Validate)
+        {
+            SelfValidation.Validate.Run(context);
             return;
         }
 
@@ -145,6 +152,7 @@ public static class Program
               -v, --version                            Show version information and exit
               -l, --log <log-file>                     Log output to file
               -s, --silent                             Silence console output
+              --validate                               Perform self-validation
             
             Commands:
             """);
