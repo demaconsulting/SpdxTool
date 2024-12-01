@@ -86,7 +86,7 @@ public sealed class CopyPackage : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 3
         if (args.Length < 3)
@@ -122,7 +122,7 @@ public sealed class CopyPackage : Command
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");

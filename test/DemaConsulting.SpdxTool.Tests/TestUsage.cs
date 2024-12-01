@@ -42,7 +42,7 @@ public class TestUsage
         Assert.AreEqual(1, exitCode);
 
         // Verify the output contains the usage information
-        StringAssert.Contains(output, "No arguments specified");
+        StringAssert.Contains(output, "Error: Missing arguments");
         StringAssert.Contains(output, "Usage: spdx-tool");
     }
 

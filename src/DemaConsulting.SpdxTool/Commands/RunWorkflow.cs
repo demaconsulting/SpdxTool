@@ -75,7 +75,7 @@ public sealed class RunWorkflow : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 1
         if (args.Length < 1)
@@ -107,20 +107,20 @@ public sealed class RunWorkflow : Command
         }
 
         // Execute the workflow
-        var outputs = name.StartsWith("http") ? RunUrl(name, null, parameters) : RunFile(name, null, parameters);
+        var outputs = name.StartsWith("http") ? RunUrl(context, name, null, parameters) : RunFile(context, name, null, parameters);
 
         // Skip if not verbose
         if (!verbose)
             return;
 
         // Print the outputs
-        Console.WriteLine("Outputs:");
+        context.WriteLine("Outputs:");
         foreach (var (key, value) in outputs)
-            Console.WriteLine($"  {key} = {value}");
+            context.WriteLine($"  {key} = {value}");
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");
@@ -144,7 +144,7 @@ public sealed class RunWorkflow : Command
             }
 
         // Run the workflow
-        var outputs = Run(step, file, url, integrity, parameters);
+        var outputs = Run(context, step, file, url, integrity, parameters);
         
         // Save any outputs
         if (GetMapMap(inputs, "outputs") is { } outputsMap)
@@ -163,6 +163,7 @@ public sealed class RunWorkflow : Command
     /// <summary>
     /// Execute the workflow
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="step">Step for reporting errors</param>
     /// <param name="file">Optional file</param>
     /// <param name="url">Optional URL</param>
@@ -170,7 +171,7 @@ public sealed class RunWorkflow : Command
     /// <param name="parameters">Workflow parameters</param>
     /// <returns>Workflow outputs</returns>
     /// <exception cref="YamlException">on error</exception>
-    public static Dictionary<string, string> Run(YamlMappingNode step, string? file, string? url, string? integrity, Dictionary<string, string> parameters)
+    public static Dictionary<string, string> Run(Context context, YamlMappingNode step, string? file, string? url, string? integrity, Dictionary<string, string> parameters)
     {
         // Fail if no source
         if (file != null && url != null)
@@ -178,11 +179,11 @@ public sealed class RunWorkflow : Command
 
         // Run the file if specified
         if (file != null)
-            return RunFile(file, integrity, parameters);
+            return RunFile(context, file, integrity, parameters);
 
         // Run the URL if specified
         if (url != null)
-            return RunUrl(url, integrity, parameters);
+            return RunUrl(context, url, integrity, parameters);
 
         // No source provided
         throw new YamlException(step.Start, step.End, "'run-workflow' command must specify either 'file' or 'url' input");
@@ -191,13 +192,14 @@ public sealed class RunWorkflow : Command
     /// <summary>
     /// Execute the workflow
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="workflowFile">Workflow file</param>
     /// <param name="integrity">Optional integrity hash</param>
     /// <param name="parameters">Workflow parameters</param>
     /// <returns>Workflow outputs</returns>
     /// <exception cref="CommandUsageException">On usage error</exception>
     /// <exception cref="YamlException">On workflow error</exception>
-    public static Dictionary<string, string> RunFile(string workflowFile, string? integrity, Dictionary<string, string> parameters)
+    public static Dictionary<string, string> RunFile(Context context, string workflowFile, string? integrity, Dictionary<string, string> parameters)
     {
         // Verify the file exists
         if (!File.Exists(workflowFile))
@@ -208,18 +210,19 @@ public sealed class RunWorkflow : Command
         var bytes = File.ReadAllBytes(workflowFile);
 
         // Run the workflow
-        return RunBytes(workflowFile, bytes, integrity, parameters);
+        return RunBytes(context, workflowFile, bytes, integrity, parameters);
     }
 
     /// <summary>
     /// Run workflow from URL
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="url">Workflow URL</param>
     /// <param name="integrity">Optional integrity hash</param>
     /// <param name="parameters">Workflow parameters</param>
     /// <returns>Workflow outputs</returns>
     /// <exception cref="CommandErrorException">on error</exception>
-    public static Dictionary<string, string> RunUrl(string url, string? integrity, Dictionary<string, string> parameters)
+    public static Dictionary<string, string> RunUrl(Context context, string url, string? integrity, Dictionary<string, string> parameters)
     {
         // Construct the client handler to use the system proxy
         var handler = new HttpClientHandler
@@ -245,18 +248,19 @@ public sealed class RunWorkflow : Command
         var bytes = bytesTask.Result;
 
         // Run the workflow
-        return RunBytes(url, bytes, integrity, parameters);
+        return RunBytes(context, url, bytes, integrity, parameters);
     }
 
     /// <summary>
     /// Execute the workflow from Yaml bytes (from file, url, etc.)
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="source">Yaml source</param>
     /// <param name="bytes">Yaml bytes</param>
     /// <param name="integrity">Optional integrity hash</param>
     /// <param name="parameters">Parameters</param>
     /// <returns>Workflow outputs</returns>
-    public static Dictionary<string, string> RunBytes(string source, byte[] bytes, string? integrity, Dictionary<string, string> parameters)
+    public static Dictionary<string, string> RunBytes(Context context, string source, byte[] bytes, string? integrity, Dictionary<string, string> parameters)
     {
         // Optionally check the integrity before running
         if (integrity != null)
@@ -319,7 +323,7 @@ public sealed class RunWorkflow : Command
                 // Check for a displayName
                 var displayName = GetMapString(step, "displayName", variables);
                 if (displayName != null)
-                    Console.WriteLine(displayName);
+                    context.WriteLine(displayName);
 
                 // Execute the step
                 if (!CommandsRegistry.Commands.TryGetValue(command, out var entry))
@@ -327,7 +331,7 @@ public sealed class RunWorkflow : Command
                         $"Unknown command: '{command}'");
 
                 // Run the command
-                entry.Instance.Run(step, variables);
+                entry.Instance.Run(context, step, variables);
             }
 
             // Return our variables as the output

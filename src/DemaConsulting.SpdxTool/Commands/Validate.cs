@@ -68,7 +68,7 @@ public sealed class Validate : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if for missing arguments
         if (args.Length == 0)
@@ -79,11 +79,11 @@ public sealed class Validate : Command
         var ntia = args.Skip(1).Any(a => a == "ntia");
         
         // Perform validation
-        DoValidate(spdxFile, ntia);
+        DoValidate(context, spdxFile, ntia);
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");
@@ -97,16 +97,17 @@ public sealed class Validate : Command
         var ntia = ntiaValue?.ToLowerInvariant() == "true";
 
         // Perform validation
-        DoValidate(spdxFile, ntia);
+        DoValidate(context, spdxFile, ntia);
     }
 
     /// <summary>
     /// Validate SPDX document for issues
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="ntia">NTIA flag</param>
     /// <exception cref="CommandErrorException">on issues</exception>
-    public static void DoValidate(string spdxFile, bool ntia)
+    public static void DoValidate(Context context, string spdxFile, bool ntia)
     {
         // Load the SPDX document
         var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
@@ -119,12 +120,10 @@ public sealed class Validate : Command
         if (issues.Count == 0)
             return;
 
-        // Report issues to console
-        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        // Report issues
         foreach (var issue in issues)
-            Console.WriteLine(issue);
-        Console.ResetColor();
-        Console.WriteLine();
+            context.WriteWarning(issue);
+        context.WriteLine("");
         
         // Throw error
         throw new CommandErrorException($"Found {issues.Count} Issues in {spdxFile}");

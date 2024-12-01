@@ -74,7 +74,7 @@ public sealed class Query : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is not 1
         if (args.Length < 2)
@@ -83,12 +83,12 @@ public sealed class Query : Command
         // Generate the markdown
         var found = QueryProgramOutput(args[0], args[1], args.Skip(2).ToArray());
 
-        // Write the found value to the console
-        Console.WriteLine(found);
+        // Write the found value
+        context.WriteLine(found);
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");

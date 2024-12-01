@@ -79,7 +79,7 @@ public sealed class GetVersion : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if insufficient arguments
         if (args.Length < 2)
@@ -94,11 +94,11 @@ public sealed class GetVersion : Command
         var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria).Version;
 
         // Print the version
-        Console.WriteLine(packageVersion);
+        context.WriteLine(packageVersion ?? "");
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");
