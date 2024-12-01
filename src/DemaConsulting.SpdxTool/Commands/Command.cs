@@ -30,15 +30,17 @@ public abstract class Command
     /// <summary>
     /// Run the command
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="args">Command arguments</param>
-    public abstract void Run(string[] args);
+    public abstract void Run(Context context, string[] args);
 
     /// <summary>
     /// Run the command
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="step">Command step</param>
     /// <param name="variables">Workflow variables</param>
-    public abstract void Run(YamlMappingNode step, Dictionary<string, string> variables);
+    public abstract void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables);
 
     /// <summary>
     /// Expand variables in text

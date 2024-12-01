@@ -82,7 +82,7 @@ public sealed class FindPackage : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if insufficient arguments
         if (args.Length < 2)
@@ -97,11 +97,11 @@ public sealed class FindPackage : Command
         var packageId = FindPackageByCriteria(spdxFile, criteria).Id;
 
         // Write the package ID to the console
-        Console.WriteLine(packageId);
+        context.WriteLine(packageId);
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");

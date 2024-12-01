@@ -69,7 +69,7 @@ public sealed class Hash : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is not 3
         if (args.Length != 3)
@@ -79,11 +79,11 @@ public sealed class Hash : Command
         var operation = args[0];
         var algorithm = args[1];
         var file = args[2];
-        DoHashOperation(operation, algorithm, file);
+        DoHashOperation(context, operation, algorithm, file);
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");
@@ -101,17 +101,18 @@ public sealed class Hash : Command
                    throw new YamlException(step.Start, step.End, "'hash' command missing 'file' input");
 
         // Do the hash operation
-        DoHashOperation(operation, algorithm, file);
+        DoHashOperation(context, operation, algorithm, file);
     }
 
     /// <summary>
     /// Do the requested Sha256 operation
     /// </summary>
+    /// <param name="context">Program context</param>
     /// <param name="operation">Operation to perform (generate or verify)</param>
     /// <param name="algorithm">Hash algorithm</param>
     /// <param name="file">File to perform operation on</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
-    public static void DoHashOperation(string operation, string algorithm, string file)
+    public static void DoHashOperation(Context context, string operation, string algorithm, string file)
     {
         // Check the algorithm
         if (algorithm != "sha256")
@@ -125,7 +126,7 @@ public sealed class Hash : Command
                 break;
 
             case "verify":
-                VerifySha256(file);
+                VerifySha256(context, file);
                 break;
 
             default:
@@ -149,9 +150,10 @@ public sealed class Hash : Command
     /// <summary>
     /// Verify a Sha256 hash for a file
     /// </summary>
-    /// <param name="file"></param>
+    /// <param name="context">Program context</param>
+    /// <param name="file">Name of the file to verify</param>
     /// <exception cref="CommandErrorException"></exception>
-    public static void VerifySha256(string file)
+    public static void VerifySha256(Context context, string file)
     {
         // Check the hash file exists
         var hashFile = file + ".sha256";
@@ -169,7 +171,7 @@ public sealed class Hash : Command
             throw new CommandErrorException($"Sha256 hash mismatch for '{file}'");
 
         // Report the digest is OK
-        Console.WriteLine($"Sha256 Digest OK for '{file}'");
+        context.WriteLine($"Sha256 Digest OK for '{file}'");
     }
 
     /// <summary>

@@ -66,18 +66,18 @@ public sealed class Help : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is not 1
         if (args.Length != 1)
             throw new CommandUsageException("'help' command missing arguments");
 
         // Generate the markdown
-        ShowUsage(args[0]);
+        ShowUsage(context, args[0]);
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");
@@ -87,15 +87,16 @@ public sealed class Help : Command
                     throw new YamlException(step.Start, step.End, "'help' command missing 'about' input");
 
         // Generate the markdown
-        ShowUsage(about);
+        ShowUsage(context, about);
     }
 
     /// <summary>
     /// Show the usage for the requested command
     /// </summary>
-    /// <param name="command"></param>
+    /// <param name="context">Program context</param>
+    /// <param name="command">Command to get help on</param>
     /// <exception cref="CommandUsageException">On error</exception>
-    public static void ShowUsage(string command)
+    public static void ShowUsage(Context context, string command)
     {
         // Get the entry for the command
         if (!CommandsRegistry.Commands.TryGetValue(command, out var entry))
@@ -103,6 +104,6 @@ public sealed class Help : Command
 
         // Display the command entry
         foreach (var line in entry.Details)
-            Console.WriteLine(line);
+            context.WriteLine(line);
     }
 }

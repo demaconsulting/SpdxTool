@@ -68,14 +68,14 @@ public sealed class Print : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         foreach (var arg in args)
-            Console.WriteLine(arg);
+            context.WriteLine(arg);
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");
@@ -88,7 +88,7 @@ public sealed class Print : Command
         for (var i = 0; i < text.Children.Count; i++)
         {
             var line = GetSequenceString(text, i, variables) ?? string.Empty;
-            Console.WriteLine(line);
+            context.WriteLine(line);
         }
     }
 }

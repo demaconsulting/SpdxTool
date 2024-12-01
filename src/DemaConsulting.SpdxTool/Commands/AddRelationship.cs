@@ -82,7 +82,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <inheritdoc />
-    public override void Run(string[] args)
+    public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 4
         if (args.Length < 4)
@@ -102,7 +102,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <inheritdoc />
-    public override void Run(YamlMappingNode step, Dictionary<string, string> variables)
+    public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");

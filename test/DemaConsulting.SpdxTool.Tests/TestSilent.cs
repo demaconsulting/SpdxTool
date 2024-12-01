@@ -21,26 +21,50 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for unknown command handling.
+/// Tests for silencing output.
 /// </summary>
 [TestClass]
-public class TestUnknownCommand
+public class TestSilent
 {
     /// <summary>
-    /// Test unknown commands are reported.
+    /// Test that silence functions when '-s' is specified
     /// </summary>
     [TestMethod]
-    public void UnknownCommand()
+    public void Silent_Short()
     {
         // Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "unknown-command");
+            "-s",
+            "-h");
 
-        // Verify error reported
-        Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "Error: Unknown command 'unknown-command'");
+        // Verify success
+        Assert.AreEqual(0, exitCode);
+
+        // Verify the output is empty
+        Assert.AreEqual(0, output.Length);
+    }
+
+    /// <summary>
+    /// Test that silence functions when '--silent' is specified
+    /// </summary>
+    [TestMethod]
+    public void Silent_Long()
+    {
+        // Run the command
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "--silent",
+            "--help");
+
+        // Verify success
+        Assert.AreEqual(0, exitCode);
+
+        // Verify the output is empty
+        Assert.AreEqual(0, output.Length);
     }
 }

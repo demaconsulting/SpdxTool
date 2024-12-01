@@ -38,97 +38,117 @@ public static class Program
             ?.InformationalVersion ?? "Unknown";
 
     /// <summary>
-    /// Application entry point
+    ///     Application entry point
     /// </summary>
     /// <param name="args">Program arguments</param>
     public static void Main(string[] args)
     {
-        // Handle querying for version
-        if (args.Length == 1 && (args[0] == "-v" || args[0] == "--version"))
+        try
         {
-            Console.WriteLine(Version);
+            using var context = Context.Create(args);
+            Run(context);
+            Environment.ExitCode = context.Errors > 0 ? 1 : 0;
+        }
+        catch (InvalidOperationException e)
+        {
+            // Report standard failure
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Error: {e.Message}");
+            Console.ResetColor();
+            Environment.Exit(1);
+        }
+        catch (Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Error: {e}");
+            Console.ResetColor();
+            throw;
+        }
+    }
+
+    /// <summary>
+    ///     Run the program context
+    /// </summary>
+    /// <param name="context">Program context</param>
+    public static void Run(Context context)
+    {
+        // Handle version query
+        if (context.Version)
+        {
+            context.WriteLine(Version);
             return;
         }
 
         // Print version banner
-        Console.WriteLine($"DemaConsulting.SpdxTool {Version}\n");
+        context.WriteLine($"DemaConsulting.SpdxTool {Version}\n");
 
-        // Fail if no arguments specified
-        if (args.Length == 0)
+        // Handle help query
+        if (context.Help)
         {
-            ReportError("No arguments specified");
-            PrintUsage();
+            PrintUsage(context);
             return;
         }
 
-        // Handle printing usage information
-        if (args[0] == "-h" || args[0] == "--help")
+        // Handle missing arguments
+        if (context.Arguments.Count == 0)
         {
-            PrintUsage();
+            context.WriteError("Error: Missing arguments");
+            PrintUsage(context);
             return;
         }
 
         try
         {
-            if (CommandsRegistry.Commands.TryGetValue(args[0], out var entry))
+            var command = context.Arguments.First();
+            if (CommandsRegistry.Commands.TryGetValue(command, out var entry))
             {
                 // Run the command
-                entry.Instance.Run(args.Skip(1).ToArray());
+                entry.Instance.Run(context, context.Arguments.Skip(1).ToArray());
             }
             else
             {
                 // Report unknown command
-                ReportError($"Unknown command: '{args[0]}'");
-                PrintUsage();
+                context.WriteError($"Error: Unknown command '{command}'");
+                PrintUsage(context);
             }
         }
         catch (CommandUsageException ex)
         {
             // Report usage exception and usage information
-            ReportError(ex.Message);
-            PrintUsage();
+            context.WriteError($"Error: {ex.Message}");
+            PrintUsage(context);
         }
         catch (CommandErrorException ex)
         {
             // Report error exception
-            ReportError(ex.Message);
+            context.WriteError($"Error: {ex.Message}");
         }
         catch (Exception ex)
         {
             // Report unknown exception
-            ReportError(ex.ToString());
+            context.WriteError(ex.ToString());
         }
     }
 
     /// <summary>
-    /// Print usage information
+    ///     Print usage information
     /// </summary>
-    public static void PrintUsage()
+    /// <param name="context">Program context</param>
+    public static void PrintUsage(Context context)
     {
-        Console.WriteLine("Usage: spdx-tool [options] <command> [arguments]");
-        Console.WriteLine();
-        Console.WriteLine("Options:");
-        Console.WriteLine("  -h, --help                               Show this help message and exit");
-        Console.WriteLine("  -v, --version                            Show version information and exit");
-        Console.WriteLine();
-        Console.WriteLine("Commands:");
+        context.WriteLine(
+            """
+            Usage: spdx-tool [options] <command> [arguments]
+            
+            Options:
+              -h, --help                               Show this help message and exit
+              -v, --version                            Show version information and exit
+              -l, --log <log-file>                     Log output to file
+              -s, --silent                             Silence console output
+            
+            Commands:
+            """);
         foreach (var command in CommandsRegistry.Commands.Values)
-            Console.WriteLine($"  {command.CommandLine,-40} {command.Summary}");
-    }
-
-    /// <summary>
-    /// Report an error message to the console in red
-    /// </summary>
-    /// <param name="message">Error message</param>
-    private static void ReportError(string message)
-    {
-        // Write an error message to the console
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Error: {message}");
-        Console.ResetColor();
-        Console.WriteLine();
-
-        // Set the exit code to 1 as an error has occurred
-        Environment.ExitCode = 1;
+            context.WriteLine($"  {command.CommandLine,-40} {command.Summary}");
     }
 }
