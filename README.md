@@ -39,6 +39,7 @@ Options:
   -v, --version                            Show version information and exit
   -l, --log <log-file>                     Log output to file
   -s, --silent                             Silence console output
+  --validate                               Perform self-validation
 
 Commands:
   help <command>                           Display extended help about a command
@@ -84,6 +85,40 @@ steps:
 ```
 
 A more detailed description of workflow YAML files can be found [here](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md)
+
+
+## Self Validation
+
+Running self-validation produces a report containing the following information:
+
+```
+# DemaConsulting.SpdxTool
+
+| Information         | Value                                              |
+| :------------------ | :------------------------------------------------- |
+| SpdxTool Version    | <version>                                         |
+| Machine Name        | <machine-name>                                     |
+| OS Version          | <os-version>                                       |
+| DotNet Runtime      | <dotnet-runtime-version>                           |
+| Time Stamp          | <timestamp>                                        |
+
+Tests:
+
+- AddPackage: Passed
+- AddRelationship: Passed
+- CopyPackage: Passed
+- FindPackage: Passed
+- GetVersion: Passed
+- Query: Passed
+- RenameId: Passed
+- UpdatePackage: Passed
+
+Validation Passed
+```
+
+On validation failure the tool will exit with a non-zero exit code.
+
+This report may be useful in regulated industries requiring evidence of tool validation.
 
 
 ## Additional Information

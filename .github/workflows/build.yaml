@@ -112,6 +112,13 @@ jobs:
         --no-restore
         --property:PackageVersion=${{ inputs.version }}
 
+    - name: Self Validate
+      run: >
+        dotnet
+        src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
+        --log validate.log
+        --validate
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -122,3 +129,4 @@ jobs:
           **/manifest.spdx.json
           **/manifest.spdx.json.sha256
           *summary.md
+          validate.log
