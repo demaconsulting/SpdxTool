@@ -3,13 +3,13 @@
   "isRoot": true,
   "tools": {
     "dotnet-sonarscanner": {
-      "version": "9.0.0",
+      "version": "9.0.2",
       "commands": [
         "dotnet-sonarscanner"
       ]
     },
     "microsoft.sbom.dotnettool": {
-      "version": "2.2.9",
+      "version": "3.0.1",
       "commands": [
         "sbom-tool"
       ]
