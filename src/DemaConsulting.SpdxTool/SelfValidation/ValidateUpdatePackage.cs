@@ -137,7 +137,7 @@ internal static class ValidateUpdatePackage
                         Description: "A new package description",
                         ConcludedLicense: "MIT v2",
                         DeclaredLicense: "MIT v2"
-                    },
+                    }
                 ]
             };
         }

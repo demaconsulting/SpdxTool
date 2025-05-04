@@ -38,7 +38,7 @@ public class TestCommand
         // Test expanding a missing variable
         const string text = "Hello, ${{ name }}!";
         var variables = new Dictionary<string, string>();
-        Assert.ThrowsException<InvalidOperationException>(() => Command.Expand(text, variables));
+        Assert.ThrowsExactly<InvalidOperationException>(() => Command.Expand(text, variables));
     }
 
     /// <summary>

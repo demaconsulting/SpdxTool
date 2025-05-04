@@ -171,7 +171,7 @@ public sealed class ToMarkdown : Command
         var rootPackages = doc.GetRootPackages().OrderBy(p => p.Name).ToArray();
         var packages = doc.Packages.Except(rootPackages).OrderBy(p => p.Name).ToArray();
         var tools = packages.Where(p => toolIds.Contains(p.Id)).ToArray();
-        packages = packages.Except(tools).ToArray();
+        packages = [..packages.Except(tools)];
 
         // Print the root packages
         if (rootPackages.Length > 0)

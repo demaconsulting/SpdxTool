@@ -81,7 +81,7 @@ public sealed class Query : Command
             throw new CommandUsageException("'query' command missing arguments");
 
         // Generate the markdown
-        var found = QueryProgramOutput(args[0], args[1], args.Skip(2).ToArray());
+        var found = QueryProgramOutput(args[0], args[1], [..args.Skip(2)]);
 
         // Write the found value
         context.WriteLine(found);
