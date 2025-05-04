@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using DemaConsulting.TestResults;
 using System.Text.RegularExpressions;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
@@ -38,10 +39,22 @@ internal static partial class ValidateQuery
     ///     Run validation test
     /// </summary>
     /// <param name="context">Program context</param>
-    public static void Run(Context context)
+    /// <param name="results">Test results</param>
+    public static void Run(Context context, TestResults.TestResults results)
     {
+        var passed = DoValidate();
+
         // Report validation result
-        context.WriteLine($"- Query: {(DoValidate() ? "Passed" : "Failed")}");
+        context.WriteLine($"- SpdxTool_Query: {(passed ? "Passed" : "Failed")}");
+        results.Results.Add(
+            new TestResult
+            {
+                Name = "SpdxTool_Query",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateQuery",
+                ComputerName = Environment.MachineName,
+                StartTime = DateTime.Now,
+                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
+            });
     }
 
     /// <summary>

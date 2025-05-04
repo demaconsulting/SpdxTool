@@ -62,6 +62,11 @@ public sealed class Context : IDisposable
     public bool Validate { get; private init; }
 
     /// <summary>
+    ///     Gets the name of the validation results file
+    /// </summary>
+    public string ValidationFile { get; private init; } = "";
+
+    /// <summary>
     ///     Gets the depth of the validation report
     /// </summary>
     public int Depth { get; private init; }
@@ -155,6 +160,7 @@ public sealed class Context : IDisposable
         var help = false;
         var silent = false;
         var validate = false;
+        var validationFile = "";
         var depth = 1;
         string? logFile = null;
         var extra = new List<string>();
@@ -187,19 +193,21 @@ public sealed class Context : IDisposable
                     validate = true;
                     break;
 
+                case "-r":
+                case "--result":
+                    // Handle validation result
+                    validationFile = ParseArgument(arg, "Missing result argument");
+                    break;
+
                 case "--depth":
                     // Handle depth argument
-                    if (!arg.MoveNext())
-                        throw new InvalidOperationException("Missing depth argument");
-                    depth = int.Parse(arg.Current);
+                    depth = int.Parse(ParseArgument(arg, "Missing depth argument"));
                     break;
 
                 case "-l":
                 case "--log":
                     // Handle logging output
-                    if (!arg.MoveNext())
-                        throw new InvalidOperationException("Missing log output filename");
-                    logFile = arg.Current;
+                    logFile = ParseArgument(arg, "Missing log output filename");
                     break;
 
                 default:
@@ -219,7 +227,25 @@ public sealed class Context : IDisposable
             Help = help,
             Silent = silent,
             Validate = validate,
+            ValidationFile = validationFile,
             Depth = depth
         };
+    }
+
+    /// <summary>
+    ///     Parse the command line argument from the enumerator
+    /// </summary>
+    /// <param name="arg">Argument enumerator</param>
+    /// <param name="missingMessage">Error message if missing</param>
+    /// <returns>Command line argument</returns>
+    /// <exception cref="InvalidOperationException">Thrown if argument missing</exception>
+    private static string ParseArgument(IEnumerator<string> arg, string missingMessage)
+    {
+        // Move to the argument
+        if (!arg.MoveNext())
+            throw new InvalidOperationException(missingMessage);
+        
+        // Return the argument
+        return arg.Current;
     }
 }

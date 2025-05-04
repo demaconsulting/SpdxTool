@@ -64,4 +64,52 @@ public class TestSelfValidation
         // Verify depth of result
         StringAssert.Contains(output, "### DemaConsulting.SpdxTool");
     }
+
+    /// <summary>
+    /// Test that the self-validation command produces TRX results file.
+    /// </summary>
+    [TestMethod]
+    public void SelfValidation_TrxResults()
+    {
+        const string resultFile = "results.trx";
+
+        try
+        {
+            // Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "--validate",
+                "--result",
+                resultFile);
+            
+            // Verify success
+            Assert.AreEqual(0, exitCode);
+            
+            // Read results file
+            var results = File.ReadAllText(resultFile);
+            Assert.IsNotNull(results);
+
+            StringAssert.Contains(results, "DemaConsulting.SpdxTool Validation Results -");
+            StringAssert.Contains(results, "SpdxTool_AddPackage");
+            StringAssert.Contains(results, "SpdxTool_AddRelationship");
+            StringAssert.Contains(results, "SpdxTool_CopyPackage");
+            StringAssert.Contains(results, "SpdxTool_FindPackage");
+            StringAssert.Contains(results, "SpdxTool_GetVersion");
+            StringAssert.Contains(results, "SpdxTool_Query");
+            StringAssert.Contains(results, "SpdxTool_RenameId");
+            StringAssert.Contains(results, "SpdxTool_UpdatePackage");
+            StringAssert.Contains(results, """
+                                             <ResultSummary outcome="Completed">
+                                               <Counters total="8" executed="8" passed="8" failed="0" />
+                                             </ResultSummary>
+                                           """);
+        }
+        finally
+        {
+            // Delete the output file
+            File.Delete(resultFile);
+        }
+    }
 }

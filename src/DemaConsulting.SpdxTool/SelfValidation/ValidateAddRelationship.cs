@@ -20,6 +20,7 @@
 
 using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.SpdxModel;
+using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
@@ -32,10 +33,22 @@ internal static class ValidateAddRelationship
     ///     Run validation test
     /// </summary>
     /// <param name="context">Program context</param>
-    public static void Run(Context context)
+    /// <param name="results">Test results</param>
+    public static void Run(Context context, TestResults.TestResults results)
     {
+        var passed = DoValidate();
+        
         // Report validation result
-        context.WriteLine($"- AddRelationship: {(DoValidate() ? "Passed" : "Failed")}");
+        context.WriteLine($"- SpdxTool_AddRelationship: {(passed ? "Passed" : "Failed")}");
+        results.Results.Add(
+            new TestResult
+            {
+                Name = "SpdxTool_AddRelationship",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateAddRelationship",
+                ComputerName = Environment.MachineName,
+                StartTime = DateTime.Now,
+                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
+            });
     }
 
     /// <summary>
