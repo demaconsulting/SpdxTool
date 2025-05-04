@@ -1,3 +1,4 @@
+---
 name: Release
 
 on:
@@ -13,13 +14,16 @@ on:
         default: 'publish'
         type: choice
         options:
-        - none
-        - release
-        - publish
+          - none
+          - release
+          - publish
 
 jobs:
   build:
     name: Build Linux
+    permissions:
+      contents: read       # To read repository contents
+      pull-requests: write # To write pull requests analysis results and artifacts
     uses: ./.github/workflows/build.yaml
     with:
       os: ubuntu-latest
@@ -29,44 +33,44 @@ jobs:
 
   release:
     permissions:
-      contents: write
-      packages: write
+      contents: write # To create releases
 
     runs-on: ubuntu-latest
-    
+
     needs: build
-    
+
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup dotnet 8
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: |
-          8.x
+      - name: Setup dotnet 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.x
 
-    - name: Download Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: artifacts-ubuntu-latest
-        path: artifacts
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-ubuntu-latest
+          path: artifacts
 
-    - name: Clean Artifacts
-      shell: bash
-      run: rm -rf artifacts/test
-      
-    - name: Create release
-      if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
-      uses: ncipollo/release-action@v1
-      with:
-        artifacts: 'artifacts/**/*'
-        generateReleaseNotes: true
-        tag: ${{ github.event.inputs.version }}
+      - name: Clean Artifacts
+        shell: bash
+        run: rm -rf artifacts/test
 
-    - name: Publish to Nuget
-      if: ${{ inputs.publish == 'publish' }}
-      run: >
-        dotnet nuget push
-        artifacts/src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
-        --source "https://api.nuget.org/v3/index.json"
-        --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
+      - name: Create release
+        if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'artifacts/**/*'
+          generateReleaseNotes: true
+          tag: ${{ inputs.version }}
+
+      - name: Publish to Nuget
+        if: ${{ inputs.publish == 'publish' }}
+        run: >
+          dotnet
+          nuget push
+          artifacts/src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+          --source "https://api.nuget.org/v3/index.json"
+          --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"

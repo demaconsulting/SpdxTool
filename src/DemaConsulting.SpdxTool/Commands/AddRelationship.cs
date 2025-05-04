@@ -184,7 +184,7 @@ public sealed class AddRelationship : Command
             return [];
 
         // Parse each relationship
-        return relationships.Children.Select(node =>
+        return [..relationships.Children.Select(node =>
         {
             // Get the relationship map
             if (node is not YamlMappingNode relationshipMap)
@@ -192,7 +192,7 @@ public sealed class AddRelationship : Command
 
             // Parse the relationship
             return Parse(command, packageId, relationshipMap, variables);
-        }).ToArray();
+        })];
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+---
 on:
   workflow_call:
     inputs:
@@ -14,119 +15,122 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read       # To read repository contents
+      pull-requests: write # To write pull requests analysis results and artifacts
+
     runs-on: ${{ inputs.os }}
 
     steps:
 
-    - name: Checkout 
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Setup dotnet 6/8
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: |
-          6.x
-          8.x
+      - name: Setup dotnet 6/8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.x
+            8.x
 
-    - name: Restore Tools
-      run: >
-        dotnet tool restore
-      
-    - name: Restore Dependencies
-      run: > 
-        dotnet restore
-      
-    - name: Start Sonar Scanner
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: >
-        dotnet dotnet-sonarscanner
-        begin
-        /k:"demaconsulting_SpdxTool"
-        /o:"demaconsulting"
-        /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-        /d:sonar.host.url="https://sonarcloud.io"
-        /d:sonar.cs.opencover.reportsPaths=**/*.opencover.xml
-        /d:sonar.scanner.scanAll=false
+      - name: Restore Tools
+        run: >
+          dotnet tool restore
 
-    - name: Build
-      run: >
-        dotnet build
-        --no-restore
-        --configuration Release
-        --property:Version=${{ inputs.version }}
+      - name: Restore Dependencies
+        run: >
+          dotnet restore
 
-    - name: Test
-      run: >
-        dotnet test
-        --no-build
-        --configuration Release
-        --property:Version=${{ inputs.version }}
-        --collect "XPlat Code Coverage;Format=opencover"
+      - name: Start Sonar Scanner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          dotnet dotnet-sonarscanner
+          begin
+          /k:"demaconsulting_SpdxTool"
+          /o:"demaconsulting"
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.cs.opencover.reportsPaths=**/*.opencover.xml
+          /d:sonar.scanner.scanAll=false
 
-    - name: End Sonar Scanner
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: >
-        dotnet dotnet-sonarscanner
-        end
-        /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
- 
-    - name: Generate Tool SBOM
-      run: >
-        dotnet sbom-tool generate
-        -b src/DemaConsulting.SpdxTool/bin/Release
-        -bc src/DemaConsulting.SpdxTool
-        -pn DemaConsulting.SpdxTool
-        -pv ${{ inputs.version }}
-        -ps DemaConsulting
-        -nsb https://DemaConsulting.com/SpdxTool
-        -pm true
-        -li true
+      - name: Build
+        run: >
+          dotnet build
+          --no-restore
+          --configuration Release
+          --property:Version=${{ inputs.version }}
 
-    - name: Generate Tests SBOM
-      run: >
-        dotnet sbom-tool generate
-        -b test/DemaConsulting.SpdxTool.Tests/bin/Release
-        -bc test/DemaConsulting.SpdxTool.Tests
-        -pn DemaConsulting.SpdxTool.Tests
-        -pv ${{ inputs.version }}
-        -ps DemaConsulting
-        -nsb https://DemaConsulting.com/SpdxTool.Tests
-        -pm true
-        -li true
+      - name: Test
+        run: >
+          dotnet test
+          --no-build
+          --configuration Release
+          --property:Version=${{ inputs.version }}
+          --collect "XPlat Code Coverage;Format=opencover"
 
-    - name: Run SBOM Workflow
-      run: >
-        dotnet
-        src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-        run-workflow
-        spdx-workflow.yaml
+      - name: End Sonar Scanner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          dotnet dotnet-sonarscanner
+          end
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-    - name: Create Dotnet Tool
-      run: >
-        dotnet pack
-        --no-build
-        --no-restore
-        --property:PackageVersion=${{ inputs.version }}
+      - name: Generate Tool SBOM
+        run: >
+          dotnet sbom-tool generate
+          -b src/DemaConsulting.SpdxTool/bin/Release
+          -bc src/DemaConsulting.SpdxTool
+          -pn DemaConsulting.SpdxTool
+          -pv ${{ inputs.version }}
+          -ps DemaConsulting
+          -nsb https://DemaConsulting.com/SpdxTool
+          -pm true
+          -li true
 
-    - name: Self Validate
-      run: >
-        dotnet
-        src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-        --log validate.log
-        --validate
+      - name: Generate Tests SBOM
+        run: >
+          dotnet sbom-tool generate
+          -b test/DemaConsulting.SpdxTool.Tests/bin/Release
+          -bc test/DemaConsulting.SpdxTool.Tests
+          -pn DemaConsulting.SpdxTool.Tests
+          -pv ${{ inputs.version }}
+          -ps DemaConsulting
+          -nsb https://DemaConsulting.com/SpdxTool.Tests
+          -pm true
+          -li true
 
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: artifacts-${{ inputs.os }}
-        path: |
-          **/*.nupkg
-          **/*.snupkg
-          **/manifest.spdx.json
-          **/manifest.spdx.json.sha256
-          *summary.md
-          validate.log
+      - name: Run SBOM Workflow
+        run: >
+          dotnet
+          src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
+          run-workflow spdx-workflow.yaml
+
+      - name: Create Dotnet Tool
+        run: >
+          dotnet pack
+          --no-build
+          --no-restore
+          --property:PackageVersion=${{ inputs.version }}
+
+      - name: Self Validate
+        run: >
+          dotnet
+          src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
+          --log validate.log
+          --validate
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-${{ inputs.os }}
+          path: |
+            **/*.nupkg
+            **/*.snupkg
+            **/manifest.spdx.json
+            **/manifest.spdx.json.sha256
+            *summary.md
+            validate.log
