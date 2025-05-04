@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using DemaConsulting.TestResults;
+
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
 /// <summary>
@@ -29,10 +31,22 @@ internal static class ValidateGetVersion
     ///     Run validation test
     /// </summary>
     /// <param name="context">Program context</param>
-    public static void Run(Context context)
+    /// <param name="results">Test results</param>
+    public static void Run(Context context, TestResults.TestResults results)
     {
+        var passed = DoValidate();
+        
         // Report validation result
-        context.WriteLine($"- GetVersion: {(DoValidate() ? "Passed" : "Failed")}");
+        context.WriteLine($"- SpdxTool_GetVersion: {(passed ? "Passed" : "Failed")}");
+        results.Results.Add(
+            new TestResult
+            {
+                Name = "SpdxTool_GetVersion",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateGetVersion",
+                ComputerName = Environment.MachineName,
+                StartTime = DateTime.Now,
+                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
+            });
     }
 
     /// <summary>

@@ -39,7 +39,8 @@ Options:
   -v, --version                            Show version information and exit
   -l, --log <log-file>                     Log output to file
   -s, --silent                             Silence console output
-  --validate                               Perform self-validation
+      --validate                           Perform self-validation
+  -r, --result <file>                      Self-validation result TRX file
 
 Commands:
   help <command>                           Display extended help about a command

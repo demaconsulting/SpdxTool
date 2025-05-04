@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxModel.IO;
+using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
@@ -31,10 +32,22 @@ internal static class ValidateUpdatePackage
     ///     Run validation test
     /// </summary>
     /// <param name="context">Program context</param>
-    public static void Run(Context context)
+    /// <param name="results">Test results</param>
+    public static void Run(Context context, TestResults.TestResults results)
     {
+        var passed = DoValidate();
+
         // Report validation result
-        context.WriteLine($"- UpdatePackage: {(DoValidate() ? "Passed" : "Failed")}");
+        context.WriteLine($"- SpdxTool_UpdatePackage: {(passed ? "Passed" : "Failed")}");
+        results.Results.Add(
+            new TestResult
+            {
+                Name = "SpdxTool_UpdatePackage",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateUpdatePackage",
+                ComputerName = Environment.MachineName,
+                StartTime = DateTime.Now,
+                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
+            });
     }
 
     /// <summary>

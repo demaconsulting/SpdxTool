@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using DemaConsulting.TestResults.IO;
+
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
 /// <summary>
@@ -48,19 +50,28 @@ public static class Validate
               
              """);
 
+        var results = new DemaConsulting.TestResults.TestResults
+        {
+            Name = $"DemaConsulting.SpdxTool Validation Results - {Program.Version}"
+        };
+        
         // Run validation tests
-        ValidateAddPackage.Run(context);
-        ValidateAddRelationship.Run(context);
-        ValidateCopyPackage.Run(context);
-        ValidateFindPackage.Run(context);
-        ValidateGetVersion.Run(context);
-        ValidateQuery.Run(context);
-        ValidateRenameId.Run(context);
-        ValidateUpdatePackage.Run(context);
+        ValidateAddPackage.Run(context, results);
+        ValidateAddRelationship.Run(context, results);
+        ValidateCopyPackage.Run(context, results);
+        ValidateFindPackage.Run(context, results);
+        ValidateGetVersion.Run(context, results);
+        ValidateQuery.Run(context, results);
+        ValidateRenameId.Run(context, results);
+        ValidateUpdatePackage.Run(context, results);
 
         // If all validations succeeded (no errors) then report validation passed
         if (context.Errors == 0)
             context.WriteLine("\nValidation Passed");
+        
+        // Save test results
+        if (!string.IsNullOrEmpty(context.ValidationFile))
+            File.WriteAllText(context.ValidationFile, TrxSerializer.Serialize(results));
     }
 
     /// <summary>

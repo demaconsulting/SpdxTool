@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxModel.IO;
+using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
@@ -31,10 +32,22 @@ internal static class ValidateRenameId
     ///     Run validation test
     /// </summary>
     /// <param name="context">Program context</param>
-    public static void Run(Context context)
+    /// <param name="results">Test results</param>
+    public static void Run(Context context, TestResults.TestResults results)
     {
+        var passed = DoValidate();
+
         // Report validation result
-        context.WriteLine($"- RenameId: {(DoValidate() ? "Passed" : "Failed")}");
+        context.WriteLine($"- SpdxTool_RenameId: {(passed ? "Passed" : "Failed")}");
+        results.Results.Add(
+            new TestResult
+            {
+                Name = "SpdxTool_RenameId",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateRenameId",
+                ComputerName = Environment.MachineName,
+                StartTime = DateTime.Now,
+                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
+            });
     }
 
     /// <summary>
