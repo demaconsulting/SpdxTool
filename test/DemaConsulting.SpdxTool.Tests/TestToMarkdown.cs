@@ -21,36 +21,36 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'to-markdown' command.
+///     Tests for the 'to-markdown' command.
 /// </summary>
 [TestClass]
 public class TestToMarkdown
 {
     /// <summary>
-    /// Test the 'to-markdown' command with missing arguments.
+    ///     Test the 'to-markdown' command with missing arguments.
     /// </summary>
     [TestMethod]
     public void ToMarkdown_MissingArguments()
     {
-        // Run the tool
+        // Act: Run the tool
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "to-markdown");
 
-        // Verify the conversion failed
+        // Assert: Verify the conversion failed
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'to-markdown' command missing arguments");
     }
 
     /// <summary>
-    /// Test the 'to-markdown' command with missing SPDX file.
+    ///     Test the 'to-markdown' command with missing SPDX file.
     /// </summary>
     [TestMethod]
     public void ToMarkdown_MissingSpdx()
     {
-        // Run the tool
+        // Act: Run the tool
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -59,18 +59,18 @@ public class TestToMarkdown
             "missing.spdx.json",
             "output.md");
 
-        // Verify the conversion failed
+        // Assert: Verify the conversion failed
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
     /// <summary>
-    /// Test the 'to-markdown' command.
+    ///     Test the 'to-markdown' command.
     /// </summary>
     [TestMethod]
     public void ToMarkdown()
     {
-        const string spdxContents = 
+        const string spdxContents =
             """
             {
               "files": [],
@@ -128,10 +128,10 @@ public class TestToMarkdown
 
         try
         {
-            // Write the SPDX file
+            // Arrange: Write the SPDX file
             File.WriteAllText("test.spdx.json", spdxContents);
 
-            // Run the tool
+            // Act: Run the tool
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -140,39 +140,39 @@ public class TestToMarkdown
                 "test.spdx.json",
                 "test.md");
 
-            // Verify the conversion succeeded
+            // Assert: Verify the conversion succeeded
             Assert.AreEqual(0, exitCode);
             Assert.IsTrue(File.Exists("test.md"));
 
             // Read the Markdown text
             var markdown = File.ReadAllText("test.md");
 
-            // Verify the contents
+            // Assert: Verify the contents
             Assert.IsTrue(markdown.Contains("## SPDX Document"));
             Assert.IsTrue(markdown.Contains("| File Name | test.spdx.json |"));
             Assert.IsTrue(markdown.Contains("| Name | Test Document |"));
 
-            // Find the root packages section
+            // Assert: Verify the root packages section
             var rootPackagesIndex = markdown.IndexOf("# Root Packages", StringComparison.Ordinal);
             Assert.IsTrue(rootPackagesIndex >= 0);
 
-            // Find the packages section
+            // Assert: Verify the packages section
             var packagesIndex = markdown.IndexOf("# Packages", StringComparison.Ordinal);
             Assert.IsTrue(packagesIndex >= 0);
 
-            // Find the tools section
+            // Assert: Verify the tools section
             var toolsIndex = markdown.IndexOf("# Tools", StringComparison.Ordinal);
             Assert.IsTrue(toolsIndex >= 0);
 
-            // Verify "Test Application" is a root package
+            // Assert: Verify "Test Application" is a root package
             var testPackageIndex = markdown.IndexOf("| Test Application | 1.2.3 | MIT |", StringComparison.Ordinal);
             Assert.IsTrue(testPackageIndex > rootPackagesIndex && testPackageIndex < packagesIndex);
 
-            // Verify "Test Library" is a package
+            // Assert: Verify "Test Library" is a package
             var testLibraryIndex = markdown.IndexOf("| Test Library | 2.3.4 | MIT |", StringComparison.Ordinal);
             Assert.IsTrue(testLibraryIndex > packagesIndex && testLibraryIndex < toolsIndex);
 
-            // Verify "Test Tool" is a tool
+            // Assert: Verify "Test Tool" is a tool
             var testToolPosition = markdown.IndexOf("| Test Tool | 3.4.5 | MIT |", StringComparison.Ordinal);
             Assert.IsTrue(testToolPosition > toolsIndex);
         }

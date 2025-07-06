@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.SpdxModel;
+using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
@@ -37,7 +37,7 @@ internal static class ValidateAddRelationship
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
-        
+
         // Report validation result
         context.WriteLine($"- SpdxTool_AddRelationship: {(passed ? "Passed" : "Failed")}");
         results.Results.Add(

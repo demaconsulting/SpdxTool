@@ -23,37 +23,37 @@ using DemaConsulting.SpdxModel.IO;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'update-package' command.
+///     Tests for the 'update-package' command.
 /// </summary>
 [TestClass]
 public class TestUpdatePackage
 {
     /// <summary>
-    /// Test the 'update-package' command does not work from the command line.
+    ///     Test the 'update-package' command does not work from the command line.
     /// </summary>
     [TestMethod]
     public void UpdatePackage_CommandLine()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "update-package");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'update-package' command is only valid in a workflow");
     }
 
     /// <summary>
-    /// Test the 'update-package' command.
+    ///     Test the 'update-package' command.
     /// </summary>
     [TestMethod]
     public void UpdatePackage_Workflow()
     {
         // SPDX contents
-        const string spdxContents = 
+        const string spdxContents =
             """
             {
               "files": [],
@@ -85,7 +85,7 @@ public class TestUpdatePackage
             """;
 
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: update-package
@@ -108,11 +108,11 @@ public class TestUpdatePackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", spdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -120,14 +120,14 @@ public class TestUpdatePackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
 
             // Read the SPDX document
             Assert.IsTrue(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
-            // Verify both packages present
+            // Assert: Verify both packages present
             Assert.AreEqual(1, doc.Packages.Length);
             Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.AreEqual("New package name", doc.Packages[0].Name);

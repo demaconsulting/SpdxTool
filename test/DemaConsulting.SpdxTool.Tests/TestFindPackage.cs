@@ -21,15 +21,15 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'find-package' command
+///     Tests for the 'find-package' command
 /// </summary>
 [TestClass]
 public class TestFindPackage
 {
     /// <summary>
-    /// SPDX file for finding packages
+    ///     SPDX file for finding packages
     /// </summary>
-    private const string SpdxContents = 
+    private const string SpdxContents =
         """
         {
           "files": [],
@@ -70,30 +70,30 @@ public class TestFindPackage
         """;
 
     /// <summary>
-    /// Test the 'find-package' command with missing arguments
+    ///     Test the 'find-package' command with missing arguments
     /// </summary>
     [TestMethod]
     public void FindPackage_MissingArguments()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "find-package");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'find-package' command missing arguments");
     }
 
     /// <summary>
-    /// Test the 'find-package' command with missing SPDX file
+    ///     Test the 'find-package' command with missing SPDX file
     /// </summary>
     [TestMethod]
     public void FindPackage_MissingFile()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -102,23 +102,23 @@ public class TestFindPackage
             "missing.spdx.json",
             "name=anything");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
     /// <summary>
-    /// Test the 'find-package' command from the command-line
+    ///     Test the 'find-package' command from the command-line
     /// </summary>
     [TestMethod]
     public void FindPackage_CommandLine()
     {
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", SpdxContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -127,7 +127,7 @@ public class TestFindPackage
                 "spdx.json",
                 "name=Another Test Package");
 
-            // Verify package ID
+            // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "SPDXRef-Package-2");
         }
@@ -138,13 +138,13 @@ public class TestFindPackage
     }
 
     /// <summary>
-    /// Test the 'find-package' command to find a package by name
+    ///     Test the 'find-package' command to find a package by name
     /// </summary>
     [TestMethod]
     public void FindPackage_ByName()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: find-package
@@ -160,11 +160,11 @@ public class TestFindPackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -172,7 +172,7 @@ public class TestFindPackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify package ID
+            // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "Found package SPDXRef-Package-1");
         }
@@ -184,13 +184,13 @@ public class TestFindPackage
     }
 
     /// <summary>
-    /// Test the 'find-package' command to find a package by version
+    ///     Test the 'find-package' command to find a package by version
     /// </summary>
     [TestMethod]
     public void FindPackage_ByVersion()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: find-package
@@ -206,11 +206,11 @@ public class TestFindPackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -218,7 +218,7 @@ public class TestFindPackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify package ID
+            // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "Found package SPDXRef-Package-2");
         }
@@ -230,13 +230,13 @@ public class TestFindPackage
     }
 
     /// <summary>
-    /// Test the 'find-package' command to find a package by file name
+    ///     Test the 'find-package' command to find a package by file name
     /// </summary>
     [TestMethod]
     public void FindPackage_ByFileName()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: find-package
@@ -252,11 +252,11 @@ public class TestFindPackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -264,7 +264,7 @@ public class TestFindPackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify package ID
+            // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "Found package SPDXRef-Package-1");
         }
@@ -276,13 +276,13 @@ public class TestFindPackage
     }
 
     /// <summary>
-    /// Test the 'find-package' command to find a package by download location
+    ///     Test the 'find-package' command to find a package by download location
     /// </summary>
     [TestMethod]
     public void FindPackage_ByDownload()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: find-package
@@ -298,11 +298,11 @@ public class TestFindPackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -310,7 +310,7 @@ public class TestFindPackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify package ID
+            // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "Found package SPDXRef-Package-2");
         }

@@ -21,7 +21,7 @@
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command Entry record
+///     Command Entry record
 /// </summary>
 /// <param name="Name">Command name</param>
 /// <param name="CommandLine">Command line example</param>

@@ -21,36 +21,36 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'help' command
+///     Tests for the 'help' command
 /// </summary>
 [TestClass]
 public class TestHelp
 {
     /// <summary>
-    /// Tests the 'help' command with missing arguments
+    ///     Tests the 'help' command with missing arguments
     /// </summary>
     [TestMethod]
     public void Help_MissingArguments()
     {
-        // Run the help command with no arguments
+        // Act: Run the help command with no arguments
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "help");
 
-        // Verify an error was detected
+        // Assert: Verify an error was detected
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'help' command missing arguments");
     }
 
     /// <summary>
-    /// Tests the 'help' command with an unknown command
+    ///     Tests the 'help' command with an unknown command
     /// </summary>
     [TestMethod]
     public void Help_UnknownCommand()
     {
-        // Run the help command with an unknown command
+        // Act: Run the help command with an unknown command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -58,18 +58,18 @@ public class TestHelp
             "help",
             "unknown-command");
 
-        // Verify an error was detected
+        // Assert: Verify an error was detected
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "Unknown command: 'unknown-command'");
     }
 
     /// <summary>
-    /// Tests the 'help' command with the 'run-workflow' command
+    ///     Tests the 'help' command with the 'run-workflow' command
     /// </summary>
     [TestMethod]
     public void Help_RunWorkflow()
     {
-        // Run the help command with an unknown command
+        // Act: Run the help command with an unknown command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -77,7 +77,7 @@ public class TestHelp
             "help",
             "run-workflow");
 
-        // Verify success
+        // Assert: Verify success
         Assert.AreEqual(0, exitCode);
         StringAssert.Contains(output, "This command runs the steps specified in the workflow file/url.");
     }

@@ -27,22 +27,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command to generate a Markdown summary of an SPDX document
+///     Command to generate a Markdown summary of an SPDX document
 /// </summary>
 public sealed class ToMarkdown : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "to-markdown";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly ToMarkdown Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -65,7 +65,7 @@ public sealed class ToMarkdown : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private ToMarkdown()
     {
@@ -108,7 +108,8 @@ public sealed class ToMarkdown : Command
 
         // Get the 'markdown' input
         var markdownFile = GetMapString(inputs, "markdown", variables) ??
-                           throw new YamlException(step.Start, step.End, "'to-markdown' command missing 'markdown' input");
+                           throw new YamlException(step.Start, step.End,
+                               "'to-markdown' command missing 'markdown' input");
 
         // Get the 'title' input
         var title = GetMapString(inputs, "title", variables) ?? "SPDX Document";
@@ -125,14 +126,15 @@ public sealed class ToMarkdown : Command
     }
 
     /// <summary>
-    /// Generate the markdown description for an SPDX document
+    ///     Generate the markdown description for an SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX file</param>
     /// <param name="markdownFile">Markdown file</param>
     /// <param name="title">Markdown title</param>
     /// <param name="depth">Depth of the Markdown headers</param>
     /// <exception cref="CommandUsageException">On usage error</exception>
-    public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, string title = "SPDX Document", int depth = 2)
+    public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, string title = "SPDX Document",
+        int depth = 2)
     {
         // Load the SPDX document
         var doc = SpdxHelpers.LoadJsonDocument(spdxFile);
@@ -160,10 +162,11 @@ public sealed class ToMarkdown : Command
         markdown.AppendLine();
 
         // Find tool package IDs
-        var toolIds = 
+        var toolIds =
             doc
                 .Relationships
-                .Where(r => r.RelationshipType is SpdxRelationshipType.BuildToolOf or SpdxRelationshipType.DevToolOf or SpdxRelationshipType.TestToolOf)
+                .Where(r => r.RelationshipType is SpdxRelationshipType.BuildToolOf or SpdxRelationshipType.DevToolOf
+                    or SpdxRelationshipType.TestToolOf)
                 .Select(r => r.Id)
                 .ToHashSet();
 
@@ -220,7 +223,7 @@ public sealed class ToMarkdown : Command
     }
 
     /// <summary>
-    /// Get a license for a package
+    ///     Get a license for a package
     /// </summary>
     /// <param name="package">SPDX package</param>
     /// <returns>License</returns>

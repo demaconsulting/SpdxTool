@@ -26,22 +26,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Add a package to an SPDX document
+///     Add a package to an SPDX document
 /// </summary>
 public sealed class AddPackage : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "add-package";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly AddPackage Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -85,7 +85,7 @@ public sealed class AddPackage : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private AddPackage()
     {
@@ -121,7 +121,7 @@ public sealed class AddPackage : Command
     }
 
     /// <summary>
-    /// Add a package to the SPDX document
+    ///     Add a package to the SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX file</param>
     /// <param name="package">Package to add</param>
@@ -143,7 +143,7 @@ public sealed class AddPackage : Command
     }
 
     /// <summary>
-    /// Add SPDX package to document with optional enhance.
+    ///     Add SPDX package to document with optional enhance.
     /// </summary>
     /// <param name="doc">SPDX document</param>
     /// <param name="package">SPDX package to add</param>
@@ -166,14 +166,15 @@ public sealed class AddPackage : Command
     }
 
     /// <summary>
-    /// Create an SPDX package from a YAML mapping node
+    ///     Create an SPDX package from a YAML mapping node
     /// </summary>
     /// <param name="command">Command to blame for errors</param>
     /// <param name="packageMap">Package YAML mapping node</param>
     /// <param name="variables">Variables for expansion</param>
     /// <returns>New SPDX package</returns>
     /// <exception cref="YamlException">On parse error</exception>
-    public static SpdxPackage ParsePackage(string command, YamlMappingNode packageMap, Dictionary<string, string> variables)
+    public static SpdxPackage ParsePackage(string command, YamlMappingNode packageMap,
+        Dictionary<string, string> variables)
     {
         // Get the package ID
         var packageId = GetMapString(packageMap, "id", variables) ??
@@ -232,24 +233,34 @@ public sealed class AddPackage : Command
         // Append the PURL if specified
         var purl = GetMapString(packageMap, "purl", variables);
         if (!string.IsNullOrEmpty(purl))
-            package.ExternalReferences = [..package.ExternalReferences.Append(
-                new SpdxExternalReference
-                {
-                    Category = SpdxReferenceCategory.PackageManager,
-                    Type = "purl",
-                    Locator = purl
-                })];
+        {
+            package.ExternalReferences =
+            [
+                ..package.ExternalReferences.Append(
+                    new SpdxExternalReference
+                    {
+                        Category = SpdxReferenceCategory.PackageManager,
+                        Type = "purl",
+                        Locator = purl
+                    })
+            ];
+        }
 
         // Append the CPE23 if specified
         var cpe23 = GetMapString(packageMap, "cpe23", variables);
         if (!string.IsNullOrEmpty(cpe23))
-            package.ExternalReferences = [..package.ExternalReferences.Append(
-                new SpdxExternalReference
-                {
-                    Category = SpdxReferenceCategory.Security,
-                    Type = "cpe23Type",
-                    Locator = cpe23
-                })];
+        {
+            package.ExternalReferences =
+            [
+                ..package.ExternalReferences.Append(
+                    new SpdxExternalReference
+                    {
+                        Category = SpdxReferenceCategory.Security,
+                        Type = "cpe23Type",
+                        Locator = cpe23
+                    })
+            ];
+        }
 
         // Return the package
         return package;

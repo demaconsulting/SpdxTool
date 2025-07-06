@@ -35,7 +35,7 @@ internal static class ValidateGetVersion
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
-        
+
         // Report validation result
         context.WriteLine($"- SpdxTool_GetVersion: {(passed ? "Passed" : "Failed")}");
         results.Results.Add(

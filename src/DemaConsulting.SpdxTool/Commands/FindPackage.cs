@@ -27,22 +27,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Find the ID of a package in an SPDX file
+///     Find the ID of a package in an SPDX file
 /// </summary>
 public sealed class FindPackage : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "find-package";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly FindPackage Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -75,7 +75,7 @@ public sealed class FindPackage : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private FindPackage()
     {
@@ -92,7 +92,7 @@ public sealed class FindPackage : Command
         var spdxFile = args[0];
         var criteria = new Dictionary<string, string>();
         ParseCriteria(args.Skip(1), criteria);
-    
+
         // Find the package ID
         var packageId = FindPackageByCriteria(spdxFile, criteria).Id;
 
@@ -126,7 +126,7 @@ public sealed class FindPackage : Command
     }
 
     /// <summary>
-    /// Parse the package criteria from the arguments
+    ///     Parse the package criteria from the arguments
     /// </summary>
     /// <param name="args">Arguments</param>
     /// <param name="criteria">Criteria dictionary to populate</param>
@@ -148,7 +148,7 @@ public sealed class FindPackage : Command
     }
 
     /// <summary>
-    /// Read the package criteria from the inputs
+    ///     Read the package criteria from the inputs
     /// </summary>
     /// <param name="map">Criteria map</param>
     /// <param name="variables">Currently defined variables</param>
@@ -185,7 +185,7 @@ public sealed class FindPackage : Command
     }
 
     /// <summary>
-    /// Find the package in the SPDX document matching the specified criteria
+    ///     Find the package in the SPDX document matching the specified criteria
     /// </summary>
     /// <param name="spdxFile">SPDX document filename</param>
     /// <param name="criteria">Search criteria</param>
@@ -209,7 +209,7 @@ public sealed class FindPackage : Command
     }
 
     /// <summary>
-    /// Test if the package matches the given criteria
+    ///     Test if the package matches the given criteria
     /// </summary>
     /// <param name="package">Package to match</param>
     /// <param name="criteria">Criteria</param>
@@ -225,11 +225,13 @@ public sealed class FindPackage : Command
             return false;
 
         // Check the version
-        if (criteria.TryGetValue("version", out var version) && (package.Version == null || !Wildcard.IsMatch(package.Version, version)))
+        if (criteria.TryGetValue("version", out var version) &&
+            (package.Version == null || !Wildcard.IsMatch(package.Version, version)))
             return false;
 
         // Check the filename
-        if (criteria.TryGetValue("filename", out var filename) && (package.FileName == null || !Wildcard.IsMatch(package.FileName, filename)))
+        if (criteria.TryGetValue("filename", out var filename) &&
+            (package.FileName == null || !Wildcard.IsMatch(package.FileName, filename)))
             return false;
 
         // Check the download location

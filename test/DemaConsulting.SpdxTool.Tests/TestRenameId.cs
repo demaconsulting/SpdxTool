@@ -23,36 +23,36 @@ using DemaConsulting.SpdxModel.IO;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'rename-id' command.
+///     Tests for the 'rename-id' command.
 /// </summary>
 [TestClass]
 public class TestRenameId
 {
     /// <summary>
-    /// Test the 'rename-id' command with missing arguments.
+    ///     Test the 'rename-id' command with missing arguments.
     /// </summary>
     [TestMethod]
     public void RenameId_MissingArguments()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "rename-id");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'rename-id' command missing arguments");
     }
 
     /// <summary>
-    /// Test the 'rename-id' command with missing SPDX file.
+    ///     Test the 'rename-id' command with missing SPDX file.
     /// </summary>
     [TestMethod]
     public void RenameId_MissingFile()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -62,18 +62,18 @@ public class TestRenameId
             "SPDXRef-Package-1",
             "SPDXRef-Package-2");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
     /// <summary>
-    /// Test the 'rename-id' command.
+    ///     Test the 'rename-id' command.
     /// </summary>
     [TestMethod]
     public void RenameId()
     {
-        const string spdxContents = 
+        const string spdxContents =
             """
             {
               "files": [],
@@ -106,10 +106,10 @@ public class TestRenameId
 
         try
         {
-            // Write the SPDX file
+            // Arrange: Write the SPDX file
             File.WriteAllText("test.spdx.json", spdxContents);
 
-            // Run the tool
+            // Act: Run the tool
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -119,14 +119,14 @@ public class TestRenameId
                 "SPDXRef-Package-1",
                 "SPDXRef-Package-2");
 
-            // Verify the conversion succeeded
+            // Assert: Verify the conversion succeeded
             Assert.AreEqual(0, exitCode);
 
             // Read the SPDX document
             Assert.IsTrue(File.Exists("test.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("test.spdx.json"));
 
-            // Verify the SPDX ID was updated
+            // Assert: Verify the SPDX ID was updated
             Assert.AreEqual("SPDXRef-Package-2", doc.Packages[0].Id);
             Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
             Assert.AreEqual("SPDXRef-Package-2", doc.Describes[0]);

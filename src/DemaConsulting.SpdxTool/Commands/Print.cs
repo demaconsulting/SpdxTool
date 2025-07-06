@@ -24,22 +24,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Print command
+///     Print command
 /// </summary>
 public sealed class Print : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "print";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly Print Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -61,7 +61,7 @@ public sealed class Print : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private Print()
     {
@@ -82,7 +82,7 @@ public sealed class Print : Command
 
         // Get the 'text' input
         var text = GetMapSequence(inputs, "text") ??
-                    throw new YamlException(step.Start, step.End, "'print' command missing 'text' input");
+                   throw new YamlException(step.Start, step.End, "'print' command missing 'text' input");
 
         // Write all text
         for (var i = 0; i < text.Children.Count; i++)

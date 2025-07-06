@@ -27,43 +27,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command to generate a diagram of an SPDX document
+///     Command to generate a diagram of an SPDX document
 /// </summary>
 public sealed class Diagram : Command
 {
     /// <summary>
-    /// Relationship direction enumeration
-    /// </summary>
-    private enum RelationshipDirection
-    {
-        /// <summary>
-        /// ID is the parent of the related element
-        /// </summary>
-        Parent,
-
-        /// <summary>
-        /// ID is the child of the related element
-        /// </summary>
-        Child,
-
-        /// <summary>
-        /// ID and related element are siblings
-        /// </summary>
-        Sibling
-    }
-
-    /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "diagram";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly Diagram Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -81,7 +60,7 @@ public sealed class Diagram : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private Diagram()
     {
@@ -97,13 +76,11 @@ public sealed class Diagram : Command
         // Check for options
         var tools = false;
         foreach (var option in args.Skip(2))
-        {
             tools = option switch
             {
                 "tools" => true,
                 _ => throw new CommandUsageException($"'diagram' command invalid option {option}")
             };
-        }
 
         // Generate the diagram
         GenerateDiagram(args[0], args[1], tools);
@@ -127,13 +104,13 @@ public sealed class Diagram : Command
         var toolsText = GetMapString(inputs, "tools", variables) ?? "false";
         if (!bool.TryParse(toolsText, out var tools))
             throw new YamlException(step.Start, step.End, "'diagram' invalid 'tools' input");
-        
+
         // Generate the diagram
         GenerateDiagram(spdxFile, mermaidFile, tools);
     }
 
     /// <summary>
-    /// Generate mermaid entity-relationship diagram from SPDX document
+    ///     Generate mermaid entity-relationship diagram from SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="mermaidFile">Mermaid diagram file name</param>
@@ -151,8 +128,8 @@ public sealed class Diagram : Command
         foreach (var relationship in doc.Relationships)
         {
             // Skip tools if not requested
-            if (!tools && relationship.RelationshipType is 
-                    SpdxRelationshipType.BuildToolOf or 
+            if (!tools && relationship.RelationshipType is
+                    SpdxRelationshipType.BuildToolOf or
                     SpdxRelationshipType.DevToolOf or
                     SpdxRelationshipType.TestToolOf)
                 continue;
@@ -164,7 +141,7 @@ public sealed class Diagram : Command
                 continue;
 
             // Get the relationship direction
-            var direction = GetDirection(relationship.RelationshipType);
+            var direction = relationship.RelationshipType.GetDirection();
             var from = direction switch
             {
                 RelationshipDirection.Parent => a,
@@ -187,46 +164,5 @@ public sealed class Diagram : Command
 
         // Write the diagram to the file
         File.WriteAllText(mermaidFile, diagram.ToString());
-    }
-
-    /// <summary>
-    /// Get the relationship direction
-    /// </summary>
-    /// <param name="type">Relationship type</param>
-    /// <returns>Relationship direction</returns>
-    private static RelationshipDirection GetDirection(SpdxRelationshipType type)
-    {
-        return type switch
-        {
-            SpdxRelationshipType.Describes => RelationshipDirection.Parent,
-            SpdxRelationshipType.DescribedBy => RelationshipDirection.Child,
-            SpdxRelationshipType.Contains => RelationshipDirection.Parent,
-            SpdxRelationshipType.ContainedBy => RelationshipDirection.Child,
-            SpdxRelationshipType.DependsOn => RelationshipDirection.Parent,
-            SpdxRelationshipType.DependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DependencyManifestOf => RelationshipDirection.Sibling,
-            SpdxRelationshipType.BuildDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DevDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.OptionalDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.ProvidedDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.TestDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.RuntimeDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.Generates => RelationshipDirection.Parent,
-            SpdxRelationshipType.GeneratedFrom => RelationshipDirection.Child,
-            SpdxRelationshipType.DistributionArtifact => RelationshipDirection.Child,
-            SpdxRelationshipType.PatchFor => RelationshipDirection.Child,
-            SpdxRelationshipType.PatchApplied => RelationshipDirection.Child,
-            SpdxRelationshipType.DynamicLink => RelationshipDirection.Parent,
-            SpdxRelationshipType.StaticLink => RelationshipDirection.Parent,
-            SpdxRelationshipType.BuildToolOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DevToolOf => RelationshipDirection.Child,
-            SpdxRelationshipType.TestToolOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DocumentationOf => RelationshipDirection.Child,
-            SpdxRelationshipType.OptionalComponentOf => RelationshipDirection.Child,
-            SpdxRelationshipType.PackageOf => RelationshipDirection.Child,
-            SpdxRelationshipType.PrerequisiteFor => RelationshipDirection.Child,
-            SpdxRelationshipType.HasPrerequisite => RelationshipDirection.Parent,
-            _ => RelationshipDirection.Sibling
-        };
     }
 }

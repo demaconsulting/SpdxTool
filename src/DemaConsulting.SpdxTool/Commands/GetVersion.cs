@@ -24,22 +24,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Get Version Command
+///     Get Version Command
 /// </summary>
 public sealed class GetVersion : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "get-version";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly GetVersion Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -72,7 +72,7 @@ public sealed class GetVersion : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private GetVersion()
     {

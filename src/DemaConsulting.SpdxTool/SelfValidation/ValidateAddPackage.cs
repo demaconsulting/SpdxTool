@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.SpdxModel;
+using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
@@ -133,14 +133,14 @@ internal static class ValidateAddPackage
             {
                 Packages:
                 [
-                    { Id: "SPDXRef-Package-1" }, 
+                    { Id: "SPDXRef-Package-1" },
                     { Id: "SPDXRef-Package-2" }
                 ],
                 Relationships:
                 [
                     _,
                     {
-                        Id: "SPDXRef-Package-2", 
+                        Id: "SPDXRef-Package-2",
                         RelationshipType: SpdxRelationshipType.BuildToolOf,
                         RelatedSpdxElement: "SPDXRef-Package-1"
                     }

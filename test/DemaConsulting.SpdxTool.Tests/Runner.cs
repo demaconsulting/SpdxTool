@@ -23,12 +23,12 @@ using System.Diagnostics;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Program runner class
+///     Program runner class
 /// </summary>
 internal static class Runner
 {
     /// <summary>
-    /// Run the specified program
+    ///     Run the specified program
     /// </summary>
     /// <param name="output">Program output</param>
     /// <param name="program">Program name</param>

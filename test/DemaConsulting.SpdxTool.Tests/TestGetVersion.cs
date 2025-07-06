@@ -21,15 +21,15 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'get-version' command
+///     Tests for the 'get-version' command
 /// </summary>
 [TestClass]
 public class TestGetVersion
 {
     /// <summary>
-    /// SPDX file for finding packages
+    ///     SPDX file for finding packages
     /// </summary>
-    private const string SpdxContents = 
+    private const string SpdxContents =
         """
         {
           "files": [],
@@ -70,30 +70,30 @@ public class TestGetVersion
         """;
 
     /// <summary>
-    /// Test the 'get-version' command with missing arguments
+    ///     Test the 'get-version' command with missing arguments
     /// </summary>
     [TestMethod]
     public void GetVersion_MissingArguments()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "get-version");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'get-version' command missing arguments");
     }
 
     /// <summary>
-    /// Test the 'get-version' command with missing SPDX file
+    ///     Test the 'get-version' command with missing SPDX file
     /// </summary>
     [TestMethod]
     public void GetVersion_MissingFile()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -102,23 +102,23 @@ public class TestGetVersion
             "missing.spdx.json",
             "id=SPDXRef-Package");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "File not found: missing.spdx.json");
     }
 
     /// <summary>
-    /// Test the 'get-version' command from the command line
+    ///     Test the 'get-version' command from the command line
     /// </summary>
     [TestMethod]
     public void GetVersion_CommandLine()
     {
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", SpdxContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -127,7 +127,7 @@ public class TestGetVersion
                 "spdx.json",
                 "id=SPDXRef-Package-2");
 
-            // Verify package ID
+            // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "2.0.0");
         }
@@ -138,13 +138,13 @@ public class TestGetVersion
     }
 
     /// <summary>
-    /// Test the 'get-version' command from a workflow
+    ///     Test the 'get-version' command from a workflow
     /// </summary>
     [TestMethod]
     public void GetVersion_Workflow()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: get-version
@@ -160,11 +160,11 @@ public class TestGetVersion
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -172,7 +172,7 @@ public class TestGetVersion
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify package ID
+            // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "Found version 2.0.0");
         }

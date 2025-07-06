@@ -216,6 +216,7 @@ public sealed class Context : IDisposable
                     {
                         extra.Add(arg.Current);
                     } while (arg.MoveNext());
+
                     break;
             }
         }
@@ -244,7 +245,7 @@ public sealed class Context : IDisposable
         // Move to the argument
         if (!arg.MoveNext())
             throw new InvalidOperationException(missingMessage);
-        
+
         // Return the argument
         return arg.Current;
     }

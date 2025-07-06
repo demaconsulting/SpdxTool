@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxModel;
+using DemaConsulting.SpdxModel.Transform;
 using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -26,22 +27,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Add a relationship between SPDX elements
+///     Add a relationship between SPDX elements
 /// </summary>
 public sealed class AddRelationship : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "add-relationship";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly AddRelationship Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -75,7 +76,7 @@ public sealed class AddRelationship : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private AddRelationship()
     {
@@ -113,7 +114,7 @@ public sealed class AddRelationship : Command
 
         // Get the 'id' input
         var id = GetMapString(inputs, "id", variables) ??
-                    throw new YamlException(step.Start, step.End, "'add-relationship' command missing 'id' input");
+                 throw new YamlException(step.Start, step.End, "'add-relationship' command missing 'id' input");
 
         // Get the 'replace' input
         var replaceText = GetMapString(inputs, "replace", variables) ?? "true";
@@ -122,7 +123,8 @@ public sealed class AddRelationship : Command
 
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
-                                    throw new YamlException(step.Start, step.End, "'add-package' missing 'relationships' input");
+                                    throw new YamlException(step.Start, step.End,
+                                        "'add-relationship' missing 'relationships' input");
         var relationships = Parse(Command, id, relationshipsSequence, variables);
 
         // Add the relationship
@@ -130,7 +132,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <summary>
-    /// Add the SPDX relationship to the SPDX document
+    ///     Add the SPDX relationship to the SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="relationships">SPDX relationships</param>
@@ -147,7 +149,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <summary>
-    /// Add the SPDX relationships to the SPDX document
+    ///     Add the SPDX relationships to the SPDX document
     /// </summary>
     /// <param name="doc">SPDX document</param>
     /// <param name="relationships">SPDX relationships</param>
@@ -156,7 +158,7 @@ public sealed class AddRelationship : Command
     {
         try
         {
-            SpdxModel.Transform.SpdxRelationships.Add(doc, relationships, replace);
+            SpdxRelationships.Add(doc, relationships, replace);
         }
         catch (Exception ex)
         {
@@ -165,7 +167,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <summary>
-    /// Parse SPDX relationships from a YAML sequence node
+    ///     Parse SPDX relationships from a YAML sequence node
     /// </summary>
     /// <param name="command">Command to blame for errors</param>
     /// <param name="packageId">Package ID</param>
@@ -184,19 +186,22 @@ public sealed class AddRelationship : Command
             return [];
 
         // Parse each relationship
-        return [..relationships.Children.Select(node =>
-        {
-            // Get the relationship map
-            if (node is not YamlMappingNode relationshipMap)
-                throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping");
+        return
+        [
+            ..relationships.Children.Select(node =>
+            {
+                // Get the relationship map
+                if (node is not YamlMappingNode relationshipMap)
+                    throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping");
 
-            // Parse the relationship
-            return Parse(command, packageId, relationshipMap, variables);
-        })];
+                // Parse the relationship
+                return Parse(command, packageId, relationshipMap, variables);
+            })
+        ];
     }
 
     /// <summary>
-    /// Parse an SPDX relationship from a YAML mapping node
+    ///     Parse an SPDX relationship from a YAML mapping node
     /// </summary>
     /// <param name="command">Command to blame for errors</param>
     /// <param name="packageId">Package ID</param>

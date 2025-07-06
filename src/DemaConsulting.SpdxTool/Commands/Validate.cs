@@ -25,22 +25,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command to validate SPDX documents
+///     Command to validate SPDX documents
 /// </summary>
 public sealed class Validate : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "validate";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly Validate Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -61,7 +61,7 @@ public sealed class Validate : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private Validate()
     {
@@ -77,7 +77,7 @@ public sealed class Validate : Command
         // Process the arguments
         var spdxFile = args[0];
         var ntia = args.Skip(1).Any(a => a == "ntia");
-        
+
         // Perform validation
         DoValidate(context, spdxFile, ntia);
     }
@@ -101,7 +101,7 @@ public sealed class Validate : Command
     }
 
     /// <summary>
-    /// Validate SPDX document for issues
+    ///     Validate SPDX document for issues
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="spdxFile">SPDX document file name</param>
@@ -124,7 +124,7 @@ public sealed class Validate : Command
         foreach (var issue in issues)
             context.WriteWarning(issue);
         context.WriteLine("");
-        
+
         // Throw error
         throw new CommandErrorException($"Found {issues.Count} Issues in {spdxFile}");
     }

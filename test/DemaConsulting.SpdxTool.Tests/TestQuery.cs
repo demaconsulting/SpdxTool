@@ -23,43 +23,43 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'query' command
+///     Tests for the 'query' command
 /// </summary>
 [TestClass]
 public partial class TestQuery
 {
     /// <summary>
-    /// Regular expression to check for version
+    ///     Regular expression to check for version
     /// </summary>
     /// <returns></returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+")]
     private static partial Regex VersionRegex();
 
     /// <summary>
-    /// Tests the 'query' command with missing arguments
+    ///     Tests the 'query' command with missing arguments
     /// </summary>
     [TestMethod]
     public void Query_MissingArguments()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "query");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'query' command missing arguments");
     }
 
     /// <summary>
-    /// Tests the 'query' command with bad pattern
+    ///     Tests the 'query' command with bad pattern
     /// </summary>
     [TestMethod]
     public void Query_BadPattern()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -69,18 +69,18 @@ public partial class TestQuery
             "dotnet",
             "--version");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "Pattern must contain a 'value' capture group");
     }
 
     /// <summary>
-    /// Tests the 'query' command with invalid program
+    ///     Tests the 'query' command with invalid program
     /// </summary>
     [TestMethod]
     public void Query_InvalidProgram()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -89,18 +89,18 @@ public partial class TestQuery
             @"(?<value>\d+\.\d+\.\d+)",
             "does-not-exist");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "Unable to start program 'does-not-exist'");
     }
 
     /// <summary>
-    /// Tests the 'query' command for dotnet version from the command line
+    ///     Tests the 'query' command for dotnet version from the command line
     /// </summary>
     [TestMethod]
     public void Query_DotNet_CommandLine()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -110,23 +110,23 @@ public partial class TestQuery
             "dotnet",
             "--version");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(0, exitCode);
         StringAssert.Matches(output, VersionRegex());
     }
 
     /// <summary>
-    /// Tests the 'query' command for dotnet version from a workflow
+    ///     Tests the 'query' command for dotnet version from a workflow
     /// </summary>
     [TestMethod]
     public void Query_DotNet_Workflow()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             parameters:
               version: unknown
-            
+
             steps:
             - command: query
               inputs:
@@ -135,7 +135,7 @@ public partial class TestQuery
                 program: dotnet
                 arguments:
                 - '--version'
-            
+
             - command: print
               inputs:
                 text:
@@ -144,10 +144,10 @@ public partial class TestQuery
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -155,7 +155,7 @@ public partial class TestQuery
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
             StringAssert.Matches(output, VersionRegex());
         }

@@ -23,19 +23,19 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command base class
+///     Command base class
 /// </summary>
 public abstract class Command
 {
     /// <summary>
-    /// Run the command
+    ///     Run the command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="args">Command arguments</param>
     public abstract void Run(Context context, string[] args);
 
     /// <summary>
-    /// Run the command
+    ///     Run the command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="step">Command step</param>
@@ -43,7 +43,7 @@ public abstract class Command
     public abstract void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables);
 
     /// <summary>
-    /// Expand variables in text
+    ///     Expand variables in text
     /// </summary>
     /// <param name="text">Text to expand</param>
     /// <param name="variables">Variables</param>
@@ -83,7 +83,7 @@ public abstract class Command
     }
 
     /// <summary>
-    /// Get a map from a map
+    ///     Get a map from a map
     /// </summary>
     /// <param name="map">Parent map node</param>
     /// <param name="name">Entry name</param>
@@ -99,7 +99,7 @@ public abstract class Command
     }
 
     /// <summary>
-    /// Get a sequence from a map
+    ///     Get a sequence from a map
     /// </summary>
     /// <param name="map">Parent map node</param>
     /// <param name="name">Entry name</param>
@@ -115,7 +115,7 @@ public abstract class Command
     }
 
     /// <summary>
-    /// Get a map value from a map
+    ///     Get a map value from a map
     /// </summary>
     /// <param name="map">Map node</param>
     /// <param name="key">Map key</param>
@@ -132,7 +132,7 @@ public abstract class Command
     }
 
     /// <summary>
-    /// Get a sequence value from a sequence
+    ///     Get a sequence value from a sequence
     /// </summary>
     /// <param name="sequence">Sequence node</param>
     /// <param name="index">Sequence index</param>

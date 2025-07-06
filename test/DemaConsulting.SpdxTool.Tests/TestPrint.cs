@@ -21,18 +21,18 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'print' command
+///     Tests for the 'print' command
 /// </summary>
 [TestClass]
 public class TestPrint
 {
     /// <summary>
-    /// Tests the 'print' command from the command line
+    ///     Tests the 'print' command from the command line
     /// </summary>
     [TestMethod]
     public void Print_CommandLine()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -40,24 +40,24 @@ public class TestPrint
             "print",
             "Hello, World!");
 
-        // Verify output
+        // Assert: Verify output
         Assert.AreEqual(0, exitCode);
         StringAssert.Contains(output, "Hello, World!");
     }
 
     /// <summary>
-    /// Tests the 'print' command from a workflow
+    ///     Tests the 'print' command from a workflow
     /// </summary>
     [TestMethod]
     public void Print_Workflow()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             parameters:
               p1: Hello
               p2: World
-            
+
             steps:
             - command: print
               inputs:
@@ -68,10 +68,10 @@ public class TestPrint
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -79,7 +79,7 @@ public class TestPrint
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "The first parameter is Hello.");
             StringAssert.Contains(output, "World is the second parameter.");
