@@ -26,22 +26,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Rename an element ID in an SPDX document
+///     Rename an element ID in an SPDX document
 /// </summary>
 public sealed class RenameId : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "rename-id";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly RenameId Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -63,7 +63,7 @@ public sealed class RenameId : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private RenameId()
     {
@@ -103,7 +103,7 @@ public sealed class RenameId : Command
     }
 
     /// <summary>
-    /// Rename an element ID in an SPDX document
+    ///     Rename an element ID in an SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX file name</param>
     /// <param name="oldId">Old element ID</param>
@@ -121,7 +121,7 @@ public sealed class RenameId : Command
     }
 
     /// <summary>
-    /// Rename an element ID in an SPDX document
+    ///     Rename an element ID in an SPDX document
     /// </summary>
     /// <param name="doc">SPDX document</param>
     /// <param name="oldId">Old element ID</param>

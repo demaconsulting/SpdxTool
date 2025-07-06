@@ -18,37 +18,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.SpdxModel;
+using DemaConsulting.SpdxModel.IO;
 
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'add-package' command.
+///     Tests for the 'add-package' command.
 /// </summary>
 [TestClass]
 public class TestAddPackage
 {
     /// <summary>
-    /// Test that the 'add-package' command is only valid in a workflow.
+    ///     Test that the 'add-package' command is only valid in a workflow.
     /// </summary>
     [TestMethod]
     public void AddPackage_CommandLine()
     {
-        // Run the command
+        // Act: Run the command directly
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "add-package");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'add-package' command is only valid in a workflow");
     }
 
     /// <summary>
-    /// Test that the 'add-package' command from a workflow on a simple SPDX document.
+    ///     Test that the 'add-package' command from a workflow on a simple SPDX document.
     /// </summary>
     [TestMethod]
     public void AddPackage_Simple()
@@ -105,11 +105,11 @@ public class TestAddPackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", spdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -117,19 +117,19 @@ public class TestAddPackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
 
             // Read the SPDX document
             Assert.IsTrue(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
-            // Verify both packages present
+            // Assert: Verify both packages present
             Assert.AreEqual(2, doc.Packages.Length);
             Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.AreEqual("SPDXRef-Package-2", doc.Packages[1].Id);
 
-            // Verify the relationship
+            // Assert: Verify the relationship
             Assert.AreEqual(2, doc.Relationships.Length);
             Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[1].Id);
             Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[1].RelationshipType);
@@ -143,13 +143,13 @@ public class TestAddPackage
     }
 
     /// <summary>
-    /// Test that the 'add-package' command from a workflow with no relationships.
+    ///     Test that the 'add-package' command from a workflow with no relationships.
     /// </summary>
     [TestMethod]
     public void AddPackage_NoRelationship()
     {
         // SPDX contents
-        const string spdxContents = 
+        const string spdxContents =
             """
             {
               "files": [],
@@ -169,7 +169,7 @@ public class TestAddPackage
             """;
 
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: add-package
@@ -185,11 +185,11 @@ public class TestAddPackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", spdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -197,18 +197,18 @@ public class TestAddPackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
 
             // Read the SPDX document
             Assert.IsTrue(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
-            // Verify package present
+            // Assert: Verify package present
             Assert.AreEqual(1, doc.Packages.Length);
             Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
 
-            // Verify no relationships
+            // Assert: Verify no relationships
             Assert.AreEqual(0, doc.Relationships.Length);
         }
         finally
@@ -219,13 +219,13 @@ public class TestAddPackage
     }
 
     /// <summary>
-    /// Test that the 'add-package' command from a workflow with a query.
+    ///     Test that the 'add-package' command from a workflow with a query.
     /// </summary>
     [TestMethod]
     public void AddPackage_FromQuery()
     {
         // SPDX contents
-        const string spdxContents = 
+        const string spdxContents =
             """
             {
               "files": [],
@@ -257,7 +257,7 @@ public class TestAddPackage
             """;
 
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             steps:
             - command: query
@@ -267,7 +267,7 @@ public class TestAddPackage
                 program: dotnet
                 arguments:
                 - '--version'
-            
+
             - command: add-package
               inputs:
                 spdx: spdx.json
@@ -284,11 +284,11 @@ public class TestAddPackage
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("spdx.json", spdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -296,19 +296,19 @@ public class TestAddPackage
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
 
             // Read the SPDX document
             Assert.IsTrue(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
-            // Verify both packages present
+            // Assert: Verify both packages present
             Assert.AreEqual(2, doc.Packages.Length);
             Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.AreEqual("SPDXRef-Package-DotNet", doc.Packages[1].Id);
 
-            // Verify the relationship
+            // Assert: Verify the relationship
             Assert.AreEqual(2, doc.Relationships.Length);
             Assert.AreEqual("SPDXRef-Package-DotNet", doc.Relationships[1].Id);
             Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[1].RelationshipType);

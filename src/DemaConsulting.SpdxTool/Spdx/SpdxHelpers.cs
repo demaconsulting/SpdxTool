@@ -25,12 +25,12 @@ using DemaConsulting.SpdxTool.Commands;
 namespace DemaConsulting.SpdxTool.Spdx;
 
 /// <summary>
-/// SPDX Helpers Class
+///     SPDX Helpers Class
 /// </summary>
 public static class SpdxHelpers
 {
     /// <summary>
-    /// Load an SPDX document
+    ///     Load an SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <returns>SPDX document</returns>
@@ -46,7 +46,7 @@ public static class SpdxHelpers
     }
 
     /// <summary>
-    /// Save an SPDX document
+    ///     Save an SPDX document
     /// </summary>
     /// <param name="doc">SPDX document</param>
     /// <param name="spdxFile">SPDX document file name</param>

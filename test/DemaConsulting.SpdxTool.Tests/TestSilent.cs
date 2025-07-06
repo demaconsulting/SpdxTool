@@ -21,18 +21,18 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for silencing output.
+///     Tests for silencing output.
 /// </summary>
 [TestClass]
 public class TestSilent
 {
     /// <summary>
-    /// Test that silence functions when '-s' is specified
+    ///     Test that silence functions when '-s' is specified
     /// </summary>
     [TestMethod]
     public void Silent_Short()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -40,20 +40,20 @@ public class TestSilent
             "-s",
             "-h");
 
-        // Verify success
+        // Assert: Verify success
         Assert.AreEqual(0, exitCode);
 
-        // Verify the output is empty
+        // Assert: Verify the output is empty
         Assert.AreEqual(0, output.Length);
     }
 
     /// <summary>
-    /// Test that silence functions when '--silent' is specified
+    ///     Test that silence functions when '--silent' is specified
     /// </summary>
     [TestMethod]
     public void Silent_Long()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -61,10 +61,10 @@ public class TestSilent
             "--silent",
             "--help");
 
-        // Verify success
+        // Assert: Verify success
         Assert.AreEqual(0, exitCode);
 
-        // Verify the output is empty
+        // Assert: Verify the output is empty
         Assert.AreEqual(0, output.Length);
     }
 }

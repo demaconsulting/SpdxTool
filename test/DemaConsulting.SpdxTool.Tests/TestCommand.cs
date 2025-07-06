@@ -24,13 +24,13 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the <see cref="Command"/> class.
+///     Tests for the <see cref="Command" /> class.
 /// </summary>
 [TestClass]
 public class TestCommand
 {
     /// <summary>
-    /// Test the <see cref="Command.Expand"/> method with a missing variable.
+    ///     Test the <see cref="Command.Expand" /> method with a missing variable.
     /// </summary>
     [TestMethod]
     public void Command_Expand_MissingVariable()
@@ -42,7 +42,7 @@ public class TestCommand
     }
 
     /// <summary>
-    /// Test the <see cref="Command.Expand"/> method with nothing to expand.
+    ///     Test the <see cref="Command.Expand" /> method with nothing to expand.
     /// </summary>
     [TestMethod]
     public void Command_Expand_NoVariables()
@@ -55,7 +55,7 @@ public class TestCommand
     }
 
     /// <summary>
-    /// Test the <see cref="Command.Expand"/> method for basic expansion.
+    ///     Test the <see cref="Command.Expand" /> method for basic expansion.
     /// </summary>
     [TestMethod]
     public void Command_Expand_BasicVariable()
@@ -68,7 +68,7 @@ public class TestCommand
     }
 
     /// <summary>
-    /// Test the <see cref="Command.Expand"/> method for double expansion.
+    ///     Test the <see cref="Command.Expand" /> method for double expansion.
     /// </summary>
     [TestMethod]
     public void Command_Expand_DoubleVariableExpansion()
@@ -81,7 +81,7 @@ public class TestCommand
     }
 
     /// <summary>
-    /// Test the <see cref="Command.Expand"/> method for nested expansion.
+    ///     Test the <see cref="Command.Expand" /> method for nested expansion.
     /// </summary>
     [TestMethod]
     public void Command_Expand_NestedVariableExpansion()
@@ -94,7 +94,7 @@ public class TestCommand
     }
 
     /// <summary>
-    /// Test the <see cref="Command.GetMapString"/> method for a missing entry.
+    ///     Test the <see cref="Command.GetMapString" /> method for a missing entry.
     /// </summary>
     [TestMethod]
     public void Command_GetMapString_MissingEntry()
@@ -106,7 +106,7 @@ public class TestCommand
     }
 
     /// <summary>
-    /// Test the <see cref="Command.GetMapString"/> method with a value requiring expansion.
+    ///     Test the <see cref="Command.GetMapString" /> method with a value requiring expansion.
     /// </summary>
     [TestMethod]
     public void Command_GetMapString_WithExpansion()

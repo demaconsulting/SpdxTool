@@ -23,13 +23,13 @@ using DemaConsulting.SpdxTool.Utility;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Test for wildcard pattern matching
+///     Test for wildcard pattern matching
 /// </summary>
 [TestClass]
 public class TestWildcard
 {
     /// <summary>
-    /// Test for exact matching
+    ///     Test for exact matching
     /// </summary>
     [TestMethod]
     public void Wildcard_Exact()
@@ -45,7 +45,7 @@ public class TestWildcard
     }
 
     /// <summary>
-    /// Test for matching with asterisks
+    ///     Test for matching with asterisks
     /// </summary>
     [TestMethod]
     public void Wildcard_Asterisks()
@@ -64,7 +64,7 @@ public class TestWildcard
     }
 
     /// <summary>
-    /// Test for matching with question-marks
+    ///     Test for matching with question-marks
     /// </summary>
     [TestMethod]
     public void Wildcard_QuestionMark()

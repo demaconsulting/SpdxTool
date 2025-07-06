@@ -21,20 +21,20 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for logging output.
+///     Tests for logging output.
 /// </summary>
 [TestClass]
 public class TestLog
 {
     /// <summary>
-    /// Test that logging functions when '-l' is specified
+    ///     Test that logging functions when '-l' is specified
     /// </summary>
     [TestMethod]
     public void Log_Short()
     {
         try
         {
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -42,13 +42,13 @@ public class TestLog
                 "-l", "output.log",
                 "-h");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
 
-            // Assert log file written
+            // Assert: Verify log file written
             Assert.IsTrue(File.Exists("output.log"));
 
-            // Verify the log contains the usage information
+            // Assert: Verify the log contains the usage information
             var log = File.ReadAllText("output.log");
             StringAssert.Contains(log, "Usage: spdx-tool");
         }
@@ -60,14 +60,14 @@ public class TestLog
     }
 
     /// <summary>
-    /// Test that logging functions when '--log' is specified
+    ///     Test that logging functions when '--log' is specified
     /// </summary>
     [TestMethod]
     public void Log_Long()
     {
         try
         {
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -75,13 +75,13 @@ public class TestLog
                 "--log", "output.log",
                 "--help");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
 
-            // Assert log file written
+            // Assert: Verify log file written
             Assert.IsTrue(File.Exists("output.log"));
 
-            // Verify the log contains the usage information
+            // Assert: Verify the log contains the usage information
             var log = File.ReadAllText("output.log");
             StringAssert.Contains(log, "Usage: spdx-tool");
         }

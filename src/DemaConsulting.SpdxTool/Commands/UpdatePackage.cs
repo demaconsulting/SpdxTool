@@ -25,22 +25,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Update a package in an SPDX document
+///     Update a package in an SPDX document
 /// </summary>
 public sealed class UpdatePackage : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "update-package";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly UpdatePackage Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -69,7 +69,7 @@ public sealed class UpdatePackage : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private UpdatePackage()
     {
@@ -108,7 +108,7 @@ public sealed class UpdatePackage : Command
     }
 
     /// <summary>
-    /// Update a package in an SPDX document file
+    ///     Update a package in an SPDX document file
     /// </summary>
     /// <param name="spdxFile">SPDX document filename</param>
     /// <param name="packageId">Package ID</param>
@@ -126,7 +126,6 @@ public sealed class UpdatePackage : Command
 
         // Update the package
         foreach (var (key, value) in updates)
-        {
             switch (key)
             {
                 case "name":
@@ -166,14 +165,13 @@ public sealed class UpdatePackage : Command
                 default:
                     throw new CommandErrorException($"Invalid package update key '{key}'");
             }
-        }
 
         // Save the SPDX document
         SpdxHelpers.SaveJsonDocument(doc, spdxFile);
     }
 
     /// <summary>
-    /// Read the package criteria from the inputs
+    ///     Read the package criteria from the inputs
     /// </summary>
     /// <param name="map">Criteria map</param>
     /// <param name="variables">Currently defined variables</param>

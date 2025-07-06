@@ -26,22 +26,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Query a program output for a value
+///     Query a program output for a value
 /// </summary>
 public sealed class Query : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "query";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly Query Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -67,7 +67,7 @@ public sealed class Query : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private Query()
     {
@@ -118,7 +118,7 @@ public sealed class Query : Command
     }
 
     /// <summary>
-    /// Run a program and query the output for a value
+    ///     Run a program and query the output for a value
     /// </summary>
     /// <param name="pattern">Regular expression pattern to capture 'value'</param>
     /// <param name="program">Program to execute</param>
@@ -158,8 +158,8 @@ public sealed class Query : Command
         }
 
         // Save the output
-        var output = 
-            process.StandardOutput.ReadToEnd().Trim() + 
+        var output =
+            process.StandardOutput.ReadToEnd().Trim() +
             process.StandardError.ReadToEnd().Trim();
 
         // Wait for the process to exit
@@ -173,7 +173,7 @@ public sealed class Query : Command
             var match = regex.Match(line);
             if (!match.Success)
                 continue;
-            
+
             // Test if the match value is valid
             var value = match.Groups["value"].Value;
             if (string.IsNullOrEmpty(value))

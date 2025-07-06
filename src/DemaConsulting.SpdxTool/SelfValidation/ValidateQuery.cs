@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DemaConsulting.TestResults;
 using System.Text.RegularExpressions;
+using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
@@ -29,7 +29,7 @@ namespace DemaConsulting.SpdxTool.SelfValidation;
 internal static partial class ValidateQuery
 {
     /// <summary>
-    /// Regular expression to check for version
+    ///     Regular expression to check for version
     /// </summary>
     /// <returns></returns>
     [GeneratedRegex(@"Dotnet version \d+\.\d+\.\d+")]
@@ -79,7 +79,7 @@ internal static partial class ValidateQuery
                     program: dotnet
                     arguments:
                     - '--version'
-                
+
                 - command: print
                   inputs:
                     text:

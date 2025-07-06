@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxModel;
+using DemaConsulting.SpdxModel.Transform;
 using DemaConsulting.SpdxTool.Spdx;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -26,22 +27,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command to copy package from one SPDX document to another
+///     Command to copy package from one SPDX document to another
 /// </summary>
 public sealed class CopyPackage : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "copy-package";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly CopyPackage Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -79,7 +80,7 @@ public sealed class CopyPackage : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private CopyPackage()
     {
@@ -101,7 +102,6 @@ public sealed class CopyPackage : Command
         var recursive = false;
         var files = false;
         foreach (var option in args.Skip(3))
-        {
             switch (option)
             {
                 case "recursive":
@@ -115,7 +115,6 @@ public sealed class CopyPackage : Command
                 default:
                     throw new CommandUsageException($"'copy-package' command invalid option {option}");
             }
-        }
 
         // Copy the package
         CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, [], recursive, files);
@@ -137,7 +136,7 @@ public sealed class CopyPackage : Command
 
         // Get the 'package' input
         var packageId = GetMapString(inputs, "package", variables) ??
-                      throw new YamlException(step.Start, step.End, "'copy-package' missing 'package' input");
+                        throw new YamlException(step.Start, step.End, "'copy-package' missing 'package' input");
 
         // Get the 'recursive' input
         var recursiveText = GetMapString(inputs, "recursive", variables) ?? "false";
@@ -158,7 +157,7 @@ public sealed class CopyPackage : Command
     }
 
     /// <summary>
-    /// Copy a package from one SPDX document to another
+    ///     Copy a package from one SPDX document to another
     /// </summary>
     /// <param name="fromFile">Source SPDX document filename</param>
     /// <param name="toFile">Destination SPDX document filename</param>
@@ -166,7 +165,8 @@ public sealed class CopyPackage : Command
     /// <param name="relationships">Relationships of package to elements in destination</param>
     /// <param name="recursive">Recursive copy option</param>
     /// <param name="files">Copy files option</param>
-    public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId, SpdxRelationship[] relationships, bool recursive, bool files)
+    public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId,
+        SpdxRelationship[] relationships, bool recursive, bool files)
     {
         // Verify package name
         if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
@@ -194,7 +194,7 @@ public sealed class CopyPackage : Command
     }
 
     /// <summary>
-    /// Copy the package from one SPDX document to another
+    ///     Copy the package from one SPDX document to another
     /// </summary>
     /// <param name="fromDoc">SPDX document to copy from</param>
     /// <param name="toDoc">SPDX document to copy to</param>
@@ -205,7 +205,7 @@ public sealed class CopyPackage : Command
     {
         // Verify the package exists in the source
         var fromPackage = Array.Find(fromDoc.Packages, p => p.Id == packageId) ??
-                      throw new CommandErrorException($"Package {packageId} not found");
+                          throw new CommandErrorException($"Package {packageId} not found");
 
         // Test if the to-package exists
         var toPackage = Array.Find(toDoc.Packages, p => SpdxPackage.Same.Equals(p, fromPackage));
@@ -264,14 +264,15 @@ public sealed class CopyPackage : Command
     }
 
     /// <summary>
-    /// Copy child packages from one SPDX document to another
+    ///     Copy child packages from one SPDX document to another
     /// </summary>
     /// <param name="fromDoc">SPDX document to copy from</param>
     /// <param name="toDoc">SPDX document to copy to</param>
     /// <param name="parentId">ID of the parent package</param>
     /// <param name="copied">Packages already copied</param>
     /// <param name="files">Copy files option</param>
-    public static void CopyChildren(SpdxDocument fromDoc, SpdxDocument toDoc, string parentId, HashSet<string> copied, bool files)
+    public static void CopyChildren(SpdxDocument fromDoc, SpdxDocument toDoc, string parentId, HashSet<string> copied,
+        bool files)
     {
         // Process each relationship dealing with the parent package
         foreach (var relationship in fromDoc.Relationships)
@@ -288,7 +289,7 @@ public sealed class CopyPackage : Command
             Copy(fromDoc, toDoc, childId, files);
 
             // Add/enhance the relationship
-            SpdxModel.Transform.SpdxRelationships.Add(toDoc, relationship);
+            SpdxRelationships.Add(toDoc, relationship);
 
             // Report copied, and process children if not already processed
             if (copied.Add(childId))
@@ -297,7 +298,7 @@ public sealed class CopyPackage : Command
     }
 
     /// <summary>
-    /// Test if a relationship indicates a child package
+    ///     Test if a relationship indicates a child package
     /// </summary>
     /// <param name="relationship">SPDX relationship</param>
     /// <param name="parentId">Parent package ID</param>
@@ -312,16 +313,31 @@ public sealed class CopyPackage : Command
             SpdxRelationshipType.ContainedBy => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
             SpdxRelationshipType.DependsOn => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
             SpdxRelationshipType.DependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DependencyManifestOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.BuildDependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DevDependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.OptionalDependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.ProvidedDependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.TestDependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.RuntimeDependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
+            SpdxRelationshipType.DependencyManifestOf => relationship.RelatedSpdxElement == parentId
+                ? relationship.Id
+                : null,
+            SpdxRelationshipType.BuildDependencyOf => relationship.RelatedSpdxElement == parentId
+                ? relationship.Id
+                : null,
+            SpdxRelationshipType.DevDependencyOf =>
+                relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
+            SpdxRelationshipType.OptionalDependencyOf => relationship.RelatedSpdxElement == parentId
+                ? relationship.Id
+                : null,
+            SpdxRelationshipType.ProvidedDependencyOf => relationship.RelatedSpdxElement == parentId
+                ? relationship.Id
+                : null,
+            SpdxRelationshipType.TestDependencyOf => relationship.RelatedSpdxElement == parentId
+                ? relationship.Id
+                : null,
+            SpdxRelationshipType.RuntimeDependencyOf => relationship.RelatedSpdxElement == parentId
+                ? relationship.Id
+                : null,
             SpdxRelationshipType.Generates => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
             SpdxRelationshipType.GeneratedFrom => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
-            SpdxRelationshipType.DistributionArtifact => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
+            SpdxRelationshipType.DistributionArtifact => relationship.Id == parentId
+                ? relationship.RelatedSpdxElement
+                : null,
             SpdxRelationshipType.PatchFor => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
             SpdxRelationshipType.PatchApplied => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
             SpdxRelationshipType.DynamicLink => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
@@ -329,11 +345,16 @@ public sealed class CopyPackage : Command
             SpdxRelationshipType.BuildToolOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
             SpdxRelationshipType.DevToolOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
             SpdxRelationshipType.TestToolOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DocumentationOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.OptionalComponentOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
+            SpdxRelationshipType.DocumentationOf =>
+                relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
+            SpdxRelationshipType.OptionalComponentOf => relationship.RelatedSpdxElement == parentId
+                ? relationship.Id
+                : null,
             SpdxRelationshipType.PackageOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.PrerequisiteFor => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.HasPrerequisite => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
+            SpdxRelationshipType.PrerequisiteFor =>
+                relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
+            SpdxRelationshipType.HasPrerequisite =>
+                relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
             _ => null
         };
     }

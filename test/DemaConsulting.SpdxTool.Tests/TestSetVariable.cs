@@ -21,37 +21,37 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'set-variable' command.
+///     Tests for the 'set-variable' command.
 /// </summary>
 [TestClass]
 public class TestSetVariable
 {
     /// <summary>
-    /// Test the 'set-variable' command does not work from the command line.
+    ///     Test the 'set-variable' command does not work from the command line.
     /// </summary>
     [TestMethod]
     public void SetVariable_CommandLine()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "set-variable");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'set-variable' command is only valid in a workflow");
     }
 
     /// <summary>
-    /// Test the 'set-variable' command.
+    ///     Test the 'set-variable' command.
     /// </summary>
     [TestMethod]
     public void SetVariable()
     {
         // Workflow contents
-        const string workflowContents = 
+        const string workflowContents =
             """
             parameters:
               p1: Hello
@@ -61,7 +61,7 @@ public class TestSetVariable
               inputs:
                 value: ${{ p1 }} and ${{ p2 }}
                 output: p1p2
-            
+
             - command: print
               inputs:
                 text:
@@ -70,10 +70,10 @@ public class TestSetVariable
 
         try
         {
-            // Write the SPDX files
+            // Arrange: Write the SPDX files
             File.WriteAllText("workflow.yaml", workflowContents);
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -81,7 +81,7 @@ public class TestSetVariable
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "p1p2 is Hello and World");
         }

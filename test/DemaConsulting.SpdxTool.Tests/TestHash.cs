@@ -21,36 +21,36 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'hash' command
+///     Tests for the 'hash' command
 /// </summary>
 [TestClass]
 public class TestHash
 {
     /// <summary>
-    /// Tests the 'hash' command with missing arguments
+    ///     Tests the 'hash' command with missing arguments
     /// </summary>
     [TestMethod]
     public void HashCommand_MissingArguments()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "hash");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'hash' command missing arguments");
     }
 
     /// <summary>
-    /// Tests the 'hash' command with missing file
+    ///     Tests the 'hash' command with missing file
     /// </summary>
     [TestMethod]
     public void HashCommand_MissingFile()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -60,22 +60,23 @@ public class TestHash
             "sha256",
             "missing-file.txt");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "Error: Could not find file 'missing-file.txt'");
     }
 
     /// <summary>
-    /// Tests the 'hash' command to generate a hash file
+    ///     Tests the 'hash' command to generate a hash file
     /// </summary>
     [TestMethod]
     public void HashCommand_Generate()
     {
         try
         {
+            // Arrange: Create a test file
             File.WriteAllText("test.txt", "The quick brown fox jumps over the lazy dog");
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -85,10 +86,10 @@ public class TestHash
                 "sha256",
                 "test.txt");
 
-            // Verify success reported
+            // Assert: Verify success reported
             Assert.AreEqual(0, exitCode);
 
-            // Verify the hash file was created
+            // Assert: Verify the hash file was created
             Assert.IsTrue(File.Exists("test.txt.sha256"));
             var digest = File.ReadAllText("test.txt.sha256");
             Assert.AreEqual("d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592", digest);
@@ -101,12 +102,12 @@ public class TestHash
     }
 
     /// <summary>
-    /// Tests the 'hash' command to verify a hash file with a missing file
+    ///     Tests the 'hash' command to verify a hash file with a missing file
     /// </summary>
     [TestMethod]
     public void HashCommand_Verify_MissingFile()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -116,23 +117,24 @@ public class TestHash
             "sha256",
             "missing-file.txt");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "Error: Could not find file");
     }
 
     /// <summary>
-    /// Tests the 'hash' command to verify a hash file with a bad hash
+    ///     Tests the 'hash' command to verify a hash file with a bad hash
     /// </summary>
     [TestMethod]
     public void HashCommand_Verify_Bad()
     {
         try
         {
+            // Arrange: Create a test file and a hash file with a bad hash
             File.WriteAllText("test.txt", "Test string");
             File.WriteAllText("test.txt.sha256", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -142,7 +144,7 @@ public class TestHash
                 "sha256",
                 "test.txt");
 
-            // Verify error reported
+            // Assert: Verify error reported
             Assert.AreEqual(1, exitCode);
             StringAssert.Contains(output, "Sha256 hash mismatch for 'test.txt'");
         }
@@ -154,17 +156,18 @@ public class TestHash
     }
 
     /// <summary>
-    /// Tests the 'hash' command to verify a hash file with a good hash
+    ///     Tests the 'hash' command to verify a hash file with a good hash
     /// </summary>
     [TestMethod]
     public void HashCommand_Verify_Good()
     {
         try
         {
+            // Arrange: Create a test file and a hash file with a good hash
             File.WriteAllText("test.txt", "The quick brown fox jumps over the lazy dog");
             File.WriteAllText("test.txt.sha256", "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592");
 
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -174,7 +177,7 @@ public class TestHash
                 "sha256",
                 "test.txt");
 
-            // Verify success reported
+            // Assert: Verify success reported
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "Sha256 Digest OK for 'test.txt'");
         }

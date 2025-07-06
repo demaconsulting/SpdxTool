@@ -18,28 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Security.Cryptography;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Hash command
+///     Hash command
 /// </summary>
 public sealed class Hash : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "hash";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly Hash Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -62,7 +63,7 @@ public sealed class Hash : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private Hash()
     {
@@ -94,7 +95,7 @@ public sealed class Hash : Command
 
         // Get the 'algorithm' input
         var algorithm = GetMapString(inputs, "algorithm", variables) ??
-                   throw new YamlException(step.Start, step.End, "'hash' command missing 'algorithm' input");
+                        throw new YamlException(step.Start, step.End, "'hash' command missing 'algorithm' input");
 
         // Get the 'file' input
         var file = GetMapString(inputs, "file", variables) ??
@@ -105,7 +106,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    /// Do the requested Sha256 operation
+    ///     Do the requested Sha256 operation
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="operation">Operation to perform (generate or verify)</param>
@@ -135,7 +136,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    /// Generate a Sha256 hash for a file
+    ///     Generate a Sha256 hash for a file
     /// </summary>
     /// <param name="file">File to generate hash for</param>
     public static void GenerateSha256(string file)
@@ -148,7 +149,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    /// Verify a Sha256 hash for a file
+    ///     Verify a Sha256 hash for a file
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="file">Name of the file to verify</param>
@@ -175,7 +176,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    /// Calculate the Sha256 hash of a file
+    ///     Calculate the Sha256 hash of a file
     /// </summary>
     /// <param name="file">File to hash</param>
     /// <returns>Sh256 hash</returns>
@@ -190,7 +191,7 @@ public sealed class Hash : Command
         {
             // Calculate the Sha256 digest of the file
             using var stream = new FileStream(file, FileMode.Open);
-            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            using var sha256 = SHA256.Create();
             var hash = sha256.ComputeHash(stream);
             return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
         }

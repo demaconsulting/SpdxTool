@@ -23,12 +23,12 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Utility;
 
 /// <summary>
-/// Wildcard Match Class
+///     Wildcard Match Class
 /// </summary>
 public static class Wildcard
 {
     /// <summary>
-    /// Convert a wildcard pattern to a regular expression pattern
+    ///     Convert a wildcard pattern to a regular expression pattern
     /// </summary>
     /// <param name="wildPattern">Wildcard pattern</param>
     /// <returns>Regular expression pattern</returns>
@@ -40,7 +40,7 @@ public static class Wildcard
     }
 
     /// <summary>
-    /// Check for a wildcard match
+    ///     Check for a wildcard match
     /// </summary>
     /// <param name="input">Input text</param>
     /// <param name="pattern">Wildcard pattern</param>
@@ -48,7 +48,7 @@ public static class Wildcard
     public static bool IsMatch(string input, string pattern)
     {
         return Regex.IsMatch(
-            input, 
+            input,
             WildCardToRegex(pattern),
             RegexOptions.IgnoreCase,
             TimeSpan.FromMilliseconds(100));

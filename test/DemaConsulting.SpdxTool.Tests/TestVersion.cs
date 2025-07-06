@@ -23,55 +23,55 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for version information.
+///     Tests for version information.
 /// </summary>
 [TestClass]
 public partial class TestVersion
 {
     /// <summary>
-    /// Regular expression to check for version
+    ///     Regular expression to check for version
     /// </summary>
     /// <returns></returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
     private static partial Regex VersionRegex();
 
     /// <summary>
-    /// Test that version information is printed when '-v' is specified
+    ///     Test that version information is printed when '-v' is specified
     /// </summary>
     [TestMethod]
     public void Version_Short()
     {
-        // Run the SPDX tool
+        // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "-v");
 
-        // Check the output
+        // Assert: Check the output
         Assert.AreEqual(0, exitCode);
 
-        // Verify version response
+        // Assert: Verify version response
         StringAssert.Matches(output, VersionRegex());
     }
 
     /// <summary>
-    /// Test that version information is printed when '--version' is specified
+    ///     Test that version information is printed when '--version' is specified
     /// </summary>
     [TestMethod]
     public void Version_Long()
     {
-        // Run the SPDX tool
+        // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "--version");
 
-        // Check the output
+        // Assert: Check the output
         Assert.AreEqual(0, exitCode);
 
-        // Verify version response
+        // Assert: Verify version response
         StringAssert.Matches(output, VersionRegex());
     }
 }

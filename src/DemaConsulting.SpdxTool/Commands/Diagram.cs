@@ -27,43 +27,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command to generate a diagram of an SPDX document
+///     Command to generate a diagram of an SPDX document
 /// </summary>
 public sealed class Diagram : Command
 {
     /// <summary>
-    /// Relationship direction enumeration
-    /// </summary>
-    private enum RelationshipDirection
-    {
-        /// <summary>
-        /// ID is the parent of the related element
-        /// </summary>
-        Parent,
-
-        /// <summary>
-        /// ID is the child of the related element
-        /// </summary>
-        Child,
-
-        /// <summary>
-        /// ID and related element are siblings
-        /// </summary>
-        Sibling
-    }
-
-    /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "diagram";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly Diagram Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -81,7 +60,7 @@ public sealed class Diagram : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private Diagram()
     {
@@ -97,13 +76,11 @@ public sealed class Diagram : Command
         // Check for options
         var tools = false;
         foreach (var option in args.Skip(2))
-        {
             tools = option switch
             {
                 "tools" => true,
                 _ => throw new CommandUsageException($"'diagram' command invalid option {option}")
             };
-        }
 
         // Generate the diagram
         GenerateDiagram(args[0], args[1], tools);
@@ -127,13 +104,13 @@ public sealed class Diagram : Command
         var toolsText = GetMapString(inputs, "tools", variables) ?? "false";
         if (!bool.TryParse(toolsText, out var tools))
             throw new YamlException(step.Start, step.End, "'diagram' invalid 'tools' input");
-        
+
         // Generate the diagram
         GenerateDiagram(spdxFile, mermaidFile, tools);
     }
 
     /// <summary>
-    /// Generate mermaid entity-relationship diagram from SPDX document
+    ///     Generate mermaid entity-relationship diagram from SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="mermaidFile">Mermaid diagram file name</param>
@@ -151,8 +128,8 @@ public sealed class Diagram : Command
         foreach (var relationship in doc.Relationships)
         {
             // Skip tools if not requested
-            if (!tools && relationship.RelationshipType is 
-                    SpdxRelationshipType.BuildToolOf or 
+            if (!tools && relationship.RelationshipType is
+                    SpdxRelationshipType.BuildToolOf or
                     SpdxRelationshipType.DevToolOf or
                     SpdxRelationshipType.TestToolOf)
                 continue;
@@ -190,7 +167,7 @@ public sealed class Diagram : Command
     }
 
     /// <summary>
-    /// Get the relationship direction
+    ///     Get the relationship direction
     /// </summary>
     /// <param name="type">Relationship type</param>
     /// <returns>Relationship direction</returns>
@@ -228,5 +205,26 @@ public sealed class Diagram : Command
             SpdxRelationshipType.HasPrerequisite => RelationshipDirection.Parent,
             _ => RelationshipDirection.Sibling
         };
+    }
+
+    /// <summary>
+    ///     Relationship direction enumeration
+    /// </summary>
+    private enum RelationshipDirection
+    {
+        /// <summary>
+        ///     ID is the parent of the related element
+        /// </summary>
+        Parent,
+
+        /// <summary>
+        ///     ID is the child of the related element
+        /// </summary>
+        Child,
+
+        /// <summary>
+        ///     ID and related element are siblings
+        /// </summary>
+        Sibling
     }
 }

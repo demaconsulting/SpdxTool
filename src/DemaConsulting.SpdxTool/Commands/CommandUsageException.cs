@@ -21,7 +21,7 @@
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Exception thrown when a command is used incorrectly
+///     Exception thrown when a command is used incorrectly
 /// </summary>
 /// <param name="message">Error message</param>
 public class CommandUsageException(string message) : Exception(message);

@@ -21,25 +21,25 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for unknown command handling.
+///     Tests for unknown command handling.
 /// </summary>
 [TestClass]
 public class TestUnknownCommand
 {
     /// <summary>
-    /// Test unknown commands are reported.
+    ///     Test unknown commands are reported.
     /// </summary>
     [TestMethod]
     public void UnknownCommand()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "unknown-command");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "Error: Unknown command 'unknown-command'");
     }

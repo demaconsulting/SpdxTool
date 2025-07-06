@@ -50,11 +50,11 @@ public static class Validate
               
              """);
 
-        var results = new DemaConsulting.TestResults.TestResults
+        var results = new TestResults.TestResults
         {
             Name = $"DemaConsulting.SpdxTool Validation Results - {Program.Version}"
         };
-        
+
         // Run validation tests
         ValidateAddPackage.Run(context, results);
         ValidateAddRelationship.Run(context, results);
@@ -68,7 +68,7 @@ public static class Validate
         // If all validations succeeded (no errors) then report validation passed
         if (context.Errors == 0)
             context.WriteLine("\nValidation Passed");
-        
+
         // Save test results
         if (!string.IsNullOrEmpty(context.ValidationFile))
             File.WriteAllText(context.ValidationFile, TrxSerializer.Serialize(results));

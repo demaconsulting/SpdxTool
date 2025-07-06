@@ -23,43 +23,43 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the 'run-workflow' command.
+///     Tests for the 'run-workflow' command.
 /// </summary>
 [TestClass]
 public partial class TestRunWorkflow
 {
     /// <summary>
-    /// Regular expression to check for dotnet version
+    ///     Regular expression to check for dotnet version
     /// </summary>
     /// <returns></returns>
     [GeneratedRegex(@"DotNet version is \d+\.\d+\.\d+")]
     private static partial Regex DotnetVersionRegex();
 
     /// <summary>
-    /// Test the 'run-workflow' command with missing arguments.
+    ///     Test the 'run-workflow' command with missing arguments.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_MissingArguments()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "run-workflow");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "'run-workflow' command missing arguments");
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with missing file.
+    ///     Test the 'run-workflow' command with missing file.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_MissingFile()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -67,13 +67,13 @@ public partial class TestRunWorkflow
             "run-workflow",
             "does-not-exist.yaml");
 
-        // Verify error reported
+        // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output, "File not found: does-not-exist.yaml");
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with invalid file.
+    ///     Test the 'run-workflow' command with invalid file.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_FileInvalid()
@@ -83,10 +83,10 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file
+            // Arrange: Write the file
             File.WriteAllText("invalid.yaml", fileContents);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -94,7 +94,7 @@ public partial class TestRunWorkflow
                 "run-workflow",
                 "invalid.yaml");
 
-            // Verify error reported
+            // Assert: Verify error reported
             Assert.AreEqual(1, exitCode);
             StringAssert.Contains(output, "Error: Workflow invalid.yaml missing steps");
         }
@@ -106,7 +106,7 @@ public partial class TestRunWorkflow
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with missing parameter in file.
+    ///     Test the 'run-workflow' command with missing parameter in file.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_MissingParameterInFile()
@@ -119,10 +119,10 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file
+            // Arrange: Write the file
             File.WriteAllText("invalid.yaml", fileContents);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -130,7 +130,7 @@ public partial class TestRunWorkflow
                 "run-workflow",
                 "invalid.yaml");
 
-            // Verify error reported
+            // Assert: Verify error reported
             Assert.AreEqual(1, exitCode);
             StringAssert.Contains(output, "'help' command missing 'about' input");
         }
@@ -142,12 +142,12 @@ public partial class TestRunWorkflow
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with a basic workflow file.
+    ///     Test the 'run-workflow' command with a basic workflow file.
     /// </summary>
     [TestMethod]
     public void RunWorkflow()
     {
-        const string fileContents = 
+        const string fileContents =
             """
             steps:
             - command: help
@@ -157,10 +157,10 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file
+            // Arrange: Write the file
             File.WriteAllText("help.yaml", fileContents);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -168,9 +168,10 @@ public partial class TestRunWorkflow
                 "run-workflow",
                 "help.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "This command displays extended help information about the specified command");
+            StringAssert.Contains(output,
+                "This command displays extended help information about the specified command");
         }
         finally
         {
@@ -180,16 +181,16 @@ public partial class TestRunWorkflow
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with default parameters.
+    ///     Test the 'run-workflow' command with default parameters.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_WithDefaultParameters()
     {
-        const string fileContents = 
+        const string fileContents =
             """
             parameters:
               about: help
-            
+
             steps:
             - command: help
               inputs:
@@ -198,10 +199,10 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file
+            // Arrange: Write the file
             File.WriteAllText("help.yaml", fileContents);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -209,9 +210,10 @@ public partial class TestRunWorkflow
                 "run-workflow",
                 "help.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "This command displays extended help information about the specified command");
+            StringAssert.Contains(output,
+                "This command displays extended help information about the specified command");
         }
         finally
         {
@@ -221,16 +223,16 @@ public partial class TestRunWorkflow
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with specified parameters.
+    ///     Test the 'run-workflow' command with specified parameters.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_WithSpecifiedParameters()
     {
-        const string fileContents = 
+        const string fileContents =
             """
             parameters:
               about: help
-            
+
             steps:
             - command: help
               inputs:
@@ -239,10 +241,10 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file
+            // Arrange: Write the file
             File.WriteAllText("help.yaml", fileContents);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -251,7 +253,7 @@ public partial class TestRunWorkflow
                 "help.yaml",
                 "about=to-markdown");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "This command produces a Markdown summary of an SPDX document");
         }
@@ -263,16 +265,16 @@ public partial class TestRunWorkflow
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with outputs.
+    ///     Test the 'run-workflow' command with outputs.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_WithOutputs()
     {
-        const string workflow1 = 
+        const string workflow1 =
             """
             parameters:
               arg: unknown
-            
+
             steps:
             - command: run-workflow
               inputs:
@@ -282,7 +284,7 @@ public partial class TestRunWorkflow
                   in: ${{ arg }}
                 outputs:
                   out: out-var
-            
+
             - command: print
               inputs:
                 text:
@@ -290,7 +292,7 @@ public partial class TestRunWorkflow
             """;
 
         // Workflow2 file with exact string representation
-        const string workflow2 = 
+        const string workflow2 =
             "parameters:\n" +
             "  in: unknown\n" +
             "\n" +
@@ -302,11 +304,11 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file2
+            // Arrange: Write the files
             File.WriteAllText("workflow1.yaml", workflow1);
             File.WriteAllText("workflow2.yaml", workflow2);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -315,7 +317,7 @@ public partial class TestRunWorkflow
                 "workflow1.yaml",
                 "arg=Fred");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
             StringAssert.Contains(output, "Output is Got Fred Param");
         }
@@ -328,16 +330,16 @@ public partial class TestRunWorkflow
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with bad file integrity.
+    ///     Test the 'run-workflow' command with bad file integrity.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_WithBadIntegrity()
     {
-        const string workflow1 = 
+        const string workflow1 =
             """
             parameters:
               arg: unknown
-            
+
             steps:
             - command: run-workflow
               inputs:
@@ -347,18 +349,18 @@ public partial class TestRunWorkflow
                   in: ${{ arg }}
                 outputs:
                   out: out-var
-            
+
             - command: print
               inputs:
                 text:
                 - Output is ${{ out-var }}
             """;
 
-        const string workflow2 = 
+        const string workflow2 =
             """
             parameters:
               in: unknown
-            
+
             steps:
             - command: set-variable
               inputs:
@@ -368,11 +370,11 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file2
+            // Arrange: Write the files
             File.WriteAllText("workflow1.yaml", workflow1);
             File.WriteAllText("workflow2.yaml", workflow2);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -381,7 +383,7 @@ public partial class TestRunWorkflow
                 "workflow1.yaml",
                 "arg=Fred");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(1, exitCode);
             StringAssert.Contains(output, "Error: Integrity check of workflow2.yaml failed");
         }
@@ -394,12 +396,12 @@ public partial class TestRunWorkflow
     }
 
     /// <summary>
-    /// Test the 'run-workflow' command with workflow URL.
+    ///     Test the 'run-workflow' command with workflow URL.
     /// </summary>
     [TestMethod]
     public void RunWorkflow_Url()
     {
-        const string workflow = 
+        const string workflow =
             """
             steps:
             - command: run-workflow
@@ -407,7 +409,7 @@ public partial class TestRunWorkflow
                 url: 'https://raw.githubusercontent.com/demaconsulting/SpdxWorkflows/main/GetDotNetVersion.yaml'
                 outputs:
                   version: dotnet-version
-            
+
             - command: print
               inputs:
                 text:
@@ -416,10 +418,10 @@ public partial class TestRunWorkflow
 
         try
         {
-            // Write the file
+            // Arrange: Write the file
             File.WriteAllText("workflow.yaml", workflow);
 
-            // Run the workflow
+            // Act: Run the workflow
             var exitCode = Runner.Run(
                 out var output,
                 "dotnet",
@@ -427,7 +429,7 @@ public partial class TestRunWorkflow
                 "run-workflow",
                 "workflow.yaml");
 
-            // Verify success
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
             StringAssert.Matches(output, DotnetVersionRegex());
         }

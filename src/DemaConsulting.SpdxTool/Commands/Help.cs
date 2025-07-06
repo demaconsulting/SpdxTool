@@ -24,22 +24,22 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-/// Command to display extended help about a command
+///     Command to display extended help about a command
 /// </summary>
 public sealed class Help : Command
 {
     /// <summary>
-    /// Command name
+    ///     Command name
     /// </summary>
     private const string Command = "help";
 
     /// <summary>
-    /// Singleton instance of this command
+    ///     Singleton instance of this command
     /// </summary>
     public static readonly Help Instance = new();
 
     /// <summary>
-    /// Entry information for this command
+    ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
@@ -59,7 +59,7 @@ public sealed class Help : Command
         Instance);
 
     /// <summary>
-    /// Private constructor - this is a singleton
+    ///     Private constructor - this is a singleton
     /// </summary>
     private Help()
     {
@@ -91,7 +91,7 @@ public sealed class Help : Command
     }
 
     /// <summary>
-    /// Show the usage for the requested command
+    ///     Show the usage for the requested command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="command">Command to get help on</param>

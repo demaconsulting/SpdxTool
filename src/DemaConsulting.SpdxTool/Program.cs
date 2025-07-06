@@ -20,16 +20,17 @@
 
 using System.Reflection;
 using DemaConsulting.SpdxTool.Commands;
+using Validate = DemaConsulting.SpdxTool.SelfValidation.Validate;
 
 namespace DemaConsulting.SpdxTool;
 
 /// <summary>
-/// Program class
+///     Program class
 /// </summary>
 public static class Program
 {
     /// <summary>
-    /// Gets the version of this assembly.
+    ///     Gets the version of this assembly.
     /// </summary>
     public static readonly string Version =
         typeof(Program)
@@ -92,7 +93,7 @@ public static class Program
         // Handle self-validation
         if (context.Validate)
         {
-            SelfValidation.Validate.Run(context);
+            Validate.Run(context);
             return;
         }
 
@@ -146,7 +147,7 @@ public static class Program
         context.WriteLine(
             """
             Usage: spdx-tool [options] <command> [arguments]
-            
+
             Options:
               -h, --help                               Show this help message and exit
               -v, --version                            Show version information and exit
@@ -154,7 +155,7 @@ public static class Program
               -s, --silent                             Silence console output
                   --validate                           Perform self-validation
               -r, --result <file>                      Self-validation result TRX file
-            
+
             Commands:
             """);
         foreach (var command in CommandsRegistry.Commands.Values)

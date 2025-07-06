@@ -21,36 +21,36 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-/// Tests for the self-validation feature.
+///     Tests for the self-validation feature.
 /// </summary>
 [TestClass]
 public class TestSelfValidation
 {
     /// <summary>
-    /// Test that the self-validation command succeeds.
+    ///     Test that the self-validation command succeeds.
     /// </summary>
     [TestMethod]
     public void SelfValidation()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
             "--validate");
 
-        // Verify success
+        // Assert: Verify success
         Assert.AreEqual(0, exitCode);
         StringAssert.Contains(output, "Validation Passed");
     }
 
     /// <summary>
-    /// Test that the self-validation command supports depth.
+    ///     Test that the self-validation command supports depth.
     /// </summary>
     [TestMethod]
     public void SelfValidation_Depth()
     {
-        // Run the command
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -58,15 +58,15 @@ public class TestSelfValidation
             "--validate",
             "--depth", "3");
 
-        // Verify success
+        // Assert: Verify success
         Assert.AreEqual(0, exitCode);
 
-        // Verify depth of result
+        // Assert: Verify depth of result
         StringAssert.Contains(output, "### DemaConsulting.SpdxTool");
     }
 
     /// <summary>
-    /// Test that the self-validation command produces TRX results file.
+    ///     Test that the self-validation command produces TRX results file.
     /// </summary>
     [TestMethod]
     public void SelfValidation_TrxResults()
@@ -75,7 +75,7 @@ public class TestSelfValidation
 
         try
         {
-            // Run the command
+            // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
@@ -83,14 +83,15 @@ public class TestSelfValidation
                 "--validate",
                 "--result",
                 resultFile);
-            
-            // Verify success
+
+            // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            
+
             // Read results file
             var results = File.ReadAllText(resultFile);
             Assert.IsNotNull(results);
 
+            // Assert: Verify the results contain expected content
             StringAssert.Contains(results, "DemaConsulting.SpdxTool Validation Results -");
             StringAssert.Contains(results, "SpdxTool_AddPackage");
             StringAssert.Contains(results, "SpdxTool_AddRelationship");
