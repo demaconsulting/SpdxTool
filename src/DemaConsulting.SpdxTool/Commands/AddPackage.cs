@@ -233,6 +233,7 @@ public sealed class AddPackage : Command
         // Append the PURL if specified
         var purl = GetMapString(packageMap, "purl", variables);
         if (!string.IsNullOrEmpty(purl))
+        {
             package.ExternalReferences =
             [
                 ..package.ExternalReferences.Append(
@@ -243,10 +244,12 @@ public sealed class AddPackage : Command
                         Locator = purl
                     })
             ];
+        }
 
         // Append the CPE23 if specified
         var cpe23 = GetMapString(packageMap, "cpe23", variables);
         if (!string.IsNullOrEmpty(cpe23))
+        {
             package.ExternalReferences =
             [
                 ..package.ExternalReferences.Append(
@@ -257,6 +260,7 @@ public sealed class AddPackage : Command
                         Locator = cpe23
                     })
             ];
+        }
 
         // Return the package
         return package;

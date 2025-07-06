@@ -166,6 +166,7 @@ public sealed class Context : IDisposable
         var extra = new List<string>();
         using var arg = args.AsEnumerable().GetEnumerator();
         while (arg.MoveNext())
+        {
             switch (arg.Current)
             {
                 case "-v":
@@ -218,6 +219,7 @@ public sealed class Context : IDisposable
 
                     break;
             }
+        }
 
         // Return the new context
         return new Context(logFile != null ? new StreamWriter(logFile) : null, extra.AsReadOnly())

@@ -141,7 +141,7 @@ public sealed class Diagram : Command
                 continue;
 
             // Get the relationship direction
-            var direction = GetDirection(relationship.RelationshipType);
+            var direction = relationship.RelationshipType.GetDirection();
             var from = direction switch
             {
                 RelationshipDirection.Parent => a,
@@ -164,67 +164,5 @@ public sealed class Diagram : Command
 
         // Write the diagram to the file
         File.WriteAllText(mermaidFile, diagram.ToString());
-    }
-
-    /// <summary>
-    ///     Get the relationship direction
-    /// </summary>
-    /// <param name="type">Relationship type</param>
-    /// <returns>Relationship direction</returns>
-    private static RelationshipDirection GetDirection(SpdxRelationshipType type)
-    {
-        return type switch
-        {
-            SpdxRelationshipType.Describes => RelationshipDirection.Parent,
-            SpdxRelationshipType.DescribedBy => RelationshipDirection.Child,
-            SpdxRelationshipType.Contains => RelationshipDirection.Parent,
-            SpdxRelationshipType.ContainedBy => RelationshipDirection.Child,
-            SpdxRelationshipType.DependsOn => RelationshipDirection.Parent,
-            SpdxRelationshipType.DependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DependencyManifestOf => RelationshipDirection.Sibling,
-            SpdxRelationshipType.BuildDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DevDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.OptionalDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.ProvidedDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.TestDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.RuntimeDependencyOf => RelationshipDirection.Child,
-            SpdxRelationshipType.Generates => RelationshipDirection.Parent,
-            SpdxRelationshipType.GeneratedFrom => RelationshipDirection.Child,
-            SpdxRelationshipType.DistributionArtifact => RelationshipDirection.Child,
-            SpdxRelationshipType.PatchFor => RelationshipDirection.Child,
-            SpdxRelationshipType.PatchApplied => RelationshipDirection.Child,
-            SpdxRelationshipType.DynamicLink => RelationshipDirection.Parent,
-            SpdxRelationshipType.StaticLink => RelationshipDirection.Parent,
-            SpdxRelationshipType.BuildToolOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DevToolOf => RelationshipDirection.Child,
-            SpdxRelationshipType.TestToolOf => RelationshipDirection.Child,
-            SpdxRelationshipType.DocumentationOf => RelationshipDirection.Child,
-            SpdxRelationshipType.OptionalComponentOf => RelationshipDirection.Child,
-            SpdxRelationshipType.PackageOf => RelationshipDirection.Child,
-            SpdxRelationshipType.PrerequisiteFor => RelationshipDirection.Child,
-            SpdxRelationshipType.HasPrerequisite => RelationshipDirection.Parent,
-            _ => RelationshipDirection.Sibling
-        };
-    }
-
-    /// <summary>
-    ///     Relationship direction enumeration
-    /// </summary>
-    private enum RelationshipDirection
-    {
-        /// <summary>
-        ///     ID is the parent of the related element
-        /// </summary>
-        Parent,
-
-        /// <summary>
-        ///     ID is the child of the related element
-        /// </summary>
-        Child,
-
-        /// <summary>
-        ///     ID and related element are siblings
-        /// </summary>
-        Sibling
     }
 }

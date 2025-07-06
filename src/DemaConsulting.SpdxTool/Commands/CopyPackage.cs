@@ -102,6 +102,7 @@ public sealed class CopyPackage : Command
         var recursive = false;
         var files = false;
         foreach (var option in args.Skip(3))
+        {
             switch (option)
             {
                 case "recursive":
@@ -115,6 +116,7 @@ public sealed class CopyPackage : Command
                 default:
                     throw new CommandUsageException($"'copy-package' command invalid option {option}");
             }
+        }
 
         // Copy the package
         CopyPackageBetweenSpdxFiles(fromFile, toFile, packageId, [], recursive, files);
@@ -305,56 +307,10 @@ public sealed class CopyPackage : Command
     /// <returns>Child package ID or null</returns>
     public static string? GetChild(SpdxRelationship relationship, string parentId)
     {
-        return relationship.RelationshipType switch
+        return relationship.RelationshipType.GetDirection() switch
         {
-            SpdxRelationshipType.Describes => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
-            SpdxRelationshipType.DescribedBy => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.Contains => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
-            SpdxRelationshipType.ContainedBy => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DependsOn => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
-            SpdxRelationshipType.DependencyOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DependencyManifestOf => relationship.RelatedSpdxElement == parentId
-                ? relationship.Id
-                : null,
-            SpdxRelationshipType.BuildDependencyOf => relationship.RelatedSpdxElement == parentId
-                ? relationship.Id
-                : null,
-            SpdxRelationshipType.DevDependencyOf =>
-                relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.OptionalDependencyOf => relationship.RelatedSpdxElement == parentId
-                ? relationship.Id
-                : null,
-            SpdxRelationshipType.ProvidedDependencyOf => relationship.RelatedSpdxElement == parentId
-                ? relationship.Id
-                : null,
-            SpdxRelationshipType.TestDependencyOf => relationship.RelatedSpdxElement == parentId
-                ? relationship.Id
-                : null,
-            SpdxRelationshipType.RuntimeDependencyOf => relationship.RelatedSpdxElement == parentId
-                ? relationship.Id
-                : null,
-            SpdxRelationshipType.Generates => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.GeneratedFrom => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
-            SpdxRelationshipType.DistributionArtifact => relationship.Id == parentId
-                ? relationship.RelatedSpdxElement
-                : null,
-            SpdxRelationshipType.PatchFor => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.PatchApplied => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DynamicLink => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
-            SpdxRelationshipType.StaticLink => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
-            SpdxRelationshipType.BuildToolOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DevToolOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.TestToolOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.DocumentationOf =>
-                relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.OptionalComponentOf => relationship.RelatedSpdxElement == parentId
-                ? relationship.Id
-                : null,
-            SpdxRelationshipType.PackageOf => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.PrerequisiteFor =>
-                relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
-            SpdxRelationshipType.HasPrerequisite =>
-                relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
+            RelationshipDirection.Parent => relationship.Id == parentId ? relationship.RelatedSpdxElement : null,
+            RelationshipDirection.Child => relationship.RelatedSpdxElement == parentId ? relationship.Id : null,
             _ => null
         };
     }
