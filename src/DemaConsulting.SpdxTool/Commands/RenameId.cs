@@ -156,40 +156,45 @@ public sealed class RenameId : Command
         foreach (var package in doc.Packages)
         {
             // Rename the package name if necessary
-            if (package.Id == oldId)
-                package.Id = newId;
+            package.Id = UpdateId(package.Id, oldId, newId);
 
             // Rename files in package
             for (var i = 0; i < package.HasFiles.Length; ++i)
-                if (package.HasFiles[i] == oldId)
-                    package.HasFiles[i] = newId;
+                package.HasFiles[i] = UpdateId(package.HasFiles[i], oldId, newId);
         }
 
         // Update files
         foreach (var file in doc.Files)
-            if (file.Id == oldId)
-                file.Id = newId;
+            file.Id = UpdateId(file.Id, oldId, newId);
 
         // Update snippets
         foreach (var snippet in doc.Snippets)
-            if (snippet.Id == oldId)
-                snippet.Id = newId;
+            snippet.Id = UpdateId(snippet.Id, oldId, newId);
 
         // Update relationships
         foreach (var relationship in doc.Relationships)
         {
             // Update the from-element id
-            if (relationship.Id == oldId)
-                relationship.Id = newId;
+            relationship.Id = UpdateId(relationship.Id, oldId, newId);
 
             // Update the to-element id
-            if (relationship.RelatedSpdxElement == oldId)
-                relationship.RelatedSpdxElement = newId;
+            relationship.RelatedSpdxElement = UpdateId(relationship.RelatedSpdxElement, oldId, newId);
         }
 
         // Update describes
         for (var i = 0; i < doc.Describes.Length; ++i)
-            if (doc.Describes[i] == oldId)
-                doc.Describes[i] = newId;
+            doc.Describes[i] = UpdateId(doc.Describes[i], oldId, newId);
+    }
+
+    /// <summary>
+    ///     Updates an element ID by replacing the old ID with the new ID if they match.
+    /// </summary>
+    /// <param name="id">The current ID to be checked and potentially updated.</param>
+    /// <param name="oldId">The old ID to be replaced.</param>
+    /// <param name="newId">The new ID to replace the old ID.</param>
+    /// <returns>The updated ID if the current ID matches the old ID; otherwise the original ID.</returns>
+    private static string UpdateId(string id, string oldId, string newId)
+    {
+        return id == oldId ? newId : id;
     }
 }
