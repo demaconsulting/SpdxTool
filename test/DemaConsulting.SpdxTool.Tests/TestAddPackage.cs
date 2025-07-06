@@ -35,7 +35,7 @@ public class TestAddPackage
     [TestMethod]
     public void AddPackage_CommandLine()
     {
-        // Act: Run the command directly
+        // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",

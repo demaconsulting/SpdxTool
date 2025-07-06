@@ -124,7 +124,7 @@ public sealed class AddRelationship : Command
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
                                     throw new YamlException(step.Start, step.End,
-                                        "'add-package' missing 'relationships' input");
+                                        "'add-relationship' missing 'relationships' input");
         var relationships = Parse(Command, id, relationshipsSequence, variables);
 
         // Add the relationship

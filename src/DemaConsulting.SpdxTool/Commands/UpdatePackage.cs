@@ -126,6 +126,7 @@ public sealed class UpdatePackage : Command
 
         // Update the package
         foreach (var (key, value) in updates)
+        {
             switch (key)
             {
                 case "name":
@@ -165,6 +166,7 @@ public sealed class UpdatePackage : Command
                 default:
                     throw new CommandErrorException($"Invalid package update key '{key}'");
             }
+        }
 
         // Save the SPDX document
         SpdxHelpers.SaveJsonDocument(doc, spdxFile);
