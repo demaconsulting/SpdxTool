@@ -148,21 +148,21 @@ public class TestToMarkdown
             var markdown = File.ReadAllText("test.md");
 
             // Assert: Verify the contents
-            Assert.IsTrue(markdown.Contains("## SPDX Document"));
-            Assert.IsTrue(markdown.Contains("| File Name | test.spdx.json |"));
-            Assert.IsTrue(markdown.Contains("| Name | Test Document |"));
+            Assert.Contains("## SPDX Document", markdown);
+            Assert.Contains("| File Name | test.spdx.json |", markdown);
+            Assert.Contains("| Name | Test Document |", markdown);
 
             // Assert: Verify the root packages section
             var rootPackagesIndex = markdown.IndexOf("# Root Packages", StringComparison.Ordinal);
-            Assert.IsTrue(rootPackagesIndex >= 0);
+            Assert.IsGreaterThanOrEqualTo(0, rootPackagesIndex);
 
             // Assert: Verify the packages section
             var packagesIndex = markdown.IndexOf("# Packages", StringComparison.Ordinal);
-            Assert.IsTrue(packagesIndex >= 0);
+            Assert.IsGreaterThanOrEqualTo(0, packagesIndex);
 
             // Assert: Verify the tools section
             var toolsIndex = markdown.IndexOf("# Tools", StringComparison.Ordinal);
-            Assert.IsTrue(toolsIndex >= 0);
+            Assert.IsGreaterThanOrEqualTo(0, toolsIndex);
 
             // Assert: Verify "Test Application" is a root package
             var testPackageIndex = markdown.IndexOf("| Test Application | 1.2.3 | MIT |", StringComparison.Ordinal);
@@ -174,7 +174,7 @@ public class TestToMarkdown
 
             // Assert: Verify "Test Tool" is a tool
             var testToolPosition = markdown.IndexOf("| Test Tool | 3.4.5 | MIT |", StringComparison.Ordinal);
-            Assert.IsTrue(testToolPosition > toolsIndex);
+            Assert.IsGreaterThan(toolsIndex, testToolPosition);
         }
         finally
         {
