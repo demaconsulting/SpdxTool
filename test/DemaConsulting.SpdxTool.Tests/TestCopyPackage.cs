@@ -44,7 +44,7 @@ public class TestCopyPackage
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'copy-package' command missing arguments");
+        Assert.Contains("'copy-package' command missing arguments", output);
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class TestCopyPackage
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "File not found: missing.spdx.json");
+        Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>

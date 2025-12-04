@@ -84,7 +84,7 @@ public class TestGetVersion
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'get-version' command missing arguments");
+        Assert.Contains("'get-version' command missing arguments", output);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public class TestGetVersion
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "File not found: missing.spdx.json");
+        Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
@@ -129,7 +129,7 @@ public class TestGetVersion
 
             // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "2.0.0");
+            Assert.Contains("2.0.0", output);
         }
         finally
         {
@@ -174,7 +174,7 @@ public class TestGetVersion
 
             // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "Found version 2.0.0");
+            Assert.Contains("Found version 2.0.0", output);
         }
         finally
         {

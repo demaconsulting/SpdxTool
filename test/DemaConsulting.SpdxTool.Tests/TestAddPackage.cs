@@ -44,7 +44,7 @@ public class TestAddPackage
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'add-package' command is only valid in a workflow");
+        Assert.Contains("'add-package' command is only valid in a workflow", output);
     }
 
     /// <summary>

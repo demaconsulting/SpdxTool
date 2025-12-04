@@ -41,7 +41,7 @@ public class TestSelfValidation
 
         // Assert: Verify success
         Assert.AreEqual(0, exitCode);
-        StringAssert.Contains(output, "Validation Passed");
+        Assert.Contains("Validation Passed", output);
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public class TestSelfValidation
         Assert.AreEqual(0, exitCode);
 
         // Assert: Verify depth of result
-        StringAssert.Contains(output, "### DemaConsulting.SpdxTool");
+        Assert.Contains("### DemaConsulting.SpdxTool", output);
     }
 
     /// <summary>
@@ -92,20 +92,20 @@ public class TestSelfValidation
             Assert.IsNotNull(results);
 
             // Assert: Verify the results contain expected content
-            StringAssert.Contains(results, "DemaConsulting.SpdxTool Validation Results -");
-            StringAssert.Contains(results, "SpdxTool_AddPackage");
-            StringAssert.Contains(results, "SpdxTool_AddRelationship");
-            StringAssert.Contains(results, "SpdxTool_CopyPackage");
-            StringAssert.Contains(results, "SpdxTool_FindPackage");
-            StringAssert.Contains(results, "SpdxTool_GetVersion");
-            StringAssert.Contains(results, "SpdxTool_Query");
-            StringAssert.Contains(results, "SpdxTool_RenameId");
-            StringAssert.Contains(results, "SpdxTool_UpdatePackage");
-            StringAssert.Contains(results, """
+            Assert.Contains("DemaConsulting.SpdxTool Validation Results -", results);
+            Assert.Contains("SpdxTool_AddPackage", results);
+            Assert.Contains("SpdxTool_AddRelationship", results);
+            Assert.Contains("SpdxTool_CopyPackage", results);
+            Assert.Contains("SpdxTool_FindPackage", results);
+            Assert.Contains("SpdxTool_GetVersion", results);
+            Assert.Contains("SpdxTool_Query", results);
+            Assert.Contains("SpdxTool_RenameId", results);
+            Assert.Contains("SpdxTool_UpdatePackage", results);
+            Assert.Contains("""
                                              <ResultSummary outcome="Completed">
                                                <Counters total="8" executed="8" passed="8" failed="0" />
                                              </ResultSummary>
-                                           """);
+                                           """, results);
         }
         finally
         {

@@ -42,7 +42,7 @@ public class TestPrint
 
         // Assert: Verify output
         Assert.AreEqual(0, exitCode);
-        StringAssert.Contains(output, "Hello, World!");
+        Assert.Contains("Hello, World!", output);
     }
 
     /// <summary>
@@ -81,8 +81,8 @@ public class TestPrint
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "The first parameter is Hello.");
-            StringAssert.Contains(output, "World is the second parameter.");
+            Assert.Contains("The first parameter is Hello.", output);
+            Assert.Contains("World is the second parameter.", output);
         }
         finally
         {

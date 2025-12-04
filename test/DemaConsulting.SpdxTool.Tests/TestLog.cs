@@ -50,7 +50,7 @@ public class TestLog
 
             // Assert: Verify the log contains the usage information
             var log = File.ReadAllText("output.log");
-            StringAssert.Contains(log, "Usage: spdx-tool");
+            Assert.Contains("Usage: spdx-tool", log);
         }
         finally
         {
@@ -83,7 +83,7 @@ public class TestLog
 
             // Assert: Verify the log contains the usage information
             var log = File.ReadAllText("output.log");
-            StringAssert.Contains(log, "Usage: spdx-tool");
+            Assert.Contains("Usage: spdx-tool", log);
         }
         finally
         {

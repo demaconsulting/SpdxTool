@@ -50,7 +50,7 @@ public partial class TestQuery
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'query' command missing arguments");
+        Assert.Contains("'query' command missing arguments", output);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public partial class TestQuery
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "Pattern must contain a 'value' capture group");
+        Assert.Contains("Pattern must contain a 'value' capture group", output);
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public partial class TestQuery
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "Unable to start program 'does-not-exist'");
+        Assert.Contains("Unable to start program 'does-not-exist'", output);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public partial class TestQuery
 
         // Assert: Verify error reported
         Assert.AreEqual(0, exitCode);
-        StringAssert.Matches(output, VersionRegex());
+        Assert.MatchesRegex(VersionRegex(), output);
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ public partial class TestQuery
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Matches(output, VersionRegex());
+            Assert.MatchesRegex(VersionRegex(), output);
         }
         finally
         {

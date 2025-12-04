@@ -41,7 +41,7 @@ public class TestSetVariable
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'set-variable' command is only valid in a workflow");
+        Assert.Contains("'set-variable' command is only valid in a workflow", output);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class TestSetVariable
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "p1p2 is Hello and World");
+            Assert.Contains("p1p2 is Hello and World", output);
         }
         finally
         {
