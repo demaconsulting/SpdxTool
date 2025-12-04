@@ -50,7 +50,7 @@ public partial class TestRunWorkflow
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'run-workflow' command missing arguments");
+        Assert.Contains("'run-workflow' command missing arguments", output);
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public partial class TestRunWorkflow
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "File not found: does-not-exist.yaml");
+        Assert.Contains("File not found: does-not-exist.yaml", output);
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public partial class TestRunWorkflow
 
             // Assert: Verify error reported
             Assert.AreEqual(1, exitCode);
-            StringAssert.Contains(output, "Error: Workflow invalid.yaml missing steps");
+            Assert.Contains("Error: Workflow invalid.yaml missing steps", output);
         }
         finally
         {
@@ -132,7 +132,7 @@ public partial class TestRunWorkflow
 
             // Assert: Verify error reported
             Assert.AreEqual(1, exitCode);
-            StringAssert.Contains(output, "'help' command missing 'about' input");
+            Assert.Contains("'help' command missing 'about' input", output);
         }
         finally
         {
@@ -170,8 +170,8 @@ public partial class TestRunWorkflow
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output,
-                "This command displays extended help information about the specified command");
+            Assert.Contains("This command displays extended help information about the specified command",
+output);
         }
         finally
         {
@@ -212,8 +212,8 @@ public partial class TestRunWorkflow
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output,
-                "This command displays extended help information about the specified command");
+            Assert.Contains("This command displays extended help information about the specified command",
+output);
         }
         finally
         {
@@ -255,7 +255,7 @@ public partial class TestRunWorkflow
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "This command produces a Markdown summary of an SPDX document");
+            Assert.Contains("This command produces a Markdown summary of an SPDX document", output);
         }
         finally
         {
@@ -319,7 +319,7 @@ public partial class TestRunWorkflow
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "Output is Got Fred Param");
+            Assert.Contains("Output is Got Fred Param", output);
         }
         finally
         {
@@ -385,7 +385,7 @@ public partial class TestRunWorkflow
 
             // Assert: Verify success
             Assert.AreEqual(1, exitCode);
-            StringAssert.Contains(output, "Error: Integrity check of workflow2.yaml failed");
+            Assert.Contains("Error: Integrity check of workflow2.yaml failed", output);
         }
         finally
         {
@@ -431,7 +431,7 @@ public partial class TestRunWorkflow
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            StringAssert.Matches(output, DotnetVersionRegex());
+            Assert.MatchesRegex(DotnetVersionRegex(), output);
         }
         finally
         {

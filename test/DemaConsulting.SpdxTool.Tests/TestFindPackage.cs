@@ -84,7 +84,7 @@ public class TestFindPackage
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'find-package' command missing arguments");
+        Assert.Contains("'find-package' command missing arguments", output);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public class TestFindPackage
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "File not found: missing.spdx.json");
+        Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
@@ -129,7 +129,7 @@ public class TestFindPackage
 
             // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "SPDXRef-Package-2");
+            Assert.Contains("SPDXRef-Package-2", output);
         }
         finally
         {
@@ -174,7 +174,7 @@ public class TestFindPackage
 
             // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "Found package SPDXRef-Package-1");
+            Assert.Contains("Found package SPDXRef-Package-1", output);
         }
         finally
         {
@@ -220,7 +220,7 @@ public class TestFindPackage
 
             // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "Found package SPDXRef-Package-2");
+            Assert.Contains("Found package SPDXRef-Package-2", output);
         }
         finally
         {
@@ -266,7 +266,7 @@ public class TestFindPackage
 
             // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "Found package SPDXRef-Package-1");
+            Assert.Contains("Found package SPDXRef-Package-1", output);
         }
         finally
         {
@@ -312,7 +312,7 @@ public class TestFindPackage
 
             // Assert: Verify package ID
             Assert.AreEqual(0, exitCode);
-            StringAssert.Contains(output, "Found package SPDXRef-Package-2");
+            Assert.Contains("Found package SPDXRef-Package-2", output);
         }
         finally
         {

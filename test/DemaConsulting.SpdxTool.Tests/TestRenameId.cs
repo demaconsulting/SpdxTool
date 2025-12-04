@@ -43,7 +43,7 @@ public class TestRenameId
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'rename-id' command missing arguments");
+        Assert.Contains("'rename-id' command missing arguments", output);
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ public class TestRenameId
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "File not found: missing.spdx.json");
+        Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>

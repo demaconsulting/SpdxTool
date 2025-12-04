@@ -41,7 +41,7 @@ public class TestHelp
 
         // Assert: Verify an error was detected
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'help' command missing arguments");
+        Assert.Contains("'help' command missing arguments", output);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class TestHelp
 
         // Assert: Verify an error was detected
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "Unknown command: 'unknown-command'");
+        Assert.Contains("Unknown command: 'unknown-command'", output);
     }
 
     /// <summary>
@@ -79,6 +79,6 @@ public class TestHelp
 
         // Assert: Verify success
         Assert.AreEqual(0, exitCode);
-        StringAssert.Contains(output, "This command runs the steps specified in the workflow file/url.");
+        Assert.Contains("This command runs the steps specified in the workflow file/url.", output);
     }
 }

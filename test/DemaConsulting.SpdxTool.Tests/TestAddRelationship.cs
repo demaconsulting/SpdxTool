@@ -81,7 +81,7 @@ public class TestAddRelationship
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'add-relationship' command missing arguments");
+        Assert.Contains("'add-relationship' command missing arguments", output);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public class TestAddRelationship
 
         // Assert: Verify error reported
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "File not found: missing.spdx.json");
+        Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>

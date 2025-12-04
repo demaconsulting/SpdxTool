@@ -41,7 +41,7 @@ public class TestToMarkdown
 
         // Assert: Verify the conversion failed
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "'to-markdown' command missing arguments");
+        Assert.Contains("'to-markdown' command missing arguments", output);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class TestToMarkdown
 
         // Assert: Verify the conversion failed
         Assert.AreEqual(1, exitCode);
-        StringAssert.Contains(output, "File not found: missing.spdx.json");
+        Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>

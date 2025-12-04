@@ -42,8 +42,8 @@ public class TestUsage
         Assert.AreEqual(1, exitCode);
 
         // Assert: Verify the output contains the usage information
-        StringAssert.Contains(output, "Error: Missing arguments");
-        StringAssert.Contains(output, "Usage: spdx-tool");
+        Assert.Contains("Error: Missing arguments", output);
+        Assert.Contains("Usage: spdx-tool", output);
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public class TestUsage
         Assert.AreEqual(0, exitCode);
 
         // Assert: Verify the output contains the usage information
-        StringAssert.Contains(output, "Usage: spdx-tool");
+        Assert.Contains("Usage: spdx-tool", output);
     }
 
     /// <summary>
@@ -83,6 +83,6 @@ public class TestUsage
         Assert.AreEqual(0, exitCode);
 
         // Assert: Verify the output contains the usage information
-        StringAssert.Contains(output, "Usage: spdx-tool");
+        Assert.Contains("Usage: spdx-tool", output);
     }
 }
