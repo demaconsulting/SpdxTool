@@ -137,7 +137,7 @@ public class TestAddRelationship
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationship added
-            Assert.AreEqual(1, doc.Relationships.Length);
+            Assert.HasCount(1, doc.Relationships);
             Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
             Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
             Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
@@ -191,7 +191,7 @@ public class TestAddRelationship
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationship added
-            Assert.AreEqual(1, doc.Relationships.Length);
+            Assert.HasCount(1, doc.Relationships);
             Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
             Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
             Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
@@ -265,7 +265,7 @@ public class TestAddRelationship
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationships added
-            Assert.AreEqual(2, doc.Relationships.Length);
+            Assert.HasCount(2, doc.Relationships);
             Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
             Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
             Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
@@ -291,7 +291,7 @@ public class TestAddRelationship
             doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationship replaced
-            Assert.AreEqual(1, doc.Relationships.Length);
+            Assert.HasCount(1, doc.Relationships);
             Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
             Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[0].RelationshipType);
             Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);

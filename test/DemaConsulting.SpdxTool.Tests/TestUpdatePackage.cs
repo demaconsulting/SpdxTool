@@ -128,7 +128,7 @@ public class TestUpdatePackage
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.AreEqual(1, doc.Packages.Length);
+            Assert.HasCount(1, doc.Packages);
             Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.AreEqual("New package name", doc.Packages[0].Name);
             Assert.AreEqual("https://new.package.download", doc.Packages[0].DownloadLocation);
