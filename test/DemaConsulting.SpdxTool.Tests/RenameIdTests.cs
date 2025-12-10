@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'rename-id' command.
 /// </summary>
 [TestClass]
-public class TestRenameId
+public class RenameIdTests
 {
     /// <summary>
     ///     Test the 'rename-id' command with missing arguments.

@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'run-workflow' command.
 /// </summary>
 [TestClass]
-public partial class TestRunWorkflow
+public partial class RunWorkflowTests
 {
     /// <summary>
     ///     Regular expression to check for dotnet version

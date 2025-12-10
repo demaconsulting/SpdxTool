@@ -27,7 +27,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'add-package' command.
 /// </summary>
 [TestClass]
-public class TestAddPackage
+public class AddPackageTests
 {
     /// <summary>
     ///     Test that the 'add-package' command is only valid in a workflow.

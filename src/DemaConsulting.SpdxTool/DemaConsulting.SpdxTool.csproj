@@ -6,6 +6,7 @@
     <LangVersion>12</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageId>DemaConsulting.SpdxTool</PackageId>
     <Title>SPDX Tool</Title>

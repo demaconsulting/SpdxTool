@@ -24,7 +24,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'find-package' command
 /// </summary>
 [TestClass]
-public class TestFindPackage
+public class FindPackageTests
 {
     /// <summary>
     ///     SPDX file for finding packages

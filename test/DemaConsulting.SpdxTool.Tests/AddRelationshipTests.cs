@@ -27,7 +27,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'add-relationship' command
 /// </summary>
 [TestClass]
-public class TestAddRelationship
+public class AddRelationshipTests
 {
     /// <summary>
     ///     SPDX file for finding packages

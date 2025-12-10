@@ -24,7 +24,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'to-markdown' command.
 /// </summary>
 [TestClass]
-public class TestToMarkdown
+public class ToMarkdownTests
 {
     /// <summary>
     ///     Test the 'to-markdown' command with missing arguments.

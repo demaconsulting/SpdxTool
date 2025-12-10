@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,53 +18,60 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Text.RegularExpressions;
+
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-///     Tests for silencing output.
+///     Tests for version information.
 /// </summary>
 [TestClass]
-public class TestSilent
+public partial class VersionTests
 {
     /// <summary>
-    ///     Test that silence functions when '-s' is specified
+    ///     Regular expression to check for version
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
+    private static partial Regex VersionRegex();
+
+    /// <summary>
+    ///     Test that version information is printed when '-v' is specified
     /// </summary>
     [TestMethod]
-    public void Silent_Short()
+    public void Version_Short()
     {
-        // Act: Run the command
+        // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "-s",
-            "-h");
+            "-v");
 
-        // Assert: Verify success
+        // Assert: Check the output
         Assert.AreEqual(0, exitCode);
 
-        // Assert: Verify the output is empty
-        Assert.AreEqual(0, output.Length);
+        // Assert: Verify version response
+        Assert.MatchesRegex(VersionRegex(), output);
     }
 
     /// <summary>
-    ///     Test that silence functions when '--silent' is specified
+    ///     Test that version information is printed when '--version' is specified
     /// </summary>
     [TestMethod]
-    public void Silent_Long()
+    public void Version_Long()
     {
-        // Act: Run the command
+        // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "--silent",
-            "--help");
+            "--version");
 
-        // Assert: Verify success
+        // Assert: Check the output
         Assert.AreEqual(0, exitCode);
 
-        // Assert: Verify the output is empty
-        Assert.AreEqual(0, output.Length);
+        // Assert: Verify version response
+        Assert.MatchesRegex(VersionRegex(), output);
     }
 }

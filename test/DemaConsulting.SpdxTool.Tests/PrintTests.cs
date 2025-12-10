@@ -21,34 +21,35 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-///     Tests for the 'set-variable' command.
+///     Tests for the 'print' command
 /// </summary>
 [TestClass]
-public class TestSetVariable
+public class PrintTests
 {
     /// <summary>
-    ///     Test the 'set-variable' command does not work from the command line.
+    ///     Tests the 'print' command from the command line
     /// </summary>
     [TestMethod]
-    public void SetVariable_CommandLine()
+    public void Print_CommandLine()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "set-variable");
+            "print",
+            "Hello, World!");
 
-        // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
-        Assert.Contains("'set-variable' command is only valid in a workflow", output);
+        // Assert: Verify output
+        Assert.AreEqual(0, exitCode);
+        Assert.Contains("Hello, World!", output);
     }
 
     /// <summary>
-    ///     Test the 'set-variable' command.
+    ///     Tests the 'print' command from a workflow
     /// </summary>
     [TestMethod]
-    public void SetVariable()
+    public void Print_Workflow()
     {
         // Workflow contents
         const string workflowContents =
@@ -56,16 +57,13 @@ public class TestSetVariable
             parameters:
               p1: Hello
               p2: World
-            steps:
-            - command: set-variable
-              inputs:
-                value: ${{ p1 }} and ${{ p2 }}
-                output: p1p2
 
+            steps:
             - command: print
               inputs:
                 text:
-                - p1p2 is ${{ p1p2 }}
+                - The first parameter is ${{ p1 }}.
+                - ${{ p2 }} is the second parameter.
             """;
 
         try
@@ -83,7 +81,8 @@ public class TestSetVariable
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.Contains("p1p2 is Hello and World", output);
+            Assert.Contains("The first parameter is Hello.", output);
+            Assert.Contains("World is the second parameter.", output);
         }
         finally
         {

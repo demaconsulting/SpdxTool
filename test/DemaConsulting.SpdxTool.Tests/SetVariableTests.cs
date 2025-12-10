@@ -21,74 +21,73 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-///     Tests for logging output.
+///     Tests for the 'set-variable' command.
 /// </summary>
 [TestClass]
-public class TestLog
+public class SetVariableTests
 {
     /// <summary>
-    ///     Test that logging functions when '-l' is specified
+    ///     Test the 'set-variable' command does not work from the command line.
     /// </summary>
     [TestMethod]
-    public void Log_Short()
+    public void SetVariable_CommandLine()
     {
-        try
-        {
-            // Act: Run the command
-            var exitCode = Runner.Run(
-                out _,
-                "dotnet",
-                "DemaConsulting.SpdxTool.dll",
-                "-l", "output.log",
-                "-h");
+        // Act: Run the command
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "set-variable");
 
-            // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
-
-            // Assert: Verify log file written
-            Assert.IsTrue(File.Exists("output.log"));
-
-            // Assert: Verify the log contains the usage information
-            var log = File.ReadAllText("output.log");
-            Assert.Contains("Usage: spdx-tool", log);
-        }
-        finally
-        {
-            // Delete output file
-            File.Delete("output.log");
-        }
+        // Assert: Verify error reported
+        Assert.AreEqual(1, exitCode);
+        Assert.Contains("'set-variable' command is only valid in a workflow", output);
     }
 
     /// <summary>
-    ///     Test that logging functions when '--log' is specified
+    ///     Test the 'set-variable' command.
     /// </summary>
     [TestMethod]
-    public void Log_Long()
+    public void SetVariable()
     {
+        // Workflow contents
+        const string workflowContents =
+            """
+            parameters:
+              p1: Hello
+              p2: World
+            steps:
+            - command: set-variable
+              inputs:
+                value: ${{ p1 }} and ${{ p2 }}
+                output: p1p2
+
+            - command: print
+              inputs:
+                text:
+                - p1p2 is ${{ p1p2 }}
+            """;
+
         try
         {
+            // Arrange: Write the SPDX files
+            File.WriteAllText("workflow.yaml", workflowContents);
+
             // Act: Run the command
             var exitCode = Runner.Run(
-                out _,
+                out var output,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "--log", "output.log",
-                "--help");
+                "run-workflow",
+                "workflow.yaml");
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-
-            // Assert: Verify log file written
-            Assert.IsTrue(File.Exists("output.log"));
-
-            // Assert: Verify the log contains the usage information
-            var log = File.ReadAllText("output.log");
-            Assert.Contains("Usage: spdx-tool", log);
+            Assert.Contains("p1p2 is Hello and World", output);
         }
         finally
         {
-            // Delete output file
-            File.Delete("output.log");
+            File.Delete("workflow.yaml");
         }
     }
 }
