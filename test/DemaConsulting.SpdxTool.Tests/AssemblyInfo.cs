@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2024 DEMA Consulting
-// 
+// Copyright (c) 2024 DEMA Consulting
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -18,29 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-/// <summary>
-///     Tests for unknown command handling.
-/// </summary>
-[TestClass]
-public class TestUnknownCommand
-{
-    /// <summary>
-    ///     Test unknown commands are reported.
-    /// </summary>
-    [TestMethod]
-    public void UnknownCommand()
-    {
-        // Act: Run the command
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "unknown-command");
-
-        // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
-        Assert.Contains("Error: Unknown command 'unknown-command'", output);
-    }
-}
+[assembly: DoNotParallelize]

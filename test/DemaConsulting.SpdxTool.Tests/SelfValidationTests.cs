@@ -24,7 +24,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the self-validation feature.
 /// </summary>
 [TestClass]
-public class TestSelfValidation
+public class SelfValidationTests
 {
     /// <summary>
     ///     Test that the self-validation command succeeds.

@@ -21,72 +21,74 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-///     Tests for the 'print' command
+///     Tests for logging output.
 /// </summary>
 [TestClass]
-public class TestPrint
+public class LogTests
 {
     /// <summary>
-    ///     Tests the 'print' command from the command line
+    ///     Test that logging functions when '-l' is specified
     /// </summary>
     [TestMethod]
-    public void Print_CommandLine()
+    public void Log_Short()
     {
-        // Act: Run the command
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "print",
-            "Hello, World!");
-
-        // Assert: Verify output
-        Assert.AreEqual(0, exitCode);
-        Assert.Contains("Hello, World!", output);
-    }
-
-    /// <summary>
-    ///     Tests the 'print' command from a workflow
-    /// </summary>
-    [TestMethod]
-    public void Print_Workflow()
-    {
-        // Workflow contents
-        const string workflowContents =
-            """
-            parameters:
-              p1: Hello
-              p2: World
-
-            steps:
-            - command: print
-              inputs:
-                text:
-                - The first parameter is ${{ p1 }}.
-                - ${{ p2 }} is the second parameter.
-            """;
-
         try
         {
-            // Arrange: Write the SPDX files
-            File.WriteAllText("workflow.yaml", workflowContents);
-
             // Act: Run the command
             var exitCode = Runner.Run(
-                out var output,
+                out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "run-workflow",
-                "workflow.yaml");
+                "-l", "output.log",
+                "-h");
 
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
-            Assert.Contains("The first parameter is Hello.", output);
-            Assert.Contains("World is the second parameter.", output);
+
+            // Assert: Verify log file written
+            Assert.IsTrue(File.Exists("output.log"));
+
+            // Assert: Verify the log contains the usage information
+            var log = File.ReadAllText("output.log");
+            Assert.Contains("Usage: spdx-tool", log);
         }
         finally
         {
-            File.Delete("workflow.yaml");
+            // Delete output file
+            File.Delete("output.log");
+        }
+    }
+
+    /// <summary>
+    ///     Test that logging functions when '--log' is specified
+    /// </summary>
+    [TestMethod]
+    public void Log_Long()
+    {
+        try
+        {
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "--log", "output.log",
+                "--help");
+
+            // Assert: Verify success
+            Assert.AreEqual(0, exitCode);
+
+            // Assert: Verify log file written
+            Assert.IsTrue(File.Exists("output.log"));
+
+            // Assert: Verify the log contains the usage information
+            var log = File.ReadAllText("output.log");
+            Assert.Contains("Usage: spdx-tool", log);
+        }
+        finally
+        {
+            // Delete output file
+            File.Delete("output.log");
         }
     }
 }

@@ -24,7 +24,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'hash' command
 /// </summary>
 [TestClass]
-public class TestHash
+public class HashTests
 {
     /// <summary>
     ///     Tests the 'hash' command with missing arguments

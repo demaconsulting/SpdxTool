@@ -1,7 +1,11 @@
 ---
 name: Build
 
-on: [push, workflow_dispatch]
+on:
+  push:                 # On push to any branch
+  workflow_dispatch:    # Allow manual trigger
+  schedule:             # 5PM UTC every Monday
+    - cron: '0 17 * * 1'
 
 env:
   version: '0.0.0-run.${{ github.run_number }}'

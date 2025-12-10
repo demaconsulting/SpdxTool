@@ -27,7 +27,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'copy-package' command.
 /// </summary>
 [TestClass]
-public class TestCopyPackage
+public class CopyPackageTests
 {
     /// <summary>
     ///     Test the 'copy-package' command with missing arguments.

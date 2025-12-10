@@ -21,68 +21,64 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-///     Tests for usage information.
+///     Tests for the 'help' command
 /// </summary>
 [TestClass]
-public class TestUsage
+public class HelpTests
 {
     /// <summary>
-    ///     Test that usage information is printed when no command line arguments are specified
+    ///     Tests the 'help' command with missing arguments
     /// </summary>
     [TestMethod]
-    public void Usage_NoArguments()
+    public void Help_MissingArguments()
     {
-        // Act: Run the command
+        // Act: Run the help command with no arguments
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
-            "DemaConsulting.SpdxTool.dll");
+            "DemaConsulting.SpdxTool.dll",
+            "help");
 
-        // Assert: Verify an error was reported
+        // Assert: Verify an error was detected
         Assert.AreEqual(1, exitCode);
-
-        // Assert: Verify the output contains the usage information
-        Assert.Contains("Error: Missing arguments", output);
-        Assert.Contains("Usage: spdx-tool", output);
+        Assert.Contains("'help' command missing arguments", output);
     }
 
     /// <summary>
-    ///     Test that usage information is printed when '-h' is specified
+    ///     Tests the 'help' command with an unknown command
     /// </summary>
     [TestMethod]
-    public void Usage_HelpShort()
+    public void Help_UnknownCommand()
     {
-        // Act: Run the command
+        // Act: Run the help command with an unknown command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "-h");
+            "help",
+            "unknown-command");
 
-        // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
-
-        // Assert: Verify the output contains the usage information
-        Assert.Contains("Usage: spdx-tool", output);
+        // Assert: Verify an error was detected
+        Assert.AreEqual(1, exitCode);
+        Assert.Contains("Unknown command: 'unknown-command'", output);
     }
 
     /// <summary>
-    ///     Test that usage information is printed when '--help' is specified
+    ///     Tests the 'help' command with the 'run-workflow' command
     /// </summary>
     [TestMethod]
-    public void Usage_HelpLong()
+    public void Help_RunWorkflow()
     {
-        // Act: Run the command
+        // Act: Run the help command with an unknown command
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
             "DemaConsulting.SpdxTool.dll",
-            "--help");
+            "help",
+            "run-workflow");
 
         // Assert: Verify success
         Assert.AreEqual(0, exitCode);
-
-        // Assert: Verify the output contains the usage information
-        Assert.Contains("Usage: spdx-tool", output);
+        Assert.Contains("This command runs the steps specified in the workflow file/url.", output);
     }
 }

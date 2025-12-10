@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Test for wildcard pattern matching
 /// </summary>
 [TestClass]
-public class TestWildcard
+public class WildcardTests
 {
     /// <summary>
     ///     Test for exact matching

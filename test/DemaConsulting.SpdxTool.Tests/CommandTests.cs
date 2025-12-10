@@ -27,7 +27,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the <see cref="Command" /> class.
 /// </summary>
 [TestClass]
-public class TestCommand
+public class CommandTests
 {
     /// <summary>
     ///     Test the <see cref="Command.Expand" /> method with a missing variable.

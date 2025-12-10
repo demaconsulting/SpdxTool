@@ -24,7 +24,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'get-version' command
 /// </summary>
 [TestClass]
-public class TestGetVersion
+public class GetVersionTests
 {
     /// <summary>
     ///     SPDX file for finding packages

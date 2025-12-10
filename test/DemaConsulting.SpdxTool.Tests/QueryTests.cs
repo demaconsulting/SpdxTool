@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'query' command
 /// </summary>
 [TestClass]
-public partial class TestQuery
+public partial class QueryTests
 {
     /// <summary>
     ///     Regular expression to check for version

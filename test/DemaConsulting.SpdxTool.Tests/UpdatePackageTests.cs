@@ -26,7 +26,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 ///     Tests for the 'update-package' command.
 /// </summary>
 [TestClass]
-public class TestUpdatePackage
+public class UpdatePackageTests
 {
     /// <summary>
     ///     Test the 'update-package' command does not work from the command line.
