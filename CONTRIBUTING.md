@@ -81,20 +81,6 @@ Use descriptive branch names:
 
 Before submitting your changes, run the following checks:
 
-**Using the Quality Check Script (Recommended):**
-
-```bash
-# Linux/macOS
-./scripts/quality-check.sh
-
-# Windows (PowerShell)
-.\scripts\quality-check.ps1
-```
-
-The quality check script runs all necessary checks in the correct order.
-
-**Manual Checks:**
-
 ```bash
 # Build the project
 dotnet build
@@ -111,6 +97,8 @@ dotnet run --project src/DemaConsulting.SpdxTool -- --validate
 # Generate code coverage (optional)
 dotnet test --collect:"XPlat Code Coverage"
 ```
+
+The CI pipeline will also run markdown linting and spell checking on all documentation.
 
 ## Coding Standards
 
