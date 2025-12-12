@@ -70,6 +70,8 @@ fi
 echo ""
 
 echo "Step 6: Running self-validation..."
+# Note: Using net8.0 explicitly since project targets multiple frameworks.
+# Self-validation behavior is identical across frameworks, so we use the LTS version.
 if dotnet run --project src/DemaConsulting.SpdxTool --no-build --framework net8.0 -- --validate > /tmp/validate.log 2>&1; then
     if grep -q "Validation Passed" /tmp/validate.log; then
         print_status 0 "Self-validation passed"

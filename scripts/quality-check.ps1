@@ -81,10 +81,13 @@ Write-Host ""
 
 Write-Host "Step 6: Running self-validation..."
 try {
-    dotnet run --project src/DemaConsulting.SpdxTool --no-build -- --validate | Out-Null
-    if ($LASTEXITCODE -eq 0) {
+    # Note: Using net8.0 explicitly since project targets multiple frameworks.
+    # Self-validation behavior is identical across frameworks, so we use the LTS version.
+    $validateOutput = dotnet run --project src/DemaConsulting.SpdxTool --no-build --framework net8.0 -- --validate 2>&1
+    if ($LASTEXITCODE -eq 0 -and $validateOutput -match "Validation Passed") {
         Print-Status $true "Self-validation passed"
     } else {
+        Write-Host $validateOutput
         Print-Status $false "Self-validation failed"
     }
 } catch {
