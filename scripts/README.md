@@ -18,6 +18,15 @@ The quality check script runs a comprehensive set of checks before committing co
 .\scripts\quality-check.ps1
 ```
 
+**With Custom Target Framework:**
+```bash
+# Linux/macOS
+SPDX_TARGET_FRAMEWORK=net9.0 ./scripts/quality-check.sh
+
+# Windows (PowerShell)
+$env:SPDX_TARGET_FRAMEWORK="net9.0"; .\scripts\quality-check.ps1
+```
+
 ### What It Checks
 
 1. **Clean**: Removes all build artifacts

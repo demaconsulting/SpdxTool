@@ -3,6 +3,15 @@
 
 $ErrorActionPreference = "Stop"
 
+# Configuration
+# Target framework for self-validation (LTS version recommended)
+$targetFramework = if ($env:SPDX_TARGET_FRAMEWORK) { $env:SPDX_TARGET_FRAMEWORK } else { "net8.0" }
+
+# Create unique temporary directory for this run
+$tempDir = New-Item -ItemType Directory -Path (Join-Path $env:TEMP "spdx-quality-$(New-Guid)")
+$cleanupScript = { Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue }
+Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action $cleanupScript | Out-Null
+
 Write-Host "==================================================" -ForegroundColor Cyan
 Write-Host "SpdxTool Quality Check" -ForegroundColor Cyan
 Write-Host "==================================================" -ForegroundColor Cyan
@@ -44,7 +53,8 @@ Write-Host ""
 
 Write-Host "Step 3: Building solution..."
 try {
-    $buildOutput = dotnet build --no-restore 2>&1
+    $buildLogPath = Join-Path $tempDir "build.log"
+    $buildOutput = dotnet build --no-restore 2>&1 | Tee-Object -FilePath $buildLogPath
     if ($LASTEXITCODE -eq 0) {
         Print-Status $true "Build completed"
     } else {
@@ -58,7 +68,8 @@ Write-Host ""
 
 Write-Host "Step 4: Running tests..."
 try {
-    $testOutput = dotnet test --no-build --verbosity quiet 2>&1
+    $testLogPath = Join-Path $tempDir "test.log"
+    $testOutput = dotnet test --no-build --verbosity quiet 2>&1 | Tee-Object -FilePath $testLogPath
     if ($LASTEXITCODE -eq 0) {
         Print-Status $true "All tests passed"
     } else {
@@ -71,9 +82,10 @@ try {
 Write-Host ""
 
 Write-Host "Step 5: Running code analysis..."
-if ($buildOutput -match "warning") {
+$buildContent = Get-Content $buildLogPath -Raw
+if ($buildContent -match "warning") {
     Write-Host "⚠ Warnings found in build output" -ForegroundColor Yellow
-    $buildOutput | Select-String "warning" | Select-Object -First 5
+    $buildContent | Select-String "warning" | Select-Object -First 5
 } else {
     Print-Status $true "No analysis warnings"
 }
@@ -81,11 +93,13 @@ Write-Host ""
 
 Write-Host "Step 6: Running self-validation..."
 try {
-    # Note: Using net8.0 explicitly since project targets multiple frameworks.
-    # Self-validation behavior is identical across frameworks, so we use the LTS version.
-    $validateOutput = dotnet run --project src/DemaConsulting.SpdxTool --no-build --framework net8.0 -- --validate 2>&1
+    # Note: Using configured framework (default: net8.0 LTS) for self-validation.
+    # Self-validation behavior is identical across frameworks.
+    # Override with: $env:SPDX_TARGET_FRAMEWORK="net9.0"; .\scripts\quality-check.ps1
+    $validateLogPath = Join-Path $tempDir "validate.log"
+    $validateOutput = dotnet run --project src/DemaConsulting.SpdxTool --no-build --framework $targetFramework -- --validate 2>&1 | Tee-Object -FilePath $validateLogPath
     if ($LASTEXITCODE -eq 0 -and $validateOutput -match "Validation Passed") {
-        Print-Status $true "Self-validation passed"
+        Print-Status $true "Self-validation passed (framework: $targetFramework)"
     } else {
         Write-Host $validateOutput
         Print-Status $false "Self-validation failed"
