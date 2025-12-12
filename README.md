@@ -122,10 +122,33 @@ On validation failure the tool will exit with a non-zero exit code.
 This report may be useful in regulated industries requiring evidence of tool validation.
 
 
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- Setting up your development environment
+- Coding standards and conventions
+- Running tests and quality checks
+- Submitting pull requests
+
+Before contributing, please read our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Project Quality
+
+This project maintains high code quality standards:
+
+- ✓ Comprehensive unit test coverage
+- ✓ Static code analysis with multiple analyzers
+- ✓ Continuous integration with SonarCloud
+- ✓ Self-validation system for tool correctness
+- ✓ Warnings treated as errors
+- ✓ EditorConfig for consistent code style
+
 ## Additional Information
 
 Additional information can be found at:
 
+- [Architecture Documentation](ARCHITECTURE.md)
 - [SPDX Site](https://spdx.dev/)
 - [GitHub CI](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md)
 - [Using with Microsoft SBOM Tool](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md)
