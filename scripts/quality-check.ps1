@@ -82,12 +82,16 @@ try {
 Write-Host ""
 
 Write-Host "Step 5: Running code analysis..."
-$buildContent = Get-Content $buildLogPath -Raw
-if ($buildContent -match "warning") {
-    Write-Host "⚠ Warnings found in build output" -ForegroundColor Yellow
-    $buildContent | Select-String "warning" | Select-Object -First 5
+if (Test-Path $buildLogPath) {
+    $buildContent = Get-Content $buildLogPath -Raw
+    if ($buildContent -match "warning") {
+        Write-Host "⚠ Warnings found in build output" -ForegroundColor Yellow
+        $buildContent | Select-String "warning" | Select-Object -First 5
+    } else {
+        Print-Status $true "No analysis warnings"
+    }
 } else {
-    Print-Status $true "No analysis warnings"
+    Write-Host "⚠ Build log not found, skipping analysis check" -ForegroundColor Yellow
 }
 Write-Host ""
 

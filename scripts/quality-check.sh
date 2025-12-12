@@ -47,11 +47,13 @@ print_status $? "Restore completed"
 echo ""
 
 echo "Step 3: Building solution..."
-if dotnet build --no-restore 2>&1 | tee "$TEMP_DIR/build.log" | grep -q "Build FAILED"; then
-    echo -e "${RED}Build failed. See output above for details.${NC}"
-    FAILED=1
-else
+dotnet build --no-restore 2>&1 | tee "$TEMP_DIR/build.log"
+BUILD_EXIT=$?
+if [ $BUILD_EXIT -eq 0 ]; then
     print_status 0 "Build completed"
+else
+    echo -e "${RED}Build failed. Exit code: $BUILD_EXIT${NC}"
+    FAILED=1
 fi
 echo ""
 
