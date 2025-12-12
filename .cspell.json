@@ -7,6 +7,7 @@
     "Dema",
     "DemaConsulting",
     "dotnet",
+    "dotnettool",
     "nuget",
     "csproj",
     "MSTest",
@@ -26,7 +27,10 @@
     "gitignore",
     "nupkg",
     "snupkg",
-    "wildcards"
+    "wildcards",
+    "SPDXID",
+    "NOASSERTION",
+    "declaredat"
   ],
   "ignoreWords": [
     "demaconsulting"
