@@ -65,8 +65,39 @@ Use these commands to perform common development tasks:
 * Avoid public fields; prefer properties.
 
 
+## Quality Tools and Practices
+
+* **Code Analysis**: The project uses multiple analyzers configured via Directory.Build.props:
+  - Microsoft.CodeAnalysis.NetAnalyzers for .NET best practices
+  - SonarAnalyzer.CSharp for additional code quality rules
+  - All warnings are treated as errors
+* **EditorConfig**: The .editorconfig file enforces consistent code style across IDEs
+* **Code Coverage**: Use `dotnet test --collect:"XPlat Code Coverage"` to generate coverage reports
+* **SonarCloud**: The CI pipeline integrates with SonarCloud for continuous quality monitoring
+* **Static Analysis**: Run `dotnet build` to perform compile-time static analysis
+
+### Running Quality Checks Locally
+
+Before committing code, developers should run:
+
+```bash
+# Restore dependencies
+dotnet restore
+
+# Build with all analysis enabled (will fail on warnings)
+dotnet build
+
+# Run all tests with coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run self-validation
+dotnet run --project src/DemaConsulting.SpdxTool -- --validate
+```
+
+
 ## Boundaries and Guardrails
 
 * **NEVER** modify files within the `/obj/` or `/bin/` directories.
 * **NEVER** commit secrets, API keys, or sensitive configuration data.
+* **NEVER** disable code analysis warnings without proper justification and review.
 * **ASK FIRST** before making significant architectural changes to the core library logic.

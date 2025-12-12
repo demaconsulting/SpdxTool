@@ -1,0 +1,64 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "SPDX",
+    "SBOM",
+    "Dema",
+    "DemaConsulting",
+    "dotnet",
+    "dotnettool",
+    "nuget",
+    "csproj",
+    "MSTest",
+    "YamlDotNet",
+    "SpdxModel",
+    "SpdxTool",
+    "trx",
+    "json",
+    "yaml",
+    "mermaid",
+    "purl",
+    "ntia",
+    "Sonar",
+    "SonarCloud",
+    "SonarAnalyzer",
+    "editorconfig",
+    "gitignore",
+    "nupkg",
+    "snupkg",
+    "wildcards",
+    "SPDXID",
+    "NOASSERTION",
+    "declaredat"
+  ],
+  "ignoreWords": [
+    "demaconsulting"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".git/**",
+    "bin/**",
+    "obj/**",
+    "*.min.js",
+    "*.min.css",
+    "package-lock.json",
+    ".vs/**",
+    ".vscode/**",
+    "coverage/**",
+    "TestResults/**"
+  ],
+  "flagWords": [],
+  "patterns": [
+    {
+      "name": "Markdown links",
+      "pattern": "\\[.*?\\]\\(.*?\\)",
+      "description": "Ignore markdown links"
+    },
+    {
+      "name": "Inline code",
+      "pattern": "`[^`]*`",
+      "description": "Ignore inline code blocks"
+    }
+  ]
+}
