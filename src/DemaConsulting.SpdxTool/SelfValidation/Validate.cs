@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Runtime.InteropServices;
 using DemaConsulting.TestResults.IO;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
@@ -42,7 +43,7 @@ public static class Validate
              | :------------------ | :------------------------------------------------- |
              | SpdxTool Version    | {Program.Version,-50} |
              | Machine Name        | {Environment.MachineName,-50} |
-             | OS Version          | {Environment.OSVersion.VersionString,-50} |
+             | OS Version          | {RuntimeInformation.OSDescription,-50} |
              | DotNet Runtime      | {Environment.Version,-50} |
              | Time Stamp          | {DateTime.UtcNow,-50:u} |
 
