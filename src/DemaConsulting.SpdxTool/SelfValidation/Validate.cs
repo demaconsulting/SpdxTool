@@ -62,6 +62,7 @@ public static class Validate
         ValidateCopyPackage.Run(context, results);
         ValidateFindPackage.Run(context, results);
         ValidateGetVersion.Run(context, results);
+        ValidateNtia.Run(context, results);
         ValidateQuery.Run(context, results);
         ValidateRenameId.Run(context, results);
         ValidateUpdatePackage.Run(context, results);
