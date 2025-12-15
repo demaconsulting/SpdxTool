@@ -129,6 +129,7 @@ internal static class ValidateNtia
         var exitCode2 = Validate.RunSpdxTool(
             "validate.tmp",
             [
+                "--silent",
                 "--log", "output.log",
                 "validate",
                 "test-ntia.spdx.json",
