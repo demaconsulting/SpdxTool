@@ -30,7 +30,8 @@
     "wildcards",
     "SPDXID",
     "NOASSERTION",
-    "declaredat"
+    "declaredat",
+    "sandboxed"
   ],
   "ignoreWords": [
     "demaconsulting"
