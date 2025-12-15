@@ -125,6 +125,7 @@ internal static class ValidateNtia
             return false;
 
         // Run validation with NTIA flag - should fail due to missing supplier
+        // The log file will be written to validate.tmp/output.log since the working directory is changed
         var exitCode2 = Validate.RunSpdxTool(
             "validate.tmp",
             [
