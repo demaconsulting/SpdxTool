@@ -62,7 +62,7 @@ Commands:
   validate <spdx.json> [ntia]              Validate SPDX document for issues
 ```
 
-A more detailed description of the usage can be found [here](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-command-line.md)
+A more detailed description of the usage can be found [here][command-line-docs]
 
 
 ## Workflow YAML Files
@@ -86,7 +86,7 @@ steps:
     input2: ${{ parameter-name }}
 ```
 
-A more detailed description of workflow YAML files can be found [here](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md)
+A more detailed description of workflow YAML files can be found [here][workflow-docs]
 
 
 ## Self Validation
@@ -125,14 +125,14 @@ This report may be useful in regulated industries requiring evidence of tool val
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+We welcome contributions! Please see our [Contributing Guide][contributing] for details on:
 
 - Setting up your development environment
 - Coding standards and conventions
 - Running tests and quality checks
 - Submitting pull requests
 
-Before contributing, please read our [Code of Conduct](CODE_OF_CONDUCT.md).
+Before contributing, please read our [Code of Conduct][code-of-conduct].
 
 ## Project Quality
 
@@ -149,7 +149,16 @@ This project maintains high code quality standards:
 
 Additional information can be found at:
 
-- [Architecture Documentation](ARCHITECTURE.md)
-- [SPDX Site](https://spdx.dev/)
-- [GitHub CI](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md)
-- [Using with Microsoft SBOM Tool](https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md)
+- [Architecture Documentation][architecture]
+- [SPDX Site][spdx-site]
+- [GitHub CI][github-ci-docs]
+- [Using with Microsoft SBOM Tool][sbom-tool-docs]
+
+[command-line-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-command-line.md
+[workflow-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md
+[contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md
+[code-of-conduct]: https://github.com/demaconsulting/SpdxTool/blob/main/CODE_OF_CONDUCT.md
+[architecture]: https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md
+[spdx-site]: https://spdx.dev/
+[github-ci-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md
+[sbom-tool-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md
