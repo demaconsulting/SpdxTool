@@ -1,5 +1,6 @@
 # SPDX Tool
 
+![NuGet Version](https://img.shields.io/nuget/v/DemaConsulting.SpdxTool?style=plastic)
 ![GitHub forks](https://img.shields.io/github/forks/demaconsulting/SpdxTool?style=plastic)
 ![GitHub Repo stars](https://img.shields.io/github/stars/demaconsulting/SpdxTool?style=plastic)
 ![GitHub contributors](https://img.shields.io/github/contributors/demaconsulting/SpdxTool?style=plastic)
