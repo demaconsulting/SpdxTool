@@ -1,0 +1,124 @@
+name: 🐛 Bug Report
+description: Create a report to help us improve
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug! Please fill out the form below with as much detail as possible.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what happened
+    validations:
+      required: true
+  
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Run command '...'
+        2. With arguments '...'
+        3. See error
+    validations:
+      required: true
+  
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: What should have happened?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened, including any error messages.
+      placeholder: What actually happened?
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Other
+    validations:
+      required: true
+  
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      description: What version of the operating system are you using?
+      placeholder: e.g., Windows 11, Ubuntu 22.04, macOS 14
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: dotnet-version
+    attributes:
+      label: .NET Version
+      description: What version of .NET are you using?
+      options:
+        - .NET 8.0
+        - .NET 9.0
+        - .NET 10.0
+        - Other
+    validations:
+      required: true
+  
+  - type: input
+    id: spdxtool-version
+    attributes:
+      label: SpdxTool Version
+      description: What version of SpdxTool are you using?
+      placeholder: e.g., 0.1.0
+    validations:
+      required: true
+  
+  - type: textarea
+    id: spdx-document
+    attributes:
+      label: SPDX Document
+      description: If applicable, provide a minimal SPDX document that reproduces the issue.
+      placeholder: |
+        {
+          "spdxVersion": "SPDX-2.3",
+          ...
+        }
+      render: json
+    validations:
+      required: false
+  
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+      placeholder: Any additional information that might help us understand the issue
+    validations:
+      required: false
+  
+  - type: textarea
+    id: possible-solution
+    attributes:
+      label: Possible Solution
+      description: If you have suggestions on how to fix the bug, describe them here.
+      placeholder: Optional suggestions for fixing the issue
+    validations:
+      required: false
