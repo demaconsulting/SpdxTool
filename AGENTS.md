@@ -3,18 +3,15 @@
 This file provides specific context and instructions for AI coding agents to
 interact effectively with this C# project.
 
-
 ## Project Overview
 
 SpdxTool is a C# .NET tool for manipulating SPDX SBOM files.
-
 
 ## Technologies and Dependencies
 
 * **Language**: C# 12
 * **.NET Frameworks**: .NET 8, 9, and 10
 * **Primary Dependencies**: [DemaConsulting.SpdxModel, YamlDotNet]
-
 
 ## Project Structure
 
@@ -27,26 +24,27 @@ The repository is organized as follows:
 * `/test/DemaConsulting.SpdxTool.Tests/`: Contains the library unit tests.
 * `/DemaConsulting.SpdxTool.sln`: The main Visual Studio solution file.
 
-
 ## Development Commands
 
 Use these commands to perform common development tasks:
 
 * **Restore DotNet Tools**:
+
   ```bash
   dotnet tool restore
   ```
 
 * **Build the Project**:
+
   ```bash
   dotnet build
   ```
 
 * **Run All Tests**:
+
   ```bash
   dotnet test
   ```
-
 
 ## Testing Guidelines
 
@@ -56,21 +54,20 @@ Use these commands to perform common development tasks:
 * The build must pass all tests and static analysis warnings before merging.
 * Tests should be written using the AAA (Arrange, Act, Assert) pattern.
 
-
 ## Code Style and Conventions
 
 * Follow standard C# naming conventions (PascalCase for classes/methods/properties, camelCase for local variables).
-* Nullable reference types are enabled at the project level (`<Nullable>enable</Nullable>` in .csproj files). Do not use file-level `#nullable enable` directives.
+* Nullable reference types are enabled at the project level (`<Nullable>enable</Nullable>` in .csproj files). Do
+  not use file-level `#nullable enable` directives.
 * Warnings are treated as errors (`<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`).
 * Avoid public fields; prefer properties.
-
 
 ## Quality Tools and Practices
 
 * **Code Analysis**: The project uses multiple analyzers configured via Directory.Build.props:
-  - Microsoft.CodeAnalysis.NetAnalyzers for .NET best practices
-  - SonarAnalyzer.CSharp for additional code quality rules
-  - All warnings are treated as errors
+  * Microsoft.CodeAnalysis.NetAnalyzers for .NET best practices
+  * SonarAnalyzer.CSharp for additional code quality rules
+  * All warnings are treated as errors
 * **EditorConfig**: The .editorconfig file enforces consistent code style across IDEs
 * **Code Coverage**: Use `dotnet test --collect:"XPlat Code Coverage"` to generate coverage reports
 * **SonarCloud**: The CI pipeline integrates with SonarCloud for continuous quality monitoring
@@ -93,7 +90,6 @@ dotnet test --collect:"XPlat Code Coverage"
 # Run self-validation
 dotnet run --project src/DemaConsulting.SpdxTool -- --validate
 ```
-
 
 ## Boundaries and Guardrails
 

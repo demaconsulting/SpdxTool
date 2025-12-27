@@ -4,11 +4,13 @@ This document describes the architecture and design of the SpdxTool project.
 
 ## Overview
 
-SpdxTool is a .NET command-line tool for manipulating SPDX (Software Package Data Exchange) SBOM (Software Bill of Materials) files. It provides a flexible command-based architecture that supports both direct command-line usage and workflow-driven automation.
+SpdxTool is a .NET command-line tool for manipulating SPDX (Software Package Data Exchange) SBOM (Software Bill
+of Materials) files. It provides a flexible command-based architecture that supports both direct command-line usage
+and workflow-driven automation.
 
 ## Project Structure
 
-```
+```text
 SpdxTool/
 ├── src/
 │   └── DemaConsulting.SpdxTool/          # Main tool implementation
@@ -31,6 +33,7 @@ SpdxTool/
 **File**: `Program.cs`
 
 The main entry point handles:
+
 - Command-line argument parsing
 - Context creation and lifecycle management
 - Top-level exception handling
@@ -38,6 +41,7 @@ The main entry point handles:
 - Self-validation orchestration
 
 Key responsibilities:
+
 - Creates a `Context` from command-line arguments
 - Delegates execution to `Run()` method
 - Handles standard error reporting and exit codes
@@ -47,6 +51,7 @@ Key responsibilities:
 **File**: `Context.cs`
 
 The `Context` class encapsulates the execution environment:
+
 - Command-line arguments
 - Output handling (console and/or log file)
 - Silent mode support
@@ -54,6 +59,7 @@ The `Context` class encapsulates the execution environment:
 - Validation result file path
 
 Key features:
+
 - Implements `IDisposable` for proper resource cleanup
 - Provides `WriteLine()` and `WriteError()` for output
 - Supports both console output and file logging simultaneously
@@ -127,6 +133,7 @@ Commands fall into several categories:
 The workflow engine enables automation through YAML-based workflows:
 
 **Features**:
+
 - Parameter substitution using `${{ variable }}` syntax
 - Step-by-step command execution
 - Variable management and propagation
@@ -135,6 +142,7 @@ The workflow engine enables automation through YAML-based workflows:
 - Output capture to workflow variables
 
 **Workflow Format**:
+
 ```yaml
 parameters:
   param1: value1
@@ -150,6 +158,7 @@ steps:
 ```
 
 **Variable Expansion**:
+
 - Supports nested expansion: `${{ var_${{ name }} }}`
 - Environment variable access: `${{ environment.VAR_NAME }}`
 - Runtime error if variable is undefined
@@ -161,16 +170,19 @@ steps:
 A unique feature that allows the tool to validate itself:
 
 **Purpose**:
+
 - Provides evidence of tool correctness for regulated environments
 - Tests core functionality in production builds
 - Generates validation reports in TRX format
 
 **Components**:
+
 - `Validate.cs`: Main validation orchestrator
 - `Validate[Command].cs`: Per-command validation tests
 - Each validator creates temporary files and executes commands
 
 **Output**:
+
 - Markdown report with system information
 - Pass/fail status for each validated command
 - Optional TRX file for CI/CD integration
@@ -220,6 +232,7 @@ Custom exception types for clear error reporting:
 ### Singleton Pattern
 
 Each command is implemented as a singleton:
+
 ```csharp
 public sealed class MyCommand : Command
 {
@@ -229,6 +242,7 @@ public sealed class MyCommand : Command
 ```
 
 **Benefits**:
+
 - Single instance per command type
 - Stateless command objects
 - Easy registration in CommandRegistry
@@ -236,6 +250,7 @@ public sealed class MyCommand : Command
 ### Command Pattern
 
 Commands encapsulate operations:
+
 - Each command is self-contained
 - Commands can be executed independently
 - Commands support both CLI and workflow modes
@@ -243,6 +258,7 @@ Commands encapsulate operations:
 ### Factory Pattern
 
 The CommandRegistry acts as a factory:
+
 - Maps command names to instances
 - Provides command lookup
 - Centralizes command registration
@@ -250,6 +266,7 @@ The CommandRegistry acts as a factory:
 ### Strategy Pattern
 
 Two execution strategies per command:
+
 - Command-line mode: direct argument parsing
 - Workflow mode: YAML-based configuration
 
@@ -257,7 +274,7 @@ Two execution strategies per command:
 
 ### Command-Line Execution
 
-```
+```text
 User Input
     ↓
 Program.Main()
@@ -277,7 +294,7 @@ Console/Log Output
 
 ### Workflow Execution
 
-```
+```text
 Workflow YAML
     ↓
 RunWorkflow.Run()
@@ -337,6 +354,7 @@ Multi-targeting ensures broad compatibility while using latest language features
 ### NuGet Package
 
 The tool is distributed as a .NET Tool package:
+
 - Package ID: `DemaConsulting.SpdxTool`
 - Tool command: `spdx-tool`
 - Includes symbol packages (.snupkg) for debugging
@@ -344,6 +362,7 @@ The tool is distributed as a .NET Tool package:
 ### Continuous Integration
 
 GitHub Actions workflows:
+
 - Build on Windows, Linux, and macOS
 - Multi-framework testing
 - SonarCloud analysis for quality metrics
@@ -357,6 +376,7 @@ GitHub Actions workflows:
 ### Unit Tests
 
 Located in `test/DemaConsulting.SpdxTool.Tests/`:
+
 - One test file per command/component
 - MSTest framework
 - AAA (Arrange-Act-Assert) pattern
@@ -420,6 +440,7 @@ Located in `test/DemaConsulting.SpdxTool.Tests/`:
 ## Future Considerations
 
 Potential areas for enhancement:
+
 - Plugin architecture for custom commands
 - Remote SPDX repository integration
 - Batch processing capabilities
@@ -431,6 +452,7 @@ Potential areas for enhancement:
 ## Conclusion
 
 SpdxTool's architecture prioritizes:
+
 - **Simplicity**: Clear command structure
 - **Extensibility**: Easy to add new commands
 - **Testability**: Comprehensive test coverage

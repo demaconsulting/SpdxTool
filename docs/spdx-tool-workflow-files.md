@@ -1,6 +1,7 @@
 # SPDX Tool Workflow Files
 
-While many SPDX Tool commands can be executed from command-line; the normal use of the tool is through YAML workflow files. These files have the benefit of:
+While many SPDX Tool commands can be executed from command-line; the normal use of the tool is through YAML workflow
+files. These files have the benefit of:
 
 - Comments to explain the purpose behind each step
 - Variables to transfer information between steps
@@ -28,7 +29,8 @@ steps:
 
 ## Variables
 
-Variables may be declaredat the top of the workflow file in a parameters section, or may be created when used as an output in a workflow step.
+Variables may be declaredat the top of the workflow file in a parameters section, or may be created when used as
+an output in a workflow step.
 
 ```yaml
 # Workflow parameters
@@ -50,7 +52,7 @@ steps:
 
 Variables can be overridden on the command line:
 
-```
+```text
 spdx-tool run-workflow workflow.yaml parameter1=command parameter2=line
 ```
 
@@ -83,7 +85,6 @@ steps:
     value: DotNet Version is ${{ dotnet-version }}
     output: pretty-version
 ```
-
 
 ## YAML Commands
 

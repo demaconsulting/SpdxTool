@@ -9,7 +9,8 @@ SPDX Tool can be used in GitHub actions by:
 
 ## Tool Manifest File
 
-A tool manifest file should be constructed at `.config/dotnet-tools.json` specifying the version of SPDX Tool to use. For example:
+A tool manifest file should be constructed at `.config/dotnet-tools.json` specifying the version of SPDX Tool to
+use. For example:
 
 ```json
 {

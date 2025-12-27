@@ -11,28 +11,26 @@
 
 Dotnet tool for manipulating SPDX SBOM files
 
-
 ## Installation
 
 The following will add SpdxTool to a Dotnet tool manifest file:
 
-```
+```bash
 dotnet new tool-manifest # if you are setting up this repo
 dotnet tool install --local DemaConsulting.SpdxTool
 ```
 
 The tool can then be executed by:
 
-```
+```bash
 dotnet spdx-tool <arguments>
 ```
-
 
 ## Usage
 
 The following shows the command-line usage of SpdxTool:
 
-```
+```text
 Usage: spdx-tool [options] <command> [arguments]
 
 Options:
@@ -62,8 +60,7 @@ Commands:
   validate <spdx.json> [ntia]              Validate SPDX document for issues
 ```
 
-A more detailed description of the usage can be found [here][command-line-docs]
-
+A more detailed description of the usage can be found in the [command-line documentation][command-line-docs]
 
 ## Workflow YAML Files
 
@@ -86,14 +83,13 @@ steps:
     input2: ${{ parameter-name }}
 ```
 
-A more detailed description of workflow YAML files can be found [here][workflow-docs]
-
+A more detailed description of workflow YAML files can be found in the [workflow documentation][workflow-docs]
 
 ## Self Validation
 
 Running self-validation produces a report containing the following information:
 
-```
+```text
 # DemaConsulting.SpdxTool
 
 | Information         | Value                                              |
@@ -121,7 +117,6 @@ Validation Passed
 On validation failure the tool will exit with a non-zero exit code.
 
 This report may be useful in regulated industries requiring evidence of tool validation.
-
 
 ## Contributing
 
