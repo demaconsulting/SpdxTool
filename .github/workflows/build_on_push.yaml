@@ -20,22 +20,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-
-      - name: Install markdownlint-cli
-        run: npm install -g markdownlint-cli
-
       - name: Run Markdown Linting
-        run: markdownlint '**/*.md' --ignore node_modules --ignore bin --ignore obj
-
-      - name: Install cspell
-        run: npm install -g cspell
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          globs: '**/*.md'
 
       - name: Run Spell Check
-        run: cspell "**/*.md" "**/*.cs" --no-progress
+        uses: streetsidesoftware/cspell-action@v8
+
+      - name: Run YAML Linting
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          config_file: .yamllint.yaml
 
   build-windows:
     name: Build Windows
