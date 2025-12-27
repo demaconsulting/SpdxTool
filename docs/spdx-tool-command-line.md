@@ -6,14 +6,14 @@ SPDX Tool is distributed as a nuget package on [nuget.org](https://www.nuget.org
 
 The following will add SPDX Tool to a Dotnet tool manifest file:
 
-```
+```bash
 dotnet new tool-manifest # if you are setting up this repo
 dotnet tool install --local DemaConsulting.SpdxTool
 ```
 
 The tool can then be executed by:
 
-```
+```bash
 dotnet spdx-tool <arguments>
 ```
 
@@ -21,7 +21,7 @@ dotnet spdx-tool <arguments>
 
 The following usage information is printed by running the tool with no arguments, or requesting help information.
 
-```
+```text
 DemaConsulting.SpdxTool 0.0.0
 
 Usage: spdx-tool [options] <command> [arguments]
@@ -53,7 +53,7 @@ Commands:
 
 Querying for usage information on a specific command can be performed using the help command. For example:
 
-```
+```text
 > dotnet spdx-tool help run-workflow
 
 DemaConsulting.SpdxTool 0.1.0-beta.1
@@ -76,4 +76,3 @@ From a YAML file this can be used as:
         name: <variable>            # Optional output to save to variable
         name: <variable>            # Optional output to save to variable
 ```
-

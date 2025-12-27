@@ -1,6 +1,7 @@
 # Contributing to SpdxTool
 
-Thank you for your interest in contributing to SpdxTool! This document provides guidelines and instructions for contributing to this project.
+Thank you for your interest in contributing to SpdxTool! This document provides guidelines and instructions for
+contributing to this project.
 
 ## Table of Contents
 
@@ -14,7 +15,8 @@ Thank you for your interest in contributing to SpdxTool! This document provides 
 
 ## Code of Conduct
 
-This project adheres to a Code of Conduct that all contributors are expected to follow. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
+This project adheres to a Code of Conduct that all contributors are expected to follow. Please read
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
 
 ## Getting Started
 
@@ -28,27 +30,32 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/SpdxTool.git
    cd SpdxTool
    ```
 
 3. Add the upstream repository as a remote:
+
    ```bash
    git remote add upstream https://github.com/demaconsulting/SpdxTool.git
    ```
 
 4. Restore .NET tools:
+
    ```bash
    dotnet tool restore
    ```
 
 5. Build the project:
+
    ```bash
    dotnet build
    ```
 
 6. Run the tests:
+
    ```bash
    dotnet test
    ```
@@ -64,6 +71,7 @@ git checkout -b feature/your-feature-name
 ```
 
 Use descriptive branch names:
+
 - `feature/` for new features
 - `fix/` for bug fixes
 - `docs/` for documentation changes
@@ -180,6 +188,7 @@ dotnet test --collect:"XPlat Code Coverage"
 3. Update documentation if needed
 4. Add tests for new functionality
 5. Rebase your branch on the latest upstream main:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
@@ -188,6 +197,7 @@ dotnet test --collect:"XPlat Code Coverage"
 ### Creating a Pull Request
 
 1. Push your branch to your fork:
+
    ```bash
    git push origin feature/your-feature-name
    ```

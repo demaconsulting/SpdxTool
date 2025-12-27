@@ -17,7 +17,8 @@ If you discover a security vulnerability within this project, please use GitHub'
 2. Click on "Report a vulnerability"
 3. Fill out the vulnerability report form with details about the issue
 
-We take all security reports seriously and will respond to your report as quickly as possible. Please do not publicly disclose the vulnerability until we have had a chance to address it.
+We take all security reports seriously and will respond to your report as quickly as possible. Please do not
+publicly disclose the vulnerability until we have had a chance to address it.
 
 ## What to Expect
 

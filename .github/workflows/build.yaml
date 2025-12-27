@@ -16,8 +16,8 @@ on:
 jobs:
   build:
     permissions:
-      contents: read       # To read repository contents
-      pull-requests: write # To write pull requests analysis results and artifacts
+      contents: read        # To read repository contents
+      pull-requests: write  # To write pull requests analysis results and artifacts
 
     runs-on: ${{ inputs.os }}
 
