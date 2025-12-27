@@ -15,7 +15,7 @@ jobs:
     name: Quality Checks
     runs-on: ubuntu-latest
     permissions:
-      contents: read       # To read repository contents
+      contents: read  # To read repository contents
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -36,8 +36,8 @@ jobs:
   build-windows:
     name: Build Windows
     permissions:
-      contents: read       # To read repository contents
-      pull-requests: write # To write pull requests analysis results and artifacts
+      contents: read        # To read repository contents
+      pull-requests: write  # To write pull requests analysis results and artifacts
     uses: ./.github/workflows/build.yaml
     with:
       os: windows-latest
@@ -48,8 +48,8 @@ jobs:
   build-linux:
     name: Build Linux
     permissions:
-      contents: read       # To read repository contents
-      pull-requests: write # To write pull requests analysis results and artifacts
+      contents: read        # To read repository contents
+      pull-requests: write  # To write pull requests analysis results and artifacts
     uses: ./.github/workflows/build.yaml
     with:
       os: ubuntu-latest

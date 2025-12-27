@@ -1,5 +1,5 @@
 ---
-# yamllint configuration for VHDLTest
+# yamllint configuration for SpdxTool
 # This configuration defines the rules for YAML file linting
 
 extends: default
