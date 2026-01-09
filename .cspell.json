@@ -53,7 +53,9 @@
     ".vs/**",
     ".vscode/**",
     "coverage/**",
-    "TestResults/**"
+    "TestResults/**",
+    "**/*.DotSettings",
+    "**/*.csproj"
   ],
   "flagWords": [],
   "patterns": [
