@@ -2,7 +2,9 @@
 
 ## Introduction
 
-SpdxTool is a .NET tool for manipulating SPDX (Software Package Data Exchange) SBOM (Software Bill of Materials) files. This guide provides comprehensive documentation for installing, configuring, and using SpdxTool in your software development and compliance workflows.
+SpdxTool is a .NET tool for manipulating SPDX (Software Package Data Exchange) SBOM (Software Bill of Materials)
+files. This guide provides comprehensive documentation for installing, configuring, and using SpdxTool in your
+software development and compliance workflows.
 
 ### Purpose
 
@@ -246,7 +248,8 @@ dotnet spdx-tool hash verify sha256 myfile.txt
 
 ## Workflow Files
 
-While many SpdxTool commands can be executed from the command line, the normal use of the tool is through YAML workflow files. These files have the benefit of:
+While many SpdxTool commands can be executed from the command line, the normal use of the tool is through YAML
+workflow files. These files have the benefit of:
 
 * Comments to explain the purpose behind each step
 * Variables to transfer information between steps
@@ -450,9 +453,10 @@ steps:
 
 ## Self-Validation
 
-### Purpose
+### Validation Purpose
 
-Self-validation produces a report demonstrating that SpdxTool is functioning correctly. This is useful in regulated industries where tool validation evidence is required.
+Self-validation produces a report demonstrating that SpdxTool is functioning correctly. This is useful in regulated
+industries where tool validation evidence is required.
 
 ### Running Validation
 
@@ -716,7 +720,7 @@ steps:
 * **Validation**: Always validate SPDX documents after modifications
 * **Error Handling**: Check command outputs and handle failures
 
-### CI/CD Integration
+### CI/CD Best Practices
 
 * **Automated Generation**: Generate SBOMs automatically in build pipelines
 * **Validation Gates**: Fail builds on SBOM validation errors
@@ -824,11 +828,13 @@ See the [GitHub releases page](https://github.com/demaconsulting/SpdxTool/releas
 
 ### License
 
-SpdxTool is licensed under the MIT License. See the [LICENSE](https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE) file for details.
+SpdxTool is licensed under the MIT License. See the
+[LICENSE](https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE) file for details.
 
 ### Contributing
 
-Contributions are welcome! Please see the [Contributing Guidelines](https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md) for details.
+Contributions are welcome! Please see the
+[Contributing Guidelines](https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md) for details.
 
 ### Support
 
