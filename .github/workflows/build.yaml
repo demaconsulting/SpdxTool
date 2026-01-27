@@ -1,10 +1,9 @@
 ---
+# Reusable workflow for building SpdxTool artifacts
+# This workflow is called by other workflows to build the project
 on:
   workflow_call:
     inputs:
-      os:
-        required: true
-        type: string
       version:
         required: true
         type: string
@@ -14,12 +13,49 @@ on:
 
 
 jobs:
+  quality-checks:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Spell Check
+        uses: streetsidesoftware/cspell-action@v8
+        with:
+          config: .cspell.json
+          files: |
+            **/*.md
+            **/*.cs
+            **/*.yaml
+            **/*.yml
+
+      - name: Markdown Lint
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          config: .markdownlint.json
+          globs: '**/*.md'
+
+      - name: YAML Lint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          config_file: .yamllint.yaml
+
   build:
+    # Permissions for this job
     permissions:
       contents: read        # To read repository contents
-      pull-requests: write  # To write pull requests analysis results and artifacts
+      pull-requests: write  # To write pull requests analysis
 
-    runs-on: ${{ inputs.os }}
+    needs: quality-checks
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
 
@@ -127,7 +163,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: artifacts-${{ inputs.os }}
+          name: artifacts-${{ matrix.os }}
           path: |
             **/*.nupkg
             **/*.snupkg
@@ -135,3 +171,106 @@ jobs:
             **/manifest.spdx.json.sha256
             *summary.md
             validate.log
+
+  codeql:
+    name: CodeQL Analysis
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.x
+            9.x
+            10.x
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          queries: security-and-quality
+          config-file: ./.github/codeql-config.yml
+          build-mode: manual
+
+      - name: Restore Tools
+        run: dotnet tool restore
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: >
+          dotnet build
+          --no-restore
+          --configuration Release
+          --property:Version=${{ inputs.version }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:csharp"
+          output: sarif-results
+          upload: false
+
+      - name: Upload SARIF
+        uses: actions/upload-artifact@v6
+        with:
+          name: codeql-sarif
+          path: sarif-results/csharp.sarif
+
+  build-docs:
+    name: Build Documents
+    runs-on: windows-latest
+
+    needs: [build, codeql]
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.x'
+
+      - name: Restore Tools
+        run: dotnet tool restore
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Build PDF with Pandoc
+        run: >
+          dotnet pandoc
+          --defaults docs/guide/definition.yaml
+          --filter node_modules/.bin/mermaid-filter.cmd
+          --output docs/guide/guide.html
+
+      - name: Convert HTML to PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          docs/guide/guide.html
+          "docs/SpdxTool User Guide.pdf"
+
+      - name: Upload Document Artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: documents
+          path: docs/*.pdf
