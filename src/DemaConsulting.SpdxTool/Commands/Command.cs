@@ -51,20 +51,23 @@ public abstract class Command
     /// <exception cref="InvalidOperationException">on error</exception>
     public static string Expand(string text, Dictionary<string, string> variables)
     {
+        var builder = new System.Text.StringBuilder(text);
+        
         while (true)
         {
             // Find the last macro to expand
-            var start = text.LastIndexOf("${{", StringComparison.Ordinal);
+            var start = builder.ToString().LastIndexOf("${{", StringComparison.Ordinal);
             if (start < 0)
-                return text;
+                return builder.ToString();
 
             // Find the end of the macro
-            var end = text.IndexOf("}}", start, StringComparison.Ordinal);
+            var currentText = builder.ToString();
+            var end = currentText.IndexOf("}}", start, StringComparison.Ordinal);
             if (end < 0)
                 throw new InvalidOperationException("Unmatched '${{' in variable expansion");
 
             // Get the variable name
-            var name = text[(start + 3)..end].Trim();
+            var name = currentText[(start + 3)..end].Trim();
 
             // Look up the value
             string? value;
@@ -78,7 +81,8 @@ public abstract class Command
                 throw new InvalidOperationException($"Undefined variable {name}");
 
             // Apply the replacement
-            text = text[..start] + value + text[(end + 2)..];
+            builder.Remove(start, end - start + 2);
+            builder.Insert(start, value);
         }
     }
 

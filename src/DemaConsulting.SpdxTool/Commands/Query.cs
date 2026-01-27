@@ -147,7 +147,7 @@ public sealed class Query : Command
             startInfo.ArgumentList.Add(argument);
 
         // Start the process
-        var process = new Process { StartInfo = startInfo };
+        using var process = new Process { StartInfo = startInfo };
         try
         {
             process.Start();
@@ -167,21 +167,14 @@ public sealed class Query : Command
 
         // Process the output line-by-line
         var outputLines = output.Split('\n').Select(l => l.Trim()).ToArray();
-        foreach (var line in outputLines)
-        {
-            // Test if this line contains a match
-            var match = regex.Match(line);
-            if (!match.Success)
-                continue;
+        var value = outputLines
+            .Select(line => regex.Match(line))
+            .Where(match => match.Success)
+            .Select(match => match.Groups["value"].Value)
+            .FirstOrDefault(val => !string.IsNullOrEmpty(val));
 
-            // Test if the match value is valid
-            var value = match.Groups["value"].Value;
-            if (string.IsNullOrEmpty(value))
-                continue;
-
-            // Return the match value
+        if (value != null)
             return value;
-        }
 
         // Match not found in program output
         throw new CommandErrorException($"Pattern '{pattern}' not found in program output");
