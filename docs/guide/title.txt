@@ -1,0 +1,7 @@
+---
+title: 'SpdxTool User Guide'
+subtitle: 'SPDX SBOM Manipulation Tool'
+author: 'DEMA Consulting'
+description: 'Comprehensive guide for installing, configuring, and using SpdxTool to manipulate SPDX SBOM files'
+keywords: [SPDX, SBOM, software bill of materials, security, compliance, licensing]
+---

@@ -13,6 +13,18 @@
       "commands": [
         "sbom-tool"
       ]
+    },
+    "demaconsulting.pandoctool": {
+      "version": "3.8.3",
+      "commands": [
+        "pandoc"
+      ]
+    },
+    "demaconsulting.weasyprinttool": {
+      "version": "68.0.0",
+      "commands": [
+        "weasyprint"
+      ]
     }
   }
 }

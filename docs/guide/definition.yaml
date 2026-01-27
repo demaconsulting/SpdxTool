@@ -1,0 +1,24 @@
+---
+# Pandoc document definition for SpdxTool User Guide
+
+# Resource paths for finding files and templates
+resource-path:
+  - docs/guide
+  - docs/template
+
+# Input files in order (relative to resource-path)
+input-files:
+  - docs/guide/title.txt
+  - docs/guide/guide.md
+
+# Template configuration
+template: template.html
+
+# Table of contents settings
+table-of-contents: true
+
+# Enable numbered sections
+number-sections: true
+
+# Standalone document
+standalone: true
