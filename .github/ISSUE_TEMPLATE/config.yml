@@ -1,9 +1,9 @@
 ---
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Discussions
+  - name: 💬 Ask a Question
     url: https://github.com/demaconsulting/SpdxTool/discussions
-    about: Ask questions and discuss ideas with the community
-  - name: 🔒 Security Advisory
+    about: Ask questions and discuss with the community
+  - name: 🔒 Security Issue
     url: https://github.com/demaconsulting/SpdxTool/security/advisories/new
-    about: Report security vulnerabilities privately
+    about: Report a security vulnerability privately
