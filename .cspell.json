@@ -37,7 +37,8 @@
     "SPDXID",
     "NOASSERTION",
     "declaredat",
-    "sandboxed"
+    "sandboxed",
+    "hotspots"
   ],
   "ignoreWords": [
     "demaconsulting"

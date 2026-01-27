@@ -269,6 +269,58 @@ jobs:
           docs/guide/guide.html
           "docs/SpdxTool User Guide.pdf"
 
+      - name: Download CodeQL SARIF
+        uses: actions/download-artifact@v6
+        with:
+          name: codeql-sarif
+          path: codeql-results
+
+      - name: Generate CodeQL Quality Report with SarifMark
+        run: >
+          dotnet sarifmark
+          --sarif codeql-results/csharp.sarif
+          --report docs/quality/codeql-quality.md
+          --heading "SpdxTool CodeQL Analysis"
+          --report-depth 1
+
+      - name: Display CodeQL Quality Report
+        run: |
+          echo "=== CodeQL Quality Report ==="
+          cat docs/quality/codeql-quality.md
+
+      - name: Generate Code Quality Report with SonarMark
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          dotnet sonarmark
+          --server https://sonarcloud.io
+          --project-key demaconsulting_SpdxTool
+          --branch ${{ github.ref_name }}
+          --token "$SONAR_TOKEN"
+          --report docs/quality/sonar-quality.md
+          --report-depth 1
+
+      - name: Display SonarCloud Quality Report
+        run: |
+          echo "=== SonarCloud Quality Report ==="
+          cat docs/quality/sonar-quality.md
+
+      - name: Generate Code Quality HTML with Pandoc
+        shell: bash
+        run: >
+          dotnet pandoc
+          docs/quality/title.txt
+          --defaults docs/quality/definition.yaml
+          --metadata version="${{ inputs.version }}"
+          --metadata date="$(date +'%Y-%m-%d')"
+          --output docs/quality/quality.html
+
+      - name: Generate Code Quality PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          docs/quality/quality.html
+          "docs/SpdxTool Code Quality.pdf"
+
       - name: Upload Document Artifacts
         uses: actions/upload-artifact@v6
         with:
