@@ -1,4 +1,6 @@
 ---
+# Release workflow for creating and publishing releases
+# This workflow is manually triggered
 name: Release
 
 on:
@@ -9,7 +11,7 @@ on:
         required: true
         type: string
       publish:
-        description: 'Publish Type'
+        description: 'Release Type'
         required: true
         default: 'publish'
         type: choice
@@ -20,18 +22,21 @@ on:
 
 jobs:
   build:
-    name: Build Linux
+    name: Build and Test
+    # Permissions for this job
     permissions:
-      contents: read        # To read repository contents
-      pull-requests: write  # To write pull requests analysis results and artifacts
+      actions: read           # To read actions for CodeQL
+      contents: read          # To read repository contents
+      pull-requests: write    # To write pull requests analysis
+      security-events: write  # To write security events for CodeQL
     uses: ./.github/workflows/build.yaml
     with:
-      os: ubuntu-latest
       version: ${{ inputs.version }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   release:
+    # Permissions for this job
     permissions:
       contents: write  # To create releases
 
@@ -42,35 +47,30 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: |
-            10.x
-
-      - name: Download Artifacts
+      - name: Download Build Artifacts
         uses: actions/download-artifact@v7
         with:
           name: artifacts-ubuntu-latest
           path: artifacts
 
-      - name: Clean Artifacts
-        shell: bash
-        run: rm -rf artifacts/test
+      - name: Download Document Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: documents
+          path: artifacts
 
       - name: Create release
         if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'artifacts/**/*'
+          artifacts: "artifacts/**/*"
           generateReleaseNotes: true
-          tag: ${{ inputs.version }}
+          tag: ${{ github.event.inputs.version }}
 
       - name: Publish to Nuget
         if: ${{ inputs.publish == 'publish' }}
         run: >
-          dotnet
-          nuget push
+          dotnet nuget push
           artifacts/src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
           --source "https://api.nuget.org/v3/index.json"
           --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
