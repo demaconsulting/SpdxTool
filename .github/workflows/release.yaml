@@ -47,6 +47,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.x'
+
       - name: Download Build Artifacts
         uses: actions/download-artifact@v7
         with:
@@ -65,7 +70,7 @@ jobs:
         with:
           artifacts: "artifacts/**/*"
           generateReleaseNotes: true
-          tag: ${{ github.event.inputs.version }}
+          tag: ${{ inputs.version }}
 
       - name: Publish to Nuget
         if: ${{ inputs.publish == 'publish' }}
