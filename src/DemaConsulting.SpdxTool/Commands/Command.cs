@@ -64,11 +64,8 @@ public abstract class Command
             // Check for macro start "${{" 
             if (i + 2 < text.Length && text[i] == '$' && text[i + 1] == '{' && text[i + 2] == '{')
             {
-                // Push the macro-body-start-index onto the stack
-                macroStack.Push(builder.Length + 3);
-                
-                // Append the macro start to the builder
-                builder.Append("${{");
+                // Push the macro-body-start-index onto the stack (current builder position)
+                macroStack.Push(builder.Length);
                 i += 3; // Skip "${{" 
             }
             // Check for macro end "}}"
@@ -96,12 +93,9 @@ public abstract class Command
                 if (value == null)
                     throw new InvalidOperationException($"Undefined variable {name}");
                 
-                // Recursively expand the value in case it contains macros
-                value = Expand(value, variables);
-                
                 // Replace the macro body with the value
-                // Remove everything from the macro start (including "${{") to current position
-                builder.Remove(macroBodyStart - 3, macroLength + 3);
+                // Remove everything from the macro start to current position
+                builder.Remove(macroBodyStart, macroLength);
                 builder.Append(value);
                 
                 i += 2; // Skip "}}"
@@ -118,7 +112,12 @@ public abstract class Command
         if (macroStack.Count > 0)
             throw new InvalidOperationException("Unmatched '${{' in variable expansion");
         
-        return builder.ToString();
+        // Check if the result contains any macros and recursively expand if needed
+        var result = builder.ToString();
+        if (result.Contains("${{"))
+            return Expand(result, variables);
+        
+        return result;
     }
 
     /// <summary>
