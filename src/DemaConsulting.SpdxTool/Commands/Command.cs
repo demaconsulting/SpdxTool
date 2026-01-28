@@ -51,17 +51,40 @@ public abstract class Command
     /// <exception cref="InvalidOperationException">on error</exception>
     public static string Expand(string text, Dictionary<string, string> variables)
     {
+        return ExpandInternal(text, variables, 0);
+    }
+
+    /// <summary>
+    ///     Expand variables in text (internal implementation with recursion depth tracking)
+    /// </summary>
+    /// <param name="text">Text to expand</param>
+    /// <param name="variables">Variables</param>
+    /// <param name="depth">Current recursion depth</param>
+    /// <returns>Expanded text</returns>
+    /// <exception cref="InvalidOperationException">on error</exception>
+    private static string ExpandInternal(string text, Dictionary<string, string> variables, int depth)
+    {
+        // Prevent infinite recursion from circular variable references
+        const int maxDepth = 100;
+        if (depth > maxDepth)
+            throw new InvalidOperationException("Maximum expansion depth exceeded - possible circular reference");
+
         // Use a StringBuilder to assemble the expanded string
         var builder = new System.Text.StringBuilder(text.Length);
         
         // Use a Stack to track macro-body-start-index positions
         var macroStack = new Stack<int>();
         
+        // Track whether any substitutions were made
+        var substitutionMade = false;
+        
         // Scan through the input text
         var i = 0;
         while (i < text.Length)
         {
             // Check for macro start "${{" 
+            // Note: "${{" is NOT appended to the builder - the macro body 
+            // content gets built character-by-character in the else branch below
             if (i + 2 < text.Length && text[i] == '$' && text[i + 1] == '{' && text[i + 2] == '{')
             {
                 // Push the macro-body-start-index onto the stack (current builder position)
@@ -82,6 +105,10 @@ public abstract class Command
                 var macroLength = builder.Length - macroBodyStart;
                 var name = builder.ToString(macroBodyStart, macroLength).Trim();
                 
+                // Check for empty variable name
+                if (string.IsNullOrWhiteSpace(name))
+                    throw new InvalidOperationException("Empty variable name in macro expansion");
+                
                 // Look up the value
                 string? value;
                 if (name.StartsWith("environment."))
@@ -94,9 +121,9 @@ public abstract class Command
                     throw new InvalidOperationException($"Undefined variable {name}");
                 
                 // Replace the macro body with the value
-                // Remove everything from the macro start to current position
                 builder.Remove(macroBodyStart, macroLength);
                 builder.Append(value);
+                substitutionMade = true;
                 
                 i += 2; // Skip "}}"
             }
@@ -112,10 +139,10 @@ public abstract class Command
         if (macroStack.Count > 0)
             throw new InvalidOperationException("Unmatched '${{' in variable expansion");
         
-        // Check if the result contains any macros and recursively expand if needed
+        // Recursively expand if substitutions were made and result contains more macros
         var result = builder.ToString();
-        if (result.Contains("${{"))
-            return Expand(result, variables);
+        if (substitutionMade && result.Contains("${{"))
+            return ExpandInternal(result, variables, depth + 1);
         
         return result;
     }
