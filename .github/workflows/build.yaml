@@ -202,10 +202,12 @@ jobs:
           build-mode: manual
 
       - name: Restore Tools
-        run: dotnet tool restore
+        run: >
+          dotnet tool restore
 
       - name: Restore Dependencies
-        run: dotnet restore
+        run: >
+          dotnet restore
 
       - name: Build
         run: >
@@ -246,7 +248,8 @@ jobs:
           dotnet-version: '10.x'
 
       - name: Restore Tools
-        run: dotnet tool restore
+        run: >
+          dotnet tool restore
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -254,7 +257,8 @@ jobs:
           node-version: 'lts/*'
 
       - name: Install npm dependencies
-        run: npm install
+        run: >
+          npm install
 
       - name: Build PDF with Pandoc
         run: >
@@ -284,6 +288,7 @@ jobs:
           --report-depth 1
 
       - name: Display CodeQL Quality Report
+        shell: bash
         run: |
           echo "=== CodeQL Quality Report ==="
           cat docs/quality/codeql-quality.md
@@ -301,6 +306,7 @@ jobs:
           --report-depth 1
 
       - name: Display SonarCloud Quality Report
+        shell: bash
         run: |
           echo "=== SonarCloud Quality Report ==="
           cat docs/quality/sonar-quality.md
