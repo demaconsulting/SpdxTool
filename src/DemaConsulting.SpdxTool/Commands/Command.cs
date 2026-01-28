@@ -51,32 +51,11 @@ public abstract class Command
     /// <exception cref="InvalidOperationException">on error</exception>
     public static string Expand(string text, Dictionary<string, string> variables)
     {
-        return ExpandInternal(text, variables, 0);
-    }
-
-    /// <summary>
-    ///     Expand variables in text (internal implementation with recursion depth tracking)
-    /// </summary>
-    /// <param name="text">Text to expand</param>
-    /// <param name="variables">Variables</param>
-    /// <param name="depth">Current recursion depth</param>
-    /// <returns>Expanded text</returns>
-    /// <exception cref="InvalidOperationException">on error</exception>
-    private static string ExpandInternal(string text, Dictionary<string, string> variables, int depth)
-    {
-        // Prevent infinite recursion from circular variable references
-        const int maxDepth = 100;
-        if (depth > maxDepth)
-            throw new InvalidOperationException("Maximum expansion depth exceeded - possible circular reference");
-
         // Use a StringBuilder to assemble the expanded string
         var builder = new System.Text.StringBuilder(text.Length);
         
         // Use a Stack to track macro-body-start-index positions
         var macroStack = new Stack<int>();
-        
-        // Track whether any substitutions were made
-        var substitutionMade = false;
         
         // Scan through the input text
         var i = 0;
@@ -123,7 +102,6 @@ public abstract class Command
                 // Replace the macro body with the value
                 builder.Remove(macroBodyStart, macroLength);
                 builder.Append(value);
-                substitutionMade = true;
                 
                 i += 2; // Skip "}}"
             }
@@ -139,12 +117,7 @@ public abstract class Command
         if (macroStack.Count > 0)
             throw new InvalidOperationException("Unmatched '${{' in variable expansion");
         
-        // Recursively expand if substitutions were made and result contains more macros
-        var result = builder.ToString();
-        if (substitutionMade && result.Contains("${{"))
-            return ExpandInternal(result, variables, depth + 1);
-        
-        return result;
+        return builder.ToString();
     }
 
     /// <summary>
