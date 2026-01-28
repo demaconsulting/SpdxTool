@@ -125,20 +125,20 @@ public sealed class Diagram : Command
         diagram.AppendLine("erDiagram");
 
         // Process all relationships
-        foreach (var relationship in doc.Relationships)
-        {
-            // Skip tools if not requested
-            if (!tools && relationship.RelationshipType is
-                    SpdxRelationshipType.BuildToolOf or
-                    SpdxRelationshipType.DevToolOf or
-                    SpdxRelationshipType.TestToolOf)
-                continue;
+        var filteredRelationships = doc.Relationships
+            .Where(relationship => tools || relationship.RelationshipType is not
+                (SpdxRelationshipType.BuildToolOf or
+                 SpdxRelationshipType.DevToolOf or
+                 SpdxRelationshipType.TestToolOf))
+            .Where(relationship =>
+                doc.GetElement<SpdxPackage>(relationship.Id) != null &&
+                doc.GetElement<SpdxPackage>(relationship.RelatedSpdxElement) != null);
 
+        foreach (var relationship in filteredRelationships)
+        {
             // Get the packages
-            var a = doc.GetElement<SpdxPackage>(relationship.Id);
-            var b = doc.GetElement<SpdxPackage>(relationship.RelatedSpdxElement);
-            if (a == null || b == null)
-                continue;
+            var a = doc.GetElement<SpdxPackage>(relationship.Id)!;
+            var b = doc.GetElement<SpdxPackage>(relationship.RelatedSpdxElement)!;
 
             // Get the relationship direction
             var direction = relationship.RelationshipType.GetDirection();

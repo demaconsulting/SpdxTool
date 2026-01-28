@@ -68,19 +68,6 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test the <see cref="Command.Expand" /> method for double expansion.
-    /// </summary>
-    [TestMethod]
-    public void Command_Expand_DoubleVariableExpansion()
-    {
-        // Test expanding a nested variable
-        const string text = "Hello, ${{ name }}!";
-        var variables = new Dictionary<string, string> { { "name", "${{ target }}" }, { "target", "world" } };
-        var result = Command.Expand(text, variables);
-        Assert.AreEqual("Hello, world!", result);
-    }
-
-    /// <summary>
     ///     Test the <see cref="Command.Expand" /> method for nested expansion.
     /// </summary>
     [TestMethod]

@@ -317,13 +317,12 @@ public sealed class RunWorkflow : Command
                             $"Workflow {source} missing steps");
 
             // Execute the steps
-            foreach (var stepNode in steps)
-            {
-                // Get the step
-                var step = stepNode as YamlMappingNode ??
-                           throw new CommandErrorException(
-                               $"Workflow {source} step is not a map");
+            var mappedSteps = steps.Select(stepNode => stepNode as YamlMappingNode ??
+                                                        throw new CommandErrorException(
+                                                            $"Workflow {source} step is not a map")).ToArray();
 
+            foreach (var step in mappedSteps)
+            {
                 // Get the command
                 var command = GetMapString(step, "command", variables) ??
                               throw new CommandErrorException(
