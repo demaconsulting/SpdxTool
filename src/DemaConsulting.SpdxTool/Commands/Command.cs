@@ -51,39 +51,74 @@ public abstract class Command
     /// <exception cref="InvalidOperationException">on error</exception>
     public static string Expand(string text, Dictionary<string, string> variables)
     {
-        while (true)
+        // Use a StringBuilder to assemble the expanded string
+        var builder = new System.Text.StringBuilder(text.Length);
+        
+        // Use a Stack to track macro-body-start-index positions
+        var macroStack = new Stack<int>();
+        
+        // Scan through the input text
+        var i = 0;
+        while (i < text.Length)
         {
-            // Find the last macro to expand
-            var start = text.LastIndexOf("${{", StringComparison.Ordinal);
-            if (start < 0)
-                return text;
-
-            // Find the end of the macro
-            var end = text.IndexOf("}}", start, StringComparison.Ordinal);
-            if (end < 0)
-                throw new InvalidOperationException("Unmatched '${{' in variable expansion");
-
-            // Get the variable name
-            var name = text[(start + 3)..end].Trim();
-
-            // Look up the value
-            string? value;
-            if (name.StartsWith("environment."))
-                value = Environment.GetEnvironmentVariable(name[12..]);
+            // Check for macro start "${{" 
+            if (i + 2 < text.Length && text[i] == '$' && text[i + 1] == '{' && text[i + 2] == '{')
+            {
+                // Push the macro-body-start-index onto the stack
+                macroStack.Push(builder.Length + 3);
+                
+                // Append the macro start to the builder
+                builder.Append("${{");
+                i += 3; // Skip "${{" 
+            }
+            // Check for macro end "}}"
+            else if (i + 1 < text.Length && text[i] == '}' && text[i + 1] == '}')
+            {
+                // Verify we have a matching macro start
+                if (macroStack.Count == 0)
+                    throw new InvalidOperationException("Unmatched '}}' in variable expansion");
+                
+                // Pop the macro-body-start-index
+                var macroBodyStart = macroStack.Pop();
+                
+                // Extract the macro body from the StringBuilder
+                var macroLength = builder.Length - macroBodyStart;
+                var name = builder.ToString(macroBodyStart, macroLength).Trim();
+                
+                // Look up the value
+                string? value;
+                if (name.StartsWith("environment."))
+                    value = Environment.GetEnvironmentVariable(name[12..]);
+                else
+                    variables.TryGetValue(name, out value);
+                
+                // Fail if the lookup failed
+                if (value == null)
+                    throw new InvalidOperationException($"Undefined variable {name}");
+                
+                // Recursively expand the value in case it contains macros
+                value = Expand(value, variables);
+                
+                // Replace the macro body with the value
+                // Remove everything from the macro start (including "${{") to current position
+                builder.Remove(macroBodyStart - 3, macroLength + 3);
+                builder.Append(value);
+                
+                i += 2; // Skip "}}"
+            }
             else
-                variables.TryGetValue(name, out value);
-
-            // Fail if the lookup failed
-            if (value == null)
-                throw new InvalidOperationException($"Undefined variable {name}");
-
-            // Apply the replacement using StringBuilder for efficiency
-            var builder = new System.Text.StringBuilder(text.Length - (end - start + 2) + value.Length);
-            builder.Append(text, 0, start);
-            builder.Append(value);
-            builder.Append(text, end + 2, text.Length - (end + 2));
-            text = builder.ToString();
+            {
+                // Normal text - just append to the StringBuilder
+                builder.Append(text[i]);
+                i++;
+            }
         }
+        
+        // Verify all macros were closed
+        if (macroStack.Count > 0)
+            throw new InvalidOperationException("Unmatched '${{' in variable expansion");
+        
+        return builder.ToString();
     }
 
     /// <summary>
