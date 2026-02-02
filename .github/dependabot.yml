@@ -18,6 +18,10 @@ updates:
     commit-message:
       prefix: "deps"
       include: "scope"
+    groups:
+      nuget-dependencies:
+        patterns:
+          - "*"
 
   # Update GitHub Actions weekly
   - package-ecosystem: "github-actions"
@@ -33,3 +37,7 @@ updates:
     commit-message:
       prefix: "ci"
       include: "scope"
+    groups:
+      github-actions-dependencies:
+        patterns:
+          - "*"
