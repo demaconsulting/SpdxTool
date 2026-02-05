@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
 
     <!-- NuGet Tool Package Configuration -->
-    <PackAsTool>True</PackAsTool>
+    <PackAsTool>true</PackAsTool>
     <ToolCommandName>spdx-tool</ToolCommandName>
     <PackageId>DemaConsulting.SpdxTool</PackageId>
     <Title>SPDX Tool</Title>
@@ -26,7 +26,7 @@
     <Product>DemaConsulting.SpdxTool</Product>
 
     <!-- Symbol Package Configuration -->
-    <IncludeSymbols>True</IncludeSymbols>
+    <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -34,7 +34,7 @@
 
     <!-- Code Quality Configuration -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
