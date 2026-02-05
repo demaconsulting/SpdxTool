@@ -11,6 +11,7 @@
     <PackAsTool>True</PackAsTool>
     <ToolCommandName>spdx-tool</ToolCommandName>
     <PackageId>DemaConsulting.SpdxTool</PackageId>
+    <Title>SPDX Tool</Title>
     <Version>0.0.0</Version>
     <Authors>DEMA Consulting</Authors>
     <Company>DEMA Consulting</Company>
@@ -22,7 +23,6 @@
     <PackageIcon>Icon.png</PackageIcon>
     <PackageTags>spdx;sbom</PackageTags>
     <Copyright>Copyright DEMA Consulting</Copyright>
-    <Title>SPDX Tool</Title>
     <Product>DemaConsulting.SpdxTool</Product>
 
     <!-- Symbol Package Configuration -->
