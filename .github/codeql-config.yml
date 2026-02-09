@@ -2,6 +2,7 @@
 # CodeQL configuration for SpdxTool
 # Excludes test code from path-combine security analysis
 # Excludes justified generic exception handlers
+# Excludes generated code warnings
 
 name: "SpdxTool CodeQL Config"
 
@@ -15,3 +16,13 @@ query-filters:
       id: cs/catch-of-all-exceptions
     paths:
       - src/DemaConsulting.SpdxTool/Program.cs
+  - exclude:
+      id: cs/unused-label
+    paths:
+      - '**/obj/**/generated/**/*.cs'
+      - '**/bin/**/generated/**/*.cs'
+  - exclude:
+      id: cs/useless-assignment-to-local
+    paths:
+      - '**/obj/**/generated/**/*.cs'
+      - '**/bin/**/generated/**/*.cs'
