@@ -26,6 +26,7 @@ jobs:
         uses: streetsidesoftware/cspell-action@v8
         with:
           config: .cspell.json
+          incremental_files_only: false
           files: |
             **/*.md
             **/*.cs

@@ -38,7 +38,8 @@
     "NOASSERTION",
     "declaredat",
     "sandboxed",
-    "hotspots"
+    "hotspots",
+    "Pandoc"
   ],
   "ignoreWords": [
     "demaconsulting"
