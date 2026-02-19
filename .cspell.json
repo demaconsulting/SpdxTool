@@ -84,6 +84,8 @@
     "trx",
     "vbproj",
     "vcxproj",
+    "versionmark",
+    "VersionMark",
     "Weasyprint",
     "wildcards",
     "YamlDotNet",
