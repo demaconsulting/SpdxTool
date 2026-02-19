@@ -223,7 +223,7 @@ public sealed class CopyPackage : Command
             toPackage = fromPackage.DeepCopy();
             toPackage.FilesAnalyzed = false;
             toPackage.HasFiles = [];
-            toDoc.Packages = [..toDoc.Packages.Append(toPackage)];
+            toDoc.Packages = [.. toDoc.Packages.Append(toPackage)];
         }
 
         // Skip if we don't need to copy files
@@ -257,12 +257,12 @@ public sealed class CopyPackage : Command
             {
                 // Append copy to the to-document
                 toFile = fromFile.DeepCopy();
-                toDoc.Files = [..toDoc.Files.Append(toFile)];
+                toDoc.Files = [.. toDoc.Files.Append(toFile)];
             }
         }
 
         // Add the new files
-        toPackage.HasFiles = [..toPackage.HasFiles.Concat(newFiles)];
+        toPackage.HasFiles = [.. toPackage.HasFiles.Concat(newFiles)];
     }
 
     /// <summary>

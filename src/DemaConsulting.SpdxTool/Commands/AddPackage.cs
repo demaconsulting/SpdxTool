@@ -161,7 +161,7 @@ public sealed class AddPackage : Command
         {
             // Copy the new package
             p = package.DeepCopy();
-            doc.Packages = [..doc.Packages.Append(p)];
+            doc.Packages = [.. doc.Packages.Append(p)];
         }
     }
 

@@ -57,7 +57,7 @@ public static class SpdxHelpers
 
         // Add this tool if missing
         if (!doc.CreationInformation.Creators.Contains(toolName))
-            doc.CreationInformation.Creators = [..doc.CreationInformation.Creators.Append(toolName)];
+            doc.CreationInformation.Creators = [.. doc.CreationInformation.Creators.Append(toolName)];
 
         // Save the document
         var serializedContent = Spdx2JsonSerializer.Serialize(doc);

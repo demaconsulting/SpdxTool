@@ -53,10 +53,10 @@ public abstract class Command
     {
         // Use a StringBuilder to assemble the expanded string
         var builder = new System.Text.StringBuilder(text.Length);
-        
+
         // Use a Stack to track macro-body-start-index positions
         var macroStack = new Stack<int>();
-        
+
         // Scan through the input text
         var i = 0;
         while (i < text.Length)
@@ -76,33 +76,33 @@ public abstract class Command
                 // Verify we have a matching macro start
                 if (macroStack.Count == 0)
                     throw new InvalidOperationException("Unmatched '}}' in variable expansion");
-                
+
                 // Pop the macro-body-start-index
                 var macroBodyStart = macroStack.Pop();
-                
+
                 // Extract the macro body from the StringBuilder
                 var macroLength = builder.Length - macroBodyStart;
                 var name = builder.ToString(macroBodyStart, macroLength).Trim();
-                
+
                 // Check for empty variable name
                 if (string.IsNullOrWhiteSpace(name))
                     throw new InvalidOperationException("Empty variable name in macro expansion");
-                
+
                 // Look up the value
                 string? value;
                 if (name.StartsWith("environment."))
                     value = Environment.GetEnvironmentVariable(name[12..]);
                 else
                     variables.TryGetValue(name, out value);
-                
+
                 // Fail if the lookup failed
                 if (value == null)
                     throw new InvalidOperationException($"Undefined variable {name}");
-                
+
                 // Replace the macro body with the value
                 builder.Remove(macroBodyStart, macroLength);
                 builder.Append(value);
-                
+
                 i += 2; // Skip "}}"
             }
             else
@@ -112,11 +112,11 @@ public abstract class Command
                 i++;
             }
         }
-        
+
         // Verify all macros were closed
         if (macroStack.Count > 0)
             throw new InvalidOperationException("Unmatched '${{' in variable expansion");
-        
+
         return builder.ToString();
     }
 

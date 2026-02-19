@@ -133,17 +133,17 @@ internal static class ValidateAddPackage
             {
                 Packages:
                 [
-                    { Id: "SPDXRef-Package-1" },
-                    { Id: "SPDXRef-Package-2" }
+                { Id: "SPDXRef-Package-1" },
+                { Id: "SPDXRef-Package-2" }
                 ],
                 Relationships:
                 [
                     _,
-                    {
-                        Id: "SPDXRef-Package-2",
-                        RelationshipType: SpdxRelationshipType.BuildToolOf,
-                        RelatedSpdxElement: "SPDXRef-Package-1"
-                    }
+                {
+                    Id: "SPDXRef-Package-2",
+                    RelationshipType: SpdxRelationshipType.BuildToolOf,
+                    RelatedSpdxElement: "SPDXRef-Package-1"
+                }
                 ]
             };
         }
