@@ -414,7 +414,6 @@ docs/buildnotes/versions.md
 # Test results
 TestResults/
 *.trx
-*.xml
 coverage.opencover.xml
 
 # VersionMark captures (generated during CI/CD)
