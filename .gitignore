@@ -400,3 +400,6 @@ FodyWeavers.xsd
 
 # Documentation build artifacts
 docs/**/*.html
+
+# Agent report files (temporary inter-agent communication)
+AGENT_REPORT_*.md
