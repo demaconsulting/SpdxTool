@@ -52,7 +52,7 @@ The agent reviews the following areas of SpdxTool for consistency with the Templ
 
 #### Quality Configuration
 
-- **Linting Rules**: `.cspell.json`, `.markdownlint.json`, `.yamllint.yaml`
+- **Linting Rules**: `.cspell.json`, `.markdownlint-cli2.jsonc`, `.yamllint.yaml`
   - Note: Spelling exceptions will be SpdxTool-specific
 - **Editor Config**: `.editorconfig` settings (file-scoped namespaces, 4-space indent, UTF-8+BOM, LF endings)
 - **Code Style**: C# code style rules and analyzer configuration

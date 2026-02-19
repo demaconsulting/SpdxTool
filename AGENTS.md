@@ -19,7 +19,7 @@ manipulating SPDX SBOM files.
 ## Key Files
 
 - **`.editorconfig`** - Code style (file-scoped namespaces, 4-space indent, UTF-8+BOM, LF endings)
-- **`.cspell.json`, `.markdownlint.json`, `.yamllint.yaml`** - Linting configs
+- **`.cspell.json`, `.markdownlint-cli2.jsonc`, `.yamllint.yaml`** - Linting configs
 
 ## Testing
 
