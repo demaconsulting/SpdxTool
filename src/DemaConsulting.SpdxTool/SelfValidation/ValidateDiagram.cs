@@ -118,11 +118,15 @@ internal static class ValidateDiagram
 
             // Fail if SpdxTool reported an error
             if (exitCode != 0)
+            {
                 return false;
+            }
 
             // Verify the mermaid file was created
             if (!File.Exists("validate.tmp/test-diagram.mermaid.txt"))
+            {
                 return false;
+            }
 
             // Read the generated mermaid content
             var mermaid = File.ReadAllText("validate.tmp/test-diagram.mermaid.txt");

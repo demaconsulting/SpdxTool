@@ -119,11 +119,15 @@ internal static class ValidateToMarkdown
 
             // Fail if SpdxTool reported an error
             if (exitCode != 0)
+            {
                 return false;
+            }
 
             // Verify the markdown file was created
             if (!File.Exists("validate.tmp/test-markdown.md"))
+            {
                 return false;
+            }
 
             // Read the generated markdown content
             var markdown = File.ReadAllText("validate.tmp/test-markdown.md");

@@ -128,7 +128,9 @@ internal static class ValidateFindPackage
 
             // Fail if SpdxTool reported an error
             if (exitCode != 0)
+            {
                 return false;
+            }
 
             // Read the log file
             var log = File.ReadAllText("validate.tmp/output.log");

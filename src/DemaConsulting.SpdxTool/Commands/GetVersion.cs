@@ -83,7 +83,9 @@ public sealed class GetVersion : Command
     {
         // Report an error if insufficient arguments
         if (args.Length < 2)
+        {
             throw new CommandUsageException("'get-version' command missing arguments");
+        }
 
         // Parse the arguments
         var spdxFile = args[0];

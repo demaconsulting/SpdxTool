@@ -75,7 +75,9 @@ public abstract class Command
             {
                 // Verify we have a matching macro start
                 if (macroStack.Count == 0)
+                {
                     throw new InvalidOperationException("Unmatched '}}' in variable expansion");
+                }
 
                 // Pop the macro-body-start-index
                 var macroBodyStart = macroStack.Pop();
@@ -86,18 +88,26 @@ public abstract class Command
 
                 // Check for empty variable name
                 if (string.IsNullOrWhiteSpace(name))
+                {
                     throw new InvalidOperationException("Empty variable name in macro expansion");
+                }
 
                 // Look up the value
                 string? value;
                 if (name.StartsWith("environment."))
+                {
                     value = Environment.GetEnvironmentVariable(name[12..]);
+                }
                 else
+                {
                     variables.TryGetValue(name, out value);
+                }
 
                 // Fail if the lookup failed
                 if (value == null)
+                {
                     throw new InvalidOperationException($"Undefined variable {name}");
+                }
 
                 // Replace the macro body with the value
                 builder.Remove(macroBodyStart, macroLength);
@@ -115,7 +125,9 @@ public abstract class Command
 
         // Verify all macros were closed
         if (macroStack.Count > 0)
+        {
             throw new InvalidOperationException("Unmatched '${{' in variable expansion");
+        }
 
         return builder.ToString();
     }
@@ -130,7 +142,9 @@ public abstract class Command
     {
         // Handle null map
         if (map == null)
+        {
             return null;
+        }
 
         // Get the entry
         return map.Children.TryGetValue(name, out var value) ? value as YamlMappingNode : null;
@@ -146,7 +160,9 @@ public abstract class Command
     {
         // Handle null map
         if (map == null)
+        {
             return null;
+        }
 
         // Get the entry
         return map.Children.TryGetValue(name, out var value) ? value as YamlSequenceNode : null;
@@ -163,7 +179,9 @@ public abstract class Command
     {
         // Handle null map
         if (map == null)
+        {
             return null;
+        }
 
         // Get the parameter
         return map.Children.TryGetValue(key, out var value) ? Expand(value.ToString(), variables) : null;

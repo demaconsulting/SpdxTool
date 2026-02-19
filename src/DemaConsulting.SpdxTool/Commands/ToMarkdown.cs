@@ -76,7 +76,9 @@ public sealed class ToMarkdown : Command
     {
         // Report an error if the number of arguments is less than 2
         if (args.Length < 2)
+        {
             throw new CommandUsageException("'to-markdown' command missing arguments");
+        }
 
         // Get the file names
         var spdxFile = args[0];
@@ -85,12 +87,16 @@ public sealed class ToMarkdown : Command
         // Get the title
         var title = args.Length > 2 ? args[2] : "SPDX Document";
         if (string.IsNullOrWhiteSpace(title))
+        {
             throw new CommandUsageException("'to-markdown' command invalid 'title' argument");
+        }
 
         // Get the depth
         var depthText = args.Length > 3 ? args[3] : "2";
         if (!int.TryParse(depthText, out var depth) || depth < 1)
+        {
             throw new CommandUsageException("'to-markdown' command invalid 'depth' argument");
+        }
 
         // Generate the markdown
         GenerateSummaryMarkdown(spdxFile, markdownFile, title, depth);
@@ -114,12 +120,16 @@ public sealed class ToMarkdown : Command
         // Get the 'title' input
         var title = GetMapString(inputs, "title", variables) ?? "SPDX Document";
         if (string.IsNullOrWhiteSpace(title))
+        {
             throw new YamlException(step.Start, step.End, "'to-markdown' command invalid 'title' input");
+        }
 
         // Get the 'depth' input
         var depthText = GetMapString(inputs, "depth", variables) ?? "2";
         if (!int.TryParse(depthText, out var depth) || depth < 1)
+        {
             throw new YamlException(step.Start, step.End, "'to-markdown' command invalid 'depth' input");
+        }
 
         // Generate the markdown
         GenerateSummaryMarkdown(spdxFile, markdownFile, title, depth);
@@ -157,7 +167,10 @@ public sealed class ToMarkdown : Command
         markdown.AppendLine($"| Relationships | {doc.Relationships.Length} |");
         markdown.AppendLine($"| Created | {doc.CreationInformation.Created} |");
         foreach (var creator in doc.CreationInformation.Creators)
+        {
             markdown.AppendLine($"| Creator | {creator} |");
+        }
+
         markdown.AppendLine();
         markdown.AppendLine();
 
@@ -184,8 +197,11 @@ public sealed class ToMarkdown : Command
             markdown.AppendLine("| Name | Version | License |");
             markdown.AppendLine("| :-------- | :--- | :--- |");
             foreach (var package in rootPackages)
+            {
                 markdown.AppendLine(
                     $"| {package.Name} | {package.Version ?? string.Empty} | {License(package)} |");
+            }
+
             markdown.AppendLine();
             markdown.AppendLine();
         }
@@ -198,8 +214,11 @@ public sealed class ToMarkdown : Command
             markdown.AppendLine("| Name | Version | License |");
             markdown.AppendLine("| :-------- | :--- | :--- |");
             foreach (var package in packages)
+            {
                 markdown.AppendLine(
                     $"| {package.Name} | {package.Version ?? string.Empty} | {License(package)} |");
+            }
+
             markdown.AppendLine();
             markdown.AppendLine();
         }
@@ -212,8 +231,11 @@ public sealed class ToMarkdown : Command
             markdown.AppendLine("| Name | Version | License |");
             markdown.AppendLine("| :-------- | :--- | :--- |");
             foreach (var package in tools)
+            {
                 markdown.AppendLine(
                     $"| {package.Name} | {package.Version ?? string.Empty} | {License(package)} |");
+            }
+
             markdown.AppendLine();
             markdown.AppendLine();
         }
@@ -231,11 +253,15 @@ public sealed class ToMarkdown : Command
     {
         // Use the concluded license if available
         if (!string.IsNullOrEmpty(package.ConcludedLicense) && package.ConcludedLicense != "NOASSERTION")
+        {
             return package.ConcludedLicense;
+        }
 
         // Use the declared license if available
         if (!string.IsNullOrEmpty(package.DeclaredLicense) && package.DeclaredLicense != "NOASSERTION")
+        {
             return package.DeclaredLicense;
+        }
 
         // Could not find license
         return "NOASSERTION";

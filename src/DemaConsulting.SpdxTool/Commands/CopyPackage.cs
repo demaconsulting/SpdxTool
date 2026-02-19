@@ -91,7 +91,9 @@ public sealed class CopyPackage : Command
     {
         // Report an error if the number of arguments is less than 3
         if (args.Length < 3)
+        {
             throw new CommandUsageException("'copy-package' command missing arguments");
+        }
 
         // Get fixed options
         var fromFile = args[0];
@@ -143,12 +145,16 @@ public sealed class CopyPackage : Command
         // Get the 'recursive' input
         var recursiveText = GetMapString(inputs, "recursive", variables) ?? "false";
         if (!bool.TryParse(recursiveText, out var recursive))
+        {
             throw new YamlException(step.Start, step.End, "'copy-package' invalid 'recursive' input");
+        }
 
         // Get the 'files' input
         var filesText = GetMapString(inputs, "files", variables) ?? "false";
         if (!bool.TryParse(filesText, out var files))
+        {
             throw new YamlException(step.Start, step.End, "'copy-package' invalid 'files' input");
+        }
 
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships");
@@ -172,7 +178,9 @@ public sealed class CopyPackage : Command
     {
         // Verify package name
         if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
+        {
             throw new CommandUsageException("Invalid package name");
+        }
 
         // Read the SPDX documents
         var fromDoc = SpdxHelpers.LoadJsonDocument(fromFile);
@@ -228,7 +236,9 @@ public sealed class CopyPackage : Command
 
         // Skip if we don't need to copy files
         if (!files || fromPackage.FilesAnalyzed == false || fromPackage.HasFiles.Length == 0)
+        {
             return;
+        }
 
         // Indicate the to-package has had analyzed files
         toPackage.FilesAnalyzed = true;
@@ -236,7 +246,9 @@ public sealed class CopyPackage : Command
         // Get the new file IDs
         var newFiles = fromPackage.HasFiles.Except(toPackage.HasFiles).ToArray();
         if (newFiles.Length == 0)
+        {
             return;
+        }
 
         // Copy the files
         foreach (var file in newFiles)
@@ -281,11 +293,15 @@ public sealed class CopyPackage : Command
         {
             var childId = GetChild(relationship, parentId);
             if (childId == null)
+            {
                 continue;
+            }
 
             // Skip if the child is not a package
             if (!Array.Exists(fromDoc.Packages, p => p.Id == childId))
+            {
                 continue;
+            }
 
             // Copy/enhance the child-package
             Copy(fromDoc, toDoc, childId, files);
@@ -295,7 +311,9 @@ public sealed class CopyPackage : Command
 
             // Report copied, and process children if not already processed
             if (copied.Add(childId))
+            {
                 CopyChildren(fromDoc, toDoc, childId, copied, files);
+            }
         }
     }
 

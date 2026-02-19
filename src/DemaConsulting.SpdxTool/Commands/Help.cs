@@ -70,7 +70,9 @@ public sealed class Help : Command
     {
         // Report an error if the number of arguments is not 1
         if (args.Length != 1)
+        {
             throw new CommandUsageException("'help' command missing arguments");
+        }
 
         // Generate the markdown
         ShowUsage(context, args[0]);
@@ -100,10 +102,14 @@ public sealed class Help : Command
     {
         // Get the entry for the command
         if (!CommandsRegistry.Commands.TryGetValue(command, out var entry))
+        {
             throw new CommandUsageException($"Unknown command: '{command}'");
+        }
 
         // Display the command entry
         foreach (var line in entry.Details)
+        {
             context.WriteLine(line);
+        }
     }
 }

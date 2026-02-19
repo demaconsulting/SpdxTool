@@ -159,6 +159,8 @@ public static class Program
             Commands:
             """);
         foreach (var command in CommandsRegistry.Commands.Values)
+        {
             context.WriteLine($"  {command.CommandLine,-40} {command.Summary}");
+        }
     }
 }

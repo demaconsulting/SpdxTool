@@ -122,7 +122,9 @@ internal static class ValidateNtia
 
         // Fail if SpdxTool reported an error
         if (exitCode1 != 0)
+        {
             return false;
+        }
 
         // Run validation with NTIA flag - should fail due to missing supplier
         // The log file will be written to validate.tmp/output.log since the working directory is changed
@@ -138,12 +140,16 @@ internal static class ValidateNtia
 
         // Should fail validation
         if (exitCode2 == 0)
+        {
             return false;
+        }
 
         // Read the log file and verify it contains the expected error
         var log = File.ReadAllText("validate.tmp/output.log");
         if (!log.Contains("NTIA: Package 'Test Package' Missing Supplier"))
+        {
             return false;
+        }
 
         return true;
     }

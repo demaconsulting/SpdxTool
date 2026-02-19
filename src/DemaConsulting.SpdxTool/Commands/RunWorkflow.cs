@@ -80,7 +80,9 @@ public sealed class RunWorkflow : Command
     {
         // Report an error if the number of arguments is less than 1
         if (args.Length < 1)
+        {
             throw new CommandUsageException("'run-workflow' command missing arguments");
+        }
 
         var name = args[0];
 
@@ -99,7 +101,9 @@ public sealed class RunWorkflow : Command
             // Verify the parameter is in the form key=value
             var sep = arg.IndexOf('=');
             if (sep < 0)
+            {
                 throw new CommandUsageException($"Invalid argument: {arg}");
+            }
 
             // Add the parameter
             var key = arg[..sep];
@@ -114,12 +118,16 @@ public sealed class RunWorkflow : Command
 
         // Skip if not verbose
         if (!verbose)
+        {
             return;
+        }
 
         // Print the outputs
         context.WriteLine("Outputs:");
         foreach (var (key, value) in outputs)
+        {
             context.WriteLine($"  {key} = {value}");
+        }
     }
 
     /// <inheritdoc />
@@ -138,6 +146,7 @@ public sealed class RunWorkflow : Command
         // Get the parameters
         var parameters = new Dictionary<string, string>();
         if (GetMapMap(inputs, "parameters") is { } parametersMap)
+        {
             // Process all the parameters
             foreach (var (keyNode, valueNode) in parametersMap.Children)
             {
@@ -145,22 +154,27 @@ public sealed class RunWorkflow : Command
                 var value = valueNode.ToString();
                 parameters[key] = Expand(value, variables);
             }
+        }
 
         // Run the workflow
         var outputs = Run(context, step, file, url, integrity, parameters);
 
         // Save any outputs
         if (GetMapMap(inputs, "outputs") is { } outputsMap)
+        {
             // Process all the outputs
             foreach (var (keyNode, valueNode) in outputsMap.Children)
             {
                 var key = keyNode.ToString();
                 var value = valueNode.ToString();
                 if (!outputs.TryGetValue(key, out var output))
+                {
                     throw new CommandUsageException($"Workflow did not produce {key} output");
+                }
 
                 variables[value] = output;
             }
+        }
     }
 
     /// <summary>
@@ -179,16 +193,22 @@ public sealed class RunWorkflow : Command
     {
         // Fail if no source
         if (file != null && url != null)
+        {
             throw new YamlException(step.Start, step.End,
                 "'run-workflow' command cannot specify both 'file' and 'url' inputs");
+        }
 
         // Run the file if specified
         if (file != null)
+        {
             return RunFile(context, file, integrity, parameters);
+        }
 
         // Run the URL if specified
         if (url != null)
+        {
             return RunUrl(context, url, integrity, parameters);
+        }
 
         // No source provided
         throw new YamlException(step.Start, step.End,
@@ -210,8 +230,10 @@ public sealed class RunWorkflow : Command
     {
         // Verify the file exists
         if (!File.Exists(workflowFile))
+        {
             throw new CommandUsageException(
                 $"File not found: {workflowFile}");
+        }
 
         // Get the file bytes
         var bytes = File.ReadAllBytes(workflowFile);
@@ -249,7 +271,9 @@ public sealed class RunWorkflow : Command
         // Get the result (blocks until result available)
         var responseMessage = getTask.Result;
         if (responseMessage.StatusCode != HttpStatusCode.OK)
+        {
             throw new CommandErrorException($"Error {responseMessage.StatusCode} fetching {url}");
+        }
 
         // Get the content bytes (blocks until data available)
         var bytesTask = responseMessage.Content.ReadAsByteArrayAsync();
@@ -277,7 +301,9 @@ public sealed class RunWorkflow : Command
             var hashBytes = SHA256.HashData(bytes);
             var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
             if (hash != integrity)
+            {
                 throw new CommandErrorException($"Integrity check of {source} failed");
+            }
         }
 
         try
@@ -293,6 +319,7 @@ public sealed class RunWorkflow : Command
             // Process the parameters definitions into local variables
             var variables = new Dictionary<string, string>();
             if (GetMapMap(root, "parameters") is { } parametersMap)
+            {
                 // Process all the parameters
                 foreach (var (keyNode, valueNode) in parametersMap.Children)
                 {
@@ -300,13 +327,16 @@ public sealed class RunWorkflow : Command
                     var value = Expand(valueNode.ToString(), variables);
                     variables[key] = Expand(value, parameters);
                 }
+            }
 
             // Apply the provided parameters to our variables
             foreach (var (key, value) in parameters)
             {
                 if (!variables.ContainsKey(key))
+                {
                     throw new CommandErrorException(
                         $"Workflow {source} parameter {key} not defined");
+                }
 
                 variables[key] = Expand(value, variables);
             }
@@ -331,12 +361,16 @@ public sealed class RunWorkflow : Command
                 // Check for a displayName
                 var displayName = GetMapString(step, "displayName", variables);
                 if (displayName != null)
+                {
                     context.WriteLine(displayName);
+                }
 
                 // Execute the step
                 if (!CommandsRegistry.Commands.TryGetValue(command, out var entry))
+                {
                     throw new CommandUsageException(
                         $"Unknown command: '{command}'");
+                }
 
                 // Run the command
                 entry.Instance.Run(context, step, variables);

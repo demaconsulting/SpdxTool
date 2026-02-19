@@ -48,7 +48,9 @@ internal static class Runner
 
         // Add the arguments
         foreach (var argument in arguments)
+        {
             startInfo.ArgumentList.Add(argument);
+        }
 
         // Start the process
         var process = Process.Start(startInfo) ??

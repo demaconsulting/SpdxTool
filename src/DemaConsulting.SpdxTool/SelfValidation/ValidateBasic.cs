@@ -39,7 +39,7 @@ internal static class ValidateBasic
 
         // Report validation result to console
         context.WriteLine($"- SpdxTool_Validate: {(passed ? "Passed" : "Failed")}");
-        
+
         // Add validation result to test results collection
         results.Results.Add(
             new TestResult
@@ -168,11 +168,13 @@ internal static class ValidateBasic
 
         // Validation should fail for invalid document
         if (exitCode == 0)
+        {
             return false;
+        }
 
         // Read the log file to verify error was reported
         var log = File.ReadAllText("validate.tmp/output.log");
-        
+
         // Verify log contains error about missing SPDXID
         return log.Contains("Issues in test-invalid.spdx.json") || log.Contains("Package") || log.Contains("SPDXID");
     }

@@ -183,7 +183,9 @@ public sealed class AddPackage : Command
 
         // Verify package ID
         if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
+        {
             throw new CommandUsageException("Invalid package ID");
+        }
 
         // Construct the package
         var package = new SpdxPackage

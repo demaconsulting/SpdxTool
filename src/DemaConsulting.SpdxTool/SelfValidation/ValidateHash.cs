@@ -95,11 +95,15 @@ internal static class ValidateHash
 
         // Fail if SpdxTool reported an error
         if (exitCode != 0)
+        {
             return false;
+        }
 
         // Verify hash file was created with expected naming
         if (!File.Exists("validate.tmp/test-file.txt.sha256"))
+        {
             return false;
+        }
 
         // Read the generated hash value
         var hash = File.ReadAllText("validate.tmp/test-file.txt.sha256");
@@ -127,7 +131,9 @@ internal static class ValidateHash
 
         // Verification should succeed with correct hash
         if (exitCode1 != 0)
+        {
             return false;
+        }
 
         // Corrupt the hash file with invalid hash value
         File.WriteAllText("validate.tmp/test-file.txt.sha256", "0000000000000000000000000000000000000000000000000000000000000000");

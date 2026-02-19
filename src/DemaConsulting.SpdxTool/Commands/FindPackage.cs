@@ -86,7 +86,9 @@ public sealed class FindPackage : Command
     {
         // Report an error if insufficient arguments
         if (args.Length < 2)
+        {
             throw new CommandUsageException("'find-package' command missing arguments");
+        }
 
         // Parse the arguments
         var spdxFile = args[0];
@@ -140,7 +142,9 @@ public sealed class FindPackage : Command
             // Split the argument into key and value
             var parts = arg.Split('=', 2);
             if (parts.Length != 2)
+            {
                 throw new CommandUsageException($"Invalid criteria '{arg}'");
+            }
 
             // Add to the criteria
             criteria[parts[0]] = parts[1];
@@ -161,27 +165,37 @@ public sealed class FindPackage : Command
         // Get the 'id' input
         var id = GetMapString(map, "id", variables);
         if (id != null)
+        {
             criteria["id"] = id;
+        }
 
         // Get the 'name' input
         var name = GetMapString(map, "name", variables);
         if (name != null)
+        {
             criteria["name"] = name;
+        }
 
         // Get the 'version' input
         var version = GetMapString(map, "version", variables);
         if (version != null)
+        {
             criteria["version"] = version;
+        }
 
         // Get the 'filename' input
         var filename = GetMapString(map, "filename", variables);
         if (filename != null)
+        {
             criteria["filename"] = filename;
+        }
 
         // Get the 'download' input
         var download = GetMapString(map, "download", variables);
         if (download != null)
+        {
             criteria["download"] = download;
+        }
     }
 
     /// <summary>
@@ -218,25 +232,35 @@ public sealed class FindPackage : Command
     {
         // Check the id
         if (criteria.TryGetValue("id", out var id) && !Wildcard.IsMatch(package.Id, id))
+        {
             return false;
+        }
 
         // Check the name
         if (criteria.TryGetValue("name", out var name) && !Wildcard.IsMatch(package.Name, name))
+        {
             return false;
+        }
 
         // Check the version
         if (criteria.TryGetValue("version", out var version) &&
             (package.Version == null || !Wildcard.IsMatch(package.Version, version)))
+        {
             return false;
+        }
 
         // Check the filename
         if (criteria.TryGetValue("filename", out var filename) &&
             (package.FileName == null || !Wildcard.IsMatch(package.FileName, filename)))
+        {
             return false;
+        }
 
         // Check the download location
         if (criteria.TryGetValue("download", out var download) && !Wildcard.IsMatch(package.DownloadLocation, download))
+        {
             return false;
+        }
 
         // Package matches all specified criteria
         return true;
