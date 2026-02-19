@@ -16,6 +16,7 @@
     "YamlDotNet",
     "SpdxModel",
     "SpdxTool",
+    "TemplateDotNetTool",
     "trx",
     "json",
     "yaml",
@@ -28,6 +29,9 @@
     "editorconfig",
     "gitignore",
     "ibiqlik",
+    "markdownlint",
+    "mstest",
+    "yamllint",
     "ncipollo",
     "nupkg",
     "snupkg",
@@ -57,7 +61,8 @@
     "coverage/**",
     "TestResults/**",
     "**/*.DotSettings",
-    "**/*.csproj"
+    "**/*.csproj",
+    "AGENT_REPORT_*.md"
   ],
   "flagWords": [],
   "patterns": [

@@ -1,99 +1,106 @@
-# AI Instructions for SpdxTool
+# Agent Quick Reference
 
-This file provides specific context and instructions for AI coding agents to
-interact effectively with this C# project.
+Project-specific guidance for agents working on SpdxTool - a .NET CLI tool for
+manipulating SPDX SBOM files.
 
-## Project Overview
+## Available Specialized Agents
 
-SpdxTool is a C# .NET tool for manipulating SPDX SBOM files.
+- **Requirements Agent** - Develops requirements and ensures test coverage linkage
+- **Technical Writer** - Creates accurate documentation following regulatory best practices
+- **Software Developer** - Writes production code and self-validation tests in literate style
+- **Test Developer** - Creates unit and integration tests following AAA pattern
+- **Code Quality Agent** - Enforces linting, static analysis, and security standards
+- **Repo Consistency Agent** - Ensures SpdxTool remains consistent with TemplateDotNetTool patterns
 
-## Technologies and Dependencies
+## Tech Stack
 
-* **Language**: C# 12
-* **.NET Frameworks**: .NET 8, 9, and 10
-* **Primary Dependencies**: [DemaConsulting.SpdxModel, YamlDotNet]
+- C# 12, .NET 8.0/9.0/10.0, dotnet CLI, NuGet
+
+## Key Files
+
+- **`.editorconfig`** - Code style (file-scoped namespaces, 4-space indent, UTF-8+BOM, LF endings)
+- **`.cspell.json`, `.markdownlint.json`, `.yamllint.yaml`** - Linting configs
+
+## Testing
+
+- **Test Naming**: `SpdxTool_FeatureBeingValidated` for self-validation tests
+- **Self-Validation**: All tests run via `--validate` flag and can output TRX format
+- **Test Framework**: Uses DemaConsulting.TestResults library for test result generation
+
+## Code Style
+
+- **XML Docs**: On ALL members (public/internal/private) with spaces after `///` in summaries
+- **Errors**: `ArgumentException` for parsing, `InvalidOperationException` for runtime issues
+- **Namespace**: File-scoped namespaces only
+- **Using Statements**: Top of file only (no nested using declarations except for IDisposable)
+- **String Formatting**: Use interpolated strings ($"") for clarity
 
 ## Project Structure
 
-The repository is organized as follows:
+- **Context.cs**: Handles command-line argument parsing, logging, and output
+- **Program.cs**: Main entry point with version/help/validation routing
+- **SelfValidation/**: Self-validation tests with TRX output support
 
-* `/.config/`: Contains the .NET Tool configuration.
-* `/.github/workflows/`: Contains the CI/CD pipeline configurations.
-* `/docs/`: Contains usage documentation.
-* `/src/DemaConsulting.SpdxTool/`: Contains the library source code.
-* `/test/DemaConsulting.SpdxTool.Tests/`: Contains the library unit tests.
-* `/DemaConsulting.SpdxTool.sln`: The main Visual Studio solution file.
-
-## Development Commands
-
-Use these commands to perform common development tasks:
-
-* **Restore DotNet Tools**:
-
-  ```bash
-  dotnet tool restore
-  ```
-
-* **Build the Project**:
-
-  ```bash
-  dotnet build
-  ```
-
-* **Run All Tests**:
-
-  ```bash
-  dotnet test
-  ```
-
-## Testing Guidelines
-
-* Tests are located under the `/test/DemaConsulting.SpdxTool.Tests/` folder and use the MSTest framework.
-* Test files should end with `.cs` and adhere to the naming convention `[Component]Tests.cs`.
-* All new features should be tested with comprehensive unit tests.
-* The build must pass all tests and static analysis warnings before merging.
-* Tests should be written using the AAA (Arrange, Act, Assert) pattern.
-
-## Code Style and Conventions
-
-* Follow standard C# naming conventions (PascalCase for classes/methods/properties, camelCase for local variables).
-* Nullable reference types are enabled at the project level (`<Nullable>enable</Nullable>` in .csproj files). Do
-  not use file-level `#nullable enable` directives.
-* Warnings are treated as errors (`<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`).
-* Avoid public fields; prefer properties.
-
-## Quality Tools and Practices
-
-* **Code Analysis**: The project uses multiple analyzers configured via Directory.Build.props:
-  * Microsoft.CodeAnalysis.NetAnalyzers for .NET best practices
-  * SonarAnalyzer.CSharp for additional code quality rules
-  * All warnings are treated as errors
-* **EditorConfig**: The .editorconfig file enforces consistent code style across IDEs
-* **Code Coverage**: Use `dotnet test --collect:"XPlat Code Coverage"` to generate coverage reports
-* **SonarCloud**: The CI pipeline integrates with SonarCloud for continuous quality monitoring
-* **Static Analysis**: Run `dotnet build` to perform compile-time static analysis
-
-### Running Quality Checks Locally
-
-Before committing code, developers should run:
+## Build and Test
 
 ```bash
-# Restore dependencies
-dotnet restore
+# Build the project
+dotnet build --configuration Release
 
-# Build with all analysis enabled (will fail on warnings)
-dotnet build
+# Run unit tests
+dotnet test --configuration Release
+
+# Run self-validation
+dotnet run --project src/DemaConsulting.SpdxTool \
+  --configuration Release --framework net10.0 --no-build -- --validate
+```
+
+## Documentation
+
+- **User Guide**: `docs/guide/`
+- **Command Reference**: `docs/spdx-tool-command-line.md`
+- **CHANGELOG.md**: Not present - changes are captured in the auto-generated build notes
+
+## Markdown Link Style
+
+- **AI agent markdown files** (`.github/agents/*.md`): Use inline links `[text](url)` so URLs are visible in agent context
+- **README.md**: Use absolute URLs (shipped in NuGet package)
+- **All other markdown files**: Use reference-style links `[text][ref]` with `[ref]: url` at document end
+
+## CI/CD
+
+- **Quality Checks**: Markdown lint, spell check, YAML lint
+- **Build**: Multi-platform (Windows/Linux)
+- **CodeQL**: Security scanning
+- **Integration Tests**: .NET 8/9/10 on Windows/Linux
+
+## Common Tasks
+
+```bash
+# Format code
+dotnet format
+
+# Restore dotnet tools
+dotnet tool restore
 
 # Run all tests with coverage
 dotnet test --collect:"XPlat Code Coverage"
-
-# Run self-validation
-dotnet run --project src/DemaConsulting.SpdxTool -- --validate
 ```
 
 ## Boundaries and Guardrails
 
-* **NEVER** modify files within the `/obj/` or `/bin/` directories.
-* **NEVER** commit secrets, API keys, or sensitive configuration data.
-* **NEVER** disable code analysis warnings without proper justification and review.
-* **ASK FIRST** before making significant architectural changes to the core library logic.
+- **NEVER** modify files within the `/obj/` or `/bin/` directories
+- **NEVER** commit secrets, API keys, or sensitive configuration data
+- **NEVER** disable code analysis warnings without proper justification and review
+- **ASK FIRST** before making significant architectural changes to the core library logic
+
+## Agent Report Files
+
+When agents need to write report files to communicate with each other or the user, follow these guidelines:
+
+- **Naming Convention**: Use the pattern `AGENT_REPORT_xxxx.md` (e.g., `AGENT_REPORT_analysis.md`, `AGENT_REPORT_results.md`)
+- **Purpose**: These files are for temporary inter-agent communication and should not be committed
+- **Exclusions**: Files matching `AGENT_REPORT_*.md` are automatically:
+  - Excluded from git (via .gitignore)
+  - Excluded from markdown linting
+  - Excluded from spell checking
