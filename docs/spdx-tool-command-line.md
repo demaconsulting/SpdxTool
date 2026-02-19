@@ -2,7 +2,7 @@
 
 ## Installation
 
-SPDX Tool is distributed as a nuget package on [nuget.org](https://www.nuget.org/packages/DemaConsulting.SpdxTool).
+SPDX Tool is distributed as a nuget package on [nuget.org][nuget-package].
 
 The following will add SPDX Tool to a Dotnet tool manifest file:
 
@@ -76,3 +76,5 @@ From a YAML file this can be used as:
         name: <variable>            # Optional output to save to variable
         name: <variable>            # Optional output to save to variable
 ```
+
+[nuget-package]: https://www.nuget.org/packages/DemaConsulting.SpdxTool

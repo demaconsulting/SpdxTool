@@ -13,7 +13,7 @@ We release patches for security vulnerabilities. Only the latest version is curr
 
 If you discover a security vulnerability within this project, please use GitHub's vulnerability reporting feature:
 
-1. Go to the [Security tab](https://github.com/demaconsulting/SpdxTool/security) of this repository
+1. Go to the [Security tab][security-tab] of this repository
 2. Click on "Report a vulnerability"
 3. Fill out the vulnerability report form with details about the issue
 
@@ -86,14 +86,21 @@ We recognize and thank security researchers who help improve our project's secur
 
 For security-related questions or concerns that are not vulnerabilities, you can:
 
-- Open a discussion in [GitHub Discussions](https://github.com/demaconsulting/SpdxTool/discussions)
+- Open a discussion in [GitHub Discussions][github-discussions]
 - Contact the maintainers through the repository
 
 ## Additional Resources
 
-- [SPDX Security Specification](https://spdx.github.io/spdx-spec/)
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [CWE - Common Weakness Enumeration](https://cwe.mitre.org/)
-- [GitHub Security Best Practices](https://docs.github.com/en/code-security)
+- [SPDX Security Specification][spdx-security]
+- [OWASP Top 10][owasp-top10]
+- [CWE - Common Weakness Enumeration][cwe]
+- [GitHub Security Best Practices][github-security]
 
 Thank you for helping keep this project and its users safe!
+
+[security-tab]: https://github.com/demaconsulting/SpdxTool/security
+[github-discussions]: https://github.com/demaconsulting/SpdxTool/discussions
+[spdx-security]: https://spdx.github.io/spdx-spec/
+[owasp-top10]: https://owasp.org/www-project-top-ten/
+[cwe]: https://cwe.mitre.org/
+[github-security]: https://docs.github.com/en/code-security

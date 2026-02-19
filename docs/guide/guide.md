@@ -805,8 +805,8 @@ This provides detailed information about:
 
 SpdxTool supports the SPDX 2.3 specification. For details, see:
 
-* [SPDX Specification](https://spdx.github.io/spdx-spec/)
-* [SPDX GitHub](https://github.com/spdx/spdx-spec)
+* [SPDX Specification][spdx-spec]
+* [SPDX GitHub][spdx-github]
 
 ### NTIA Minimum Elements
 
@@ -820,21 +820,21 @@ The NTIA minimum elements for SBOM include:
 * Dependency relationships
 * Author of SBOM data
 
-For more information, see: [NTIA SBOM Minimum Elements](https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf)
+For more information, see: [NTIA SBOM Minimum Elements][ntia-sbom]
 
 ### Version History
 
-See the [GitHub releases page](https://github.com/demaconsulting/SpdxTool/releases) for detailed version history.
+See the [GitHub releases page][releases] for detailed version history.
 
 ### License
 
 SpdxTool is licensed under the MIT License. See the
-[LICENSE](https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE) file for details.
+[LICENSE][license] file for details.
 
 ### Contributing
 
 Contributions are welcome! Please see the
-[Contributing Guidelines](https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md) for details.
+[Contributing Guidelines][contributing] for details.
 
 ### Support
 
@@ -849,3 +849,10 @@ For issues, questions, or feature requests:
 * **Microsoft SBOM Tool**: <https://github.com/microsoft/sbom-tool>
 * **.NET Tool Documentation**: <https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools>
 * **SPDX Model Library**: <https://github.com/demaconsulting/SpdxModel>
+
+[spdx-spec]: https://spdx.github.io/spdx-spec/
+[spdx-github]: https://github.com/spdx/spdx-spec
+[ntia-sbom]: https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf
+[releases]: https://github.com/demaconsulting/SpdxTool/releases
+[license]: https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE
+[contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md

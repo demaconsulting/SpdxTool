@@ -2,7 +2,7 @@
 
 A common approach to creating SPDX SBOMs is:
 
-1. Use the [Microsoft SBOM DotNet Tool](https://github.com/microsoft/sbom-tool) to create an SBOM
+1. Use the [Microsoft SBOM DotNet Tool][sbom-tool] to create an SBOM
 2. Use SPDX Tool to enhance the SBOM with extended information such as build tools
 
 ## Tool Manifest File
@@ -68,3 +68,5 @@ This example workflow:
       run: |
         dotnet spdx-tool run-workflow spdx-workflow.yaml
 ```
+
+[sbom-tool]: https://github.com/microsoft/sbom-tool
