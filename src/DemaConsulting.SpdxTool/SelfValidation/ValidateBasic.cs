@@ -1,4 +1,4 @@
-// Copyright (c) 2024 DEMA Consulting
+﻿// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,13 @@ internal static class ValidateBasic
     /// <param name="results">Test results</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result
+        // Report validation result to console
         context.WriteLine($"- SpdxTool_Validate: {(passed ? "Passed" : "Failed")}");
+        
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -60,7 +63,7 @@ internal static class ValidateBasic
             // Create the temporary validation folder
             Directory.CreateDirectory("validate.tmp");
 
-            // Run individual validation tests
+            // Run validation tests for both valid and invalid documents
             return DoValidateValid() && DoValidateInvalid();
         }
         finally
@@ -81,8 +84,7 @@ internal static class ValidateBasic
             """
             {
               "files": [],
-              "packages": [
-                {
+              "packages": [    {
                   "SPDXID": "SPDXRef-Package",
                   "name": "Test Package",
                   "versionInfo": "1.0.0",
@@ -91,8 +93,7 @@ internal static class ValidateBasic
                   "licenseConcluded": "MIT"
                 }
               ],
-              "relationships": [
-                {
+              "relationships": [    {
                   "spdxElementId": "SPDXRef-DOCUMENT",
                   "relatedSpdxElement": "SPDXRef-Package",
                   "relationshipType": "DESCRIBES"
@@ -110,7 +111,7 @@ internal static class ValidateBasic
             }
             """);
 
-        // Run validation without NTIA flag - should succeed
+        // Run validation without NTIA flag on valid document
         var exitCode = Validate.RunSpdxTool(
             "validate.tmp",
             [
@@ -119,7 +120,7 @@ internal static class ValidateBasic
                 "test-valid.spdx.json"
             ]);
 
-        // Should pass validation
+        // Validation should pass for valid document
         return exitCode == 0;
     }
 
@@ -134,8 +135,7 @@ internal static class ValidateBasic
             """
             {
               "files": [],
-              "packages": [
-                {
+              "packages": [    {
                   "name": "Test Package",
                   "versionInfo": "1.0.0",
                   "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
@@ -156,7 +156,7 @@ internal static class ValidateBasic
             }
             """);
 
-        // Run validation - should fail due to missing SPDXID
+        // Run validation on invalid document
         var exitCode = Validate.RunSpdxTool(
             "validate.tmp",
             [
@@ -166,12 +166,14 @@ internal static class ValidateBasic
                 "test-invalid.spdx.json"
             ]);
 
-        // Should fail validation
+        // Validation should fail for invalid document
         if (exitCode == 0)
             return false;
 
-        // Read the log file and verify it contains an error about the missing SPDXID
+        // Read the log file to verify error was reported
         var log = File.ReadAllText("validate.tmp/output.log");
+        
+        // Verify log contains error about missing SPDXID
         return log.Contains("Issues in test-invalid.spdx.json") || log.Contains("Package") || log.Contains("SPDXID");
     }
 }

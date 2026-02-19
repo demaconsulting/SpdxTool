@@ -1,4 +1,4 @@
-// Copyright (c) 2024 DEMA Consulting
+﻿// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,13 @@ internal static class ValidateDiagram
     /// <param name="results">Test results</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result
+        // Report validation result to console
         context.WriteLine($"- SpdxTool_Diagram: {(passed ? "Passed" : "Failed")}");
+        
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -65,8 +68,7 @@ internal static class ValidateDiagram
                 """
                 {
                   "files": [],
-                  "packages": [
-                    {
+                  "packages": [    {
                       "SPDXID": "SPDXRef-Application",
                       "name": "Test Application",
                       "versionInfo": "1.0.0",
@@ -81,8 +83,7 @@ internal static class ValidateDiagram
                       "licenseConcluded": "Apache-2.0"
                     }
                   ],
-                  "relationships": [
-                    {
+                  "relationships": [    {
                       "spdxElementId": "SPDXRef-DOCUMENT",
                       "relatedSpdxElement": "SPDXRef-Application",
                       "relationshipType": "DESCRIBES"
@@ -105,7 +106,7 @@ internal static class ValidateDiagram
                 }
                 """);
 
-            // Run the diagram command
+            // Run the diagram command to generate mermaid diagram
             var exitCode = Validate.RunSpdxTool(
                 "validate.tmp",
                 [
@@ -123,10 +124,10 @@ internal static class ValidateDiagram
             if (!File.Exists("validate.tmp/test-diagram.mermaid.txt"))
                 return false;
 
-            // Read and verify mermaid content
+            // Read the generated mermaid content
             var mermaid = File.ReadAllText("validate.tmp/test-diagram.mermaid.txt");
 
-            // Verify mermaid syntax and content
+            // Verify mermaid contains expected diagram syntax and content
             return mermaid.Contains("erDiagram") &&
                    mermaid.Contains("Test Application / 1.0.0") &&
                    mermaid.Contains("Test Library / 2.0.0") &&

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 DEMA Consulting
+﻿// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,13 @@ internal static class ValidateHash
     /// <param name="results">Test results</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result
+        // Report validation result to console
         context.WriteLine($"- SpdxTool_Hash: {(passed ? "Passed" : "Failed")}");
+        
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -60,6 +63,7 @@ internal static class ValidateHash
             // Create the temporary validation folder
             Directory.CreateDirectory("validate.tmp");
 
+            // Run both generation and verification validation tests
             return DoValidateGenerate() && DoValidateVerify();
         }
         finally
@@ -75,10 +79,10 @@ internal static class ValidateHash
     /// <returns>True on success</returns>
     private static bool DoValidateGenerate()
     {
-        // Write test file
+        // Write test file with known content
         File.WriteAllText("validate.tmp/test-file.txt", "The quick brown fox jumps over the lazy dog");
 
-        // Run hash generate command
+        // Run hash generate command to create SHA256 hash
         var exitCode = Validate.RunSpdxTool(
             "validate.tmp",
             [
@@ -93,12 +97,14 @@ internal static class ValidateHash
         if (exitCode != 0)
             return false;
 
-        // Verify hash file was created
+        // Verify hash file was created with expected naming
         if (!File.Exists("validate.tmp/test-file.txt.sha256"))
             return false;
 
-        // Verify hash content is correct
+        // Read the generated hash value
         var hash = File.ReadAllText("validate.tmp/test-file.txt.sha256");
+        
+        // Verify hash matches expected SHA256 value for the test content
         return hash == "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592";
     }
 
@@ -119,11 +125,11 @@ internal static class ValidateHash
                 "test-file.txt"
             ]);
 
-        // Should succeed with correct hash
+        // Verification should succeed with correct hash
         if (exitCode1 != 0)
             return false;
 
-        // Corrupt the hash file
+        // Corrupt the hash file with invalid hash value
         File.WriteAllText("validate.tmp/test-file.txt.sha256", "0000000000000000000000000000000000000000000000000000000000000000");
 
         // Run hash verify command with incorrect hash
@@ -137,7 +143,7 @@ internal static class ValidateHash
                 "test-file.txt"
             ]);
 
-        // Should fail with incorrect hash
+        // Verification should fail with incorrect hash
         return exitCode2 != 0;
     }
 }

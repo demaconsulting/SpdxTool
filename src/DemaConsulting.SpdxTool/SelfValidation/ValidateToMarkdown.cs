@@ -1,4 +1,4 @@
-// Copyright (c) 2024 DEMA Consulting
+﻿// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,13 @@ internal static class ValidateToMarkdown
     /// <param name="results">Test results</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result
+        // Report validation result to console
         context.WriteLine($"- SpdxTool_ToMarkdown: {(passed ? "Passed" : "Failed")}");
+        
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -65,8 +68,7 @@ internal static class ValidateToMarkdown
                 """
                 {
                   "files": [],
-                  "packages": [
-                    {
+                  "packages": [    {
                       "SPDXID": "SPDXRef-Application",
                       "name": "Test Application",
                       "versionInfo": "1.0.0",
@@ -81,8 +83,7 @@ internal static class ValidateToMarkdown
                       "licenseConcluded": "Apache-2.0"
                     }
                   ],
-                  "relationships": [
-                    {
+                  "relationships": [    {
                       "spdxElementId": "SPDXRef-DOCUMENT",
                       "relatedSpdxElement": "SPDXRef-Application",
                       "relationshipType": "DESCRIBES"
@@ -105,7 +106,7 @@ internal static class ValidateToMarkdown
                 }
                 """);
 
-            // Run the to-markdown command
+            // Run the to-markdown command to generate markdown summary
             var exitCode = Validate.RunSpdxTool(
                 "validate.tmp",
                 [
@@ -124,10 +125,10 @@ internal static class ValidateToMarkdown
             if (!File.Exists("validate.tmp/test-markdown.md"))
                 return false;
 
-            // Read and verify markdown content
+            // Read the generated markdown content
             var markdown = File.ReadAllText("validate.tmp/test-markdown.md");
 
-            // Verify markdown structure and content
+            // Verify markdown contains expected structure and package information
             return markdown.Contains("Test SBOM Summary") &&
                    markdown.Contains("Root Packages") &&
                    markdown.Contains("Packages") &&
