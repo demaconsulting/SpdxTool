@@ -72,7 +72,9 @@ public sealed class Validate : Command
     {
         // Report an error if for missing arguments
         if (args.Length == 0)
+        {
             throw new CommandUsageException("'validate' command missing arguments");
+        }
 
         // Process the arguments
         var spdxFile = args[0];
@@ -118,11 +120,16 @@ public sealed class Validate : Command
 
         // Skip if no issues detected
         if (issues.Count == 0)
+        {
             return;
+        }
 
         // Report issues
         foreach (var issue in issues)
+        {
             context.WriteWarning(issue);
+        }
+
         context.WriteLine("");
 
         // Throw error

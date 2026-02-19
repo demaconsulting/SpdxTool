@@ -102,7 +102,9 @@ public sealed class Context : IDisposable
     {
         // Write to the console unless silent
         if (!Silent)
+        {
             Console.WriteLine(text);
+        }
 
         // Write to the log if specified
         _log?.WriteLine(text);
@@ -244,7 +246,9 @@ public sealed class Context : IDisposable
     {
         // Move to the argument
         if (!arg.MoveNext())
+        {
             throw new InvalidOperationException(missingMessage);
+        }
 
         // Return the argument
         return arg.Current;

@@ -74,7 +74,9 @@ public sealed class RenameId : Command
     {
         // Report an error if the number of arguments is not 3
         if (args.Length != 3)
+        {
             throw new CommandUsageException("'rename-id' command missing arguments");
+        }
 
         // Rename the ID
         Rename(args[0], args[1], args[2]);
@@ -132,25 +134,35 @@ public sealed class RenameId : Command
     {
         // Skip if no rename
         if (oldId == newId)
+        {
             return;
+        }
 
         // Verify the old ID is valid
         if (oldId.Length == 0 || oldId == "SPDXRef-DOCUMENT")
+        {
             throw new CommandUsageException("Invalid old ID");
+        }
 
         // Verify the new ID is valid
         if (newId.Length == 0 || newId == "SPDXRef-DOCUMENT")
+        {
             throw new CommandUsageException("Invalid new ID");
+        }
 
         // Verify the IDs are different
         if (oldId == newId)
+        {
             throw new CommandUsageException("Old and new IDs are the same");
+        }
 
         // Verify ID is not in use
         if (Array.Exists(doc.Packages, p => p.Id == newId) ||
             Array.Exists(doc.Files, f => f.Id == newId) ||
             Array.Exists(doc.Snippets, s => s.Id == newId))
+        {
             throw new CommandErrorException($"Element ID {newId} is already used");
+        }
 
         // Update packages
         foreach (var package in doc.Packages)
@@ -160,16 +172,22 @@ public sealed class RenameId : Command
 
             // Rename files in package
             for (var i = 0; i < package.HasFiles.Length; ++i)
+            {
                 package.HasFiles[i] = UpdateId(package.HasFiles[i], oldId, newId);
+            }
         }
 
         // Update files
         foreach (var file in doc.Files)
+        {
             file.Id = UpdateId(file.Id, oldId, newId);
+        }
 
         // Update snippets
         foreach (var snippet in doc.Snippets)
+        {
             snippet.Id = UpdateId(snippet.Id, oldId, newId);
+        }
 
         // Update relationships
         foreach (var relationship in doc.Relationships)
@@ -183,7 +201,9 @@ public sealed class RenameId : Command
 
         // Update describes
         for (var i = 0; i < doc.Describes.Length; ++i)
+        {
             doc.Describes[i] = UpdateId(doc.Describes[i], oldId, newId);
+        }
     }
 
     /// <summary>

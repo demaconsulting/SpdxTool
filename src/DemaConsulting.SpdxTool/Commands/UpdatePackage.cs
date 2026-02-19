@@ -186,56 +186,78 @@ public sealed class UpdatePackage : Command
         // Get the 'name' input
         var name = GetMapString(map, "name", variables);
         if (name != null)
+        {
             updates["name"] = name;
+        }
 
         // Get the 'download' input
         var download = GetMapString(map, "download", variables);
         if (download != null)
+        {
             updates["download"] = download;
+        }
 
         // Get the 'version' input
         var version = GetMapString(map, "version", variables);
         if (version != null)
+        {
             updates["version"] = version;
+        }
 
         // Get the 'filename' input
         var filename = GetMapString(map, "filename", variables);
         if (filename != null)
+        {
             updates["filename"] = filename;
+        }
 
         // Get the 'supplier' input
         var supplier = GetMapString(map, "supplier", variables);
         if (supplier != null)
+        {
             updates["supplier"] = supplier;
+        }
 
         // Get the 'originator' input
         var originator = GetMapString(map, "originator", variables);
         if (originator != null)
+        {
             updates["originator"] = originator;
+        }
 
         // Get the 'homepage' input
         var homepage = GetMapString(map, "homepage", variables);
         if (homepage != null)
+        {
             updates["homepage"] = homepage;
+        }
 
         // Get the 'copyright' input
         var copyright = GetMapString(map, "copyright", variables);
         if (copyright != null)
+        {
             updates["copyright"] = copyright;
+        }
 
         // Get the 'summary' input
         var summary = GetMapString(map, "summary", variables);
         if (summary != null)
+        {
             updates["summary"] = summary;
+        }
 
         // Get the 'description' input
         var description = GetMapString(map, "description", variables);
         if (description != null)
+        {
             updates["description"] = description;
+        }
 
         // Get the 'license' input
         var license = GetMapString(map, "license", variables);
         if (license != null)
+        {
             updates["license"] = license;
+        }
     }
 }

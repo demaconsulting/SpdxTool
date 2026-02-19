@@ -82,7 +82,7 @@ public static class RelationshipDirectionExtensions
         { SpdxRelationshipType.PrerequisiteFor, RelationshipDirection.Child },
         { SpdxRelationshipType.HasPrerequisite, RelationshipDirection.Parent },
     };
-    
+
     /// <summary>
     ///     Get the direction of a relationship
     /// </summary>

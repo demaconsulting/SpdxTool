@@ -29,7 +29,7 @@ steps:
 
 ## Variables
 
-Variables may be declaredat the top of the workflow file in a parameters section, or may be created when used as
+Variables may be declared at the top of the workflow file in a parameters section, or may be created when used as
 an output in a workflow step.
 
 ```yaml

@@ -87,7 +87,9 @@ public sealed class AddRelationship : Command
     {
         // Report an error if the number of arguments is less than 4
         if (args.Length < 4)
+        {
             throw new CommandUsageException("'add-relationship' command missing arguments");
+        }
 
         var spdxFile = args[0];
         var relationship = new SpdxRelationship
@@ -119,7 +121,9 @@ public sealed class AddRelationship : Command
         // Get the 'replace' input
         var replaceText = GetMapString(inputs, "replace", variables) ?? "true";
         if (!bool.TryParse(replaceText, out var replace))
+        {
             throw new YamlException(step.Start, step.End, "'add-relationship' invalid 'replace' input");
+        }
 
         // Parse the relationships
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
@@ -183,7 +187,9 @@ public sealed class AddRelationship : Command
     {
         // Handle no relationships
         if (relationships == null)
+        {
             return [];
+        }
 
         // Parse each relationship
         return
@@ -191,8 +197,7 @@ public sealed class AddRelationship : Command
             ..relationships.Children.Select(node =>
             {
                 // Get the relationship map
-                if (node is not YamlMappingNode relationshipMap)
-                    throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping");
+                if (node is not YamlMappingNode relationshipMap) { throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping"); }
 
                 // Parse the relationship
                 return Parse(command, packageId, relationshipMap, variables);

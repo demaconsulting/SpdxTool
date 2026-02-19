@@ -71,7 +71,9 @@ public sealed class Print : Command
     public override void Run(Context context, string[] args)
     {
         foreach (var arg in args)
+        {
             context.WriteLine(arg);
+        }
     }
 
     /// <inheritdoc />

@@ -123,7 +123,9 @@ internal static class ValidateAddPackage
 
             // Fail if SpdxTool reported an error
             if (exitCode != 0)
+            {
                 return false;
+            }
 
             // Read the SPDX document
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/test.spdx.json"));
@@ -133,17 +135,17 @@ internal static class ValidateAddPackage
             {
                 Packages:
                 [
-                    { Id: "SPDXRef-Package-1" },
-                    { Id: "SPDXRef-Package-2" }
+                { Id: "SPDXRef-Package-1" },
+                { Id: "SPDXRef-Package-2" }
                 ],
                 Relationships:
                 [
                     _,
-                    {
-                        Id: "SPDXRef-Package-2",
-                        RelationshipType: SpdxRelationshipType.BuildToolOf,
-                        RelatedSpdxElement: "SPDXRef-Package-1"
-                    }
+                {
+                    Id: "SPDXRef-Package-2",
+                    RelationshipType: SpdxRelationshipType.BuildToolOf,
+                    RelatedSpdxElement: "SPDXRef-Package-1"
+                }
                 ]
             };
         }

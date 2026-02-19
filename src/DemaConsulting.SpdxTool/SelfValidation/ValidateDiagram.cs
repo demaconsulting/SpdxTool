@@ -18,15 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
 /// <summary>
-///     Self-validation of UpdatePackage
+///     Self-validation of Diagram command
 /// </summary>
-internal static class ValidateUpdatePackage
+internal static class ValidateDiagram
 {
     /// <summary>
     ///     Run validation test
@@ -35,15 +34,18 @@ internal static class ValidateUpdatePackage
     /// <param name="results">Test results</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result
-        context.WriteLine($"- SpdxTool_UpdatePackage: {(passed ? "Passed" : "Failed")}");
+        // Report validation result to console
+        context.WriteLine($"- SpdxTool_Diagram: {(passed ? "Passed" : "Failed")}");
+        
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
-                Name = "SpdxTool_UpdatePackage",
-                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateUpdatePackage",
+                Name = "SpdxTool_Diagram",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateDiagram",
                 ComputerName = Environment.MachineName,
                 StartTime = DateTime.Now,
                 Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
@@ -61,23 +63,35 @@ internal static class ValidateUpdatePackage
             // Create the temporary validation folder
             Directory.CreateDirectory("validate.tmp");
 
-            // Write test SPDX file
-            File.WriteAllText("validate.tmp/test.spdx.json",
+            // Write test SPDX file with packages and relationships
+            File.WriteAllText("validate.tmp/test-diagram.spdx.json",
                 """
                 {
                   "files": [],
                   "packages": [    {
-                      "SPDXID": "SPDXRef-Package-1",
-                      "name": "Test Package",
+                      "SPDXID": "SPDXRef-Application",
+                      "name": "Test Application",
                       "versionInfo": "1.0.0",
                       "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
                       "licenseConcluded": "MIT"
+                    },
+                    {
+                      "SPDXID": "SPDXRef-Library",
+                      "name": "Test Library",
+                      "versionInfo": "2.0.0",
+                      "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                      "licenseConcluded": "Apache-2.0"
                     }
                   ],
                   "relationships": [    {
                       "spdxElementId": "SPDXRef-DOCUMENT",
-                      "relatedSpdxElement": "SPDXRef-Package-1",
+                      "relatedSpdxElement": "SPDXRef-Application",
                       "relationshipType": "DESCRIBES"
+                    },
+                    {
+                      "spdxElementId": "SPDXRef-Application",
+                      "relatedSpdxElement": "SPDXRef-Library",
+                      "relationshipType": "DEPENDS_ON"
                     }
                   ],
                   "spdxVersion": "SPDX-2.2",
@@ -88,40 +102,18 @@ internal static class ValidateUpdatePackage
                   "creationInfo": {
                     "created": "2021-10-01T00:00:00Z",
                     "creators": [ "Person: Malcolm Nixon" ]
-                  },
-                  "documentDescribes": [ "SPDXRef-Package-1" ]
+                  }
                 }
                 """);
 
-            // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
-                """
-                steps:
-                - command: update-package
-                  inputs:
-                    spdx: test.spdx.json
-                    package:
-                      id: SPDXRef-Package-1
-                      name: New package name
-                      download: https://new.package.download
-                      version: 2.0.0
-                      filename: new.zip
-                      supplier: New Supplier
-                      originator: New Originator
-                      homepage: https://new.package.org
-                      copyright: Copyright New Package Maker
-                      summary: New Package
-                      description: A new package description
-                      license: MIT v2
-                """);
-
-            // Run the workflow file
+            // Run the diagram command to generate mermaid diagram
             var exitCode = Validate.RunSpdxTool(
                 "validate.tmp",
                 [
                     "--silent",
-                    "run-workflow",
-                    "workflow.yaml"
+                    "diagram",
+                    "test-diagram.spdx.json",
+                    "test-diagram.mermaid.txt"
                 ]);
 
             // Fail if SpdxTool reported an error
@@ -130,31 +122,20 @@ internal static class ValidateUpdatePackage
                 return false;
             }
 
-            // Read the SPDX document
-            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/test.spdx.json"));
-
-            // Verify expected SPDX content
-            return doc is
+            // Verify the mermaid file was created
+            if (!File.Exists("validate.tmp/test-diagram.mermaid.txt"))
             {
-                Packages:
-                [
-                    {
-                        Id: "SPDXRef-Package-1",
-                        Name: "New package name",
-                        DownloadLocation: "https://new.package.download",
-                        Version: "2.0.0",
-                        FileName: "new.zip",
-                        Supplier: "New Supplier",
-                        Originator: "New Originator",
-                        HomePage: "https://new.package.org",
-                        CopyrightText: "Copyright New Package Maker",
-                        Summary: "New Package",
-                        Description: "A new package description",
-                        ConcludedLicense: "MIT v2",
-                        DeclaredLicense: "MIT v2"
-                    }
-                ]
-            };
+                return false;
+            }
+
+            // Read the generated mermaid content
+            var mermaid = File.ReadAllText("validate.tmp/test-diagram.mermaid.txt");
+
+            // Verify mermaid contains expected diagram syntax and content
+            return mermaid.Contains("erDiagram") &&
+                   mermaid.Contains("Test Application / 1.0.0") &&
+                   mermaid.Contains("Test Library / 2.0.0") &&
+                   mermaid.Contains("DEPENDS_ON");
         }
         finally
         {

@@ -111,7 +111,7 @@ public static class Program
             if (CommandsRegistry.Commands.TryGetValue(command, out var entry))
             {
                 // Run the command
-                entry.Instance.Run(context, [..context.Arguments.Skip(1)]);
+                entry.Instance.Run(context, [.. context.Arguments.Skip(1)]);
             }
             else
             {
@@ -159,6 +159,8 @@ public static class Program
             Commands:
             """);
         foreach (var command in CommandsRegistry.Commands.Values)
+        {
             context.WriteLine($"  {command.CommandLine,-40} {command.Summary}");
+        }
     }
 }

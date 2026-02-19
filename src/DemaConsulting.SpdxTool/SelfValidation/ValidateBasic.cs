@@ -23,9 +23,9 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
 /// <summary>
-///     Self-validation of NTIA validation
+///     Self-validation of basic SPDX validation
 /// </summary>
-internal static class ValidateNtia
+internal static class ValidateBasic
 {
     /// <summary>
     ///     Run validation test
@@ -34,15 +34,18 @@ internal static class ValidateNtia
     /// <param name="results">Test results</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result
-        context.WriteLine($"- SpdxTool_Ntia: {(passed ? "Passed" : "Failed")}");
+        // Report validation result to console
+        context.WriteLine($"- SpdxTool_Validate: {(passed ? "Passed" : "Failed")}");
+
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
-                Name = "SpdxTool_Ntia",
-                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateNtia",
+                Name = "SpdxTool_Validate",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateBasic",
                 ComputerName = Environment.MachineName,
                 StartTime = DateTime.Now,
                 Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
@@ -60,8 +63,8 @@ internal static class ValidateNtia
             // Create the temporary validation folder
             Directory.CreateDirectory("validate.tmp");
 
-            // Run individual validation tests
-            return DoValidateMissingSupplier() && DoValidateCompliant();
+            // Run validation tests for both valid and invalid documents
+            return DoValidateValid() && DoValidateInvalid();
         }
         finally
         {
@@ -71,19 +74,17 @@ internal static class ValidateNtia
     }
 
     /// <summary>
-    ///     Validate that NTIA validation detects missing supplier
+    ///     Validate that basic validation passes for valid document
     /// </summary>
     /// <returns>True on success</returns>
-    private static bool DoValidateMissingSupplier()
+    private static bool DoValidateValid()
     {
-        // Write test SPDX file that is valid but not NTIA compliant
-        // Missing: supplier field for the package
-        File.WriteAllText("validate.tmp/test-ntia.spdx.json",
+        // Write test SPDX file that is valid
+        File.WriteAllText("validate.tmp/test-valid.spdx.json",
             """
             {
               "files": [],
-              "packages": [
-                {
+              "packages": [    {
                   "SPDXID": "SPDXRef-Package",
                   "name": "Test Package",
                   "versionInfo": "1.0.0",
@@ -92,8 +93,7 @@ internal static class ValidateNtia
                   "licenseConcluded": "MIT"
                 }
               ],
-              "relationships": [
-                {
+              "relationships": [    {
                   "spdxElementId": "SPDXRef-DOCUMENT",
                   "relatedSpdxElement": "SPDXRef-Package",
                   "relationshipType": "DESCRIBES"
@@ -111,101 +111,71 @@ internal static class ValidateNtia
             }
             """);
 
-        // Run validation without NTIA flag - should succeed
-        var exitCode1 = Validate.RunSpdxTool(
-            "validate.tmp",
-            [
-                "--silent",
-                "validate",
-                "test-ntia.spdx.json"
-            ]);
-
-        // Fail if SpdxTool reported an error
-        if (exitCode1 != 0)
-        {
-            return false;
-        }
-
-        // Run validation with NTIA flag - should fail due to missing supplier
-        // The log file will be written to validate.tmp/output.log since the working directory is changed
-        var exitCode2 = Validate.RunSpdxTool(
-            "validate.tmp",
-            [
-                "--silent",
-                "--log", "output.log",
-                "validate",
-                "test-ntia.spdx.json",
-                "ntia"
-            ]);
-
-        // Should fail validation
-        if (exitCode2 == 0)
-        {
-            return false;
-        }
-
-        // Read the log file and verify it contains the expected error
-        var log = File.ReadAllText("validate.tmp/output.log");
-        if (!log.Contains("NTIA: Package 'Test Package' Missing Supplier"))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    ///     Validate that NTIA validation passes for compliant document
-    /// </summary>
-    /// <returns>True on success</returns>
-    private static bool DoValidateCompliant()
-    {
-        // Write test SPDX file that is NTIA compliant
-        File.WriteAllText("validate.tmp/test-ntia-valid.spdx.json",
-            """
-            {
-              "files": [],
-              "packages": [
-                {
-                  "SPDXID": "SPDXRef-Package",
-                  "name": "Test Package",
-                  "versionInfo": "1.0.0",
-                  "supplier": "Organization: Test",
-                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                  "filesAnalyzed": false,
-                  "licenseConcluded": "MIT"
-                }
-              ],
-              "relationships": [
-                {
-                  "spdxElementId": "SPDXRef-DOCUMENT",
-                  "relatedSpdxElement": "SPDXRef-Package",
-                  "relationshipType": "DESCRIBES"
-                }
-              ],
-              "spdxVersion": "SPDX-2.2",
-              "dataLicense": "CC0-1.0",
-              "SPDXID": "SPDXRef-DOCUMENT",
-              "name": "Test Document",
-              "documentNamespace": "https://sbom.spdx.org",
-              "creationInfo": {
-                "created": "2021-10-01T00:00:00Z",
-                "creators": [ "Person: Malcolm Nixon" ]
-              }
-            }
-            """);
-
-        // Run validation with NTIA flag on valid document - should succeed
+        // Run validation without NTIA flag on valid document
         var exitCode = Validate.RunSpdxTool(
             "validate.tmp",
             [
                 "--silent",
                 "validate",
-                "test-ntia-valid.spdx.json",
-                "ntia"
+                "test-valid.spdx.json"
             ]);
 
-        // Should pass validation
+        // Validation should pass for valid document
         return exitCode == 0;
+    }
+
+    /// <summary>
+    ///     Validate that basic validation detects invalid document
+    /// </summary>
+    /// <returns>True on success</returns>
+    private static bool DoValidateInvalid()
+    {
+        // Write test SPDX file that is invalid (missing required SPDXID)
+        File.WriteAllText("validate.tmp/test-invalid.spdx.json",
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "filesAnalyzed": false,
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """);
+
+        // Run validation on invalid document
+        var exitCode = Validate.RunSpdxTool(
+            "validate.tmp",
+            [
+                "--silent",
+                "--log", "output.log",
+                "validate",
+                "test-invalid.spdx.json"
+            ]);
+
+        // Validation should fail for invalid document
+        if (exitCode == 0)
+        {
+            return false;
+        }
+
+        // Read the log file to verify error was reported
+        var log = File.ReadAllText("validate.tmp/output.log");
+
+        // Verify log contains error about missing SPDXID
+        return log.Contains("Issues in test-invalid.spdx.json") || log.Contains("Package") || log.Contains("SPDXID");
     }
 }

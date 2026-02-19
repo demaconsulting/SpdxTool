@@ -16,7 +16,7 @@ contributing to this project.
 ## Code of Conduct
 
 This project adheres to a Code of Conduct that all contributors are expected to follow. Please read
-[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
+[CODE_OF_CONDUCT.md][code-of-conduct] before contributing.
 
 ## Getting Started
 
@@ -231,9 +231,9 @@ Contributors do not need to worry about versioning or releases.
 
 ## Additional Resources
 
-- [SPDX Specification](https://spdx.dev/)
-- [.NET Coding Conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
-- [MSTest Documentation](https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-mstest)
+- [SPDX Specification][spdx-spec]
+- [.NET Coding Conventions][dotnet-conventions]
+- [MSTest Documentation][mstest-docs]
 
 ## Questions?
 
@@ -245,3 +245,8 @@ If you have questions about contributing, please:
 4. Contact the maintainers
 
 Thank you for contributing to SpdxTool!
+
+[code-of-conduct]: CODE_OF_CONDUCT.md
+[spdx-spec]: https://spdx.dev/
+[dotnet-conventions]: https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions
+[mstest-docs]: https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-mstest

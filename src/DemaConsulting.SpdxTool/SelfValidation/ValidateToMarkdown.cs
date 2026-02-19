@@ -18,15 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DemaConsulting.SpdxModel.IO;
 using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
 
 /// <summary>
-///     Self-validation of UpdatePackage
+///     Self-validation of ToMarkdown command
 /// </summary>
-internal static class ValidateUpdatePackage
+internal static class ValidateToMarkdown
 {
     /// <summary>
     ///     Run validation test
@@ -35,15 +34,18 @@ internal static class ValidateUpdatePackage
     /// <param name="results">Test results</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result
-        context.WriteLine($"- SpdxTool_UpdatePackage: {(passed ? "Passed" : "Failed")}");
+        // Report validation result to console
+        context.WriteLine($"- SpdxTool_ToMarkdown: {(passed ? "Passed" : "Failed")}");
+        
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
-                Name = "SpdxTool_UpdatePackage",
-                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateUpdatePackage",
+                Name = "SpdxTool_ToMarkdown",
+                ClassName = "DemaConsulting.SpdxTool.SelfValidation.ValidateToMarkdown",
                 ComputerName = Environment.MachineName,
                 StartTime = DateTime.Now,
                 Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
@@ -61,23 +63,35 @@ internal static class ValidateUpdatePackage
             // Create the temporary validation folder
             Directory.CreateDirectory("validate.tmp");
 
-            // Write test SPDX file
-            File.WriteAllText("validate.tmp/test.spdx.json",
+            // Write test SPDX file with packages and relationships
+            File.WriteAllText("validate.tmp/test-markdown.spdx.json",
                 """
                 {
                   "files": [],
                   "packages": [    {
-                      "SPDXID": "SPDXRef-Package-1",
-                      "name": "Test Package",
+                      "SPDXID": "SPDXRef-Application",
+                      "name": "Test Application",
                       "versionInfo": "1.0.0",
                       "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
                       "licenseConcluded": "MIT"
+                    },
+                    {
+                      "SPDXID": "SPDXRef-Library",
+                      "name": "Test Library",
+                      "versionInfo": "2.0.0",
+                      "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                      "licenseConcluded": "Apache-2.0"
                     }
                   ],
                   "relationships": [    {
                       "spdxElementId": "SPDXRef-DOCUMENT",
-                      "relatedSpdxElement": "SPDXRef-Package-1",
+                      "relatedSpdxElement": "SPDXRef-Application",
                       "relationshipType": "DESCRIBES"
+                    },
+                    {
+                      "spdxElementId": "SPDXRef-Application",
+                      "relatedSpdxElement": "SPDXRef-Library",
+                      "relationshipType": "CONTAINS"
                     }
                   ],
                   "spdxVersion": "SPDX-2.2",
@@ -88,40 +102,19 @@ internal static class ValidateUpdatePackage
                   "creationInfo": {
                     "created": "2021-10-01T00:00:00Z",
                     "creators": [ "Person: Malcolm Nixon" ]
-                  },
-                  "documentDescribes": [ "SPDXRef-Package-1" ]
+                  }
                 }
                 """);
 
-            // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
-                """
-                steps:
-                - command: update-package
-                  inputs:
-                    spdx: test.spdx.json
-                    package:
-                      id: SPDXRef-Package-1
-                      name: New package name
-                      download: https://new.package.download
-                      version: 2.0.0
-                      filename: new.zip
-                      supplier: New Supplier
-                      originator: New Originator
-                      homepage: https://new.package.org
-                      copyright: Copyright New Package Maker
-                      summary: New Package
-                      description: A new package description
-                      license: MIT v2
-                """);
-
-            // Run the workflow file
+            // Run the to-markdown command to generate markdown summary
             var exitCode = Validate.RunSpdxTool(
                 "validate.tmp",
                 [
                     "--silent",
-                    "run-workflow",
-                    "workflow.yaml"
+                    "to-markdown",
+                    "test-markdown.spdx.json",
+                    "test-markdown.md",
+                    "Test SBOM Summary"
                 ]);
 
             // Fail if SpdxTool reported an error
@@ -130,31 +123,23 @@ internal static class ValidateUpdatePackage
                 return false;
             }
 
-            // Read the SPDX document
-            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/test.spdx.json"));
-
-            // Verify expected SPDX content
-            return doc is
+            // Verify the markdown file was created
+            if (!File.Exists("validate.tmp/test-markdown.md"))
             {
-                Packages:
-                [
-                    {
-                        Id: "SPDXRef-Package-1",
-                        Name: "New package name",
-                        DownloadLocation: "https://new.package.download",
-                        Version: "2.0.0",
-                        FileName: "new.zip",
-                        Supplier: "New Supplier",
-                        Originator: "New Originator",
-                        HomePage: "https://new.package.org",
-                        CopyrightText: "Copyright New Package Maker",
-                        Summary: "New Package",
-                        Description: "A new package description",
-                        ConcludedLicense: "MIT v2",
-                        DeclaredLicense: "MIT v2"
-                    }
-                ]
-            };
+                return false;
+            }
+
+            // Read the generated markdown content
+            var markdown = File.ReadAllText("validate.tmp/test-markdown.md");
+
+            // Verify markdown contains expected structure and package information
+            return markdown.Contains("Test SBOM Summary") &&
+                   markdown.Contains("Root Packages") &&
+                   markdown.Contains("Packages") &&
+                   markdown.Contains("Test Application") &&
+                   markdown.Contains("1.0.0") &&
+                   markdown.Contains("Test Library") &&
+                   markdown.Contains("2.0.0");
         }
         finally
         {

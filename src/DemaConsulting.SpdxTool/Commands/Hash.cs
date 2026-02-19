@@ -74,7 +74,9 @@ public sealed class Hash : Command
     {
         // Report an error if the number of arguments is not 3
         if (args.Length != 3)
+        {
             throw new CommandUsageException("'hash' command missing arguments");
+        }
 
         // Do the hash operation
         var operation = args[0];
@@ -117,7 +119,9 @@ public sealed class Hash : Command
     {
         // Check the algorithm
         if (algorithm != "sha256")
+        {
             throw new CommandUsageException($"'hash' command invalid algorithm '{algorithm}'");
+        }
 
         // Process the operation
         switch (operation)
@@ -159,7 +163,9 @@ public sealed class Hash : Command
         // Check the hash file exists
         var hashFile = file + ".sha256";
         if (!File.Exists(hashFile))
+        {
             throw new CommandErrorException($"Error: Could not find file '{hashFile}'");
+        }
 
         // Read the digest
         var digest = File.ReadAllText(hashFile).Trim();
@@ -169,7 +175,9 @@ public sealed class Hash : Command
 
         // Verify the digest
         if (digest != calculated)
+        {
             throw new CommandErrorException($"Sha256 hash mismatch for '{file}'");
+        }
 
         // Report the digest is OK
         context.WriteLine($"Sha256 Digest OK for '{file}'");
@@ -185,7 +193,9 @@ public sealed class Hash : Command
     {
         // Check the hash file exists
         if (!File.Exists(file))
+        {
             throw new CommandErrorException($"Error: Could not find file '{file}'");
+        }
 
         try
         {

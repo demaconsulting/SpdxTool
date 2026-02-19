@@ -71,16 +71,20 @@ public sealed class Diagram : Command
     {
         // Report an error if the number of arguments is less than 2
         if (args.Length < 2)
+        {
             throw new CommandUsageException("'diagram' command invalid arguments");
+        }
 
         // Check for options
         var tools = false;
         foreach (var option in args.Skip(2))
+        {
             tools = option switch
             {
                 "tools" => true,
                 _ => throw new CommandUsageException($"'diagram' command invalid option {option}")
             };
+        }
 
         // Generate the diagram
         GenerateDiagram(args[0], args[1], tools);
@@ -103,7 +107,9 @@ public sealed class Diagram : Command
         // Get the 'tools' input
         var toolsText = GetMapString(inputs, "tools", variables) ?? "false";
         if (!bool.TryParse(toolsText, out var tools))
+        {
             throw new YamlException(step.Start, step.End, "'diagram' invalid 'tools' input");
+        }
 
         // Generate the diagram
         GenerateDiagram(spdxFile, mermaidFile, tools);

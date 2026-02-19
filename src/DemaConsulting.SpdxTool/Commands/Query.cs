@@ -78,10 +78,12 @@ public sealed class Query : Command
     {
         // Report an error if the number of arguments is not 1
         if (args.Length < 2)
+        {
             throw new CommandUsageException("'query' command missing arguments");
+        }
 
         // Generate the markdown
-        var found = QueryProgramOutput(args[0], args[1], [..args.Skip(2)]);
+        var found = QueryProgramOutput(args[0], args[1], [.. args.Skip(2)]);
 
         // Write the found value
         context.WriteLine(found);
@@ -131,7 +133,9 @@ public sealed class Query : Command
         // Construct the regular expression
         var regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
         if (!regex.GetGroupNames().Contains("value"))
+        {
             throw new CommandUsageException("Pattern must contain a 'value' capture group");
+        }
 
         // Construct the process start information
         var startInfo = new ProcessStartInfo(program)
@@ -144,7 +148,9 @@ public sealed class Query : Command
 
         // Add the arguments
         foreach (var argument in arguments)
+        {
             startInfo.ArgumentList.Add(argument);
+        }
 
         // Start the process
         using var process = new Process { StartInfo = startInfo };
@@ -174,7 +180,9 @@ public sealed class Query : Command
             .FirstOrDefault(val => !string.IsNullOrEmpty(val));
 
         if (value != null)
+        {
             return value;
+        }
 
         // Match not found in program output
         throw new CommandErrorException($"Pattern '{pattern}' not found in program output");

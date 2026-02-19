@@ -38,7 +38,9 @@ public static class SpdxHelpers
     {
         // Verify to file exists
         if (!File.Exists(spdxFile))
+        {
             throw new CommandUsageException($"File not found: {spdxFile}");
+        }
 
         // Load the SPDX document
         var fileContent = File.ReadAllText(spdxFile);
@@ -57,7 +59,9 @@ public static class SpdxHelpers
 
         // Add this tool if missing
         if (!doc.CreationInformation.Creators.Contains(toolName))
-            doc.CreationInformation.Creators = [..doc.CreationInformation.Creators.Append(toolName)];
+        {
+            doc.CreationInformation.Creators = [.. doc.CreationInformation.Creators.Append(toolName)];
+        }
 
         // Save the document
         var serializedContent = Spdx2JsonSerializer.Serialize(doc);
