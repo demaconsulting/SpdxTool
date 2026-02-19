@@ -59,12 +59,16 @@ public static class Validate
         // Run validation tests
         ValidateAddPackage.Run(context, results);
         ValidateAddRelationship.Run(context, results);
+        ValidateBasic.Run(context, results);
         ValidateCopyPackage.Run(context, results);
+        ValidateDiagram.Run(context, results);
         ValidateFindPackage.Run(context, results);
         ValidateGetVersion.Run(context, results);
+        ValidateHash.Run(context, results);
         ValidateNtia.Run(context, results);
         ValidateQuery.Run(context, results);
         ValidateRenameId.Run(context, results);
+        ValidateToMarkdown.Run(context, results);
         ValidateUpdatePackage.Run(context, results);
 
         // If all validations succeeded (no errors) then report validation passed

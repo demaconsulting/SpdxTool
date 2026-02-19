@@ -96,15 +96,19 @@ public class SelfValidationTests
             Assert.Contains("SpdxTool_AddPackage", results);
             Assert.Contains("SpdxTool_AddRelationship", results);
             Assert.Contains("SpdxTool_CopyPackage", results);
+            Assert.Contains("SpdxTool_Diagram", results);
             Assert.Contains("SpdxTool_FindPackage", results);
             Assert.Contains("SpdxTool_GetVersion", results);
+            Assert.Contains("SpdxTool_Hash", results);
             Assert.Contains("SpdxTool_Ntia", results);
             Assert.Contains("SpdxTool_Query", results);
             Assert.Contains("SpdxTool_RenameId", results);
+            Assert.Contains("SpdxTool_ToMarkdown", results);
             Assert.Contains("SpdxTool_UpdatePackage", results);
+            Assert.Contains("SpdxTool_Validate", results);
             Assert.Contains("""
                                              <ResultSummary outcome="Completed">
-                                               <Counters total="9" executed="9" passed="9" failed="0" />
+                                               <Counters total="13" executed="13" passed="13" failed="0" />
                                              </ResultSummary>
                                            """, results);
         }
