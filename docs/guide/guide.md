@@ -1,7 +1,3 @@
-# SpdxTool User Guide
-
-<!-- markdownlint-disable MD025 -->
-
 # Introduction
 
 SpdxTool is a .NET tool for manipulating SPDX (Software Package Data Exchange) SBOM (Software Bill of Materials)
