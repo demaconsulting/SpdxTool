@@ -1,12 +1,10 @@
-# SpdxTool User Guide
-
-## Introduction
+# Introduction
 
 SpdxTool is a .NET tool for manipulating SPDX (Software Package Data Exchange) SBOM (Software Bill of Materials)
 files. This guide provides comprehensive documentation for installing, configuring, and using SpdxTool in your
 software development and compliance workflows.
 
-### Purpose
+## Purpose
 
 SpdxTool simplifies the process of working with SPDX SBOM files by:
 
@@ -16,7 +14,22 @@ SpdxTool simplifies the process of working with SPDX SBOM files by:
 * Facilitating compliance and security analysis
 * Enabling integration with CI/CD pipelines
 
-### Key Features
+## Scope
+
+This guide covers the installation, configuration, and usage of SpdxTool, including:
+
+* Installation prerequisites and methods
+* Command-line interface and general syntax
+* Core commands for SPDX operations
+* Workflow files for automation
+* Self-validation capabilities
+* CI/CD integration with GitHub Actions and Azure DevOps
+* Common use cases and examples
+* Best practices for SPDX document management, workflows, and security
+* Troubleshooting and debug techniques
+* Reference materials and additional resources
+
+## Key Features
 
 * **Command-Line Interface**: Rich set of commands for SPDX operations
 * **Workflow Automation**: YAML-based workflow files for complex operations
@@ -27,18 +40,18 @@ SpdxTool simplifies the process of working with SPDX SBOM files by:
 * **Mermaid Diagrams**: Visualize SPDX relationships as diagrams
 * **Self-Validation**: Built-in validation for tool qualification
 
-## Installation
+# Installation
 
-### Prerequisites
+## Prerequisites
 
 Before installing SpdxTool, ensure you have:
 
 * **.NET SDK**: Version 8.0 or later
 * **Operating System**: Windows, Linux, or macOS
 
-### Installation Methods
+## Installation Methods
 
-#### Local Installation
+### Local Installation
 
 To add SpdxTool to a .NET tool manifest file:
 
@@ -53,7 +66,7 @@ The tool can then be executed by:
 dotnet spdx-tool <arguments>
 ```
 
-#### Global Installation
+### Global Installation
 
 For global installation across all projects:
 
@@ -67,7 +80,7 @@ Then execute directly:
 spdx-tool <arguments>
 ```
 
-### Verifying Installation
+## Verifying Installation
 
 To verify SpdxTool is installed correctly:
 
@@ -77,9 +90,9 @@ dotnet spdx-tool --version
 
 This will display the installed version number.
 
-## Command-Line Usage
+# Command-Line Usage
 
-### General Syntax
+## General Syntax
 
 The general command-line syntax is:
 
@@ -87,7 +100,7 @@ The general command-line syntax is:
 spdx-tool [options] <command> [arguments]
 ```
 
-### Global Options
+## Global Options
 
 * `-h, --help` - Show help message and exit
 * `-v, --version` - Show version information and exit
@@ -96,7 +109,7 @@ spdx-tool [options] <command> [arguments]
 * `--validate` - Perform self-validation
 * `-r, --result <file>` - Self-validation result TRX file
 
-### Available Commands
+## Available Commands
 
 * `help <command>` - Display extended help about a command
 * `add-package` - Add package to SPDX document (workflow only)
@@ -115,7 +128,7 @@ spdx-tool [options] <command> [arguments]
 * `update-package` - Update package in SPDX document (workflow only)
 * `validate <spdx.json> [ntia]` - Validate SPDX document for issues
 
-### Getting Command Help
+## Getting Command Help
 
 To get detailed help for any command:
 
@@ -129,9 +142,9 @@ For example:
 dotnet spdx-tool help validate
 ```
 
-## Core Commands
+# Core Commands
 
-### Validate Command
+## Validate Command
 
 The `validate` command checks an SPDX document for correctness and optionally for NTIA compliance.
 
@@ -148,7 +161,7 @@ dotnet spdx-tool validate manifest.spdx.json
 dotnet spdx-tool validate manifest.spdx.json ntia
 ```
 
-### Add Relationship Command
+## Add Relationship Command
 
 The `add-relationship` command adds relationships between SPDX elements.
 
@@ -164,7 +177,7 @@ spdx-tool add-relationship <spdx.json> <id> <type> <element> [comment]
 dotnet spdx-tool add-relationship manifest.spdx.json SPDXRef-Package DEPENDS_ON SPDXRef-Library
 ```
 
-### Find Package Command
+## Find Package Command
 
 The `find-package` command locates a package in an SPDX document based on criteria.
 
@@ -181,7 +194,7 @@ dotnet spdx-tool find-package manifest.spdx.json name=MyPackage
 dotnet spdx-tool find-package manifest.spdx.json version=1.0.0
 ```
 
-### Get Version Command
+## Get Version Command
 
 The `get-version` command retrieves the version of a package in an SPDX document.
 
@@ -197,7 +210,7 @@ spdx-tool get-version <spdx.json> [criteria]
 dotnet spdx-tool get-version manifest.spdx.json id=SPDXRef-Package
 ```
 
-### To Markdown Command
+## To Markdown Command
 
 The `to-markdown` command generates a human-readable markdown summary of an SPDX document.
 
@@ -213,7 +226,7 @@ spdx-tool to-markdown <spdx.json> <out.md> [title] [depth]
 dotnet spdx-tool to-markdown manifest.spdx.json summary.md "SBOM Summary"
 ```
 
-### Diagram Command
+## Diagram Command
 
 The `diagram` command generates a mermaid diagram visualizing SPDX relationships.
 
@@ -229,7 +242,7 @@ spdx-tool diagram <spdx.json> <mermaid.txt>
 dotnet spdx-tool diagram manifest.spdx.json diagram.mmd
 ```
 
-### Hash Command
+## Hash Command
 
 The `hash` command generates or verifies file hashes.
 
@@ -246,7 +259,7 @@ dotnet spdx-tool hash generate sha256 myfile.txt
 dotnet spdx-tool hash verify sha256 myfile.txt
 ```
 
-## Workflow Files
+# Workflow Files
 
 While many SpdxTool commands can be executed from the command line, the normal use of the tool is through YAML
 workflow files. These files have the benefit of:
@@ -256,7 +269,7 @@ workflow files. These files have the benefit of:
 * Complex multi-step operations
 * Reusable automation scripts
 
-### Basic Structure
+## Basic Structure
 
 SpdxTool workflow files have the following basic structure:
 
@@ -277,7 +290,7 @@ steps:
     input2: ${{ parameter-name }}
 ```
 
-### Running Workflow Files
+## Running Workflow Files
 
 To execute a workflow file:
 
@@ -291,7 +304,7 @@ To override parameters:
 dotnet spdx-tool run-workflow workflow.yaml parameter1=value1 parameter2=value2
 ```
 
-### Variables
+## Variables
 
 Variables can be declared at the top of the workflow file:
 
@@ -327,9 +340,9 @@ steps:
     - Package version is ${{ package-version }}
 ```
 
-### Workflow Commands
+## Workflow Commands
 
-#### Add Package
+### Add Package
 
 Add a new package to an SPDX document:
 
@@ -348,7 +361,7 @@ Add a new package to an SPDX document:
       element: SPDXRef-Document
 ```
 
-#### Update Package
+### Update Package
 
 Update an existing package in an SPDX document:
 
@@ -362,7 +375,7 @@ Update an existing package in an SPDX document:
       download: https://example.com/package-v2.tar.gz
 ```
 
-#### Copy Package
+### Copy Package
 
 Copy a package from one SPDX document to another:
 
@@ -376,7 +389,7 @@ Copy a package from one SPDX document to another:
     files: true
 ```
 
-#### Query Command
+### Query Command
 
 Query information from program output:
 
@@ -390,7 +403,7 @@ Query information from program output:
     - '--version'
 ```
 
-#### Set Variable
+### Set Variable
 
 Set a workflow variable:
 
@@ -401,7 +414,7 @@ Set a workflow variable:
     output: message
 ```
 
-#### Print Command
+### Print Command
 
 Print text to the console:
 
@@ -413,7 +426,7 @@ Print text to the console:
     - File: ${{ spdx-file }}
 ```
 
-### Example Workflow
+## Example Workflow
 
 Here's a complete workflow example that validates an SPDX document and generates a summary:
 
@@ -451,14 +464,14 @@ steps:
     - Summary generated at ${{ output-file }}
 ```
 
-## Self-Validation
+# Self-Validation
 
-### Validation Purpose
+## Validation Purpose
 
 Self-validation produces a report demonstrating that SpdxTool is functioning correctly. This is useful in regulated
 industries where tool validation evidence is required.
 
-### Running Validation
+## Running Validation
 
 To perform self-validation:
 
@@ -478,7 +491,7 @@ To generate a TRX test results file:
 dotnet spdx-tool --validate --result validation.trx
 ```
 
-### Validation Report
+## Validation Report
 
 The validation report contains:
 
@@ -516,7 +529,7 @@ Tests:
 Validation Passed
 ```
 
-### Validation Failure
+## Validation Failure
 
 On validation failure:
 
@@ -524,9 +537,9 @@ On validation failure:
 * The report indicates which validation tests failed
 * Error messages provide diagnostic information
 
-## CI/CD Integration
+# CI/CD Integration
 
-### GitHub Actions
+## GitHub Actions
 
 Example GitHub Actions workflow:
 
@@ -568,7 +581,7 @@ jobs:
             sbom-summary.md
 ```
 
-### Azure DevOps
+## Azure DevOps
 
 Example Azure DevOps pipeline:
 
@@ -602,9 +615,9 @@ steps:
       artifactName: 'sbom'
 ```
 
-## Use Cases
+# Use Cases
 
-### SBOM Generation and Validation
+## SBOM Generation and Validation
 
 A common workflow for generating and validating SBOMs:
 
@@ -634,7 +647,7 @@ steps:
     title: Software Bill of Materials
 ```
 
-### Dependency Version Tracking
+## Dependency Version Tracking
 
 Track and update dependency versions:
 
@@ -668,7 +681,7 @@ steps:
       version: ${{ dotnet-version }}
 ```
 
-### Multi-Document SBOM Assembly
+## Multi-Document SBOM Assembly
 
 Combine multiple SPDX documents:
 
@@ -703,16 +716,16 @@ steps:
     spdx: ${{ output-spdx }}
 ```
 
-## Best Practices
+# Best Practices
 
-### SPDX Document Organization
+## SPDX Document Organization
 
 * **Consistent Naming**: Use consistent ID naming conventions (e.g., SPDXRef-Component-Name)
 * **Document Structure**: Organize packages hierarchically with clear relationships
 * **Version Control**: Keep SPDX documents in version control
 * **Automation**: Use workflow files for repeatable SBOM operations
 
-### Workflow Design
+## Workflow Design
 
 * **Modularity**: Break complex operations into reusable workflow files
 * **Variables**: Use variables for configurable values
@@ -720,7 +733,7 @@ steps:
 * **Validation**: Always validate SPDX documents after modifications
 * **Error Handling**: Check command outputs and handle failures
 
-### CI/CD Best Practices
+## CI/CD Best Practices
 
 * **Automated Generation**: Generate SBOMs automatically in build pipelines
 * **Validation Gates**: Fail builds on SBOM validation errors
@@ -728,7 +741,7 @@ steps:
 * **NTIA Compliance**: Validate for NTIA minimum elements when required
 * **Documentation**: Generate markdown summaries for human review
 
-### Security and Compliance
+## Security and Compliance
 
 * **Regular Updates**: Keep SpdxTool updated to the latest version
 * **License Compliance**: Ensure all package licenses are correctly specified
@@ -736,11 +749,11 @@ steps:
 * **Audit Trail**: Log all SBOM operations for audit purposes
 * **Access Control**: Restrict SBOM modifications to authorized processes
 
-## Troubleshooting
+# Troubleshooting
 
-### Common Issues
+## Common Issues
 
-#### Invalid SPDX Document
+### Invalid SPDX Document
 
 **Problem**: Validation fails with schema errors.
 
@@ -751,7 +764,7 @@ steps:
 * Verify JSON syntax is correct
 * Use the validate command to get detailed error messages
 
-#### Package Not Found
+### Package Not Found
 
 **Problem**: find-package or get-version commands cannot locate a package.
 
@@ -762,7 +775,7 @@ steps:
 * Use multiple criteria to narrow the search
 * List all packages with to-markdown to see available packages
 
-#### Workflow Variable Not Expanding
+### Workflow Variable Not Expanding
 
 **Problem**: Variables in workflow files are not being replaced.
 
@@ -773,7 +786,7 @@ steps:
 * Verify the output parameter name matches the variable name
 * Variables are case-sensitive
 
-#### Permission Errors
+### Permission Errors
 
 **Problem**: Cannot write SPDX document or output files.
 
@@ -784,7 +797,7 @@ steps:
 * Check disk space availability
 * Use an absolute path or verify the working directory
 
-### Debug Mode
+## Debug Mode
 
 Enable detailed logging for troubleshooting:
 
@@ -799,16 +812,16 @@ This provides detailed information about:
 * Variable expansion
 * Error stack traces
 
-## Appendix
+# Appendix
 
-### SPDX Specification
+## SPDX Specification
 
 SpdxTool supports the SPDX 2.3 specification. For details, see:
 
 * [SPDX Specification][spdx-spec]
 * [SPDX GitHub][spdx-github]
 
-### NTIA Minimum Elements
+## NTIA Minimum Elements
 
 The NTIA minimum elements for SBOM include:
 
@@ -822,28 +835,28 @@ The NTIA minimum elements for SBOM include:
 
 For more information, see: [NTIA SBOM Minimum Elements][ntia-sbom]
 
-### Version History
+## Version History
 
 See the [GitHub releases page][releases] for detailed version history.
 
-### License
+## License
 
 SpdxTool is licensed under the MIT License. See the
 [LICENSE][license] file for details.
 
-### Contributing
+## Contributing
 
 Contributions are welcome! Please see the
 [Contributing Guidelines][contributing] for details.
 
-### Support
+## Support
 
 For issues, questions, or feature requests:
 
 * **GitHub Issues**: <https://github.com/demaconsulting/SpdxTool/issues>
 * **Documentation**: <https://github.com/demaconsulting/SpdxTool>
 
-### Additional Resources
+## Additional Resources
 
 * **SPDX Official Site**: <https://spdx.dev/>
 * **Microsoft SBOM Tool**: <https://github.com/microsoft/sbom-tool>
