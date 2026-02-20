@@ -145,36 +145,6 @@ jobs:
           end
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-      - name: Generate Tool SBOM
-        run: >
-          dotnet sbom-tool generate
-          -b src/DemaConsulting.SpdxTool/bin/Release
-          -bc src/DemaConsulting.SpdxTool
-          -pn DemaConsulting.SpdxTool
-          -pv ${{ inputs.version }}
-          -ps DemaConsulting
-          -nsb https://DemaConsulting.com/SpdxTool
-          -pm true
-          -li true
-
-      - name: Generate Tests SBOM
-        run: >
-          dotnet sbom-tool generate
-          -b test/DemaConsulting.SpdxTool.Tests/bin/Release
-          -bc test/DemaConsulting.SpdxTool.Tests
-          -pn DemaConsulting.SpdxTool.Tests
-          -pv ${{ inputs.version }}
-          -ps DemaConsulting
-          -nsb https://DemaConsulting.com/SpdxTool.Tests
-          -pm true
-          -li true
-
-      - name: Run SBOM Workflow
-        run: >
-          dotnet
-          src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-          run-workflow spdx-workflow.yaml
-
       - name: Create Dotnet Tool
         run: >
           dotnet pack
@@ -210,11 +180,8 @@ jobs:
         with:
           name: artifacts-${{ matrix.os }}
           path: |
-            **/*.nupkg
-            **/*.snupkg
-            **/manifest.spdx.json
-            **/manifest.spdx.json.sha256
-            *summary.md
+            src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+            src/DemaConsulting.SpdxTool/bin/Release/*.snupkg
 
   # Runs CodeQL security and quality analysis, gathering results to include
   # in the code quality report.
@@ -395,12 +362,6 @@ jobs:
           pattern: '*test-results*'
         continue-on-error: true
 
-      - name: Download SpdxTool package
-        uses: actions/download-artifact@v7
-        with:
-          name: artifacts-windows-latest
-          path: packages
-
       - name: Download CodeQL SARIF
         uses: actions/download-artifact@v7
         with:
@@ -431,15 +392,6 @@ jobs:
       - name: Install npm dependencies
         run: >
           npm install
-
-      - name: Install SpdxTool from package
-        shell: bash
-        run: |
-          echo "Installing SpdxTool version ${{ inputs.version }}"
-          dotnet tool install --global \
-            --add-source packages \
-            --version ${{ inputs.version }} \
-            DemaConsulting.SpdxTool
 
       - name: Restore Tools
         run: >
