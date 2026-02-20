@@ -135,6 +135,8 @@ jobs:
           --configuration Release
           --property:Version=${{ inputs.version }}
           --collect "XPlat Code Coverage;Format=opencover"
+          --logger "trx;LogFilePrefix=${{ matrix.os }}"
+          --results-directory test-results
 
       - name: End Sonar Scanner
         env:
@@ -204,6 +206,19 @@ jobs:
           src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
           --log validate.log
           --validate
+          --result validation-${{ matrix.os }}.trx
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-results-${{ matrix.os }}
+          path: test-results/*.trx
+
+      - name: Upload Validation Results
+        uses: actions/upload-artifact@v6
+        with:
+          name: validation-results-${{ matrix.os }}
+          path: validation-${{ matrix.os }}.trx
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6
@@ -301,6 +316,20 @@ jobs:
           name: codeql-sarif
           path: codeql-results
 
+      - name: Download all test results
+        uses: actions/download-artifact@v7
+        with:
+          path: test-results
+          pattern: '*test-results*'
+        continue-on-error: true
+
+      - name: Download all validation results
+        uses: actions/download-artifact@v7
+        with:
+          path: test-results
+          pattern: '*validation-results*'
+        continue-on-error: true
+
       - name: Download all version captures
         uses: actions/download-artifact@v7
         with:
@@ -339,12 +368,23 @@ jobs:
         run: |
           echo "Capturing tool versions..."
           dotnet versionmark --capture --job-id "build-docs" -- \
-            dotnet git node npm pandoc weasyprint sarifmark sonarmark buildmark versionmark
+            dotnet git node npm pandoc weasyprint sarifmark sonarmark reqstream buildmark versionmark
           echo "✓ Tool versions captured"
 
       # === GENERATE MARKDOWN REPORTS ===
       # This section generates all markdown reports from various tools and sources.
       # Downstream projects: Add any additional markdown report generation steps here.
+
+      - name: Generate Requirements, Justifications, and Trace Matrix with ReqStream
+        # Note: --enforce fails the build if any requirement has no passing test evidence
+        run: >
+          dotnet reqstream
+          --requirements requirements.yaml
+          --tests "test-results/**/*.trx"
+          --report docs/requirements/requirements.md
+          --justifications docs/justifications/justifications.md
+          --matrix docs/tracematrix/tracematrix.md
+          --enforce
 
       - name: Generate CodeQL Quality Report with SarifMark
         run: >
@@ -442,6 +482,33 @@ jobs:
           --metadata date="$(date +'%Y-%m-%d')"
           --output docs/quality/quality.html
 
+      - name: Generate Requirements HTML with Pandoc
+        shell: bash
+        run: >
+          dotnet pandoc
+          --defaults docs/requirements/definition.yaml
+          --metadata version="${{ inputs.version }}"
+          --metadata date="$(date +'%Y-%m-%d')"
+          --output docs/requirements/requirements.html
+
+      - name: Generate Requirements Justifications HTML with Pandoc
+        shell: bash
+        run: >
+          dotnet pandoc
+          --defaults docs/justifications/definition.yaml
+          --metadata version="${{ inputs.version }}"
+          --metadata date="$(date +'%Y-%m-%d')"
+          --output docs/justifications/justifications.html
+
+      - name: Generate Trace Matrix HTML with Pandoc
+        shell: bash
+        run: >
+          dotnet pandoc
+          --defaults docs/tracematrix/definition.yaml
+          --metadata version="${{ inputs.version }}"
+          --metadata date="$(date +'%Y-%m-%d')"
+          --output docs/tracematrix/tracematrix.html
+
       # === GENERATE PDF DOCUMENTS WITH WEASYPRINT ===
       # This section converts HTML documents to PDF using Weasyprint.
       # Downstream projects: Add any additional Weasyprint PDF generation steps here.
@@ -463,6 +530,24 @@ jobs:
           dotnet weasyprint
           docs/quality/quality.html
           "docs/SpdxTool Code Quality.pdf"
+
+      - name: Generate Requirements PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          docs/requirements/requirements.html
+          "docs/SpdxTool Requirements.pdf"
+
+      - name: Generate Requirements Justifications PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          docs/justifications/justifications.html
+          "docs/SpdxTool Requirements Justifications.pdf"
+
+      - name: Generate Trace Matrix PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          docs/tracematrix/tracematrix.html
+          "docs/SpdxTool Trace Matrix.pdf"
 
       # === UPLOAD ARTIFACTS ===
       # This section uploads all generated documentation artifacts.
