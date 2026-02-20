@@ -1,0 +1,321 @@
+# DemaConsulting.SpdxTool Requirements
+#
+# This file contains the requirements for the SpdxTool project.
+#
+# Testing Strategy:
+# - Unit tests validate internal component behavior and individual functions
+# - Self-validation tests validate command-line behavior and end-to-end features
+# - Platform tests validate cross-platform compatibility
+#
+# Test Evidence:
+# - Unit test names are prefixed with their test class (e.g., Version_Short, Usage_HelpLong)
+# - Self-validation test names are prefixed with SpdxTool_ (e.g., SpdxTool_AddPackage)
+# - Platform-specific tests use platform@ prefix (e.g., windows@SpdxTool_Validate)
+# - .NET version tests use dotnet8.x@ prefix (e.g., dotnet8.x@SpdxTool_Validate)
+#
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Command-Line Interface
+        requirements:
+          - id: SPDX-REQ-001
+            title: The tool shall display version information when invoked with the -v flag.
+            justification: |
+              Users need to check the version of the tool they are using for compatibility
+              and troubleshooting purposes. The short flag provides a convenient way to
+              access this information.
+            tests:
+              - Version_Short
+
+          - id: SPDX-REQ-002
+            title: The tool shall display version information when invoked with the --version flag.
+            justification: |
+              Users need to check the version of the tool they are using for compatibility
+              and troubleshooting purposes. The long flag provides a more descriptive
+              alternative to the short flag.
+            tests:
+              - Version_Long
+
+          - id: SPDX-REQ-003
+            title: The tool shall display usage information when invoked with the -h flag.
+            justification: |
+              Users need quick access to help documentation to understand how to use the
+              tool effectively. The short flag provides a convenient way to access help.
+            tests:
+              - Usage_HelpShort
+
+          - id: SPDX-REQ-004
+            title: The tool shall display usage information when invoked with the --help flag.
+            justification: |
+              Users need quick access to help documentation to understand how to use the
+              tool effectively. The long flag provides a more descriptive alternative.
+            tests:
+              - Usage_HelpLong
+
+          - id: SPDX-REQ-005
+            title: The tool shall display an error and usage information when invoked without arguments.
+            justification: |
+              When users invoke the tool without any arguments, they should receive
+              guidance on proper usage rather than encountering undefined behavior.
+            tests:
+              - Usage_NoArguments
+
+          - id: SPDX-REQ-006
+            title: The tool shall silence console output when invoked with the -s flag.
+            justification: |
+              In automated scripts and CI/CD pipelines, users may want to suppress
+              console output to reduce log noise. The short flag provides a convenient
+              way to enable silent mode.
+            tests:
+              - Silent_Short
+
+          - id: SPDX-REQ-007
+            title: The tool shall silence console output when invoked with the --silent flag.
+            justification: |
+              In automated scripts and CI/CD pipelines, users may want to suppress
+              console output to reduce log noise. The long flag provides a more
+              descriptive alternative.
+            tests:
+              - Silent_Long
+
+          - id: SPDX-REQ-008
+            title: The tool shall write output to a log file when invoked with the -l flag.
+            justification: |
+              Users need the ability to capture tool output to files for auditing,
+              debugging, and record-keeping purposes. The short flag provides a
+              convenient way to enable logging.
+            tests:
+              - Log_Short
+
+          - id: SPDX-REQ-009
+            title: The tool shall write output to a log file when invoked with the --log flag.
+            justification: |
+              Users need the ability to capture tool output to files for auditing,
+              debugging, and record-keeping purposes. The long flag provides a more
+              descriptive alternative.
+            tests:
+              - Log_Long
+
+          - id: SPDX-REQ-010
+            title: The tool shall perform self-validation when invoked with the --validate flag.
+            justification: |
+              Self-validation ensures that the tool functions correctly after installation
+              or deployment. This is critical for CI/CD pipelines and quality assurance.
+            tests:
+              - SelfValidation
+
+          - id: SPDX-REQ-011
+            title: The tool shall support depth control for self-validation output.
+            justification: |
+              Users may want to see detailed hierarchical results during self-validation
+              to understand which specific tests passed or failed at different depths.
+            tests:
+              - SelfValidation_Depth
+
+          - id: SPDX-REQ-012
+            title: The tool shall write self-validation results to a TRX file when invoked with the -r or --result flag.
+            justification: |
+              CI/CD systems and test reporting tools often require test results in
+              standardized formats like TRX. This enables integration with existing
+              test infrastructure.
+            tests:
+              - SelfValidation_TrxResults
+
+      - title: SPDX Document Validation
+        requirements:
+          - id: SPDX-REQ-013
+            title: The tool shall validate SPDX documents using the validate command.
+            justification: |
+              Users need to verify that SPDX documents conform to the SPDX specification
+              before using them in downstream processes or sharing them with others.
+            tests:
+              - SpdxTool_Validate
+
+          - id: SPDX-REQ-014
+            title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
+            justification: |
+              The NTIA (National Telecommunications and Information Administration) has
+              defined minimum elements for SBOM. Users need to verify compliance with
+              these requirements for regulatory and industry standards.
+            tests:
+              - SpdxTool_Ntia
+
+      - title: SPDX Package Management
+        requirements:
+          - id: SPDX-REQ-015
+            title: The tool shall add packages to SPDX documents using the add-package command.
+            justification: |
+              Users need to incrementally build SPDX documents by adding new packages
+              that represent software components, libraries, or dependencies.
+            tests:
+              - SpdxTool_AddPackage
+
+          - id: SPDX-REQ-016
+            title: The tool shall copy packages between SPDX documents using the copy-package command.
+            justification: |
+              Users need to reuse package information across multiple SPDX documents
+              to avoid duplication and ensure consistency of package metadata.
+            tests:
+              - SpdxTool_CopyPackage
+
+          - id: SPDX-REQ-017
+            title: The tool shall update existing packages in SPDX documents using the update-package command.
+            justification: |
+              Users need to modify package metadata as software components evolve,
+              such as updating versions, licenses, or other attributes.
+            tests:
+              - SpdxTool_UpdatePackage
+
+          - id: SPDX-REQ-018
+            title: The tool shall find packages in SPDX documents using the find-package command.
+            justification: |
+              Users need to locate specific packages within SPDX documents based on
+              criteria such as name, version, or other attributes to query or modify them.
+            tests:
+              - SpdxTool_FindPackage
+
+          - id: SPDX-REQ-019
+            title: The tool shall retrieve package versions from SPDX documents using the get-version command.
+            justification: |
+              Users need to extract version information from packages for reporting,
+              dependency management, and compatibility checking.
+            tests:
+              - SpdxTool_GetVersion
+
+      - title: SPDX Relationship Management
+        requirements:
+          - id: SPDX-REQ-020
+            title: The tool shall add relationships to SPDX documents using the add-relationship command.
+            justification: |
+              SPDX documents describe relationships between packages, files, and other
+              elements. Users need to define these relationships to accurately represent
+              dependency graphs and component hierarchies.
+            tests:
+              - SpdxTool_AddRelationship
+
+      - title: SPDX Document Transformation
+        requirements:
+          - id: SPDX-REQ-021
+            title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
+            justification: |
+              Users need human-readable representations of SPDX documents for
+              documentation, reporting, and review purposes. Markdown is a widely
+              supported format for documentation.
+            tests:
+              - SpdxTool_ToMarkdown
+
+          - id: SPDX-REQ-022
+            title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
+            justification: |
+              Visual representations of SPDX relationships and package hierarchies
+              help users understand complex dependency graphs. Mermaid is a popular
+              text-based diagramming language.
+            tests:
+              - SpdxTool_Diagram
+
+      - title: SPDX Document Manipulation
+        requirements:
+          - id: SPDX-REQ-023
+            title: The tool shall rename SPDX element IDs using the rename-id command.
+            justification: |
+              Users need to modify element IDs to resolve conflicts, follow naming
+              conventions, or reorganize SPDX documents while maintaining referential
+              integrity.
+            tests:
+              - SpdxTool_RenameId
+
+      - title: File Hashing
+        requirements:
+          - id: SPDX-REQ-024
+            title: The tool shall compute and verify file hashes using the hash command.
+            justification: |
+              SPDX documents often include file hashes for integrity verification.
+              Users need to compute hashes using various algorithms and verify that
+              files match expected hash values.
+            tests:
+              - SpdxTool_Hash
+
+      - title: Workflow Support
+        requirements:
+          - id: SPDX-REQ-025
+            title: The tool shall execute workflow files using the run-workflow command.
+            justification: |
+              Complex SPDX document operations often require multiple steps. Workflows
+              enable users to define and automate multi-step processes in a declarative
+              YAML format.
+            tests:
+              - SpdxTool_AddPackage
+              - SpdxTool_AddRelationship
+              - SpdxTool_CopyPackage
+              - SpdxTool_UpdatePackage
+
+          - id: SPDX-REQ-026
+            title: The tool shall support setting variables within workflows using the set-variable command.
+            justification: |
+              Workflows need to pass data between steps and parameterize operations.
+              Variables enable dynamic workflow execution based on computed or input values.
+            tests:
+              - SpdxTool_AddPackage
+
+          - id: SPDX-REQ-027
+            title: The tool shall support printing text within workflows using the print command.
+            justification: |
+              Users need to output informational messages during workflow execution
+              for debugging, progress tracking, and user feedback.
+            tests:
+              - SpdxTool_AddPackage
+
+          - id: SPDX-REQ-028
+            title: The tool shall support querying external program output using the query command.
+            justification: |
+              Workflows often need to extract information from external tools or
+              commands to incorporate into SPDX documents or workflow logic.
+            tests:
+              - SpdxTool_Query
+
+      - title: Platform Support
+        requirements:
+          - id: SPDX-REQ-029
+            title: The tool shall run successfully on Windows platforms.
+            justification: |
+              Windows is a widely used operating system for development. The tool
+              must function correctly on Windows to support a broad user base.
+            tests:
+              - windows@SpdxTool_Validate
+
+          - id: SPDX-REQ-030
+            title: The tool shall run successfully on Linux platforms.
+            justification: |
+              Linux is a widely used operating system for development and deployment,
+              especially in CI/CD environments. The tool must function correctly on
+              Linux to support a broad user base.
+            tests:
+              - ubuntu@SpdxTool_Validate
+
+          - id: SPDX-REQ-031
+            title: The tool shall run successfully on .NET 8.x.
+            justification: |
+              .NET 8.x is a long-term support (LTS) release of .NET. The tool must
+              support this version to provide stability and compatibility for users
+              who require LTS support.
+            tests:
+              - SpdxTool_Validate
+
+          - id: SPDX-REQ-032
+            title: The tool shall run successfully on .NET 9.x.
+            justification: |
+              .NET 9.x is a current release of .NET. The tool must support this
+              version to enable users to take advantage of the latest .NET features
+              and improvements.
+            tests:
+              - SpdxTool_Validate
+
+          - id: SPDX-REQ-033
+            title: The tool shall run successfully on .NET 10.x.
+            justification: |
+              .NET 10.x represents forward compatibility. The tool should support
+              future .NET releases to ensure users can upgrade their runtime without
+              losing tool functionality.
+            tests:
+              - SpdxTool_Validate
