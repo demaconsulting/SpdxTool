@@ -39,7 +39,7 @@ internal static class ValidateHash
 
         // Report validation result to console
         context.WriteLine($"- SpdxTool_Hash: {(passed ? "Passed" : "Failed")}");
-        
+
         // Add validation result to test results collection
         results.Results.Add(
             new TestResult
@@ -107,7 +107,7 @@ internal static class ValidateHash
 
         // Read the generated hash value
         var hash = File.ReadAllText("validate.tmp/test-file.txt.sha256");
-        
+
         // Verify hash matches expected SHA256 value for the test content
         return hash == "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592";
     }

@@ -39,7 +39,7 @@ internal static class ValidateDiagram
 
         // Report validation result to console
         context.WriteLine($"- SpdxTool_Diagram: {(passed ? "Passed" : "Failed")}");
-        
+
         // Add validation result to test results collection
         results.Results.Add(
             new TestResult

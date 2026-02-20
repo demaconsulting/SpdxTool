@@ -221,11 +221,10 @@ dotnet test --collect:"XPlat Code Coverage"
 Releases are managed by project maintainers following these steps:
 
 1. Update version numbers in project files
-2. Update CHANGELOG.md with release notes
-3. Create a release branch
-4. Tag the release
-5. Build and publish NuGet packages
-6. Create a GitHub release with release notes
+2. Create a release branch
+3. Tag the release
+4. Build and publish NuGet packages
+5. Create a GitHub release with auto-generated build notes
 
 Contributors do not need to worry about versioning or releases.
 

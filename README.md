@@ -94,7 +94,7 @@ Running self-validation produces a report containing the following information:
 
 | Information         | Value                                              |
 | :------------------ | :------------------------------------------------- |
-| SpdxTool Version    | <version>                                         |
+| SpdxTool Version    | <version>                                          |
 | Machine Name        | <machine-name>                                     |
 | OS Version          | <os-version>                                       |
 | DotNet Runtime      | <dotnet-runtime-version>                           |
@@ -102,14 +102,19 @@ Running self-validation produces a report containing the following information:
 
 Tests:
 
-- AddPackage: Passed
-- AddRelationship: Passed
-- CopyPackage: Passed
-- FindPackage: Passed
-- GetVersion: Passed
-- Query: Passed
-- RenameId: Passed
-- UpdatePackage: Passed
+- SpdxTool_AddPackage: Passed
+- SpdxTool_AddRelationship: Passed
+- SpdxTool_Validate: Passed
+- SpdxTool_CopyPackage: Passed
+- SpdxTool_Diagram: Passed
+- SpdxTool_FindPackage: Passed
+- SpdxTool_GetVersion: Passed
+- SpdxTool_Hash: Passed
+- SpdxTool_Ntia: Passed
+- SpdxTool_Query: Passed
+- SpdxTool_RenameId: Passed
+- SpdxTool_ToMarkdown: Passed
+- SpdxTool_UpdatePackage: Passed
 
 Validation Passed
 ```
