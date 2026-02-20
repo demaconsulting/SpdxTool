@@ -6,39 +6,16 @@ software development and compliance workflows.
 
 ## Purpose
 
-SpdxTool simplifies the process of working with SPDX SBOM files by:
-
-* Providing command-line utilities for SPDX document manipulation
-* Enabling workflow automation through YAML configuration files
-* Supporting comprehensive SBOM operations (create, read, update, validate)
-* Facilitating compliance and security analysis
-* Enabling integration with CI/CD pipelines
+SpdxTool simplifies the process of working with SPDX SBOM files by providing a rich command-line interface for
+document manipulation, YAML-based workflow automation for complex multi-step operations, and comprehensive SBOM
+operations including package management, relationship management, validation, markdown export, and mermaid diagram
+generation. It facilitates compliance and security analysis and integrates with CI/CD pipelines. A built-in
+self-validation system supports tool qualification in regulated environments.
 
 ## Scope
 
-This guide covers the installation, configuration, and usage of SpdxTool, including:
-
-* Installation prerequisites and methods
-* Command-line interface and general syntax
-* Core commands for SPDX operations
-* Workflow files for automation
-* Self-validation capabilities
-* CI/CD integration with GitHub Actions and Azure DevOps
-* Common use cases and examples
-* Best practices for SPDX document management, workflows, and security
-* Troubleshooting and debug techniques
-* Reference materials and additional resources
-
-## Key Features
-
-* **Command-Line Interface**: Rich set of commands for SPDX operations
-* **Workflow Automation**: YAML-based workflow files for complex operations
-* **SPDX Validation**: Validate SPDX documents for correctness and NTIA compliance
-* **Package Management**: Add, update, copy, and query packages
-* **Relationship Management**: Manage relationships between SPDX elements
-* **Markdown Export**: Generate human-readable markdown from SPDX documents
-* **Mermaid Diagrams**: Visualize SPDX relationships as diagrams
-* **Self-Validation**: Built-in validation for tool qualification
+This guide covers the installation, configuration, and usage of SpdxTool from command-line basics through
+workflow automation, CI/CD integration, and best practices for SPDX document management.
 
 # Installation
 
@@ -517,14 +494,19 @@ Example validation report:
 
 Tests:
 
-- AddPackage: Passed
-- AddRelationship: Passed
-- CopyPackage: Passed
-- FindPackage: Passed
-- GetVersion: Passed
-- Query: Passed
-- RenameId: Passed
-- UpdatePackage: Passed
+- SpdxTool_AddPackage: Passed
+- SpdxTool_AddRelationship: Passed
+- SpdxTool_Validate: Passed
+- SpdxTool_CopyPackage: Passed
+- SpdxTool_Diagram: Passed
+- SpdxTool_FindPackage: Passed
+- SpdxTool_GetVersion: Passed
+- SpdxTool_Hash: Passed
+- SpdxTool_Ntia: Passed
+- SpdxTool_Query: Passed
+- SpdxTool_RenameId: Passed
+- SpdxTool_ToMarkdown: Passed
+- SpdxTool_UpdatePackage: Passed
 
 Validation Passed
 ```
