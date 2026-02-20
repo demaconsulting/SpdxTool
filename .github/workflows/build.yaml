@@ -72,12 +72,11 @@ jobs:
   # unit-tests operate on all platforms and to run SonarScanner for generating
   # the code quality report.
   build:
-    # Permissions for this job
+    name: Build ${{ matrix.os }}
+    needs: quality-checks
     permissions:
       contents: read        # To read repository contents
       pull-requests: write  # To write pull requests analysis
-
-    needs: quality-checks
 
     strategy:
       matrix:
@@ -323,6 +322,20 @@ jobs:
             --version ${{ inputs.version }} \
             DemaConsulting.SpdxTool
 
+      - name: Test version display
+        shell: bash
+        run: |
+          echo "Testing spdx-tool --version..."
+          spdx-tool --version || { echo "✗ Version command failed"; exit 1; }
+          echo "✓ Version command succeeded"
+
+      - name: Test help display
+        shell: bash
+        run: |
+          echo "Testing spdx-tool --help..."
+          spdx-tool --help || { echo "✗ Help command failed"; exit 1; }
+          echo "✓ Help command succeeded"
+
       - name: Run self-validation
         shell: bash
         run: |
@@ -375,12 +388,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Download CodeQL SARIF
-        uses: actions/download-artifact@v7
-        with:
-          name: codeql-sarif
-          path: codeql-results
-
       - name: Download all test results
         uses: actions/download-artifact@v7
         with:
@@ -388,12 +395,17 @@ jobs:
           pattern: '*test-results*'
         continue-on-error: true
 
-      - name: Download all validation test results
+      - name: Download SpdxTool package
         uses: actions/download-artifact@v7
         with:
-          path: test-results
-          pattern: '*validation-test-results*'
-        continue-on-error: true
+          name: artifacts-windows-latest
+          path: packages
+
+      - name: Download CodeQL SARIF
+        uses: actions/download-artifact@v7
+        with:
+          name: codeql-sarif
+          path: codeql-results
 
       - name: Download all version captures
         uses: actions/download-artifact@v7
@@ -419,6 +431,15 @@ jobs:
       - name: Install npm dependencies
         run: >
           npm install
+
+      - name: Install SpdxTool from package
+        shell: bash
+        run: |
+          echo "Installing SpdxTool version ${{ inputs.version }}"
+          dotnet tool install --global \
+            --add-source packages \
+            --version ${{ inputs.version }} \
+            DemaConsulting.SpdxTool
 
       - name: Restore Tools
         run: >
@@ -581,36 +602,42 @@ jobs:
       - name: Generate Build Notes PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/buildnotes/buildnotes.html
           "docs/SpdxTool Build Notes.pdf"
 
       - name: Generate Guide PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/guide/guide.html
           "docs/SpdxTool User Guide.pdf"
 
       - name: Generate Code Quality PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/quality/quality.html
           "docs/SpdxTool Code Quality.pdf"
 
       - name: Generate Requirements PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/requirements/requirements.html
           "docs/SpdxTool Requirements.pdf"
 
       - name: Generate Requirements Justifications PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/justifications/justifications.html
           "docs/SpdxTool Requirements Justifications.pdf"
 
       - name: Generate Trace Matrix PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/tracematrix/tracematrix.html
           "docs/SpdxTool Trace Matrix.pdf"
 
