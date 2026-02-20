@@ -200,53 +200,11 @@ jobs:
           name: version-capture-${{ matrix.os }}
           path: versionmark-build-*.json
 
-      - name: Self Validate .NET 8
-        run: >
-          dotnet
-          src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-          --log validate.log
-          --validate
-          --result validation-${{ matrix.os }}-dotnet8.x.trx
-
-      - name: Self Validate .NET 9
-        run: >
-          dotnet
-          src/DemaConsulting.SpdxTool/bin/Release/net9.0/DemaConsulting.SpdxTool.dll
-          --silent
-          --validate
-          --result validation-${{ matrix.os }}-dotnet9.x.trx
-
-      - name: Self Validate .NET 10
-        run: >
-          dotnet
-          src/DemaConsulting.SpdxTool/bin/Release/net10.0/DemaConsulting.SpdxTool.dll
-          --silent
-          --validate
-          --result validation-${{ matrix.os }}-dotnet10.x.trx
-
       - name: Upload Test Results
         uses: actions/upload-artifact@v6
         with:
           name: test-results-${{ matrix.os }}
           path: test-results/*.trx
-
-      - name: Upload Validation Results .NET 8
-        uses: actions/upload-artifact@v6
-        with:
-          name: validation-results-${{ matrix.os }}-dotnet8.x
-          path: validation-${{ matrix.os }}-dotnet8.x.trx
-
-      - name: Upload Validation Results .NET 9
-        uses: actions/upload-artifact@v6
-        with:
-          name: validation-results-${{ matrix.os }}-dotnet9.x
-          path: validation-${{ matrix.os }}-dotnet9.x.trx
-
-      - name: Upload Validation Results .NET 10
-        uses: actions/upload-artifact@v6
-        with:
-          name: validation-results-${{ matrix.os }}-dotnet10.x
-          path: validation-${{ matrix.os }}-dotnet10.x.trx
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6
@@ -258,7 +216,6 @@ jobs:
             **/manifest.spdx.json
             **/manifest.spdx.json.sha256
             *summary.md
-            validate.log
 
   # Runs CodeQL security and quality analysis, gathering results to include
   # in the code quality report.
@@ -319,13 +276,93 @@ jobs:
           name: codeql-sarif
           path: sarif-results/csharp.sarif
 
+  # Performs integration testing on a matrix of operating systems and .NET runtimes,
+  # involving basic tool execution and running self-validation to ensure compatibility
+  # across different platforms and runtime versions.
+  integration-test:
+    name: Integration Test ${{ matrix.os }} .NET ${{ matrix.dotnet-version }}
+    runs-on: ${{ matrix.os }}
+    needs: build
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        dotnet-version: ['8.x', '9.x', '10.x']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .versionmark.yaml
+            .config/dotnet-tools.json
+
+      - name: Download package
+        uses: actions/download-artifact@v7
+        with:
+          name: artifacts-${{ matrix.os }}
+          path: packages
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Restore Tools
+        run: >
+          dotnet tool restore
+
+      - name: Install tool from package
+        shell: bash
+        run: |
+          echo "Installing package version ${{ inputs.version }} from: packages/"
+          dotnet tool install --global \
+            --add-source packages \
+            --version ${{ inputs.version }} \
+            DemaConsulting.SpdxTool
+
+      - name: Run self-validation
+        shell: bash
+        run: |
+          echo "Running self-validation..."
+          spdx-tool --validate --result \
+            validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx \
+            || { echo "✗ Self-validation failed"; exit 1; }
+          echo "✓ Self-validation succeeded"
+
+      - name: Capture tool versions
+        shell: bash
+        run: |
+          echo "Capturing tool versions..."
+          # Create short job ID: int-win-8, int-win-9, int-ubuntu-8, etc.
+          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
+          DOTNET_SHORT=$(echo "${{ matrix.dotnet-version }}" | sed 's/\.x$//')
+          JOB_ID="int-${OS_SHORT}-${DOTNET_SHORT}"
+          dotnet versionmark --capture --job-id "${JOB_ID}" -- dotnet git versionmark
+          echo "✓ Tool versions captured"
+
+      - name: Upload version capture
+        uses: actions/upload-artifact@v6
+        with:
+          name: version-capture-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
+          path: versionmark-int-*.json
+
+      - name: Upload validation test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: validation-test-results-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
+          path: validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx
+
   # Builds the supporting documentation including user guides, code quality
   # reports, and build notes.
   build-docs:
     name: Build Documents
     runs-on: windows-latest
 
-    needs: [build, codeql]
+    needs: [build, integration-test, codeql]
 
     permissions:
       contents: read
@@ -351,11 +388,11 @@ jobs:
           pattern: '*test-results*'
         continue-on-error: true
 
-      - name: Download all validation results
+      - name: Download all validation test results
         uses: actions/download-artifact@v7
         with:
           path: test-results
-          pattern: '*validation-results*'
+          pattern: '*validation-test-results*'
         continue-on-error: true
 
       - name: Download all version captures
