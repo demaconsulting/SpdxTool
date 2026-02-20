@@ -39,7 +39,7 @@ internal static class ValidateToMarkdown
 
         // Report validation result to console
         context.WriteLine($"- SpdxTool_ToMarkdown: {(passed ? "Passed" : "Failed")}");
-        
+
         // Add validation result to test results collection
         results.Results.Add(
             new TestResult

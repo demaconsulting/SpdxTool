@@ -33,7 +33,7 @@ The GitHub Actions workflow file should have a step to ensure dotnet is installe
 
 ```yaml
     - name: Setup dotnet 8
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 8.x
 ```
@@ -50,7 +50,7 @@ The GitHub Actions workflow file should have a step to restore dotnet tools spec
 
 ## Run SPDX Tool Step
 
-The Github Actions workflow file should have a step to run SPDX Tool. For example:
+The GitHub Actions workflow file should have a step to run SPDX Tool. For example:
 
 ```yaml
     - name: Run SBOM Workflow
