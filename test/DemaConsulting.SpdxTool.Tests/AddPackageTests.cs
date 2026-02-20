@@ -30,10 +30,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class AddPackageTests
 {
     /// <summary>
-    ///     Test that the 'add-package' command is only valid in a workflow.
+    ///     Test that add-package command on command line reports workflow-only error
     /// </summary>
     [TestMethod]
-    public void AddPackage_CommandLine()
+    public void AddPackage_OnCommandLine_ReportsWorkflowOnlyError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -48,10 +48,10 @@ public class AddPackageTests
     }
 
     /// <summary>
-    ///     Test that the 'add-package' command from a workflow on a simple SPDX document.
+    ///     Test that add-package command in workflow with relationship adds package and relationship
     /// </summary>
     [TestMethod]
-    public void AddPackage_Simple()
+    public void AddPackage_InWorkflowWithRelationship_AddsPackageAndRelationship()
     {
         // SPDX contents
         const string spdxContents =
@@ -143,10 +143,10 @@ public class AddPackageTests
     }
 
     /// <summary>
-    ///     Test that the 'add-package' command from a workflow with no relationships.
+    ///     Test that add-package command in workflow with no relationship adds package only
     /// </summary>
     [TestMethod]
-    public void AddPackage_NoRelationship()
+    public void AddPackage_InWorkflowNoRelationship_AddsPackageOnly()
     {
         // SPDX contents
         const string spdxContents =
@@ -219,10 +219,10 @@ public class AddPackageTests
     }
 
     /// <summary>
-    ///     Test that the 'add-package' command from a workflow with a query.
+    ///     Test that add-package command in workflow with query version adds package
     /// </summary>
     [TestMethod]
-    public void AddPackage_FromQuery()
+    public void AddPackage_InWorkflowWithQueryVersion_AddsPackage()
     {
         // SPDX contents
         const string spdxContents =

@@ -45,37 +45,41 @@ jobs:
     needs: build
 
     steps:
-      - uses: actions/checkout@v6
-
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.x'
 
-      - name: Download Build Artifacts
+      - name: Download package artifacts
         uses: actions/download-artifact@v7
         with:
           name: artifacts-ubuntu-latest
           path: artifacts
 
-      - name: Download Document Artifacts
+      - name: Download documents artifact
         uses: actions/download-artifact@v7
         with:
           name: documents
           path: artifacts
 
+      - name: Move buildnotes.md to root
+        run: |
+          set -e
+          mv artifacts/buildnotes.md buildnotes.md
+
       - name: Create release
         if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "artifacts/**/*"
-          generateReleaseNotes: true
+          artifacts: "artifacts/*"
+          bodyFile: buildnotes.md
+          generateReleaseNotes: false
           tag: ${{ inputs.version }}
 
       - name: Publish to Nuget
         if: ${{ inputs.publish == 'publish' }}
         run: >
           dotnet nuget push
-          artifacts/src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+          artifacts/*.nupkg
           --source "https://api.nuget.org/v3/index.json"
           --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"

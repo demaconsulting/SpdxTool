@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class SetVariableTests
 {
     /// <summary>
-    ///     Test the 'set-variable' command does not work from the command line.
+    ///     Test that set-variable command on command line reports workflow-only error
     /// </summary>
     [TestMethod]
-    public void SetVariable_CommandLine()
+    public void SetVariable_OnCommandLine_ReportsWorkflowOnlyError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -45,10 +45,10 @@ public class SetVariableTests
     }
 
     /// <summary>
-    ///     Test the 'set-variable' command.
+    ///     Test that set-variable command in workflow sets the variable
     /// </summary>
     [TestMethod]
-    public void SetVariable()
+    public void SetVariable_InWorkflow_SetsVariable()
     {
         // Workflow contents
         const string workflowContents =

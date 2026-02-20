@@ -36,10 +36,10 @@ public partial class QueryTests
     private static partial Regex VersionRegex();
 
     /// <summary>
-    ///     Tests the 'query' command with missing arguments
+    ///     Test that query command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void Query_MissingArguments()
+    public void Query_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -54,10 +54,10 @@ public partial class QueryTests
     }
 
     /// <summary>
-    ///     Tests the 'query' command with bad pattern
+    ///     Test that query command with bad regex pattern reports an error
     /// </summary>
     [TestMethod]
-    public void Query_BadPattern()
+    public void Query_BadRegexPattern_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -75,10 +75,10 @@ public partial class QueryTests
     }
 
     /// <summary>
-    ///     Tests the 'query' command with invalid program
+    ///     Test that query command with invalid program reports an error
     /// </summary>
     [TestMethod]
-    public void Query_InvalidProgram()
+    public void Query_InvalidProgram_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -95,10 +95,10 @@ public partial class QueryTests
     }
 
     /// <summary>
-    ///     Tests the 'query' command for dotnet version from the command line
+    ///     Test that query command for dotnet version on command line returns the version
     /// </summary>
     [TestMethod]
-    public void Query_DotNet_CommandLine()
+    public void Query_DotNetVersion_OnCommandLine_ReturnsVersion()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -116,10 +116,10 @@ public partial class QueryTests
     }
 
     /// <summary>
-    ///     Tests the 'query' command for dotnet version from a workflow
+    ///     Test that query command for dotnet version in workflow stores the version
     /// </summary>
     [TestMethod]
-    public void Query_DotNet_Workflow()
+    public void Query_DotNetVersion_InWorkflow_StoresVersion()
     {
         // Workflow contents
         const string workflowContents =

@@ -48,6 +48,11 @@ tools:
     command: dotnet tool list
     regex: '(?i)demaconsulting\.sonarmark\s+(?<version>\d+\.\d+\.\d+)'
 
+  # ReqStream (DemaConsulting.ReqStream from dotnet tool list)
+  reqstream:
+    command: dotnet tool list
+    regex: '(?i)demaconsulting\.reqstream\s+(?<version>\d+\.\d+\.\d+)'
+
   # BuildMark (DemaConsulting.BuildMark from dotnet tool list)
   buildmark:
     command: dotnet tool list

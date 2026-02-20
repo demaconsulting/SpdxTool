@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class SilentTests
 {
     /// <summary>
-    ///     Test that silence functions when '-s' is specified
+    ///     Test that the short silent flag suppresses output
     /// </summary>
     [TestMethod]
-    public void Silent_Short()
+    public void Silent_ShortFlag_SuppressesOutput()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -48,10 +48,10 @@ public class SilentTests
     }
 
     /// <summary>
-    ///     Test that silence functions when '--silent' is specified
+    ///     Test that the long silent flag suppresses output
     /// </summary>
     [TestMethod]
-    public void Silent_Long()
+    public void Silent_LongFlag_SuppressesOutput()
     {
         // Act: Run the command
         var exitCode = Runner.Run(

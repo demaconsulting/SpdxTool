@@ -72,12 +72,11 @@ jobs:
   # unit-tests operate on all platforms and to run SonarScanner for generating
   # the code quality report.
   build:
-    # Permissions for this job
+    name: Build ${{ matrix.os }}
+    needs: quality-checks
     permissions:
       contents: read        # To read repository contents
       pull-requests: write  # To write pull requests analysis
-
-    needs: quality-checks
 
     strategy:
       matrix:
@@ -135,6 +134,8 @@ jobs:
           --configuration Release
           --property:Version=${{ inputs.version }}
           --collect "XPlat Code Coverage;Format=opencover"
+          --logger "trx;LogFilePrefix=${{ matrix.os }}"
+          --results-directory test-results
 
       - name: End Sonar Scanner
         env:
@@ -143,36 +144,6 @@ jobs:
           dotnet dotnet-sonarscanner
           end
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
-      - name: Generate Tool SBOM
-        run: >
-          dotnet sbom-tool generate
-          -b src/DemaConsulting.SpdxTool/bin/Release
-          -bc src/DemaConsulting.SpdxTool
-          -pn DemaConsulting.SpdxTool
-          -pv ${{ inputs.version }}
-          -ps DemaConsulting
-          -nsb https://DemaConsulting.com/SpdxTool
-          -pm true
-          -li true
-
-      - name: Generate Tests SBOM
-        run: >
-          dotnet sbom-tool generate
-          -b test/DemaConsulting.SpdxTool.Tests/bin/Release
-          -bc test/DemaConsulting.SpdxTool.Tests
-          -pn DemaConsulting.SpdxTool.Tests
-          -pv ${{ inputs.version }}
-          -ps DemaConsulting
-          -nsb https://DemaConsulting.com/SpdxTool.Tests
-          -pm true
-          -li true
-
-      - name: Run SBOM Workflow
-        run: >
-          dotnet
-          src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-          run-workflow spdx-workflow.yaml
 
       - name: Create Dotnet Tool
         run: >
@@ -198,24 +169,19 @@ jobs:
           name: version-capture-${{ matrix.os }}
           path: versionmark-build-*.json
 
-      - name: Self Validate
-        run: >
-          dotnet
-          src/DemaConsulting.SpdxTool/bin/Release/net8.0/DemaConsulting.SpdxTool.dll
-          --log validate.log
-          --validate
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-results-${{ matrix.os }}
+          path: test-results/*.trx
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6
         with:
           name: artifacts-${{ matrix.os }}
           path: |
-            **/*.nupkg
-            **/*.snupkg
-            **/manifest.spdx.json
-            **/manifest.spdx.json.sha256
-            *summary.md
-            validate.log
+            src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
+            src/DemaConsulting.SpdxTool/bin/Release/*.snupkg
 
   # Runs CodeQL security and quality analysis, gathering results to include
   # in the code quality report.
@@ -276,13 +242,107 @@ jobs:
           name: codeql-sarif
           path: sarif-results/csharp.sarif
 
+  # Performs integration testing on a matrix of operating systems and .NET runtimes,
+  # involving basic tool execution and running self-validation to ensure compatibility
+  # across different platforms and runtime versions.
+  integration-test:
+    name: Integration Test ${{ matrix.os }} .NET ${{ matrix.dotnet-version }}
+    runs-on: ${{ matrix.os }}
+    needs: build
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        dotnet-version: ['8.x', '9.x', '10.x']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .versionmark.yaml
+            .config/dotnet-tools.json
+
+      - name: Download package
+        uses: actions/download-artifact@v7
+        with:
+          name: artifacts-${{ matrix.os }}
+          path: packages
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Restore Tools
+        run: >
+          dotnet tool restore
+
+      - name: Install tool from package
+        shell: bash
+        run: |
+          echo "Installing package version ${{ inputs.version }} from: packages/"
+          dotnet tool install --global \
+            --add-source packages \
+            --version ${{ inputs.version }} \
+            DemaConsulting.SpdxTool
+
+      - name: Test version display
+        shell: bash
+        run: |
+          echo "Testing spdx-tool --version..."
+          spdx-tool --version || { echo "✗ Version command failed"; exit 1; }
+          echo "✓ Version command succeeded"
+
+      - name: Test help display
+        shell: bash
+        run: |
+          echo "Testing spdx-tool --help..."
+          spdx-tool --help || { echo "✗ Help command failed"; exit 1; }
+          echo "✓ Help command succeeded"
+
+      - name: Run self-validation
+        shell: bash
+        run: |
+          echo "Running self-validation..."
+          spdx-tool --validate --result \
+            validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx \
+            || { echo "✗ Self-validation failed"; exit 1; }
+          echo "✓ Self-validation succeeded"
+
+      - name: Capture tool versions
+        shell: bash
+        run: |
+          echo "Capturing tool versions..."
+          # Create short job ID: int-win-8, int-win-9, int-ubuntu-8, etc.
+          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
+          DOTNET_SHORT=$(echo "${{ matrix.dotnet-version }}" | sed 's/\.x$//')
+          JOB_ID="int-${OS_SHORT}-${DOTNET_SHORT}"
+          dotnet versionmark --capture --job-id "${JOB_ID}" -- dotnet git versionmark
+          echo "✓ Tool versions captured"
+
+      - name: Upload version capture
+        uses: actions/upload-artifact@v6
+        with:
+          name: version-capture-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
+          path: versionmark-int-*.json
+
+      - name: Upload validation test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: validation-test-results-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
+          path: validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx
+
   # Builds the supporting documentation including user guides, code quality
   # reports, and build notes.
   build-docs:
     name: Build Documents
     runs-on: windows-latest
 
-    needs: [build, codeql]
+    needs: [build, integration-test, codeql]
 
     permissions:
       contents: read
@@ -294,6 +354,13 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Download all test results
+        uses: actions/download-artifact@v7
+        with:
+          path: test-results
+          pattern: '*test-results*'
+        continue-on-error: true
 
       - name: Download CodeQL SARIF
         uses: actions/download-artifact@v7
@@ -339,12 +406,23 @@ jobs:
         run: |
           echo "Capturing tool versions..."
           dotnet versionmark --capture --job-id "build-docs" -- \
-            dotnet git node npm pandoc weasyprint sarifmark sonarmark buildmark versionmark
+            dotnet git node npm pandoc weasyprint sarifmark sonarmark reqstream buildmark versionmark
           echo "✓ Tool versions captured"
 
       # === GENERATE MARKDOWN REPORTS ===
       # This section generates all markdown reports from various tools and sources.
       # Downstream projects: Add any additional markdown report generation steps here.
+
+      - name: Generate Requirements, Justifications, and Trace Matrix with ReqStream
+        # Note: --enforce fails the build if any requirement has no passing test evidence
+        run: >
+          dotnet reqstream
+          --requirements requirements.yaml
+          --tests "test-results/**/*.trx"
+          --report docs/requirements/requirements.md
+          --justifications docs/justifications/justifications.md
+          --matrix docs/tracematrix/tracematrix.md
+          --enforce
 
       - name: Generate CodeQL Quality Report with SarifMark
         run: >
@@ -442,6 +520,33 @@ jobs:
           --metadata date="$(date +'%Y-%m-%d')"
           --output docs/quality/quality.html
 
+      - name: Generate Requirements HTML with Pandoc
+        shell: bash
+        run: >
+          dotnet pandoc
+          --defaults docs/requirements/definition.yaml
+          --metadata version="${{ inputs.version }}"
+          --metadata date="$(date +'%Y-%m-%d')"
+          --output docs/requirements/requirements.html
+
+      - name: Generate Requirements Justifications HTML with Pandoc
+        shell: bash
+        run: >
+          dotnet pandoc
+          --defaults docs/justifications/definition.yaml
+          --metadata version="${{ inputs.version }}"
+          --metadata date="$(date +'%Y-%m-%d')"
+          --output docs/justifications/justifications.html
+
+      - name: Generate Trace Matrix HTML with Pandoc
+        shell: bash
+        run: >
+          dotnet pandoc
+          --defaults docs/tracematrix/definition.yaml
+          --metadata version="${{ inputs.version }}"
+          --metadata date="$(date +'%Y-%m-%d')"
+          --output docs/tracematrix/tracematrix.html
+
       # === GENERATE PDF DOCUMENTS WITH WEASYPRINT ===
       # This section converts HTML documents to PDF using Weasyprint.
       # Downstream projects: Add any additional Weasyprint PDF generation steps here.
@@ -449,20 +554,44 @@ jobs:
       - name: Generate Build Notes PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/buildnotes/buildnotes.html
           "docs/SpdxTool Build Notes.pdf"
 
       - name: Generate Guide PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/guide/guide.html
           "docs/SpdxTool User Guide.pdf"
 
       - name: Generate Code Quality PDF with Weasyprint
         run: >
           dotnet weasyprint
+          --pdf-variant pdf/a-3u
           docs/quality/quality.html
           "docs/SpdxTool Code Quality.pdf"
+
+      - name: Generate Requirements PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          --pdf-variant pdf/a-3u
+          docs/requirements/requirements.html
+          "docs/SpdxTool Requirements.pdf"
+
+      - name: Generate Requirements Justifications PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          --pdf-variant pdf/a-3u
+          docs/justifications/justifications.html
+          "docs/SpdxTool Requirements Justifications.pdf"
+
+      - name: Generate Trace Matrix PDF with Weasyprint
+        run: >
+          dotnet weasyprint
+          --pdf-variant pdf/a-3u
+          docs/tracematrix/tracematrix.html
+          "docs/SpdxTool Trace Matrix.pdf"
 
       # === UPLOAD ARTIFACTS ===
       # This section uploads all generated documentation artifacts.

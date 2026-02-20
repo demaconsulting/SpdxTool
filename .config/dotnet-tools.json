@@ -8,12 +8,6 @@
         "dotnet-sonarscanner"
       ]
     },
-    "microsoft.sbom.dotnettool": {
-      "version": "4.1.5",
-      "commands": [
-        "sbom-tool"
-      ]
-    },
     "demaconsulting.pandoctool": {
       "version": "3.9.0",
       "commands": [
@@ -36,6 +30,12 @@
       "version": "1.1.0",
       "commands": [
         "sarifmark"
+      ]
+    },
+    "demaconsulting.reqstream": {
+      "version": "1.2.0",
+      "commands": [
+        "reqstream"
       ]
     },
     "demaconsulting.buildmark": {

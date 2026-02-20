@@ -29,10 +29,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class WildcardTests
 {
     /// <summary>
-    ///     Test for exact matching
+    ///     Test that exact pattern matching returns true for matching strings
     /// </summary>
     [TestMethod]
-    public void Wildcard_Exact()
+    public void Wildcard_ExactMatch_ReturnsTrue()
     {
         Assert.IsTrue(Wildcard.IsMatch("Hello", "Hello"));
         Assert.IsTrue(Wildcard.IsMatch("HELLO", "Hello"));
@@ -45,10 +45,10 @@ public class WildcardTests
     }
 
     /// <summary>
-    ///     Test for matching with asterisks
+    ///     Test that asterisk pattern matching matches multiple characters
     /// </summary>
     [TestMethod]
-    public void Wildcard_Asterisks()
+    public void Wildcard_AsteriskPattern_MatchesMultipleChars()
     {
         Assert.IsTrue(Wildcard.IsMatch("Test.This.String", "Test.*.String"));
         Assert.IsTrue(Wildcard.IsMatch("Test String", "*Test*"));
@@ -64,10 +64,10 @@ public class WildcardTests
     }
 
     /// <summary>
-    ///     Test for matching with question-marks
+    ///     Test that question mark pattern matching matches a single character
     /// </summary>
     [TestMethod]
-    public void Wildcard_QuestionMark()
+    public void Wildcard_QuestionMarkPattern_MatchesSingleChar()
     {
         Assert.IsTrue(Wildcard.IsMatch("Test", "Te?t"));
         Assert.IsTrue(Wildcard.IsMatch("Test", "????"));

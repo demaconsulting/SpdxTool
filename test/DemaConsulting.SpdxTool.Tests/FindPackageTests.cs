@@ -70,10 +70,10 @@ public class FindPackageTests
         """;
 
     /// <summary>
-    ///     Test the 'find-package' command with missing arguments
+    ///     Test that find-package command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void FindPackage_MissingArguments()
+    public void FindPackage_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -88,10 +88,10 @@ public class FindPackageTests
     }
 
     /// <summary>
-    ///     Test the 'find-package' command with missing SPDX file
+    ///     Test that find-package command with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void FindPackage_MissingFile()
+    public void FindPackage_MissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -108,10 +108,10 @@ public class FindPackageTests
     }
 
     /// <summary>
-    ///     Test the 'find-package' command from the command-line
+    ///     Test that find-package command on command line reports workflow-only error
     /// </summary>
     [TestMethod]
-    public void FindPackage_CommandLine()
+    public void FindPackage_OnCommandLine_ReportsWorkflowOnlyError()
     {
         try
         {
@@ -138,10 +138,10 @@ public class FindPackageTests
     }
 
     /// <summary>
-    ///     Test the 'find-package' command to find a package by name
+    ///     Test that find-package command by name finds the package
     /// </summary>
     [TestMethod]
-    public void FindPackage_ByName()
+    public void FindPackage_ByName_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =
@@ -184,10 +184,10 @@ public class FindPackageTests
     }
 
     /// <summary>
-    ///     Test the 'find-package' command to find a package by version
+    ///     Test that find-package command by version finds the package
     /// </summary>
     [TestMethod]
-    public void FindPackage_ByVersion()
+    public void FindPackage_ByVersion_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =
@@ -230,10 +230,10 @@ public class FindPackageTests
     }
 
     /// <summary>
-    ///     Test the 'find-package' command to find a package by file name
+    ///     Test that find-package command by file name finds the package
     /// </summary>
     [TestMethod]
-    public void FindPackage_ByFileName()
+    public void FindPackage_ByFileName_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =
@@ -276,10 +276,10 @@ public class FindPackageTests
     }
 
     /// <summary>
-    ///     Test the 'find-package' command to find a package by download location
+    ///     Test that find-package command by download URL finds the package
     /// </summary>
     [TestMethod]
-    public void FindPackage_ByDownload()
+    public void FindPackage_ByDownloadUrl_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =

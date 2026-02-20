@@ -36,10 +36,10 @@ public partial class RunWorkflowTests
     private static partial Regex DotnetVersionRegex();
 
     /// <summary>
-    ///     Test the 'run-workflow' command with missing arguments.
+    ///     Test that run-workflow command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_MissingArguments()
+    public void RunWorkflow_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -54,10 +54,10 @@ public partial class RunWorkflowTests
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with missing file.
+    ///     Test that run-workflow command with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_MissingFile()
+    public void RunWorkflow_MissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -73,10 +73,10 @@ public partial class RunWorkflowTests
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with invalid file.
+    ///     Test that run-workflow command with invalid workflow file reports an error
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_FileInvalid()
+    public void RunWorkflow_InvalidWorkflowFile_ReportsError()
     {
         const string fileContents =
             "missing-steps: 123";
@@ -106,10 +106,10 @@ public partial class RunWorkflowTests
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with missing parameter in file.
+    ///     Test that run-workflow command with missing parameter reports an error
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_MissingParameterInFile()
+    public void RunWorkflow_MissingParameter_ReportsError()
     {
         const string fileContents =
             """
@@ -142,10 +142,10 @@ public partial class RunWorkflowTests
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with a basic workflow file.
+    ///     Test that run-workflow command with valid workflow file executes the workflow
     /// </summary>
     [TestMethod]
-    public void RunWorkflow()
+    public void RunWorkflow_ValidWorkflowFile_ExecutesWorkflow()
     {
         const string fileContents =
             """
@@ -181,10 +181,10 @@ output);
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with default parameters.
+    ///     Test that run-workflow command with default parameters uses the defaults
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_WithDefaultParameters()
+    public void RunWorkflow_WithDefaultParameters_UsesDefaults()
     {
         const string fileContents =
             """
@@ -223,10 +223,10 @@ output);
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with specified parameters.
+    ///     Test that run-workflow command with specified parameters uses the specified values
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_WithSpecifiedParameters()
+    public void RunWorkflow_WithSpecifiedParameters_UsesSpecified()
     {
         const string fileContents =
             """
@@ -265,10 +265,10 @@ output);
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with outputs.
+    ///     Test that run-workflow command with outputs populates the output variables
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_WithOutputs()
+    public void RunWorkflow_WithOutputs_PopulatesOutputs()
     {
         const string workflow1 =
             """
@@ -330,10 +330,10 @@ output);
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with bad file integrity.
+    ///     Test that run-workflow command with bad integrity reports an error
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_WithBadIntegrity()
+    public void RunWorkflow_WithBadIntegrity_ReportsError()
     {
         const string workflow1 =
             """
@@ -396,10 +396,10 @@ output);
     }
 
     /// <summary>
-    ///     Test the 'run-workflow' command with workflow URL.
+    ///     Test that run-workflow command with URL workflow executes the workflow
     /// </summary>
     [TestMethod]
-    public void RunWorkflow_Url()
+    public void RunWorkflow_UrlWorkflow_ExecutesWorkflow()
     {
         const string workflow =
             """

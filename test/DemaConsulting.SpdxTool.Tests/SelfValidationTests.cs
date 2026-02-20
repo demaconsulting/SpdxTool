@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class SelfValidationTests
 {
     /// <summary>
-    ///     Test that the self-validation command succeeds.
+    ///     Test that the validate flag succeeds on self-validation
     /// </summary>
     [TestMethod]
-    public void SelfValidation()
+    public void SelfValidation_ValidateFlag_Succeeds()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -45,10 +45,10 @@ public class SelfValidationTests
     }
 
     /// <summary>
-    ///     Test that the self-validation command supports depth.
+    ///     Test that the validate flag with depth shows depth in output
     /// </summary>
     [TestMethod]
-    public void SelfValidation_Depth()
+    public void SelfValidation_ValidateFlagWithDepth_ShowsDepth()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -66,10 +66,10 @@ public class SelfValidationTests
     }
 
     /// <summary>
-    ///     Test that the self-validation command produces TRX results file.
+    ///     Test that the validate flag with results generates a TRX file
     /// </summary>
     [TestMethod]
-    public void SelfValidation_TrxResults()
+    public void SelfValidation_ValidateFlagWithResults_GeneratesTrxFile()
     {
         const string resultFile = "results.trx";
 

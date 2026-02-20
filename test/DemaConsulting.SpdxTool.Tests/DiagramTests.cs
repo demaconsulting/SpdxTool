@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class DiagramTests
 {
     /// <summary>
-    ///     Test the 'diagram' command with missing arguments
+    ///     Test that diagram command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void DiagramCommand_MissingArguments()
+    public void Diagram_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -45,10 +45,10 @@ public class DiagramTests
     }
 
     /// <summary>
-    ///     Test the 'diagram' command with insufficient arguments
+    ///     Test that diagram command with insufficient arguments reports an error
     /// </summary>
     [TestMethod]
-    public void DiagramCommand_InsufficientArguments()
+    public void Diagram_InsufficientArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -64,10 +64,10 @@ public class DiagramTests
     }
 
     /// <summary>
-    ///     Test the 'diagram' command with missing SPDX file
+    ///     Test that diagram command with missing SPDX file reports an error
     /// </summary>
     [TestMethod]
-    public void DiagramCommand_MissingSpdxFile()
+    public void Diagram_MissingSpdxFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -84,10 +84,10 @@ public class DiagramTests
     }
 
     /// <summary>
-    ///     Test the 'diagram' command with invalid option
+    ///     Test that diagram command with invalid option reports an error
     /// </summary>
     [TestMethod]
-    public void DiagramCommand_InvalidOption()
+    public void Diagram_InvalidOption_ReportsError()
     {
         const string spdxContents =
             """
@@ -133,10 +133,10 @@ public class DiagramTests
     }
 
     /// <summary>
-    ///     Test the 'diagram' command to generate a diagram
+    ///     Test that diagram command with valid SPDX file generates a diagram
     /// </summary>
     [TestMethod]
-    public void DiagramCommand_GenerateDiagram()
+    public void Diagram_ValidSpdxFile_GeneratesDiagram()
     {
         const string spdxContents =
             """
@@ -215,10 +215,10 @@ public class DiagramTests
     }
 
     /// <summary>
-    ///     Test the 'diagram' command with tools option
+    ///     Test that diagram command with tools option generates diagram with tools
     /// </summary>
     [TestMethod]
-    public void DiagramCommand_WithTools()
+    public void Diagram_WithToolsOption_GeneratesDiagramWithTools()
     {
         const string spdxContents =
             """

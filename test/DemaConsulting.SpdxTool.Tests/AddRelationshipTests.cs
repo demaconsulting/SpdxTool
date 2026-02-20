@@ -67,10 +67,10 @@ public class AddRelationshipTests
         """;
 
     /// <summary>
-    ///     Test the add-relationship command with missing arguments
+    ///     Test that add-relationship command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void AddRelationship_MissingArguments()
+    public void AddRelationship_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -85,10 +85,10 @@ public class AddRelationshipTests
     }
 
     /// <summary>
-    ///     Test the add-relationship command with missing SPDX file
+    ///     Test that add-relationship command with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void AddRelationship_MissingFile()
+    public void AddRelationship_MissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -107,10 +107,10 @@ public class AddRelationshipTests
     }
 
     /// <summary>
-    ///     Test the add-relationship command from the command-line
+    ///     Test that add-relationship command on command line reports workflow-only error
     /// </summary>
     [TestMethod]
-    public void AddRelationship_CommandLine()
+    public void AddRelationship_OnCommandLine_ReportsWorkflowOnlyError()
     {
         try
         {
@@ -150,10 +150,10 @@ public class AddRelationshipTests
     }
 
     /// <summary>
-    ///     Test the add-relationship command from a workflow
+    ///     Test that add-relationship command in workflow adds the relationship
     /// </summary>
     [TestMethod]
-    public void AddRelationship_Workflow()
+    public void AddRelationship_InWorkflow_AddsRelationship()
     {
         // Workflow contents
         const string workflowContents =
@@ -205,10 +205,10 @@ public class AddRelationshipTests
     }
 
     /// <summary>
-    ///     Test the add-relationship command from a workflow replacing an existing relationship
+    ///     Test that add-relationship command with replace mode replaces existing relationships
     /// </summary>
     [TestMethod]
-    public void AddRelationship_Replace()
+    public void AddRelationship_ReplaceMode_ReplacesExistingRelationship()
     {
         // Workflow1 contents
         const string workflow1Contents =

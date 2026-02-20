@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class PrintTests
 {
     /// <summary>
-    ///     Tests the 'print' command from the command line
+    ///     Test that print command on command line prints the text
     /// </summary>
     [TestMethod]
-    public void Print_CommandLine()
+    public void Print_OnCommandLine_PrintsText()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -46,10 +46,10 @@ public class PrintTests
     }
 
     /// <summary>
-    ///     Tests the 'print' command from a workflow
+    ///     Test that print command in workflow prints the text
     /// </summary>
     [TestMethod]
-    public void Print_Workflow()
+    public void Print_InWorkflow_PrintsText()
     {
         // Workflow contents
         const string workflowContents =
