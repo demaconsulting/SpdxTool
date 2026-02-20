@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class ValidateTests
 {
     /// <summary>
-    ///     Test the 'validate' command with missing arguments
+    ///     Test that validate command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void ValidateCommand_MissingArguments()
+    public void Validate_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -45,10 +45,10 @@ public class ValidateTests
     }
 
     /// <summary>
-    ///     Test the 'validate' command with missing SPDX file
+    ///     Test that validate command with missing SPDX file reports an error
     /// </summary>
     [TestMethod]
-    public void ValidateCommand_MissingSpdxFile()
+    public void Validate_MissingSpdxFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -64,10 +64,10 @@ public class ValidateTests
     }
 
     /// <summary>
-    ///     Test the 'validate' command with a valid SPDX document
+    ///     Test that validate command with valid SPDX document succeeds
     /// </summary>
     [TestMethod]
-    public void ValidateCommand_ValidDocument()
+    public void Validate_ValidSpdxDocument_Succeeds()
     {
         const string spdxContents =
             """
@@ -125,10 +125,10 @@ public class ValidateTests
     }
 
     /// <summary>
-    ///     Test the 'validate' command with valid document without files analyzed
+    ///     Test that validate command with valid document with no files analyzed succeeds
     /// </summary>
     [TestMethod]
-    public void ValidateCommand_NoFilesAnalyzed()
+    public void Validate_ValidDocumentNoFilesAnalyzed_Succeeds()
     {
         const string spdxContents =
             """
@@ -186,10 +186,10 @@ public class ValidateTests
     }
 
     /// <summary>
-    ///     Test the 'validate' command with NTIA option on valid document
+    ///     Test that validate command with NTIA-valid document succeeds
     /// </summary>
     [TestMethod]
-    public void ValidateCommand_NtiaValid()
+    public void Validate_NtiaValidDocument_Succeeds()
     {
         const string spdxContents =
             """
@@ -249,10 +249,10 @@ public class ValidateTests
     }
 
     /// <summary>
-    ///     Test the 'validate' command with NTIA option on invalid document
+    ///     Test that validate command with NTIA-invalid document reports NTIA errors
     /// </summary>
     [TestMethod]
-    public void ValidateCommand_NtiaInvalid()
+    public void Validate_NtiaInvalidDocument_ReportsNtiaErrors()
     {
         const string spdxContents =
             """

@@ -36,10 +36,10 @@ public partial class VersionTests
     private static partial Regex VersionRegex();
 
     /// <summary>
-    ///     Test that version information is printed when '-v' is specified
+    ///     Test that the short version flag displays the version information
     /// </summary>
     [TestMethod]
-    public void Version_Short()
+    public void Version_ShortFlag_DisplaysVersion()
     {
         // Act: Run the SPDX tool
         var exitCode = Runner.Run(
@@ -56,10 +56,10 @@ public partial class VersionTests
     }
 
     /// <summary>
-    ///     Test that version information is printed when '--version' is specified
+    ///     Test that the long version flag displays the version information
     /// </summary>
     [TestMethod]
-    public void Version_Long()
+    public void Version_LongFlag_DisplaysVersion()
     {
         // Act: Run the SPDX tool
         var exitCode = Runner.Run(

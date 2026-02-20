@@ -30,10 +30,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class CommandTests
 {
     /// <summary>
-    ///     Test the <see cref="Command.Expand" /> method with a missing variable.
+    ///     Test that Command.Expand with missing variable returns missing token
     /// </summary>
     [TestMethod]
-    public void Command_Expand_MissingVariable()
+    public void Command_Expand_MissingVariable_ReturnsMissingToken()
     {
         // Test expanding a missing variable
         const string text = "Hello, ${{ name }}!";
@@ -42,10 +42,10 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test the <see cref="Command.Expand" /> method with nothing to expand.
+    ///     Test that Command.Expand with no variables returns the original string
     /// </summary>
     [TestMethod]
-    public void Command_Expand_NoVariables()
+    public void Command_Expand_NoVariables_ReturnsOriginal()
     {
         // Test expanding nothing
         const string text = "Hello, world!";
@@ -55,10 +55,10 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test the <see cref="Command.Expand" /> method for basic expansion.
+    ///     Test that Command.Expand with basic variable returns expanded string
     /// </summary>
     [TestMethod]
-    public void Command_Expand_BasicVariable()
+    public void Command_Expand_BasicVariable_ReturnsExpanded()
     {
         // Test expanding a basic variable
         const string text = "Hello, ${{ name }}!";
@@ -68,10 +68,10 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test the <see cref="Command.Expand" /> method for nested expansion.
+    ///     Test that Command.Expand with nested variable returns fully expanded string
     /// </summary>
     [TestMethod]
-    public void Command_Expand_NestedVariableExpansion()
+    public void Command_Expand_NestedVariable_ReturnsFullyExpanded()
     {
         // Test expanding a nested variable
         const string text = "Hello, ${{ variable_${{ test }} }}!";
@@ -81,10 +81,10 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test the <see cref="Command.GetMapString" /> method for a missing entry.
+    ///     Test that Command.GetMapString with missing entry throws exception
     /// </summary>
     [TestMethod]
-    public void Command_GetMapString_MissingEntry()
+    public void Command_GetMapString_MissingEntry_ThrowsException()
     {
         // Test getting a missing parameter
         var map = new YamlMappingNode();
@@ -93,10 +93,10 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test the <see cref="Command.GetMapString" /> method with a value requiring expansion.
+    ///     Test that Command.GetMapString with variable expansion returns expanded value
     /// </summary>
     [TestMethod]
-    public void Command_GetMapString_WithExpansion()
+    public void Command_GetMapString_WithVariableExpansion_ReturnsExpanded()
     {
         // Test getting a parameter
         var map = new YamlMappingNode { { "parameter", "Hello, ${{ name }}!" } };

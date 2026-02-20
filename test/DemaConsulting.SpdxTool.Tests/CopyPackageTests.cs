@@ -30,10 +30,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class CopyPackageTests
 {
     /// <summary>
-    ///     Test the 'copy-package' command with missing arguments.
+    ///     Test that copy-package command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void CopyPackage_MissingArguments()
+    public void CopyPackage_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -48,10 +48,10 @@ public class CopyPackageTests
     }
 
     /// <summary>
-    ///     Test the 'copy-package' command with missing file.
+    ///     Test that copy-package command with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void CopyPackage_MissingFile()
+    public void CopyPackage_MissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -69,10 +69,10 @@ public class CopyPackageTests
     }
 
     /// <summary>
-    ///     Test the 'copy-package' command from the command-line.
+    ///     Test that copy-package command on command line reports workflow-only error
     /// </summary>
     [TestMethod]
-    public void CopyPackage_CommandLine()
+    public void CopyPackage_OnCommandLine_ReportsWorkflowOnlyError()
     {
         const string toSpdxContents =
             """
@@ -174,10 +174,10 @@ public class CopyPackageTests
     }
 
     /// <summary>
-    ///     Test the 'copy-package' command from a workflow.
+    ///     Test that copy-package command in workflow copies the package
     /// </summary>
     [TestMethod]
-    public void CopyPackage_Workflow()
+    public void CopyPackage_InWorkflow_CopiesPackage()
     {
         const string toSpdxContents =
             """
@@ -299,10 +299,10 @@ public class CopyPackageTests
     }
 
     /// <summary>
-    ///     Test the 'copy-package' command with recursive package copying.
+    ///     Test that copy-package command in workflow with recursive flag copies package recursively
     /// </summary>
     [TestMethod]
-    public void CopyPackage_Recursive()
+    public void CopyPackage_InWorkflowRecursive_CopiesPackageRecursively()
     {
         const string toSpdxContents =
             """
@@ -472,10 +472,10 @@ public class CopyPackageTests
     }
 
     /// <summary>
-    ///     Test the 'copy-package' command with copying of package file information.
+    ///     Test that copy-package command in workflow with files copies package and files
     /// </summary>
     [TestMethod]
-    public void CopyPackage_Files()
+    public void CopyPackage_InWorkflowWithFiles_CopiesPackageAndFiles()
     {
         const string toSpdxContents =
             """

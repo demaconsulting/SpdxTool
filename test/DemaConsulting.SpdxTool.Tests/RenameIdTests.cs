@@ -29,10 +29,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class RenameIdTests
 {
     /// <summary>
-    ///     Test the 'rename-id' command with missing arguments.
+    ///     Test that rename-id command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void RenameId_MissingArguments()
+    public void RenameId_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -47,10 +47,10 @@ public class RenameIdTests
     }
 
     /// <summary>
-    ///     Test the 'rename-id' command with missing SPDX file.
+    ///     Test that rename-id command with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void RenameId_MissingFile()
+    public void RenameId_MissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -68,10 +68,10 @@ public class RenameIdTests
     }
 
     /// <summary>
-    ///     Test the 'rename-id' command.
+    ///     Test that rename-id command with valid SPDX file renames the ID
     /// </summary>
     [TestMethod]
-    public void RenameId()
+    public void RenameId_ValidSpdxFile_RenamesId()
     {
         const string spdxContents =
             """

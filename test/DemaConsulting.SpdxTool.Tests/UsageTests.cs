@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class UsageTests
 {
     /// <summary>
-    ///     Test that usage information is printed when no command line arguments are specified
+    ///     Test that running with no arguments displays an error message
     /// </summary>
     [TestMethod]
-    public void Usage_NoArguments()
+    public void Usage_NoArguments_DisplaysError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -47,10 +47,10 @@ public class UsageTests
     }
 
     /// <summary>
-    ///     Test that usage information is printed when '-h' is specified
+    ///     Test that the short help flag displays usage information
     /// </summary>
     [TestMethod]
-    public void Usage_HelpShort()
+    public void Usage_ShortHelpFlag_DisplaysUsage()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -67,10 +67,10 @@ public class UsageTests
     }
 
     /// <summary>
-    ///     Test that usage information is printed when '--help' is specified
+    ///     Test that the long help flag displays usage information
     /// </summary>
     [TestMethod]
-    public void Usage_HelpLong()
+    public void Usage_LongHelpFlag_DisplaysUsage()
     {
         // Act: Run the command
         var exitCode = Runner.Run(

@@ -29,10 +29,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class UpdatePackageTests
 {
     /// <summary>
-    ///     Test the 'update-package' command does not work from the command line.
+    ///     Test that update-package command on command line reports workflow-only error
     /// </summary>
     [TestMethod]
-    public void UpdatePackage_CommandLine()
+    public void UpdatePackage_OnCommandLine_ReportsWorkflowOnlyError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -47,10 +47,10 @@ public class UpdatePackageTests
     }
 
     /// <summary>
-    ///     Test the 'update-package' command.
+    ///     Test that update-package command in workflow updates the package
     /// </summary>
     [TestMethod]
-    public void UpdatePackage_Workflow()
+    public void UpdatePackage_InWorkflow_UpdatesPackage()
     {
         // SPDX contents
         const string spdxContents =

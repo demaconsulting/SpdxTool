@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class HashTests
 {
     /// <summary>
-    ///     Tests the 'hash' command with missing arguments
+    ///     Test that hash command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void HashCommand_MissingArguments()
+    public void Hash_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -45,10 +45,10 @@ public class HashTests
     }
 
     /// <summary>
-    ///     Tests the 'hash' command with missing file
+    ///     Test that hash command with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void HashCommand_MissingFile()
+    public void Hash_MissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -66,10 +66,10 @@ public class HashTests
     }
 
     /// <summary>
-    ///     Tests the 'hash' command to generate a hash file
+    ///     Test that hash command with generate operation updates package hash
     /// </summary>
     [TestMethod]
-    public void HashCommand_Generate()
+    public void Hash_GenerateOperation_UpdatesPackageHash()
     {
         try
         {
@@ -102,10 +102,10 @@ public class HashTests
     }
 
     /// <summary>
-    ///     Tests the 'hash' command to verify a hash file with a missing file
+    ///     Test that hash command verify operation with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void HashCommand_Verify_MissingFile()
+    public void Hash_VerifyMissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -123,10 +123,10 @@ public class HashTests
     }
 
     /// <summary>
-    ///     Tests the 'hash' command to verify a hash file with a bad hash
+    ///     Test that hash command verify operation fails for invalid hash
     /// </summary>
     [TestMethod]
-    public void HashCommand_Verify_Bad()
+    public void Hash_VerifyOperation_FailsForInvalidHash()
     {
         try
         {
@@ -156,10 +156,10 @@ public class HashTests
     }
 
     /// <summary>
-    ///     Tests the 'hash' command to verify a hash file with a good hash
+    ///     Test that hash command verify operation succeeds for valid hash
     /// </summary>
     [TestMethod]
-    public void HashCommand_Verify_Good()
+    public void Hash_VerifyOperation_SucceedsForValidHash()
     {
         try
         {

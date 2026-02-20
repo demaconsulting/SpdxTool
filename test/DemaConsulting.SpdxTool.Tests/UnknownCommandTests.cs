@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class UnknownCommandTests
 {
     /// <summary>
-    ///     Test unknown commands are reported.
+    ///     Test that unrecognized commands report an error
     /// </summary>
     [TestMethod]
-    public void UnknownCommand()
+    public void UnknownCommand_UnrecognizedCommand_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(

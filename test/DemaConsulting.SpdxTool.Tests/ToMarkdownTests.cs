@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class ToMarkdownTests
 {
     /// <summary>
-    ///     Test the 'to-markdown' command with missing arguments.
+    ///     Test that to-markdown command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void ToMarkdown_MissingArguments()
+    public void ToMarkdown_MissingArguments_ReportsError()
     {
         // Act: Run the tool
         var exitCode = Runner.Run(
@@ -45,10 +45,10 @@ public class ToMarkdownTests
     }
 
     /// <summary>
-    ///     Test the 'to-markdown' command with missing SPDX file.
+    ///     Test that to-markdown command with missing SPDX file reports an error
     /// </summary>
     [TestMethod]
-    public void ToMarkdown_MissingSpdx()
+    public void ToMarkdown_MissingSpdxFile_ReportsError()
     {
         // Act: Run the tool
         var exitCode = Runner.Run(
@@ -65,10 +65,10 @@ public class ToMarkdownTests
     }
 
     /// <summary>
-    ///     Test the 'to-markdown' command.
+    ///     Test that to-markdown command with valid SPDX file generates markdown
     /// </summary>
     [TestMethod]
-    public void ToMarkdown()
+    public void ToMarkdown_ValidSpdxFile_GeneratesMarkdown()
     {
         const string spdxContents =
             """

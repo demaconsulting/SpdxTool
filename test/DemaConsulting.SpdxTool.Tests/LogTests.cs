@@ -27,10 +27,10 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class LogTests
 {
     /// <summary>
-    ///     Test that logging functions when '-l' is specified
+    ///     Test that the short log flag writes output to a file
     /// </summary>
     [TestMethod]
-    public void Log_Short()
+    public void Log_ShortFlag_WritesOutputToFile()
     {
         try
         {
@@ -60,10 +60,10 @@ public class LogTests
     }
 
     /// <summary>
-    ///     Test that logging functions when '--log' is specified
+    ///     Test that the long log flag writes output to a file
     /// </summary>
     [TestMethod]
-    public void Log_Long()
+    public void Log_LongFlag_WritesOutputToFile()
     {
         try
         {

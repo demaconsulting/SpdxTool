@@ -70,10 +70,10 @@ public class GetVersionTests
         """;
 
     /// <summary>
-    ///     Test the 'get-version' command with missing arguments
+    ///     Test that get-version command with missing arguments reports an error
     /// </summary>
     [TestMethod]
-    public void GetVersion_MissingArguments()
+    public void GetVersion_MissingArguments_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -88,10 +88,10 @@ public class GetVersionTests
     }
 
     /// <summary>
-    ///     Test the 'get-version' command with missing SPDX file
+    ///     Test that get-version command with missing file reports an error
     /// </summary>
     [TestMethod]
-    public void GetVersion_MissingFile()
+    public void GetVersion_MissingFile_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -108,10 +108,10 @@ public class GetVersionTests
     }
 
     /// <summary>
-    ///     Test the 'get-version' command from the command line
+    ///     Test that get-version command on command line reports workflow-only error
     /// </summary>
     [TestMethod]
-    public void GetVersion_CommandLine()
+    public void GetVersion_OnCommandLine_ReportsWorkflowOnlyError()
     {
         try
         {
@@ -138,10 +138,10 @@ public class GetVersionTests
     }
 
     /// <summary>
-    ///     Test the 'get-version' command from a workflow
+    ///     Test that get-version command in workflow returns the package version
     /// </summary>
     [TestMethod]
-    public void GetVersion_Workflow()
+    public void GetVersion_InWorkflow_ReturnsPackageVersion()
     {
         // Workflow contents
         const string workflowContents =
