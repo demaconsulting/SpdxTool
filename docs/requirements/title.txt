@@ -1,0 +1,15 @@
+---
+title: SpdxTool Requirements
+subtitle: Requirements Specification for the DemaConsulting SpdxTool
+author: DEMA Consulting
+description: Requirements Specification for the DemaConsulting SpdxTool
+lang: en-US
+keywords:
+  - SpdxTool
+  - SPDX
+  - SBOM
+  - Requirements
+  - Specification
+  - .NET
+  - Command-Line Tool
+---

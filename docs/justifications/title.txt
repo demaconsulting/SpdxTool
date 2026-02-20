@@ -1,0 +1,15 @@
+---
+title: SpdxTool Requirements Justifications
+subtitle: Requirements Justifications for the DemaConsulting SpdxTool
+author: DEMA Consulting
+description: Requirements Justifications for the DemaConsulting SpdxTool
+lang: en-US
+keywords:
+  - SpdxTool
+  - SPDX
+  - SBOM
+  - Requirements
+  - Justifications
+  - .NET
+  - Documentation
+---
