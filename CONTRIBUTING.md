@@ -91,16 +91,14 @@ Before submitting your changes, run the following checks:
 
 ```bash
 # Build the project
-dotnet build
+dotnet build --configuration Release
 
-# Run all tests
-dotnet test
+# Run unit tests
+dotnet test --configuration Release
 
-# Run code analysis (warnings will be treated as errors)
-dotnet build /p:TreatWarningsAsErrors=true
-
-# Run self-validation
-dotnet run --project src/DemaConsulting.SpdxTool -- --validate
+# Run self-validation tests
+dotnet run --project src/DemaConsulting.SpdxTool \
+  --configuration Release --framework net10.0 --no-build -- --validate
 
 # Generate code coverage (optional)
 dotnet test --collect:"XPlat Code Coverage"
@@ -165,18 +163,28 @@ The CI pipeline will also run markdown linting and spell checking on all documen
 
 ### Running Tests
 
+#### Unit Tests
+
 ```bash
-# Run all tests
-dotnet test
+# Run all unit tests
+dotnet test --configuration Release
 
 # Run tests for a specific framework
-dotnet test --framework net8.0
+dotnet test --configuration Release --framework net8.0
 
-# Run tests with detailed output
-dotnet test --verbosity detailed
+# Run specific unit test
+dotnet test --filter "FullyQualifiedName~YourTestName"
 
 # Run tests with coverage
 dotnet test --collect:"XPlat Code Coverage"
+```
+
+#### Self-Validation Tests
+
+```bash
+# Run self-validation tests
+dotnet run --project src/DemaConsulting.SpdxTool \
+  --configuration Release --framework net10.0 --no-build -- --validate
 ```
 
 ## Submitting Changes
