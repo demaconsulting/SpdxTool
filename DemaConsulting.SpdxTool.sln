@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemaConsulting.SpdxTool", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemaConsulting.SpdxTool.Tests", "test\DemaConsulting.SpdxTool.Tests\DemaConsulting.SpdxTool.Tests.csproj", "{96983F4D-6AE0-406E-902D-72E0BBE45836}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemaConsulting.SpdxTool.Targets", "src\DemaConsulting.SpdxTool.Targets\DemaConsulting.SpdxTool.Targets.csproj", "{FC34B997-15A1-4E9C-ACB9-58E59EF08BE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{96983F4D-6AE0-406E-902D-72E0BBE45836}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96983F4D-6AE0-406E-902D-72E0BBE45836}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96983F4D-6AE0-406E-902D-72E0BBE45836}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC34B997-15A1-4E9C-ACB9-58E59EF08BE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC34B997-15A1-4E9C-ACB9-58E59EF08BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC34B997-15A1-4E9C-ACB9-58E59EF08BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC34B997-15A1-4E9C-ACB9-58E59EF08BE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
