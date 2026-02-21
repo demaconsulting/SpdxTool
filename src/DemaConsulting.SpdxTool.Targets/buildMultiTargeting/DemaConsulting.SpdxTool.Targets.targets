@@ -1,0 +1,10 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    Multi-targeting projects import this file instead of the build/ targets file.
+    Since Pack (and GenerateSbomTarget) runs once in the outer build for multi-TFM
+    projects, we simply import the single-TFM targets to avoid running N times.
+  -->
+  <Import Project="..\build\DemaConsulting.SpdxTool.Targets.targets" />
+
+</Project>

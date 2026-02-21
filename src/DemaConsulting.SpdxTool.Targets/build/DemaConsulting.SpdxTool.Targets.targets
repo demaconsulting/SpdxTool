@@ -1,0 +1,61 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Default properties for SBOM decoration -->
+  <PropertyGroup>
+    <DecorateSBOM Condition="'$(DecorateSBOM)' == ''">false</DecorateSBOM>
+    <SpdxWorkflowFile Condition="'$(SpdxWorkflowFile)' == ''">$(MSBuildProjectDirectory)/spdx-workflow.yaml</SpdxWorkflowFile>
+    <SpdxToolCommand Condition="'$(SpdxToolCommand)' == ''">spdx-tool</SpdxToolCommand>
+  </PropertyGroup>
+
+  <!--
+    DecorateSbomTarget runs after GenerateSbomTarget (defined by Microsoft.Sbom.Targets).
+    Since GenerateSbomTarget runs AfterTargets="Pack" and performs the unzip/SBOM-generate/rezip
+    cycle, this target must also unzip/modify/rezip the nupkg to decorate the SBOM.
+  -->
+  <Target
+    Name="DecorateSbomTarget"
+    AfterTargets="GenerateSbomTarget"
+    Condition="'$(IsPackable)' == 'true' AND '$(DecorateSBOM)' == 'true' AND '$(GenerateSBOM)' == 'true'">
+
+    <!-- Validate that the workflow file exists -->
+    <Error
+      Condition="!Exists('$(SpdxWorkflowFile)')"
+      Text="SpdxTool workflow file not found: $(SpdxWorkflowFile). Create the file or set the SpdxWorkflowFile property to the correct path." />
+
+    <!-- Compute paths for unzip/rezip -->
+    <PropertyGroup>
+      <_DecorateSbomPackageOutputFullPath>$([System.IO.Path]::GetFullPath('$(PackageOutputPath)'))</_DecorateSbomPackageOutputFullPath>
+      <_DecorateSbomNupkgPath>$([System.IO.Path]::Combine($(_DecorateSbomPackageOutputFullPath), $(PackageId).$(PackageVersion).nupkg))</_DecorateSbomNupkgPath>
+      <_DecorateSbomGuid>$([System.Guid]::NewGuid())</_DecorateSbomGuid>
+      <_DecorateSbomShortGuid>$([System.String]::Copy('$(_DecorateSbomGuid)').Substring(0, 8))</_DecorateSbomShortGuid>
+      <_DecorateSbomUnzipDir>$([System.IO.Path]::Combine($(_DecorateSbomPackageOutputFullPath), $(PackageId).$(PackageVersion).$(_DecorateSbomShortGuid).spdxtool.temp))</_DecorateSbomUnzipDir>
+    </PropertyGroup>
+
+    <Message Text="SpdxTool: Decorating SBOM in $(PackageId).$(PackageVersion).nupkg" Importance="high" />
+
+    <!-- Unzip the nupkg -->
+    <Unzip
+      DestinationFolder="$(_DecorateSbomUnzipDir)"
+      SourceFiles="$(_DecorateSbomNupkgPath)"
+      OverwriteReadOnlyFiles="true" />
+
+    <!-- Run spdx-tool workflow to decorate the SBOM -->
+    <Exec
+      Command="$(SpdxToolCommand) run-workflow &quot;$(SpdxWorkflowFile)&quot;"
+      WorkingDirectory="$(_DecorateSbomUnzipDir)" />
+
+    <!-- Delete original nupkg and rezip -->
+    <Delete Files="$(_DecorateSbomNupkgPath)" />
+    <ZipDirectory
+      SourceDirectory="$(_DecorateSbomUnzipDir)"
+      DestinationFile="$(_DecorateSbomNupkgPath)"
+      Overwrite="true" />
+
+    <!-- Clean up temp directory -->
+    <RemoveDir Directories="$(_DecorateSbomUnzipDir)" />
+
+    <Message Text="SpdxTool: SBOM decoration complete" Importance="high" />
+
+  </Target>
+
+</Project>
