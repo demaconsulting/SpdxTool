@@ -441,6 +441,36 @@ steps:
     - Summary generated at ${{ output-file }}
 ```
 
+# MSBuild Integration
+
+## Overview
+
+The `DemaConsulting.SpdxTool.Targets` NuGet package integrates SpdxTool SBOM decoration directly into the
+`dotnet pack` pipeline. When used alongside `Microsoft.Sbom.Targets`, it automatically runs an SpdxTool workflow
+to decorate the generated SBOM inside the NuGet package.
+
+## Quick Start
+
+Add both packages to your project and enable SBOM decoration:
+
+```xml
+<PropertyGroup>
+  <GenerateSBOM>true</GenerateSBOM>
+  <DecorateSBOM>true</DecorateSBOM>
+</PropertyGroup>
+
+<ItemGroup>
+  <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.5" PrivateAssets="All" />
+  <PackageReference Include="DemaConsulting.SpdxTool.Targets" Version="1.0.0" PrivateAssets="All" />
+</ItemGroup>
+```
+
+Create an `spdx-workflow.yaml` in your project directory to define the SBOM decoration steps. The workflow runs
+with the working directory set to the unzipped NuGet package contents, where the SBOM is at
+`_manifest/spdx_2.2/manifest.spdx.json`.
+
+For detailed configuration and examples, see the [MSBuild Integration documentation][msbuild-integration].
+
 # Self-Validation
 
 ## Validation Purpose
@@ -851,3 +881,4 @@ For issues, questions, or feature requests:
 [releases]: https://github.com/demaconsulting/SpdxTool/releases
 [license]: https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE
 [contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md
+[msbuild-integration]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/msbuild-integration.md

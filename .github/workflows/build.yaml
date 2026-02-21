@@ -182,6 +182,7 @@ jobs:
           path: |
             src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
             src/DemaConsulting.SpdxTool/bin/Release/*.snupkg
+            src/DemaConsulting.SpdxTool.Targets/bin/Release/*.nupkg
 
   # Runs CodeQL security and quality analysis, gathering results to include
   # in the code quality report.
