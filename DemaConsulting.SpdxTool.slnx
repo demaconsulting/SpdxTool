@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/DemaConsulting.SpdxTool.Targets/DemaConsulting.SpdxTool.Targets.csproj" />
+  <Project Path="src/DemaConsulting.SpdxTool/DemaConsulting.SpdxTool.csproj" />
+  <Project Path="test/DemaConsulting.SpdxTool.Tests/DemaConsulting.SpdxTool.Tests.csproj" />
+</Solution>
