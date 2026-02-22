@@ -1,0 +1,13 @@
+---
+parameters:
+  sbom: _manifest/spdx_2.2/manifest.spdx.json
+
+steps:
+  - command: print
+    inputs:
+      text:
+        - "## SpdxTool decoration running"
+
+  - command: validate
+    inputs:
+      spdx: ${{ sbom }}
