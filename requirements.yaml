@@ -398,3 +398,97 @@ sections:
               losing tool functionality.
             tests:
               - dotnet10.x@SpdxTool_Validate
+
+      - title: MSBuild Targets Integration
+        requirements:
+          - id: SPDX-REQ-034
+            title: The MSBuild targets package shall decorate SBOMs during dotnet pack for single-TFM projects.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users building single-target framework projects need SBOM decoration
+              integrated into their standard build process without manual intervention.
+              Automatic decoration during pack ensures SBOMs are consistently enhanced.
+            tests:
+              - SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+
+          - id: SPDX-REQ-035
+            title: The MSBuild targets package shall decorate SBOMs during dotnet pack for multi-TFM projects.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users building multi-target framework projects need SBOM decoration
+              to work correctly across all target frameworks. This ensures consistent
+              SBOM enhancement regardless of project complexity.
+            tests:
+              - MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+
+          - id: SPDX-REQ-036
+            title: The MSBuild targets package shall skip SBOM decoration when DecorateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users must be able to opt-out of SBOM decoration for projects where it is
+              not needed or desired. The default behavior respects user choice by not
+              decorating unless explicitly enabled.
+            tests:
+              - SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+
+          - id: SPDX-REQ-037
+            title: The MSBuild targets package shall skip SBOM decoration when GenerateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              SBOM decoration depends on SBOM generation being enabled. When no SBOM
+              is generated, decoration should be skipped entirely to avoid errors and
+              unnecessary processing.
+            tests:
+              - SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+
+          - id: SPDX-REQ-038
+            title: The MSBuild targets package shall report a clear error when the workflow file is missing.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              When users enable SBOM decoration but the required workflow file is not
+              present, they need a clear error message to understand the problem and
+              take corrective action.
+            tests:
+              - SingleTfmProject_MissingWorkflow_ReportsError
+
+          - id: SPDX-REQ-039
+            title: The MSBuild targets package shall work correctly on Windows platforms.
+            tags:
+              - msbuild
+              - platform
+            justification: |
+              Windows is a widely used operating system for .NET development. The
+              MSBuild integration must function correctly on Windows to support
+              developers using this platform.
+            tests:
+              - windows@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - windows@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+              - windows@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+              - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+              - windows@SingleTfmProject_MissingWorkflow_ReportsError
+
+          - id: SPDX-REQ-040
+            title: The MSBuild targets package shall work correctly on Linux platforms.
+            tags:
+              - msbuild
+              - platform
+            justification: |
+              Linux is a widely used operating system for .NET development and CI/CD
+              environments. The MSBuild integration must function correctly on Linux
+              to support developers and automation using this platform.
+            tests:
+              - ubuntu@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - ubuntu@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+              - ubuntu@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+              - ubuntu@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+              - ubuntu@SingleTfmProject_MissingWorkflow_ReportsError
