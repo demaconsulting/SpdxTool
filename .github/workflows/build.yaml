@@ -176,13 +176,19 @@ jobs:
           name: test-results-${{ matrix.os }}
           path: test-results/*.trx
 
-      - name: Upload Artifacts
+      - name: Upload SpdxTool Packages
         uses: actions/upload-artifact@v6
         with:
-          name: artifacts-${{ matrix.os }}
+          name: packages-${{ matrix.os }}
           path: |
             src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
             src/DemaConsulting.SpdxTool/bin/Release/*.snupkg
+
+      - name: Upload SpdxTool.Targets Packages
+        uses: actions/upload-artifact@v6
+        with:
+          name: targets-packages-${{ matrix.os }}
+          path: |
             src/DemaConsulting.SpdxTool.Targets/bin/Release/*.nupkg
 
   # Runs CodeQL security and quality analysis, gathering results to include
@@ -270,7 +276,7 @@ jobs:
       - name: Download package
         uses: actions/download-artifact@v7
         with:
-          name: artifacts-${{ matrix.os }}
+          name: packages-${{ matrix.os }}
           path: packages
 
       - name: Setup dotnet
@@ -360,7 +366,7 @@ jobs:
       - name: Download package
         uses: actions/download-artifact@v7
         with:
-          name: artifacts-${{ matrix.os }}
+          name: packages-${{ matrix.os }}
           path: packages
 
       - name: Setup dotnet
