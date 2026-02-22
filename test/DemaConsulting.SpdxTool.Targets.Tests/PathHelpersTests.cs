@@ -40,7 +40,7 @@ public class PathHelpersTests
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.AreEqual($"/home/user{Path.DirectorySeparatorChar}documents/file.txt", result);
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class PathHelpersTests
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.AreEqual($"/home/user/documents{Path.DirectorySeparatorChar}file.txt", result);
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public class PathHelpersTests
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.AreEqual($"/home/user{Path.DirectorySeparatorChar}documents/work/report.pdf", result);
     }
 
     /// <summary>
@@ -141,14 +141,13 @@ public class PathHelpersTests
     public void PathHelpers_SafePathCombine_GuidBasedFilename_CombinesSuccessfully()
     {
         // Arrange
-        var basePath = Path.GetTempPath();
-        var guid = Guid.NewGuid();
-        var relativePath = $"test-{guid}.tmp";
+        var basePath = "/tmp/testdir";
+        var relativePath = "test-a1b2c3d4.tmp";
 
         // Act
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.AreEqual($"/tmp/testdir{Path.DirectorySeparatorChar}test-a1b2c3d4.tmp", result);
     }
 }
