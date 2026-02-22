@@ -47,6 +47,11 @@ internal static class DotnetRunner
             WorkingDirectory = workingDirectory
         };
 
+        // Disable MSBuild server and node reuse to prevent lingering child
+        // processes that cause VSTest to hang waiting for process tree exit.
+        startInfo.Environment["DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER"] = "1";
+        startInfo.Environment["MSBUILDDISABLENODEREUSE"] = "1";
+
         // Add the arguments
         foreach (var argument in arguments)
         {
