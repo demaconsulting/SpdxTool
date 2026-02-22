@@ -130,6 +130,7 @@ jobs:
       - name: Test
         run: >
           dotnet test
+          test/DemaConsulting.SpdxTool.Tests/DemaConsulting.SpdxTool.Tests.csproj
           --no-build
           --configuration Release
           --property:Version=${{ inputs.version }}
@@ -339,7 +340,8 @@ jobs:
 
   # Performs integration testing of the DemaConsulting.SpdxTool.Targets package
   # to verify the MSBuild targets work correctly with both single-TFM and
-  # multi-TFM projects on Windows and Linux.
+  # multi-TFM projects on Windows and Linux. Runs the MSTest integration tests
+  # and produces TRX files for requirement traceability.
   targets-integration-test:
     name: Targets Test ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -379,56 +381,20 @@ jobs:
             DemaConsulting.SpdxTool
           echo "✓ spdx-tool installed"
 
-      - name: Test single-TFM fixture with decoration
-        shell: bash
-        run: |
-          echo "Testing single-TFM project with DecorateSBOM=true..."
-          dotnet pack test/TestFixtures/SingleTfmProject/SingleTfmProject.csproj \
-            --configuration Release \
-            | tee single-tfm-output.txt
-          grep -q "SpdxTool: SBOM decoration complete" single-tfm-output.txt \
-            || { echo "✗ SBOM decoration did not run"; exit 1; }
-          echo "✓ Single-TFM decoration succeeded"
+      - name: Run targets integration tests
+        run: >
+          dotnet test
+          test/DemaConsulting.SpdxTool.Targets.Tests/DemaConsulting.SpdxTool.Targets.Tests.csproj
+          --configuration Release
+          --logger "trx;LogFilePrefix=targets-${{ matrix.os }}"
+          --results-directory targets-test-results
 
-      - name: Test multi-TFM fixture with decoration
-        shell: bash
-        run: |
-          echo "Testing multi-TFM project with DecorateSBOM=true..."
-          dotnet pack test/TestFixtures/MultiTfmProject/MultiTfmProject.csproj \
-            --configuration Release \
-            | tee multi-tfm-output.txt
-          grep -q "SpdxTool: SBOM decoration complete" multi-tfm-output.txt \
-            || { echo "✗ SBOM decoration did not run"; exit 1; }
-          echo "✓ Multi-TFM decoration succeeded"
-
-      - name: Test DecorateSBOM=false skips decoration
-        shell: bash
-        run: |
-          echo "Testing DecorateSBOM=false..."
-          dotnet pack test/TestFixtures/SingleTfmProject/SingleTfmProject.csproj \
-            --configuration Release \
-            /p:DecorateSBOM=false \
-            | tee opt-out-output.txt
-          if grep -q "SpdxTool: Decorating SBOM" opt-out-output.txt; then
-            echo "✗ Decoration should not run when DecorateSBOM=false"
-            exit 1
-          fi
-          echo "✓ Decoration correctly skipped"
-
-      - name: Test missing workflow file produces error
-        shell: bash
-        run: |
-          echo "Testing missing workflow file..."
-          if dotnet pack test/TestFixtures/SingleTfmProject/SingleTfmProject.csproj \
-            --configuration Release \
-            /p:SpdxWorkflowFile=nonexistent-workflow.yaml 2>&1 \
-            | tee missing-workflow-output.txt; then
-            echo "✗ Pack should have failed with missing workflow"
-            exit 1
-          fi
-          grep -q "SpdxTool workflow file not found" missing-workflow-output.txt \
-            || { echo "✗ Expected clear error about missing workflow"; exit 1; }
-          echo "✓ Missing workflow produces clear error"
+      - name: Upload targets test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: targets-test-results-${{ matrix.os }}
+          path: targets-test-results/*.trx
 
   # Builds the supporting documentation including user guides, code quality
   # reports, and build notes.
