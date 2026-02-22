@@ -11,9 +11,9 @@ The integration follows this sequence during `dotnet pack`:
 
 1. **Pack** — MSBuild creates the `.nupkg` file
 2. **GenerateSbomTarget** — `Microsoft.Sbom.Targets` unzips the `.nupkg`,
-   generates the SBOM, and rezips the package
+   generates the SBOM, and re-zips the package
 3. **DecorateSbomTarget** — `DemaConsulting.SpdxTool.Targets` unzips the
-   `.nupkg`, runs the SpdxTool workflow to decorate the SBOM, and rezips the
+   `.nupkg`, runs the SpdxTool workflow to decorate the SBOM, and re-zips the
    package
 
 ## Installation
@@ -48,17 +48,18 @@ Enable SBOM generation and decoration in your project file:
 | :----------------- | :----------------------------------------------- | :------------------------------------- |
 | `DecorateSBOM`     | `false`                                          | Enable SBOM decoration during pack     |
 | `SpdxWorkflowFile` | `$(MSBuildProjectDirectory)/spdx-workflow.yaml`  | Path to the SpdxTool workflow file     |
-| `SpdxToolCommand`  | `spdx-tool`                                      | Command to invoke SpdxTool             |
+| `SpdxToolCommand`  | `dotnet spdx-tool`                               | Command to invoke SpdxTool             |
 
 ### SpdxToolCommand
 
 The `SpdxToolCommand` property controls how SpdxTool is invoked. The default
-value `spdx-tool` works when the tool is installed globally. If you are using
-a local tool installation, set this to `dotnet spdx-tool`:
+value `dotnet spdx-tool` works when the tool is managed as a local tool via
+`.config/dotnet-tools.json`. If you have installed spdx-tool globally, you
+can override this to use the bare command:
 
 ```xml
 <PropertyGroup>
-  <SpdxToolCommand>dotnet spdx-tool</SpdxToolCommand>
+  <SpdxToolCommand>spdx-tool</SpdxToolCommand>
 </PropertyGroup>
 ```
 

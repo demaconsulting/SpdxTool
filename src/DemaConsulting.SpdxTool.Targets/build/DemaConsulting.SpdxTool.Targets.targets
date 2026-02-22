@@ -4,7 +4,7 @@
   <PropertyGroup>
     <DecorateSBOM Condition="'$(DecorateSBOM)' == ''">false</DecorateSBOM>
     <SpdxWorkflowFile Condition="'$(SpdxWorkflowFile)' == ''">$(MSBuildProjectDirectory)/spdx-workflow.yaml</SpdxWorkflowFile>
-    <SpdxToolCommand Condition="'$(SpdxToolCommand)' == ''">spdx-tool</SpdxToolCommand>
+    <SpdxToolCommand Condition="'$(SpdxToolCommand)' == ''">dotnet spdx-tool</SpdxToolCommand>
   </PropertyGroup>
 
   <!--

@@ -141,13 +141,13 @@ public class PathHelpersTests
     public void PathHelpers_SafePathCombine_GuidBasedFilename_CombinesSuccessfully()
     {
         // Arrange
-        var basePath = "/tmp/testdir";
+        var basePath = "/tmp/test-dir";
         var relativePath = "test-a1b2c3d4.tmp";
 
         // Act
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual($"/tmp/testdir{Path.DirectorySeparatorChar}test-a1b2c3d4.tmp", result);
+        Assert.AreEqual($"/tmp/test-dir{Path.DirectorySeparatorChar}test-a1b2c3d4.tmp", result);
     }
 }

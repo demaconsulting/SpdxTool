@@ -9,6 +9,7 @@
     <Description>Multi TFM test fixture for SpdxTool.Targets</Description>
     <GenerateSBOM>true</GenerateSBOM>
     <DecorateSBOM>true</DecorateSBOM>
+    <SpdxToolCommand>spdx-tool</SpdxToolCommand>
   </PropertyGroup>
 
   <ItemGroup>
