@@ -36,7 +36,7 @@ internal static class FixturePaths
         var dir = AppContext.BaseDirectory;
         while (dir != null)
         {
-            if (File.Exists(Path.Combine(dir, "DemaConsulting.SpdxTool.slnx")))
+            if (File.Exists(PathHelpers.SafePathCombine(dir, "DemaConsulting.SpdxTool.slnx")))
             {
                 return dir;
             }
@@ -54,7 +54,9 @@ internal static class FixturePaths
     /// <returns>Absolute path to the SingleTfmProject fixture.</returns>
     public static string GetSingleTfmProjectPath()
     {
-        return Path.Combine(GetRepoRoot(), "test", "TestFixtures", "SingleTfmProject");
+        var testDir = PathHelpers.SafePathCombine(GetRepoRoot(), "test");
+        var fixturesDir = PathHelpers.SafePathCombine(testDir, "TestFixtures");
+        return PathHelpers.SafePathCombine(fixturesDir, "SingleTfmProject");
     }
 
     /// <summary>
@@ -63,6 +65,8 @@ internal static class FixturePaths
     /// <returns>Absolute path to the MultiTfmProject fixture.</returns>
     public static string GetMultiTfmProjectPath()
     {
-        return Path.Combine(GetRepoRoot(), "test", "TestFixtures", "MultiTfmProject");
+        var testDir = PathHelpers.SafePathCombine(GetRepoRoot(), "test");
+        var fixturesDir = PathHelpers.SafePathCombine(testDir, "TestFixtures");
+        return PathHelpers.SafePathCombine(fixturesDir, "MultiTfmProject");
     }
 }

@@ -56,7 +56,9 @@ public class DecorateSbomTargetTests
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgPath = Path.Combine(fixtureDir, "bin", "Release", "TestFixtures.SingleTfmProject.1.0.0.nupkg");
+        var nupkgDir = PathHelpers.SafePathCombine(fixtureDir, "bin");
+        nupkgDir = PathHelpers.SafePathCombine(nupkgDir, "Release");
+        var nupkgPath = PathHelpers.SafePathCombine(nupkgDir, "TestFixtures.SingleTfmProject.1.0.0.nupkg");
         Assert.IsTrue(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
@@ -84,7 +86,9 @@ public class DecorateSbomTargetTests
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgPath = Path.Combine(fixtureDir, "bin", "Release", "TestFixtures.MultiTfmProject.1.0.0.nupkg");
+        var nupkgDir = PathHelpers.SafePathCombine(fixtureDir, "bin");
+        nupkgDir = PathHelpers.SafePathCombine(nupkgDir, "Release");
+        var nupkgPath = PathHelpers.SafePathCombine(nupkgDir, "TestFixtures.MultiTfmProject.1.0.0.nupkg");
         Assert.IsTrue(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
@@ -166,8 +170,8 @@ public class DecorateSbomTargetTests
     /// <param name="projectDir">Path to the project directory.</param>
     private static void CleanBinObj(string projectDir)
     {
-        var binDir = Path.Combine(projectDir, "bin");
-        var objDir = Path.Combine(projectDir, "obj");
+        var binDir = PathHelpers.SafePathCombine(projectDir, "bin");
+        var objDir = PathHelpers.SafePathCombine(projectDir, "obj");
 
         if (Directory.Exists(binDir))
         {
