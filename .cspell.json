@@ -37,6 +37,8 @@
     "maintainer",
     "markdownlint",
     "mermaid",
+    "MSBUILD",
+    "MSBUILDDISABLENODEREUSE",
     "MSTest",
     "mstest",
     "myterm",
