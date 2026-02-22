@@ -32,7 +32,7 @@ sections:
     sections:
       - title: Command-Line Interface
         requirements:
-          - id: SPDX-REQ-001
+          - id: SPDX-CMD-001
             title: The tool shall display version information when invoked with the -v flag.
             tags:
               - cli
@@ -43,7 +43,7 @@ sections:
             tests:
               - Version_ShortFlag_DisplaysVersion
 
-          - id: SPDX-REQ-002
+          - id: SPDX-CMD-002
             title: The tool shall display version information when invoked with the --version flag.
             tags:
               - cli
@@ -54,7 +54,7 @@ sections:
             tests:
               - Version_LongFlag_DisplaysVersion
 
-          - id: SPDX-REQ-003
+          - id: SPDX-CMD-003
             title: The tool shall display usage information when invoked with the -h flag.
             tags:
               - cli
@@ -64,7 +64,7 @@ sections:
             tests:
               - Usage_ShortHelpFlag_DisplaysUsage
 
-          - id: SPDX-REQ-004
+          - id: SPDX-CMD-004
             title: The tool shall display usage information when invoked with the --help flag.
             tags:
               - cli
@@ -74,7 +74,7 @@ sections:
             tests:
               - Usage_LongHelpFlag_DisplaysUsage
 
-          - id: SPDX-REQ-005
+          - id: SPDX-CMD-005
             title: The tool shall display an error and usage information when invoked without arguments.
             tags:
               - cli
@@ -84,7 +84,7 @@ sections:
             tests:
               - Usage_NoArguments_DisplaysError
 
-          - id: SPDX-REQ-006
+          - id: SPDX-CMD-006
             title: The tool shall silence console output when invoked with the -s flag.
             tags:
               - cli
@@ -95,7 +95,7 @@ sections:
             tests:
               - Silent_ShortFlag_SuppressesOutput
 
-          - id: SPDX-REQ-007
+          - id: SPDX-CMD-007
             title: The tool shall silence console output when invoked with the --silent flag.
             tags:
               - cli
@@ -106,7 +106,7 @@ sections:
             tests:
               - Silent_LongFlag_SuppressesOutput
 
-          - id: SPDX-REQ-008
+          - id: SPDX-CMD-008
             title: The tool shall write output to a log file when invoked with the -l flag.
             tags:
               - cli
@@ -117,7 +117,7 @@ sections:
             tests:
               - Log_ShortFlag_WritesOutputToFile
 
-          - id: SPDX-REQ-009
+          - id: SPDX-CMD-009
             title: The tool shall write output to a log file when invoked with the --log flag.
             tags:
               - cli
@@ -128,7 +128,7 @@ sections:
             tests:
               - Log_LongFlag_WritesOutputToFile
 
-          - id: SPDX-REQ-010
+          - id: SPDX-CMD-010
             title: The tool shall perform self-validation when invoked with the --validate flag.
             tags:
               - cli
@@ -138,7 +138,7 @@ sections:
             tests:
               - SelfValidation_ValidateFlag_Succeeds
 
-          - id: SPDX-REQ-011
+          - id: SPDX-CMD-011
             title: The tool shall support depth control for self-validation output.
             tags:
               - cli
@@ -148,7 +148,7 @@ sections:
             tests:
               - SelfValidation_ValidateFlagWithDepth_ShowsDepth
 
-          - id: SPDX-REQ-012
+          - id: SPDX-CMD-012
             title: The tool shall write self-validation results to a TRX file when invoked with the -r or --result flag.
             tags:
               - cli
@@ -161,7 +161,7 @@ sections:
 
       - title: SPDX Document Validation
         requirements:
-          - id: SPDX-REQ-013
+          - id: SPDX-VAL-001
             title: The tool shall validate SPDX documents using the validate command.
             tags:
               - spdx
@@ -171,7 +171,7 @@ sections:
             tests:
               - SpdxTool_Validate
 
-          - id: SPDX-REQ-014
+          - id: SPDX-VAL-002
             title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
             tags:
               - spdx
@@ -184,7 +184,7 @@ sections:
 
       - title: SPDX Package Management
         requirements:
-          - id: SPDX-REQ-015
+          - id: SPDX-PKG-001
             title: The tool shall add packages to SPDX documents using the add-package command.
             tags:
               - spdx
@@ -194,7 +194,7 @@ sections:
             tests:
               - SpdxTool_AddPackage
 
-          - id: SPDX-REQ-016
+          - id: SPDX-PKG-002
             title: The tool shall copy packages between SPDX documents using the copy-package command.
             tags:
               - spdx
@@ -204,7 +204,7 @@ sections:
             tests:
               - SpdxTool_CopyPackage
 
-          - id: SPDX-REQ-017
+          - id: SPDX-PKG-003
             title: The tool shall update existing packages in SPDX documents using the update-package command.
             tags:
               - spdx
@@ -214,7 +214,7 @@ sections:
             tests:
               - SpdxTool_UpdatePackage
 
-          - id: SPDX-REQ-018
+          - id: SPDX-PKG-004
             title: The tool shall find packages in SPDX documents using the find-package command.
             tags:
               - spdx
@@ -224,7 +224,7 @@ sections:
             tests:
               - SpdxTool_FindPackage
 
-          - id: SPDX-REQ-019
+          - id: SPDX-PKG-005
             title: The tool shall retrieve package versions from SPDX documents using the get-version command.
             tags:
               - spdx
@@ -236,7 +236,7 @@ sections:
 
       - title: SPDX Relationship Management
         requirements:
-          - id: SPDX-REQ-020
+          - id: SPDX-REL-001
             title: The tool shall add relationships to SPDX documents using the add-relationship command.
             tags:
               - spdx
@@ -249,7 +249,7 @@ sections:
 
       - title: SPDX Document Transformation
         requirements:
-          - id: SPDX-REQ-021
+          - id: SPDX-XFM-001
             title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
             tags:
               - spdx
@@ -260,7 +260,7 @@ sections:
             tests:
               - SpdxTool_ToMarkdown
 
-          - id: SPDX-REQ-022
+          - id: SPDX-XFM-002
             title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
             tags:
               - spdx
@@ -273,7 +273,7 @@ sections:
 
       - title: SPDX Document Manipulation
         requirements:
-          - id: SPDX-REQ-023
+          - id: SPDX-MAN-001
             title: The tool shall rename SPDX element IDs using the rename-id command.
             tags:
               - spdx
@@ -286,7 +286,7 @@ sections:
 
       - title: File Hashing
         requirements:
-          - id: SPDX-REQ-024
+          - id: SPDX-HSH-001
             title: The tool shall compute and verify file hashes using the hash command.
             tags:
               - spdx
@@ -299,7 +299,7 @@ sections:
 
       - title: Workflow Support
         requirements:
-          - id: SPDX-REQ-025
+          - id: SPDX-WKF-001
             title: The tool shall execute workflow files using the run-workflow command.
             tags:
               - workflow
@@ -313,7 +313,7 @@ sections:
               - SpdxTool_CopyPackage
               - SpdxTool_UpdatePackage
 
-          - id: SPDX-REQ-026
+          - id: SPDX-WKF-002
             title: The tool shall support setting variables within workflows using the set-variable command.
             tags:
               - workflow
@@ -323,7 +323,7 @@ sections:
             tests:
               - SpdxTool_AddPackage
 
-          - id: SPDX-REQ-027
+          - id: SPDX-WKF-003
             title: The tool shall support printing text within workflows using the print command.
             tags:
               - workflow
@@ -333,7 +333,7 @@ sections:
             tests:
               - SpdxTool_AddPackage
 
-          - id: SPDX-REQ-028
+          - id: SPDX-WKF-004
             title: The tool shall support querying external program output using the query command.
             tags:
               - workflow
@@ -345,7 +345,7 @@ sections:
 
       - title: Platform Support
         requirements:
-          - id: SPDX-REQ-029
+          - id: SPDX-PLT-001
             title: The tool shall run successfully on Windows platforms.
             tags:
               - platform
@@ -355,7 +355,7 @@ sections:
             tests:
               - windows@SpdxTool_Validate
 
-          - id: SPDX-REQ-030
+          - id: SPDX-PLT-002
             title: The tool shall run successfully on Linux platforms.
             tags:
               - platform
@@ -366,7 +366,7 @@ sections:
             tests:
               - ubuntu@SpdxTool_Validate
 
-          - id: SPDX-REQ-031
+          - id: SPDX-PLT-003
             title: The tool shall run successfully on .NET 8.x.
             tags:
               - platform
@@ -377,7 +377,7 @@ sections:
             tests:
               - dotnet8.x@SpdxTool_Validate
 
-          - id: SPDX-REQ-032
+          - id: SPDX-PLT-004
             title: The tool shall run successfully on .NET 9.x.
             tags:
               - platform
@@ -388,7 +388,7 @@ sections:
             tests:
               - dotnet9.x@SpdxTool_Validate
 
-          - id: SPDX-REQ-033
+          - id: SPDX-PLT-005
             title: The tool shall run successfully on .NET 10.x.
             tags:
               - platform
@@ -398,3 +398,86 @@ sections:
               losing tool functionality.
             tests:
               - dotnet10.x@SpdxTool_Validate
+
+          - id: SPDX-PLT-006
+            title: The MSBuild targets package shall work correctly on Windows platforms.
+            tags:
+              - platform
+              - msbuild
+            justification: |
+              Windows is a widely used operating system for .NET development. The
+              MSBuild integration must function correctly on Windows to support
+              developers using this platform.
+            tests:
+              - windows@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - windows@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+              - windows@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+              - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+              - windows@SingleTfmProject_MissingWorkflow_ReportsError
+
+          - id: SPDX-PLT-007
+            title: The MSBuild targets package shall work correctly on Linux platforms.
+            tags:
+              - platform
+              - msbuild
+            justification: |
+              Linux is a widely used operating system for .NET development and CI/CD
+              environments. The MSBuild integration must function correctly on Linux
+              to support developers and automation using this platform.
+            tests:
+              - ubuntu@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - ubuntu@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+              - ubuntu@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+              - ubuntu@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+              - ubuntu@SingleTfmProject_MissingWorkflow_ReportsError
+
+      - title: MSBuild Targets Integration
+        requirements:
+          - id: SPDX-TGT-001
+            title: The MSBuild targets package shall decorate SBOMs during dotnet pack.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users need SBOM decoration integrated into their standard build process
+              without manual intervention. Automatic decoration during pack ensures
+              SBOMs are consistently enhanced for both single-TFM and multi-TFM projects.
+            tests:
+              - SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+
+          - id: SPDX-TGT-002
+            title: The MSBuild targets package shall skip SBOM decoration when DecorateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users must be able to opt-out of SBOM decoration for projects where it is
+              not needed or desired. The default behavior respects user choice by not
+              decorating unless explicitly enabled.
+            tests:
+              - SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+
+          - id: SPDX-TGT-003
+            title: The MSBuild targets package shall skip SBOM decoration when GenerateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              SBOM decoration depends on SBOM generation being enabled. When no SBOM
+              is generated, decoration should be skipped entirely to avoid errors and
+              unnecessary processing.
+            tests:
+              - SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+
+          - id: SPDX-TGT-004
+            title: The MSBuild targets package shall report a clear error when the workflow file is missing.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              When users enable SBOM decoration but the required workflow file is not
+              present, they need a clear error message to understand the problem and
+              take corrective action.
+            tests:
+              - SingleTfmProject_MissingWorkflow_ReportsError

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>TestFixtures.SingleTfmProject</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Test</Authors>
+    <Description>Single TFM test fixture for SpdxTool.Targets</Description>
+    <GenerateSBOM>true</GenerateSBOM>
+    <DecorateSBOM>true</DecorateSBOM>
+    <SpdxToolCommand>spdx-tool</SpdxToolCommand>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.5" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!-- Import local targets instead of package reference for testing -->
+  <Import
+    Project="$(MSBuildThisFileDirectory)\..\..\..\src\DemaConsulting.SpdxTool.Targets\build\DemaConsulting.SpdxTool.Targets.targets"
+    Condition="Exists('$(MSBuildThisFileDirectory)\..\..\..\src\DemaConsulting.SpdxTool.Targets\build\DemaConsulting.SpdxTool.Targets.targets')" />
+
+</Project>

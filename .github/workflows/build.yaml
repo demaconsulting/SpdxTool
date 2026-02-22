@@ -130,6 +130,7 @@ jobs:
       - name: Test
         run: >
           dotnet test
+          test/DemaConsulting.SpdxTool.Tests/DemaConsulting.SpdxTool.Tests.csproj
           --no-build
           --configuration Release
           --property:Version=${{ inputs.version }}
@@ -175,13 +176,20 @@ jobs:
           name: test-results-${{ matrix.os }}
           path: test-results/*.trx
 
-      - name: Upload Artifacts
+      - name: Upload SpdxTool Packages
         uses: actions/upload-artifact@v6
         with:
-          name: artifacts-${{ matrix.os }}
+          name: packages-${{ matrix.os }}
           path: |
             src/DemaConsulting.SpdxTool/bin/Release/*.nupkg
             src/DemaConsulting.SpdxTool/bin/Release/*.snupkg
+
+      - name: Upload SpdxTool.Targets Packages
+        uses: actions/upload-artifact@v6
+        with:
+          name: targets-packages-${{ matrix.os }}
+          path: |
+            src/DemaConsulting.SpdxTool.Targets/bin/Release/*.nupkg
 
   # Runs CodeQL security and quality analysis, gathering results to include
   # in the code quality report.
@@ -268,7 +276,7 @@ jobs:
       - name: Download package
         uses: actions/download-artifact@v7
         with:
-          name: artifacts-${{ matrix.os }}
+          name: packages-${{ matrix.os }}
           path: packages
 
       - name: Setup dotnet
@@ -336,13 +344,71 @@ jobs:
           name: validation-test-results-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
           path: validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx
 
+  # Performs integration testing of the DemaConsulting.SpdxTool.Targets package
+  # to verify the MSBuild targets work correctly with both single-TFM and
+  # multi-TFM projects on Windows and Linux. Runs the MSTest integration tests
+  # and produces TRX files for requirement traceability.
+  targets-integration-test:
+    name: Targets Test ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: build
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download package
+        uses: actions/download-artifact@v7
+        with:
+          name: packages-${{ matrix.os }}
+          path: packages
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.x
+            9.x
+            10.x
+
+      - name: Install spdx-tool from package
+        shell: bash
+        run: |
+          echo "Installing spdx-tool version ${{ inputs.version }}..."
+          dotnet tool install --global \
+            --add-source packages \
+            --version ${{ inputs.version }} \
+            DemaConsulting.SpdxTool
+          echo "✓ spdx-tool installed"
+
+      - name: Run targets integration tests
+        run: >
+          dotnet test
+          test/DemaConsulting.SpdxTool.Targets.Tests/DemaConsulting.SpdxTool.Targets.Tests.csproj
+          --configuration Release
+          --logger "trx;LogFilePrefix=targets-${{ matrix.os }}"
+          --results-directory targets-test-results
+
+      - name: Upload targets test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: targets-test-results-${{ matrix.os }}
+          path: targets-test-results/*.trx
+
   # Builds the supporting documentation including user guides, code quality
   # reports, and build notes.
   build-docs:
     name: Build Documents
     runs-on: windows-latest
 
-    needs: [build, integration-test, codeql]
+    needs: [build, integration-test, targets-integration-test, codeql]
 
     permissions:
       contents: read

@@ -150,6 +150,7 @@ This project maintains high code quality standards:
 Additional information can be found at:
 
 - [Architecture Documentation][architecture]
+- [MSBuild Integration][msbuild-integration]
 - [SPDX Site][spdx-site]
 - [GitHub CI][github-ci-docs]
 - [Using with Microsoft SBOM Tool][sbom-tool-docs]
@@ -159,6 +160,7 @@ Additional information can be found at:
 [contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md
 [code-of-conduct]: https://github.com/demaconsulting/SpdxTool/blob/main/CODE_OF_CONDUCT.md
 [architecture]: https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md
+[msbuild-integration]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/msbuild-integration.md
 [spdx-site]: https://spdx.dev/
 [github-ci-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md
 [sbom-tool-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md

@@ -1,0 +1,74 @@
+﻿// Copyright (c) 2024 DEMA Consulting
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using System.Diagnostics;
+
+namespace DemaConsulting.SpdxTool.Targets.Tests;
+
+/// <summary>
+///     Helper for running dotnet commands in integration tests.
+/// </summary>
+internal static class DotnetRunner
+{
+    /// <summary>
+    ///     Run a dotnet command and capture the output.
+    /// </summary>
+    /// <param name="output">Combined stdout and stderr output.</param>
+    /// <param name="workingDirectory">Working directory for the command.</param>
+    /// <param name="arguments">Arguments to pass to dotnet.</param>
+    /// <returns>Process exit code.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the process fails to start.</exception>
+    public static int Run(out string output, string workingDirectory, params string[] arguments)
+    {
+        // Construct the start information
+        var startInfo = new ProcessStartInfo("dotnet")
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            WorkingDirectory = workingDirectory
+        };
+
+        // Disable MSBuild server and node reuse to prevent lingering child
+        // processes that cause VSTest to hang waiting for process tree exit.
+        startInfo.Environment["DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER"] = "1";
+        startInfo.Environment["MSBUILDDISABLENODEREUSE"] = "1";
+
+        // Add the arguments
+        foreach (var argument in arguments)
+        {
+            startInfo.ArgumentList.Add(argument);
+        }
+
+        // Start the process
+        var process = Process.Start(startInfo) ??
+                      throw new InvalidOperationException("Failed to start dotnet process");
+
+        // Save the output
+        output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
+
+        // Wait for the process to exit
+        process.WaitForExit();
+
+        // Return the exit code
+        return process.ExitCode;
+    }
+}
