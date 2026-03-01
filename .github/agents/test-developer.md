@@ -55,6 +55,32 @@ public void ClassName_MethodUnderTest_Scenario_ExpectedBehavior()
 - Clear failure messages for assertions
 - Consider edge cases and error conditions
 
+### Tests and Requirements
+
+- **All requirements MUST have linked tests** - this is enforced in CI
+- **Not all tests need requirements** - tests may be created for:
+  - Exploring corner cases not explicitly stated in requirements
+  - Testing design decisions and implementation details
+  - Failure-testing and error handling scenarios
+  - Verifying internal behavior beyond requirement scope
+
+### Test Source Filters
+
+Test links in `requirements.yaml` can include a source filter prefix to restrict which test results count as
+evidence. These filters are critical for platform and framework requirements - **do not remove them**.
+
+- `windows@TestName` - proves the test passed on a Windows platform
+- `ubuntu@TestName` - proves the test passed on a Linux (Ubuntu) platform
+- `net8.0@TestName` - proves the test passed under the .NET 8 target framework
+- `net9.0@TestName` - proves the test passed under the .NET 9 target framework
+- `net10.0@TestName` - proves the test passed under the .NET 10 target framework
+- `dotnet8.x@TestName` - proves the self-validation test ran on a machine with .NET 8.x runtime
+- `dotnet9.x@TestName` - proves the self-validation test ran on a machine with .NET 9.x runtime
+- `dotnet10.x@TestName` - proves the self-validation test ran on a machine with .NET 10.x runtime
+
+Removing a source filter means a test result from any environment can satisfy the requirement, which invalidates
+the evidence-based proof that the tool works on a specific platform or framework.
+
 ### SpdxTool-Specific
 
 - **NOT self-validation tests** - those are handled by Software Developer Agent
@@ -97,8 +123,18 @@ Common anti-patterns to avoid (not exhaustive):
    // ✅ Good: Assert.HasCount(3, collection);
    ```
 
+5. **Avoid Assert.IsTrue for string prefix checks** - Use `Assert.StartsWith` instead of wrapping
+   `string.StartsWith` in `Assert.IsTrue`, as it produces clearer failure messages that show the expected prefix
+   and actual value:
+
+   ```csharp
+   // ❌ Bad: Assert.IsTrue(value.StartsWith("prefix"));
+   // ✅ Good: Assert.StartsWith("prefix", value);
+   ```
+
 ## Defer To
 
+- **Requirements Agent**: For test strategy and coverage requirements
 - **Software Developer Agent**: For self-validation tests and production code issues
 - **Technical Writer Agent**: For test documentation in markdown
 - **Code Quality Agent**: For test linting and static analysis
