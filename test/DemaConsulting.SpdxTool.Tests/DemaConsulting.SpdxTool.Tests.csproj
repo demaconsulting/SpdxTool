@@ -50,8 +50,10 @@
     </ProjectReference>
   </ItemGroup>
 
+  <!-- Implicit Usings -->
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <Using Include="Polyfills" />
   </ItemGroup>
 
 </Project>
