@@ -51,19 +51,19 @@ jobs:
           dotnet-version: '10.x'
 
       - name: Download SpdxTool package artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: packages-ubuntu-latest
           path: artifacts
 
       - name: Download SpdxTool.Targets package artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: targets-packages-ubuntu-latest
           path: artifacts
 
       - name: Download documents artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: documents
           path: artifacts
