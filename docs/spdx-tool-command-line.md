@@ -32,7 +32,7 @@ Options:
   -l, --log <log-file>                     Log output to file
   -s, --silent                             Silence console output
       --validate                           Perform self-validation
-  -r, --result <file>                      Self-validation result TRX file
+  -r, --result <file>                      Self-validation result file (.trx TRX or .xml JUnit XML)
 
 Commands:
   help <command>                           Display extended help about a command

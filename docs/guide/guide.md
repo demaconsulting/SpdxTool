@@ -84,7 +84,8 @@ spdx-tool [options] <command> [arguments]
 * `-l, --log <log-file>` - Log output to file
 * `-s, --silent` - Silence console output
 * `--validate` - Perform self-validation
-* `-r, --result <file>` - Self-validation result TRX file
+* `-r, --result <file>` - Self-validation result file (`.trx` TRX format or `.xml` JUnit XML format,
+  auto-detected from extension)
 
 ## Available Commands
 
@@ -402,6 +403,37 @@ Print text to the console:
     - Processing SPDX document
     - File: ${{ spdx-file }}
 ```
+
+### Run Workflow
+
+Run a separate workflow file, URL, or NuGet package:
+
+```yaml
+- command: run-workflow
+  inputs:
+    file: <workflow.yaml>         # Workflow file path (or path within NuGet package)
+    url: <url>                    # Optional workflow URL (mutually exclusive with nuget)
+    nuget: <package:version>      # Optional NuGet package (mutually exclusive with url)
+    integrity: <sha256>           # Optional SHA-256 integrity check for url/nuget workflows
+    parameters:
+      name: <value>               # Optional workflow parameter
+    outputs:
+      name: <variable>            # Optional output to save to variable
+```
+
+When `nuget` is specified, the `file` path is resolved within the cached NuGet package. The `nuget`
+value must be in `PackageName:version` format, for example:
+
+```yaml
+- command: run-workflow
+  inputs:
+    nuget: "DemaConsulting.SpdxWorkflows:1.0.0"
+    file: "contentFiles/any/any/workflows/GetDotNetVersion.yaml"
+    outputs:
+      version: dotnet-version
+```
+
+The `nuget` and `url` parameters are mutually exclusive — only one may be specified per step.
 
 ## Example Workflow
 
@@ -846,6 +878,15 @@ To generate a TRX test results file:
 ```bash
 dotnet spdx-tool --validate --result validation.trx
 ```
+
+To generate a JUnit XML test results file:
+
+```bash
+dotnet spdx-tool --validate --result validation.xml
+```
+
+The output format is automatically selected based on the file extension: `.trx` produces a Visual Studio
+TRX file and `.xml` produces a JUnit XML file.
 
 ## Validation Report
 
