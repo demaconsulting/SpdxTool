@@ -68,6 +68,7 @@ public static class Validate
         ValidateNtia.Run(context, results);
         ValidateQuery.Run(context, results);
         ValidateRenameId.Run(context, results);
+        ValidateRunNuGetWorkflow.Run(context, results);
         ValidateToMarkdown.Run(context, results);
         ValidateUpdatePackage.Run(context, results);
 

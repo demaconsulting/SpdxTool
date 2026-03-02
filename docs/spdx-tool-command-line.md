@@ -72,6 +72,7 @@ From a YAML file this can be used as:
     inputs:
       file: <workflow.yaml>         # Optional workflow file
       url: <url>                    # Optional workflow url
+      nuget: <package:version>      # Optional NuGet package
       integrity: <sha256>           # Optional workflow integrity check
       parameters:
         name: <value>               # Optional workflow parameter

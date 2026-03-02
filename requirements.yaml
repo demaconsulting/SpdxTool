@@ -343,6 +343,17 @@ sections:
             tests:
               - SpdxTool_Query
 
+          - id: SPDX-WKF-005
+            title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
+            tags:
+              - workflow
+            justification: |
+              Users need to reference workflow files stored in NuGet packages so that
+              workflows can be versioned, distributed, and cached locally rather than
+              downloaded on every run.
+            tests:
+              - SpdxTool_RunNuGetWorkflow
+
       - title: Platform Support
         requirements:
           - id: SPDX-PLT-001
