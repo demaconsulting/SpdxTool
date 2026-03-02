@@ -925,6 +925,7 @@ Tests:
 - SpdxTool_Ntia: Passed
 - SpdxTool_Query: Passed
 - SpdxTool_RenameId: Passed
+- SpdxTool_RunNuGetWorkflow: Passed
 - SpdxTool_ToMarkdown: Passed
 - SpdxTool_UpdatePackage: Passed
 
