@@ -103,14 +103,66 @@ public class SelfValidationTests
             Assert.Contains("SpdxTool_Ntia", results);
             Assert.Contains("SpdxTool_Query", results);
             Assert.Contains("SpdxTool_RenameId", results);
+            Assert.Contains("SpdxTool_RunNuGetWorkflow", results);
             Assert.Contains("SpdxTool_ToMarkdown", results);
             Assert.Contains("SpdxTool_UpdatePackage", results);
             Assert.Contains("SpdxTool_Validate", results);
             Assert.Contains("""
                                              <ResultSummary outcome="Completed">
-                                               <Counters total="13" executed="13" passed="13" failed="0" />
+                                               <Counters total="14" executed="14" passed="14" failed="0" />
                                              </ResultSummary>
                                            """, results);
+        }
+        finally
+        {
+            // Delete the output file
+            File.Delete(resultFile);
+        }
+    }
+
+    /// <summary>
+    ///     Test that the validate flag with results generates a JUnit file
+    /// </summary>
+    [TestMethod]
+    public void SelfValidation_ValidateFlagWithResults_GeneratesJUnitFile()
+    {
+        const string resultFile = "results.xml";
+
+        try
+        {
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "--validate",
+                "--result",
+                resultFile);
+
+            // Assert: Verify success
+            Assert.AreEqual(0, exitCode);
+
+            // Read results file
+            var results = File.ReadAllText(resultFile);
+            Assert.IsNotNull(results);
+
+            // Assert: Verify the results contain expected content
+            Assert.Contains("DemaConsulting.SpdxTool Validation Results -", results);
+            Assert.Contains("SpdxTool_AddPackage", results);
+            Assert.Contains("SpdxTool_AddRelationship", results);
+            Assert.Contains("SpdxTool_CopyPackage", results);
+            Assert.Contains("SpdxTool_Diagram", results);
+            Assert.Contains("SpdxTool_FindPackage", results);
+            Assert.Contains("SpdxTool_GetVersion", results);
+            Assert.Contains("SpdxTool_Hash", results);
+            Assert.Contains("SpdxTool_Ntia", results);
+            Assert.Contains("SpdxTool_Query", results);
+            Assert.Contains("SpdxTool_RenameId", results);
+            Assert.Contains("SpdxTool_RunNuGetWorkflow", results);
+            Assert.Contains("SpdxTool_ToMarkdown", results);
+            Assert.Contains("SpdxTool_UpdatePackage", results);
+            Assert.Contains("SpdxTool_Validate", results);
+            Assert.Contains("<testsuites name=\"DemaConsulting.SpdxTool Validation Results -", results);
         }
         finally
         {

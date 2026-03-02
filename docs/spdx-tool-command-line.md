@@ -32,7 +32,7 @@ Options:
   -l, --log <log-file>                     Log output to file
   -s, --silent                             Silence console output
       --validate                           Perform self-validation
-  -r, --result <file>                      Self-validation result TRX file
+  -r, --result <file>                      Self-validation result file (.trx TRX or .xml JUnit XML)
 
 Commands:
   help <command>                           Display extended help about a command
@@ -72,6 +72,7 @@ From a YAML file this can be used as:
     inputs:
       file: <workflow.yaml>         # Optional workflow file
       url: <url>                    # Optional workflow url
+      nuget: <package:version>      # Optional NuGet package
       integrity: <sha256>           # Optional workflow integrity check
       parameters:
         name: <value>               # Optional workflow parameter

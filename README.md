@@ -39,7 +39,7 @@ Options:
   -l, --log <log-file>                     Log output to file
   -s, --silent                             Silence console output
       --validate                           Perform self-validation
-  -r, --result <file>                      Self-validation result TRX file
+  -r, --result <file>                      Self-validation result file (.trx TRX or .xml JUnit XML)
 
 Commands:
   help <command>                           Display extended help about a command
@@ -113,6 +113,7 @@ Tests:
 - SpdxTool_Ntia: Passed
 - SpdxTool_Query: Passed
 - SpdxTool_RenameId: Passed
+- SpdxTool_RunNuGetWorkflow: Passed
 - SpdxTool_ToMarkdown: Passed
 - SpdxTool_UpdatePackage: Passed
 

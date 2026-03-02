@@ -154,7 +154,7 @@ public static class Program
               -l, --log <log-file>                     Log output to file
               -s, --silent                             Silence console output
                   --validate                           Perform self-validation
-              -r, --result <file>                      Self-validation result TRX file
+              -r, --result <file>                      Self-validation result file (.trx or .xml for JUnit)
 
             Commands:
             """);

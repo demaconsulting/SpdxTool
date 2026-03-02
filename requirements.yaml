@@ -149,7 +149,7 @@ sections:
               - SelfValidation_ValidateFlagWithDepth_ShowsDepth
 
           - id: SPDX-CMD-012
-            title: The tool shall write self-validation results to a TRX file when invoked with the -r or --result flag.
+            title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
             tags:
               - cli
             justification: |
@@ -158,6 +158,17 @@ sections:
               test infrastructure.
             tests:
               - SelfValidation_ValidateFlagWithResults_GeneratesTrxFile
+
+          - id: SPDX-CMD-013
+            title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
+            tags:
+              - cli
+            justification: |
+              Many CI/CD systems and test reporting tools support JUnit XML format.
+              Auto-detecting the format from the file extension allows users to generate
+              JUnit output without requiring a separate flag.
+            tests:
+              - SelfValidation_ValidateFlagWithResults_GeneratesJUnitFile
 
       - title: SPDX Document Validation
         requirements:
@@ -342,6 +353,17 @@ sections:
               commands to incorporate into SPDX documents or workflow logic.
             tests:
               - SpdxTool_Query
+
+          - id: SPDX-WKF-005
+            title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
+            tags:
+              - workflow
+            justification: |
+              Users need to reference workflow files stored in NuGet packages so that
+              workflows can be versioned, distributed, and cached locally rather than
+              downloaded on every run.
+            tests:
+              - SpdxTool_RunNuGetWorkflow
 
       - title: Platform Support
         requirements:

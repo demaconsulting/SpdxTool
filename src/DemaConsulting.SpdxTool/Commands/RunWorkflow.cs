@@ -20,6 +20,8 @@
 
 using System.Net;
 using System.Security.Cryptography;
+using DemaConsulting.NuGet.Caching;
+using DemaConsulting.SpdxTool.Utility;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -58,6 +60,7 @@ public sealed class RunWorkflow : Command
             "    inputs:",
             "      file: <workflow.yaml>         # Optional workflow file",
             "      url: <url>                    # Optional workflow url",
+            "      nuget: <package:version>      # Optional NuGet package",
             "      integrity: <sha256>           # Optional workflow integrity check",
             "      parameters:",
             "        name: <value>               # Optional workflow parameter",
@@ -142,6 +145,16 @@ public sealed class RunWorkflow : Command
         // Get the 'file' and 'url' inputs
         var file = GetMapString(inputs, "file", variables);
         var url = GetMapString(inputs, "url", variables);
+
+        // Get the 'nuget' input
+        var nuget = GetMapString(inputs, "nuget", variables);
+
+        // If nuget is specified, resolve the workflow file from the NuGet package
+        if (nuget != null)
+        {
+            file = ResolveNuGetFile(step, nuget, file, url);
+            url = null;
+        }
 
         // Get the parameters
         var parameters = new Dictionary<string, string>();
@@ -389,5 +402,51 @@ public sealed class RunWorkflow : Command
             throw new CommandErrorException(
                 $"Workflow {source} invalid at {ex.Start} - {ex.Message}", ex);
         }
+    }
+
+    /// <summary>
+    ///     Resolve a workflow file path from a NuGet package
+    /// </summary>
+    /// <param name="step">Step for reporting errors</param>
+    /// <param name="nuget">NuGet package specification (PackageName:version)</param>
+    /// <param name="file">File path within the NuGet package</param>
+    /// <param name="url">URL (must be null when nuget is specified)</param>
+    /// <returns>Resolved file path</returns>
+    /// <exception cref="YamlException">On invalid inputs</exception>
+    private static string ResolveNuGetFile(YamlMappingNode step, string nuget, string? file, string? url)
+    {
+        // Cannot specify both nuget and url
+        if (url != null)
+        {
+            throw new YamlException(step.Start, step.End,
+                "'run-workflow' command cannot specify both 'nuget' and 'url' inputs");
+        }
+
+        // File must be specified with nuget
+        if (file == null)
+        {
+            throw new YamlException(step.Start, step.End,
+                "'run-workflow' command requires 'file' input when 'nuget' is specified");
+        }
+
+        // Parse the nuget value "PackageName:version"
+        var sep = nuget.IndexOf(':');
+        if (sep < 0)
+        {
+            throw new YamlException(step.Start, step.End,
+                "'run-workflow' nuget parameter must be in format 'PackageName:version'");
+        }
+
+        var packageId = nuget[..sep];
+        var version = nuget[(sep + 1)..];
+
+        // Get the package path from NuGet cache - blocking synchronously using
+        // GetAwaiter().GetResult() to match the pattern used by RunUrl (which also
+        // blocks on async HTTP operations). This is safe because SpdxTool runs as
+        // a console application without a synchronization context that could deadlock.
+        var packagePath = NuGetCache.EnsureCachedAsync(packageId, version).GetAwaiter().GetResult();
+
+        // Construct the full file path using safe path combination to prevent path traversal
+        return PathHelpers.SafePathCombine(packagePath, file);
     }
 }

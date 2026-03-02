@@ -48,4 +48,12 @@
     <Using Include="Polyfills" />
   </ItemGroup>
 
+  <!-- Project References -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DemaConsulting.SpdxTool\DemaConsulting.SpdxTool.csproj">
+      <Private>true</Private>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
+  </ItemGroup>
+
 </Project>

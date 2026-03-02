@@ -68,6 +68,7 @@ public static class Validate
         ValidateNtia.Run(context, results);
         ValidateQuery.Run(context, results);
         ValidateRenameId.Run(context, results);
+        ValidateRunNuGetWorkflow.Run(context, results);
         ValidateToMarkdown.Run(context, results);
         ValidateUpdatePackage.Run(context, results);
 
@@ -80,8 +81,36 @@ public static class Validate
         // Save test results
         if (!string.IsNullOrEmpty(context.ValidationFile))
         {
-            File.WriteAllText(context.ValidationFile, TrxSerializer.Serialize(results));
+            WriteResultsFile(context, results);
         }
+    }
+
+    /// <summary>
+    ///     Write the test results to the specified file
+    /// </summary>
+    /// <param name="context">Program context</param>
+    /// <param name="results">Test results</param>
+    private static void WriteResultsFile(Context context, TestResults.TestResults results)
+    {
+        var extension = Path.GetExtension(context.ValidationFile).ToLowerInvariant();
+        string content;
+
+        if (extension == ".trx")
+        {
+            content = TrxSerializer.Serialize(results);
+        }
+        else if (extension == ".xml")
+        {
+            // Assume JUnit format for .xml extension
+            content = JUnitSerializer.Serialize(results);
+        }
+        else
+        {
+            context.WriteError($"Unsupported results file format '{extension}'. Use .trx or .xml extension.");
+            return;
+        }
+
+        File.WriteAllText(context.ValidationFile, content);
     }
 
     /// <summary>

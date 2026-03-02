@@ -396,6 +396,52 @@ output);
     }
 
     /// <summary>
+    ///     Test that run-workflow command with NuGet workflow executes the workflow
+    /// </summary>
+    [TestMethod]
+    public void RunWorkflow_NuGetWorkflow_ExecutesWorkflow()
+    {
+        const string workflow =
+            """
+            steps:
+            - command: run-workflow
+              inputs:
+                nuget: "DemaConsulting.SpdxWorkflows:1.0.0-rc.2"
+                file: "contentFiles/any/any/workflows/GetDotNetVersion.yaml"
+                outputs:
+                  version: dotnet-version
+
+            - command: print
+              inputs:
+                text:
+                - DotNet version is ${{ dotnet-version }}
+            """;
+
+        try
+        {
+            // Arrange: Write the file
+            File.WriteAllText("workflow.yaml", workflow);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify success
+            Assert.AreEqual(0, exitCode);
+            Assert.MatchesRegex(DotnetVersionRegex(), output);
+        }
+        finally
+        {
+            // Delete the files
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
     ///     Test that run-workflow command with URL workflow executes the workflow
     /// </summary>
     [TestMethod]
