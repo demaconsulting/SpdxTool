@@ -38,13 +38,8 @@ internal static class PathHelpers
         ArgumentNullException.ThrowIfNull(basePath);
         ArgumentNullException.ThrowIfNull(relativePath);
 
-        // Normalize path separators for cross-platform compatibility
-        var normalizedRelative = relativePath
-            .Replace('/', Path.DirectorySeparatorChar)
-            .Replace('\\', Path.DirectorySeparatorChar);
-
         // Ensure the relative path does not contain path traversal sequences
-        if (normalizedRelative.Contains("..") || Path.IsPathRooted(normalizedRelative))
+        if (relativePath.Contains("..") || Path.IsPathRooted(relativePath))
         {
             throw new ArgumentException($"Invalid path component: {relativePath}", nameof(relativePath));
         }
@@ -53,7 +48,7 @@ internal static class PathHelpers
         // 1. relativePath does not contain ".." (path traversal)
         // 2. relativePath is not an absolute path (IsPathRooted check)
         // This ensures the combined path will always be under basePath
-        var combinedPath = Path.Combine(basePath, normalizedRelative);
+        var combinedPath = Path.Combine(basePath, relativePath);
 
         // Additional security validation: ensure the combined path is still under the base path.
         // This defense-in-depth approach protects against edge cases that might bypass the
