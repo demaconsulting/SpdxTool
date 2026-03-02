@@ -113,7 +113,7 @@ public class DecorateSbomTargetTests
 
         // Assert: pack succeeded but decoration did NOT run
         Assert.AreEqual(0, exitCode, $"dotnet pack failed:\n{output}");
-        Assert.IsFalse(output.Contains("SpdxTool: Decorating SBOM"),
+        Assert.DoesNotContain("SpdxTool: Decorating SBOM", output,
             "Decoration should not run when DecorateSBOM=false");
     }
 
@@ -137,7 +137,7 @@ public class DecorateSbomTargetTests
 
         // Assert: pack succeeded but decoration did NOT run
         Assert.AreEqual(0, exitCode, $"dotnet pack failed:\n{output}");
-        Assert.IsFalse(output.Contains("SpdxTool: Decorating SBOM"),
+        Assert.DoesNotContain("SpdxTool: Decorating SBOM", output,
             "Decoration should not run when GenerateSBOM=false");
     }
 
