@@ -21,6 +21,7 @@
 using System.Net;
 using System.Security.Cryptography;
 using DemaConsulting.NuGet.Caching;
+using DemaConsulting.SpdxTool.Utility;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -445,9 +446,7 @@ public sealed class RunWorkflow : Command
         // a console application without a synchronization context that could deadlock.
         var packagePath = NuGetCache.EnsureCachedAsync(packageId, version).GetAwaiter().GetResult();
 
-        // Construct the full file path (file is relative to package root).
-        // Split on both separators to handle cross-platform path differences.
-        var fileParts = file.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
-        return Path.Combine([packagePath, ..fileParts]);
+        // Construct the full file path using safe path combination to prevent path traversal
+        return PathHelpers.SafePathCombine(packagePath, file);
     }
 }

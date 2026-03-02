@@ -12,6 +12,7 @@ query-filters:
       id: cs/path-combine
     paths:
       - test/DemaConsulting.SpdxTool.Targets.Tests/PathHelpers.cs
+      - src/DemaConsulting.SpdxTool/Utility/PathHelpers.cs
   - exclude:
       id: cs/catch-of-all-exceptions
     paths:
