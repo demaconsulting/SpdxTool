@@ -149,7 +149,7 @@ sections:
               - SelfValidation_ValidateFlagWithDepth_ShowsDepth
 
           - id: SPDX-CMD-012
-            title: The tool shall write self-validation results to a TRX file when invoked with the -r or --result flag with a .trx extension.
+            title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
             tags:
               - cli
             justification: |
@@ -160,7 +160,7 @@ sections:
               - SelfValidation_ValidateFlagWithResults_GeneratesTrxFile
 
           - id: SPDX-CMD-013
-            title: The tool shall write self-validation results to a JUnit XML file when invoked with the -r or --result flag with a .xml extension.
+            title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
             tags:
               - cli
             justification: |
