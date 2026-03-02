@@ -80,6 +80,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="DemaConsulting.SpdxTool.Tests" />
+    <InternalsVisibleTo Include="DemaConsulting.SpdxTool.Targets.Tests" />
   </ItemGroup>
 
   <ItemGroup>
