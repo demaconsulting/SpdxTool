@@ -29,6 +29,7 @@ Invoke the requirements-agent for:
 
 ### Test Coverage Strategy
 
+- **All requirements MUST be linked to tests** - this is enforced in CI
 - **Not all tests need to be linked to requirements** - tests may exist for:
   - Exploring corner cases
   - Testing design decisions

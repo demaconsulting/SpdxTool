@@ -14,10 +14,11 @@ manipulating SPDX SBOM files.
 
 ## Tech Stack
 
-- C# 12, .NET 8.0/9.0/10.0, dotnet CLI, NuGet
+- C# (latest), .NET 8.0/9.0/10.0, dotnet CLI, NuGet
 
 ## Key Files
 
+- **`requirements.yaml`** - All requirements with test linkage (enforced via `dotnet reqstream --enforce`)
 - **`.editorconfig`** - Code style (file-scoped namespaces, 4-space indent, UTF-8+BOM, LF endings)
 - **`.cspell.json`, `.markdownlint-cli2.jsonc`, `.yamllint.yaml`** - Linting configs
 
