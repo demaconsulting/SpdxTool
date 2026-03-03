@@ -137,6 +137,8 @@ Each test in the report proves a specific command works correctly:
 - **SpdxTool_ToMarkdown** - Proves the `to-markdown` command generates a Markdown summary from an SPDX document.
 - **SpdxTool_UpdatePackage** - Proves the `update-package` command updates all fields of a package in an SPDX document.
 
+For detailed descriptions of each validation test, see the [User Guide][user-guide].
+
 On validation failure the tool will exit with a non-zero exit code.
 
 This report may be useful in regulated industries requiring evidence of tool validation.
@@ -175,6 +177,7 @@ Additional information can be found at:
 
 [command-line-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-command-line.md
 [workflow-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md
+[user-guide]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/guide/guide.md
 [contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md
 [code-of-conduct]: https://github.com/demaconsulting/SpdxTool/blob/main/CODE_OF_CONDUCT.md
 [architecture]: https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md
