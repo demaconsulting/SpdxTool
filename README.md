@@ -122,46 +122,20 @@ Validation Passed
 
 Each test in the report proves a specific command works correctly:
 
-- **SpdxTool_AddPackage** - Proves that the `add-package` command correctly adds a new package with
-  relationships to an SPDX document.
-
-- **SpdxTool_AddRelationship** - Proves that the `add-relationship` command correctly adds a
-  relationship between existing SPDX elements.
-
-- **SpdxTool_Validate** - Proves that the `validate` command correctly accepts valid SPDX documents
-  and rejects invalid ones.
-
-- **SpdxTool_CopyPackage** - Proves that the `copy-package` command correctly copies a package with
-  relationships between SPDX documents.
-
-- **SpdxTool_Diagram** - Proves that the `diagram` command correctly generates a Mermaid diagram
-  from an SPDX document.
-
-- **SpdxTool_FindPackage** - Proves that the `find-package` command correctly locates a package by
-  name in an SPDX document.
-
-- **SpdxTool_GetVersion** - Proves that the `get-version` command correctly retrieves a package
-  version from an SPDX document.
-
-- **SpdxTool_Hash** - Proves that the `hash` command correctly generates and verifies file hashes.
-
-- **SpdxTool_Ntia** - Proves that the `validate` command correctly enforces NTIA minimum SBOM
-  element requirements.
-
-- **SpdxTool_Query** - Proves that the `query` command correctly extracts values from program
-  output.
-
-- **SpdxTool_RenameId** - Proves that the `rename-id` command correctly renames an element
-  identifier throughout an SPDX document.
-
-- **SpdxTool_RunNuGetWorkflow** - Proves that the `run-workflow` command correctly executes a
-  workflow from a NuGet package.
-
-- **SpdxTool_ToMarkdown** - Proves that the `to-markdown` command correctly generates a Markdown
-  summary from an SPDX document.
-
-- **SpdxTool_UpdatePackage** - Proves that the `update-package` command correctly updates all fields
-  of a package in an SPDX document.
+- **SpdxTool_AddPackage** - Proves the `add-package` command adds a package with relationships to an SPDX document.
+- **SpdxTool_AddRelationship** - Proves the `add-relationship` command adds a relationship between SPDX elements.
+- **SpdxTool_Validate** - Proves the `validate` command accepts valid and rejects invalid SPDX documents.
+- **SpdxTool_CopyPackage** - Proves the `copy-package` command copies a package with relationships between SPDX documents.
+- **SpdxTool_Diagram** - Proves the `diagram` command generates a Mermaid diagram from an SPDX document.
+- **SpdxTool_FindPackage** - Proves the `find-package` command locates a package by name in an SPDX document.
+- **SpdxTool_GetVersion** - Proves the `get-version` command retrieves a package version from an SPDX document.
+- **SpdxTool_Hash** - Proves the `hash` command generates and verifies file hashes.
+- **SpdxTool_Ntia** - Proves the `validate` command enforces NTIA minimum SBOM element requirements.
+- **SpdxTool_Query** - Proves the `query` command extracts values from program output.
+- **SpdxTool_RenameId** - Proves the `rename-id` command renames an element identifier throughout an SPDX document.
+- **SpdxTool_RunNuGetWorkflow** - Proves the `run-workflow` command executes a workflow from a NuGet package.
+- **SpdxTool_ToMarkdown** - Proves the `to-markdown` command generates a Markdown summary from an SPDX document.
+- **SpdxTool_UpdatePackage** - Proves the `update-package` command updates all fields of a package in an SPDX document.
 
 On validation failure the tool will exit with a non-zero exit code.
 
