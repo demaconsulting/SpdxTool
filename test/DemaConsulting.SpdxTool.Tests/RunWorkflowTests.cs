@@ -406,7 +406,7 @@ output);
             steps:
             - command: run-workflow
               inputs:
-                nuget: "DemaConsulting.SpdxWorkflows:1.0.0-rc.2"
+                nuget: "DemaConsulting.SpdxWorkflows:1.0.0"
                 file: "contentFiles/any/any/workflows/GetDotNetVersion.yaml"
                 outputs:
                   version: dotnet-version
