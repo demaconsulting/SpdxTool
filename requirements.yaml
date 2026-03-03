@@ -329,22 +329,36 @@ sections:
             title: The tool shall run successfully on Windows platforms.
             tags:
               - platform
+              - msbuild
             justification: |
               Windows is a widely used operating system for development. The tool
-              must function correctly on Windows to support a broad user base.
+              (both the dotnet-tool and the MSBuild targets package) must function
+              correctly on Windows to support a broad user base.
             tests:
               - windows@SpdxTool_Validate
+              - windows@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - windows@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+              - windows@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+              - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+              - windows@SingleTfmProject_MissingWorkflow_ReportsError
 
           - id: SpdxTool-Plt-Linux
             title: The tool shall run successfully on Linux platforms.
             tags:
               - platform
+              - msbuild
             justification: |
               Linux is a widely used operating system for development and deployment,
-              especially in CI/CD environments. The tool must function correctly on
-              Linux to support a broad user base.
+              especially in CI/CD environments. The tool (both the dotnet-tool and
+              the MSBuild targets package) must function correctly on Linux to support
+              a broad user base.
             tests:
               - ubuntu@SpdxTool_Validate
+              - ubuntu@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - ubuntu@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+              - ubuntu@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+              - ubuntu@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+              - ubuntu@SingleTfmProject_MissingWorkflow_ReportsError
 
           - id: SpdxTool-Plt-Net8
             title: The tool shall run successfully on .NET 8.x.
@@ -378,38 +392,6 @@ sections:
               losing tool functionality.
             tests:
               - dotnet10.x@SpdxTool_Validate
-
-          - id: SpdxTool-Plt-TargetsWindows
-            title: The MSBuild targets package shall work correctly on Windows platforms.
-            tags:
-              - platform
-              - msbuild
-            justification: |
-              Windows is a widely used operating system for .NET development. The
-              MSBuild integration must function correctly on Windows to support
-              developers using this platform.
-            tests:
-              - windows@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
-              - windows@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
-              - windows@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
-              - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
-              - windows@SingleTfmProject_MissingWorkflow_ReportsError
-
-          - id: SpdxTool-Plt-TargetsLinux
-            title: The MSBuild targets package shall work correctly on Linux platforms.
-            tags:
-              - platform
-              - msbuild
-            justification: |
-              Linux is a widely used operating system for .NET development and CI/CD
-              environments. The MSBuild integration must function correctly on Linux
-              to support developers and automation using this platform.
-            tests:
-              - ubuntu@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
-              - ubuntu@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
-              - ubuntu@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
-              - ubuntu@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
-              - ubuntu@SingleTfmProject_MissingWorkflow_ReportsError
 
       - title: MSBuild Targets Integration
         requirements:
