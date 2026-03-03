@@ -325,7 +325,7 @@ sections:
 
       - title: Platform Support
         requirements:
-          - id: SpdxTool-Platform-Windows
+          - id: SpdxTool-Plt-Windows
             title: The tool shall run successfully on Windows platforms.
             tags:
               - platform
@@ -335,7 +335,7 @@ sections:
             tests:
               - windows@SpdxTool_Validate
 
-          - id: SpdxTool-Platform-Linux
+          - id: SpdxTool-Plt-Linux
             title: The tool shall run successfully on Linux platforms.
             tags:
               - platform
@@ -346,7 +346,7 @@ sections:
             tests:
               - ubuntu@SpdxTool_Validate
 
-          - id: SpdxTool-Platform-Net8
+          - id: SpdxTool-Plt-Net8
             title: The tool shall run successfully on .NET 8.x.
             tags:
               - platform
@@ -357,7 +357,7 @@ sections:
             tests:
               - dotnet8.x@SpdxTool_Validate
 
-          - id: SpdxTool-Platform-Net9
+          - id: SpdxTool-Plt-Net9
             title: The tool shall run successfully on .NET 9.x.
             tags:
               - platform
@@ -368,7 +368,7 @@ sections:
             tests:
               - dotnet9.x@SpdxTool_Validate
 
-          - id: SpdxTool-Platform-Net10
+          - id: SpdxTool-Plt-Net10
             title: The tool shall run successfully on .NET 10.x.
             tags:
               - platform
@@ -379,7 +379,7 @@ sections:
             tests:
               - dotnet10.x@SpdxTool_Validate
 
-          - id: SpdxTool-Platform-TargetsWindows
+          - id: SpdxTool-Plt-TargetsWindows
             title: The MSBuild targets package shall work correctly on Windows platforms.
             tags:
               - platform
@@ -395,7 +395,7 @@ sections:
               - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
               - windows@SingleTfmProject_MissingWorkflow_ReportsError
 
-          - id: SpdxTool-Platform-TargetsLinux
+          - id: SpdxTool-Plt-TargetsLinux
             title: The MSBuild targets package shall work correctly on Linux platforms.
             tags:
               - platform
