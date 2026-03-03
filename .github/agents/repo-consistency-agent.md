@@ -66,6 +66,29 @@ The agent reviews the following areas of SpdxTool for consistency with the Templ
   - SBOM Configuration
   - Common package references (DemaConsulting.TestResults, Microsoft.SourceLink.GitHub, analyzers)
 
+### Tracking Template Evolution
+
+To ensure SpdxTool benefits from recent template improvements, review recent pull requests
+merged into the template repository:
+
+1. **List Recent PRs**: Retrieve recently merged PRs from `demaconsulting/TemplateDotNetTool`
+   - Review the last 10-20 PRs to identify template improvements
+
+2. **Identify Propagatable Changes**: For each PR, determine if changes should apply to SpdxTool:
+   - Focus on structural changes (workflows, agents, configurations) over content-specific changes
+   - Note changes to `.github/`, linting configurations, project patterns, and documentation structure
+
+3. **Check SpdxTool Application**: Verify if identified changes exist in SpdxTool:
+   - Check if similar files/patterns exist in SpdxTool
+   - Compare file contents between template and SpdxTool
+   - Look for similar PR titles or commit messages in SpdxTool repository history
+
+4. **Recommend Missing Updates**: For changes not yet applied, include them in the consistency
+   review with:
+   - Description of the template change (reference PR number)
+   - Explanation of benefits for SpdxTool
+   - Specific files or patterns that need updating
+
 ### Review Process
 
 1. **Identify Differences**: Compare SpdxTool structure with TemplateDotNetTool template

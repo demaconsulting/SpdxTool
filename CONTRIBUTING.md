@@ -10,6 +10,7 @@ contributing to this project.
 - [Development Workflow](#development-workflow)
 - [Coding Standards](#coding-standards)
 - [Testing Guidelines](#testing-guidelines)
+- [Requirements Management](#requirements-management)
 - [Submitting Changes](#submitting-changes)
 - [Release Process](#release-process)
 
@@ -187,6 +188,15 @@ dotnet run --project src/DemaConsulting.SpdxTool \
   --configuration Release --framework net10.0 --no-build -- --validate
 ```
 
+## Requirements Management
+
+SpdxTool uses [DemaConsulting.ReqStream][reqstream] for requirements traceability:
+
+- All requirements are defined in `requirements.yaml`
+- Each requirement must be linked to test cases
+- Run `dotnet reqstream` to generate requirements documentation
+- Use the `--enforce` flag to ensure all requirements have test coverage
+
 ## Submitting Changes
 
 ### Before Submitting
@@ -254,6 +264,7 @@ If you have questions about contributing, please:
 Thank you for contributing to SpdxTool!
 
 [code-of-conduct]: CODE_OF_CONDUCT.md
+[reqstream]: https://github.com/demaconsulting/ReqStream
 [spdx-spec]: https://spdx.dev/
 [dotnet-conventions]: https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions
 [mstest-docs]: https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-mstest
