@@ -32,7 +32,7 @@ sections:
     sections:
       - title: Command-Line Interface
         requirements:
-          - id: SpdxTool-CMD-Version
+          - id: SpdxTool-Cmd-Version
             title: The tool shall display version information when invoked with the -v or --version flag.
             tags:
               - cli
@@ -43,7 +43,7 @@ sections:
               - Version_ShortFlag_DisplaysVersion
               - Version_LongFlag_DisplaysVersion
 
-          - id: SpdxTool-CMD-Help
+          - id: SpdxTool-Cmd-Help
             title: The tool shall display usage information when invoked with the -h, -?, or --help flag.
             tags:
               - cli
@@ -54,7 +54,7 @@ sections:
               - Usage_ShortHelpFlag_DisplaysUsage
               - Usage_LongHelpFlag_DisplaysUsage
 
-          - id: SpdxTool-CMD-InvalidArgs
+          - id: SpdxTool-Cmd-InvalidArgs
             title: The tool shall display an error and usage information when invoked without arguments.
             tags:
               - cli
@@ -64,7 +64,7 @@ sections:
             tests:
               - Usage_NoArguments_DisplaysError
 
-          - id: SpdxTool-CMD-Silent
+          - id: SpdxTool-Cmd-Silent
             title: The tool shall silence console output when invoked with the -s or --silent flag.
             tags:
               - cli
@@ -75,7 +75,7 @@ sections:
               - Silent_ShortFlag_SuppressesOutput
               - Silent_LongFlag_SuppressesOutput
 
-          - id: SpdxTool-CMD-Log
+          - id: SpdxTool-Cmd-Log
             title: The tool shall write output to a log file when invoked with the -l or --log flag.
             tags:
               - cli
@@ -86,7 +86,7 @@ sections:
               - Log_ShortFlag_WritesOutputToFile
               - Log_LongFlag_WritesOutputToFile
 
-          - id: SpdxTool-CMD-Validate
+          - id: SpdxTool-Cmd-Validate
             title: The tool shall perform self-validation when invoked with the --validate flag.
             tags:
               - cli
@@ -96,7 +96,7 @@ sections:
             tests:
               - SelfValidation_ValidateFlag_Succeeds
 
-          - id: SpdxTool-CMD-Depth
+          - id: SpdxTool-Cmd-Depth
             title: The tool shall support depth control for self-validation output.
             tags:
               - cli
@@ -106,7 +106,7 @@ sections:
             tests:
               - SelfValidation_ValidateFlagWithDepth_ShowsDepth
 
-          - id: SpdxTool-CMD-ResultsTrx
+          - id: SpdxTool-Cmd-ResultsTrx
             title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
             tags:
               - cli
@@ -117,7 +117,7 @@ sections:
             tests:
               - SelfValidation_ValidateFlagWithResults_GeneratesTrxFile
 
-          - id: SpdxTool-CMD-ResultsJUnit
+          - id: SpdxTool-Cmd-ResultsJUnit
             title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
             tags:
               - cli
@@ -130,7 +130,7 @@ sections:
 
       - title: SPDX Document Validation
         requirements:
-          - id: SpdxTool-VAL-Validate
+          - id: SpdxTool-Val-Validate
             title: The tool shall validate SPDX documents using the validate command.
             tags:
               - spdx
@@ -140,7 +140,7 @@ sections:
             tests:
               - SpdxTool_Validate
 
-          - id: SpdxTool-VAL-NtiaMinimum
+          - id: SpdxTool-Val-NtiaMinimum
             title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
             tags:
               - spdx
@@ -153,7 +153,7 @@ sections:
 
       - title: SPDX Package Management
         requirements:
-          - id: SpdxTool-PKG-AddPackage
+          - id: SpdxTool-Pkg-AddPackage
             title: The tool shall add packages to SPDX documents using the add-package command.
             tags:
               - spdx
@@ -163,7 +163,7 @@ sections:
             tests:
               - SpdxTool_AddPackage
 
-          - id: SpdxTool-PKG-CopyPackage
+          - id: SpdxTool-Pkg-CopyPackage
             title: The tool shall copy packages between SPDX documents using the copy-package command.
             tags:
               - spdx
@@ -173,7 +173,7 @@ sections:
             tests:
               - SpdxTool_CopyPackage
 
-          - id: SpdxTool-PKG-UpdatePackage
+          - id: SpdxTool-Pkg-UpdatePackage
             title: The tool shall update existing packages in SPDX documents using the update-package command.
             tags:
               - spdx
@@ -183,7 +183,7 @@ sections:
             tests:
               - SpdxTool_UpdatePackage
 
-          - id: SpdxTool-PKG-FindPackage
+          - id: SpdxTool-Pkg-FindPackage
             title: The tool shall find packages in SPDX documents using the find-package command.
             tags:
               - spdx
@@ -193,7 +193,7 @@ sections:
             tests:
               - SpdxTool_FindPackage
 
-          - id: SpdxTool-PKG-GetVersion
+          - id: SpdxTool-Pkg-GetVersion
             title: The tool shall retrieve package versions from SPDX documents using the get-version command.
             tags:
               - spdx
@@ -205,7 +205,7 @@ sections:
 
       - title: SPDX Relationship Management
         requirements:
-          - id: SpdxTool-REL-AddRelationship
+          - id: SpdxTool-Rel-AddRelationship
             title: The tool shall add relationships to SPDX documents using the add-relationship command.
             tags:
               - spdx
@@ -218,7 +218,7 @@ sections:
 
       - title: SPDX Document Transformation
         requirements:
-          - id: SpdxTool-XFM-ToMarkdown
+          - id: SpdxTool-Xfm-ToMarkdown
             title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
             tags:
               - spdx
@@ -229,7 +229,7 @@ sections:
             tests:
               - SpdxTool_ToMarkdown
 
-          - id: SpdxTool-XFM-Diagram
+          - id: SpdxTool-Xfm-Diagram
             title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
             tags:
               - spdx
@@ -242,7 +242,7 @@ sections:
 
       - title: SPDX Document Manipulation
         requirements:
-          - id: SpdxTool-MAN-RenameId
+          - id: SpdxTool-Man-RenameId
             title: The tool shall rename SPDX element IDs using the rename-id command.
             tags:
               - spdx
@@ -255,7 +255,7 @@ sections:
 
       - title: File Hashing
         requirements:
-          - id: SpdxTool-HSH-Hash
+          - id: SpdxTool-Hsh-Hash
             title: The tool shall compute and verify file hashes using the hash command.
             tags:
               - spdx
@@ -268,7 +268,7 @@ sections:
 
       - title: Workflow Support
         requirements:
-          - id: SpdxTool-WKF-RunWorkflow
+          - id: SpdxTool-Wkf-RunWorkflow
             title: The tool shall execute workflow files using the run-workflow command.
             tags:
               - workflow
@@ -282,7 +282,7 @@ sections:
               - SpdxTool_CopyPackage
               - SpdxTool_UpdatePackage
 
-          - id: SpdxTool-WKF-SetVariable
+          - id: SpdxTool-Wkf-SetVariable
             title: The tool shall support setting variables within workflows using the set-variable command.
             tags:
               - workflow
@@ -292,7 +292,7 @@ sections:
             tests:
               - SpdxTool_AddPackage
 
-          - id: SpdxTool-WKF-Print
+          - id: SpdxTool-Wkf-Print
             title: The tool shall support printing text within workflows using the print command.
             tags:
               - workflow
@@ -302,7 +302,7 @@ sections:
             tests:
               - SpdxTool_AddPackage
 
-          - id: SpdxTool-WKF-Query
+          - id: SpdxTool-Wkf-Query
             title: The tool shall support querying external program output using the query command.
             tags:
               - workflow
@@ -312,7 +312,7 @@ sections:
             tests:
               - SpdxTool_Query
 
-          - id: SpdxTool-WKF-NuGetWorkflow
+          - id: SpdxTool-Wkf-NuGetWorkflow
             title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
             tags:
               - workflow
@@ -325,7 +325,7 @@ sections:
 
       - title: Platform Support
         requirements:
-          - id: SpdxTool-PLT-Windows
+          - id: SpdxTool-Platform-Windows
             title: The tool shall run successfully on Windows platforms.
             tags:
               - platform
@@ -335,7 +335,7 @@ sections:
             tests:
               - windows@SpdxTool_Validate
 
-          - id: SpdxTool-PLT-Linux
+          - id: SpdxTool-Platform-Linux
             title: The tool shall run successfully on Linux platforms.
             tags:
               - platform
@@ -346,7 +346,7 @@ sections:
             tests:
               - ubuntu@SpdxTool_Validate
 
-          - id: SpdxTool-PLT-Net8
+          - id: SpdxTool-Platform-Net8
             title: The tool shall run successfully on .NET 8.x.
             tags:
               - platform
@@ -357,7 +357,7 @@ sections:
             tests:
               - dotnet8.x@SpdxTool_Validate
 
-          - id: SpdxTool-PLT-Net9
+          - id: SpdxTool-Platform-Net9
             title: The tool shall run successfully on .NET 9.x.
             tags:
               - platform
@@ -368,7 +368,7 @@ sections:
             tests:
               - dotnet9.x@SpdxTool_Validate
 
-          - id: SpdxTool-PLT-Net10
+          - id: SpdxTool-Platform-Net10
             title: The tool shall run successfully on .NET 10.x.
             tags:
               - platform
@@ -379,7 +379,7 @@ sections:
             tests:
               - dotnet10.x@SpdxTool_Validate
 
-          - id: SpdxTool-PLT-TargetsWindows
+          - id: SpdxTool-Platform-TargetsWindows
             title: The MSBuild targets package shall work correctly on Windows platforms.
             tags:
               - platform
@@ -395,7 +395,7 @@ sections:
               - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
               - windows@SingleTfmProject_MissingWorkflow_ReportsError
 
-          - id: SpdxTool-PLT-TargetsLinux
+          - id: SpdxTool-Platform-TargetsLinux
             title: The MSBuild targets package shall work correctly on Linux platforms.
             tags:
               - platform
@@ -413,7 +413,7 @@ sections:
 
       - title: MSBuild Targets Integration
         requirements:
-          - id: SpdxTool-TGT-DecorateSbom
+          - id: SpdxTool-Tgt-DecorateSbom
             title: The MSBuild targets package shall decorate SBOMs during dotnet pack.
             tags:
               - msbuild
@@ -426,7 +426,7 @@ sections:
               - SingleTfmProject_DecorateSbomTrue_DecoratesSbom
               - MultiTfmProject_DecorateSbomTrue_DecoratesSbom
 
-          - id: SpdxTool-TGT-SkipDecorate
+          - id: SpdxTool-Tgt-SkipDecorate
             title: The MSBuild targets package shall skip SBOM decoration when DecorateSBOM is false.
             tags:
               - msbuild
@@ -438,7 +438,7 @@ sections:
             tests:
               - SingleTfmProject_DecorateSbomFalse_SkipsDecoration
 
-          - id: SpdxTool-TGT-SkipGenerateSbom
+          - id: SpdxTool-Tgt-SkipGenerateSbom
             title: The MSBuild targets package shall skip SBOM decoration when GenerateSBOM is false.
             tags:
               - msbuild
@@ -450,7 +450,7 @@ sections:
             tests:
               - SingleTfmProject_GenerateSbomFalse_SkipsEntirely
 
-          - id: SpdxTool-TGT-MissingWorkflowError
+          - id: SpdxTool-Tgt-MissingWorkflowError
             title: The MSBuild targets package shall report a clear error when the workflow file is missing.
             tags:
               - msbuild
