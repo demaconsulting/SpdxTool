@@ -38,7 +38,14 @@ internal static class ValidateBasic
         var passed = DoValidate();
 
         // Report validation result to console
-        context.WriteLine($"- SpdxTool_Validate: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_Validate - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_Validate - Failed");
+        }
 
         // Add validation result to test results collection
         results.Results.Add(

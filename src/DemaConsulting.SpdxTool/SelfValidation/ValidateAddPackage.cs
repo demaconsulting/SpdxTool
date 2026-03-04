@@ -39,7 +39,15 @@ internal static class ValidateAddPackage
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_AddPackage: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_AddPackage - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_AddPackage - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

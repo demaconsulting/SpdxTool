@@ -38,7 +38,14 @@ internal static class ValidateHash
         var passed = DoValidate();
 
         // Report validation result to console
-        context.WriteLine($"- SpdxTool_Hash: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_Hash - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_Hash - Failed");
+        }
 
         // Add validation result to test results collection
         results.Results.Add(

@@ -38,7 +38,15 @@ internal static class ValidateUpdatePackage
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_UpdatePackage: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_UpdatePackage - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_UpdatePackage - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

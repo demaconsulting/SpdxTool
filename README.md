@@ -100,22 +100,24 @@ Running self-validation produces a report containing the following information:
 | DotNet Runtime      | <dotnet-runtime-version>                           |
 | Time Stamp          | <timestamp>                                        |
 
-Tests:
+✓ SpdxTool_AddPackage - Passed
+✓ SpdxTool_AddRelationship - Passed
+✓ SpdxTool_Validate - Passed
+✓ SpdxTool_CopyPackage - Passed
+✓ SpdxTool_Diagram - Passed
+✓ SpdxTool_FindPackage - Passed
+✓ SpdxTool_GetVersion - Passed
+✓ SpdxTool_Hash - Passed
+✓ SpdxTool_Ntia - Passed
+✓ SpdxTool_Query - Passed
+✓ SpdxTool_RenameId - Passed
+✓ SpdxTool_RunNuGetWorkflow - Passed
+✓ SpdxTool_ToMarkdown - Passed
+✓ SpdxTool_UpdatePackage - Passed
 
-- SpdxTool_AddPackage: Passed
-- SpdxTool_AddRelationship: Passed
-- SpdxTool_Validate: Passed
-- SpdxTool_CopyPackage: Passed
-- SpdxTool_Diagram: Passed
-- SpdxTool_FindPackage: Passed
-- SpdxTool_GetVersion: Passed
-- SpdxTool_Hash: Passed
-- SpdxTool_Ntia: Passed
-- SpdxTool_Query: Passed
-- SpdxTool_RenameId: Passed
-- SpdxTool_RunNuGetWorkflow: Passed
-- SpdxTool_ToMarkdown: Passed
-- SpdxTool_UpdatePackage: Passed
+Total Tests: 14
+Passed: 14
+Failed: 0
 
 Validation Passed
 ```

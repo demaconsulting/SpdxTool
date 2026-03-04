@@ -910,24 +910,26 @@ Example validation report:
 | Machine Name        | BUILD-SERVER                                       |
 | OS Version          | Microsoft Windows NT 10.0.19045.0                  |
 | DotNet Runtime      | .NET 8.0.0                                         |
-| Time Stamp          | 2024-01-15T10:30:00Z                               |
+| Time Stamp          | 2024-01-15 10:30:00Z                               |
 
-Tests:
+✓ SpdxTool_AddPackage - Passed
+✓ SpdxTool_AddRelationship - Passed
+✓ SpdxTool_Validate - Passed
+✓ SpdxTool_CopyPackage - Passed
+✓ SpdxTool_Diagram - Passed
+✓ SpdxTool_FindPackage - Passed
+✓ SpdxTool_GetVersion - Passed
+✓ SpdxTool_Hash - Passed
+✓ SpdxTool_Ntia - Passed
+✓ SpdxTool_Query - Passed
+✓ SpdxTool_RenameId - Passed
+✓ SpdxTool_RunNuGetWorkflow - Passed
+✓ SpdxTool_ToMarkdown - Passed
+✓ SpdxTool_UpdatePackage - Passed
 
-- SpdxTool_AddPackage: Passed
-- SpdxTool_AddRelationship: Passed
-- SpdxTool_Validate: Passed
-- SpdxTool_CopyPackage: Passed
-- SpdxTool_Diagram: Passed
-- SpdxTool_FindPackage: Passed
-- SpdxTool_GetVersion: Passed
-- SpdxTool_Hash: Passed
-- SpdxTool_Ntia: Passed
-- SpdxTool_Query: Passed
-- SpdxTool_RenameId: Passed
-- SpdxTool_RunNuGetWorkflow: Passed
-- SpdxTool_ToMarkdown: Passed
-- SpdxTool_UpdatePackage: Passed
+Total Tests: 14
+Passed: 14
+Failed: 0
 
 Validation Passed
 ```
