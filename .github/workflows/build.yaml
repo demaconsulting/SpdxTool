@@ -21,6 +21,10 @@ jobs:
     permissions:
       contents: read
     steps:
+      # === INSTALL DEPENDENCIES ===
+      # This section installs all required dependencies for quality checks.
+      # Downstream projects: Add any additional dependency installations here.
+
       - name: Checkout
         uses: actions/checkout@v6
 
@@ -36,17 +40,25 @@ jobs:
       - name: Capture tool versions
         shell: bash
         run: |
+          mkdir -p artifacts
           echo "Capturing tool versions..."
-          dotnet versionmark --capture --job-id "quality" -- dotnet git versionmark
+          dotnet versionmark --capture --job-id "quality" \
+            --output "artifacts/versionmark-quality.json" -- \
+            dotnet git versionmark
           echo "✓ Tool versions captured"
 
-      - name: Upload version capture
-        uses: actions/upload-artifact@v7
-        with:
-          name: version-capture-quality
-          path: versionmark-quality.json
+      # === CAPTURE OTS SELF-VALIDATION RESULTS ===
+      # This section captures self-validation results from OTS tools.
+      # Downstream projects: Add any additional self-validation steps here.
 
-      - name: Spell Check
+      - name: Run VersionMark self-validation
+        run: dotnet versionmark --validate --results artifacts/versionmark-self-validation-quality.trx
+
+      # === RUN QUALITY CHECKS ===
+      # This section runs all quality checks for the project.
+      # Downstream projects: Add any additional quality checks here.
+
+      - name: Run spell checker
         uses: streetsidesoftware/cspell-action@v8
         with:
           config: .cspell.json
@@ -57,16 +69,22 @@ jobs:
             **/*.yaml
             **/*.yml
 
-      - name: Markdown Lint
+      - name: Run markdown linter
         uses: DavidAnson/markdownlint-cli2-action@v22
         with:
           config: .markdownlint-cli2.jsonc
           globs: '**/*.md'
 
-      - name: YAML Lint
+      - name: Run YAML linter
         uses: ibiqlik/action-yamllint@v3
         with:
           config_file: .yamllint.yaml
+
+      - name: Upload quality artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifacts-quality
+          path: artifacts/
 
   # Builds and unit-tests the project on supported operating systems to ensure
   # unit-tests operate on all platforms and to run SonarScanner for generating
@@ -86,6 +104,10 @@ jobs:
 
     steps:
 
+      # === INSTALL DEPENDENCIES ===
+      # This section installs all required dependencies for the build.
+      # Downstream projects: Add any additional dependency installations here.
+
       - name: Checkout
         uses: actions/checkout@v6
         with:
@@ -102,6 +124,33 @@ jobs:
       - name: Restore Tools
         run: >
           dotnet tool restore
+
+      # === CAPTURE TOOL VERSIONS ===
+      # This section captures the versions of all tools used in the build process.
+      # Downstream projects: Add any additional tools to capture here.
+
+      - name: Capture tool versions
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          echo "Capturing tool versions..."
+          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
+          JOB_ID="build-${OS_SHORT}"
+          dotnet versionmark --capture --job-id "${JOB_ID}" \
+            --output "artifacts/versionmark-${JOB_ID}.json" -- \
+            dotnet git dotnet-sonarscanner versionmark
+          echo "✓ Tool versions captured"
+
+      # === CAPTURE OTS SELF-VALIDATION RESULTS ===
+      # This section captures self-validation results from OTS tools.
+      # Downstream projects: Add any additional self-validation steps here.
+
+      - name: Run VersionMark self-validation
+        run: dotnet versionmark --validate --results artifacts/versionmark-self-validation-${{ matrix.os }}.trx
+
+      # === BUILD AND TEST ===
+      # This section builds and tests the project.
+      # Downstream projects: Add any additional build and test steps here.
 
       - name: Restore Dependencies
         run: >
@@ -136,7 +185,7 @@ jobs:
           --property:Version=${{ inputs.version }}
           --collect "XPlat Code Coverage;Format=opencover"
           --logger "trx;LogFilePrefix=${{ matrix.os }}"
-          --results-directory test-results
+          --results-directory artifacts
 
       - name: End Sonar Scanner
         env:
@@ -153,28 +202,15 @@ jobs:
           --no-restore
           --property:PackageVersion=${{ inputs.version }}
 
-      - name: Capture tool versions
-        shell: bash
-        run: |
-          echo "Capturing tool versions..."
-          # Create short job ID: build-win, build-ubuntu
-          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
-          JOB_ID="build-${OS_SHORT}"
-          dotnet versionmark --capture --job-id "${JOB_ID}" -- \
-            dotnet git dotnet-sonarscanner versionmark
-          echo "✓ Tool versions captured"
+      # === UPLOAD ARTIFACTS ===
+      # This section uploads all build artifacts.
+      # Downstream projects: Add any additional artifact uploads here.
 
-      - name: Upload version capture
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: version-capture-${{ matrix.os }}
-          path: versionmark-build-*.json
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v7
-        with:
-          name: test-results-${{ matrix.os }}
-          path: test-results/*.trx
+          name: artifacts-build-${{ matrix.os }}
+          path: artifacts/
 
       - name: Upload SpdxTool Packages
         uses: actions/upload-artifact@v7
@@ -203,16 +239,12 @@ jobs:
       security-events: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      # === INSTALL DEPENDENCIES ===
+      # This section installs all required dependencies for CodeQL analysis.
+      # Downstream projects: Add any additional dependency installations here.
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: |
-            8.x
-            9.x
-            10.x
+      - name: Checkout
+        uses: actions/checkout@v6
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -222,6 +254,14 @@ jobs:
           config-file: ./.github/codeql-config.yml
           build-mode: manual
 
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.x
+            9.x
+            10.x
+
       - name: Restore Tools
         run: >
           dotnet tool restore
@@ -229,6 +269,10 @@ jobs:
       - name: Restore Dependencies
         run: >
           dotnet restore
+
+      # === BUILD AND ANALYZE ===
+      # This section builds the project and runs CodeQL analysis.
+      # Downstream projects: Add any additional analysis steps here.
 
       - name: Build
         run: >
@@ -241,14 +285,18 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:csharp"
-          output: sarif-results
+          output: artifacts
           upload: false
 
-      - name: Upload SARIF
+      # === UPLOAD ARTIFACTS ===
+      # This section uploads all CodeQL artifacts.
+      # Downstream projects: Add any additional artifact uploads here.
+
+      - name: Upload CodeQL artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: codeql-sarif
-          path: sarif-results/csharp.sarif
+          name: artifacts-codeql
+          path: artifacts/
 
   # Performs integration testing on a matrix of operating systems and .NET runtimes,
   # involving basic tool execution and running self-validation to ensure compatibility
@@ -266,6 +314,10 @@ jobs:
         dotnet-version: ['8.x', '9.x', '10.x']
 
     steps:
+      # === INSTALL DEPENDENCIES ===
+      # This section installs all required dependencies and tools for integration testing.
+      # Downstream projects: Add any additional dependency installations here.
+
       - name: Checkout
         uses: actions/checkout@v6
         with:
@@ -297,6 +349,28 @@ jobs:
             --version ${{ inputs.version }} \
             DemaConsulting.SpdxTool
 
+      # === CAPTURE TOOL VERSIONS ===
+      # This section captures the versions of all tools used in the integration tests.
+      # Downstream projects: Add any additional tools to capture here.
+
+      - name: Capture tool versions
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          echo "Capturing tool versions..."
+          # Create short job ID: int-win-8, int-win-9, int-ubuntu-8, etc.
+          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
+          DOTNET_SHORT=$(echo "${{ matrix.dotnet-version }}" | sed 's/\.x$//')
+          JOB_ID="int-${OS_SHORT}-${DOTNET_SHORT}"
+          dotnet versionmark --capture --job-id "${JOB_ID}" \
+            --output "artifacts/versionmark-${JOB_ID}.json" -- \
+            dotnet git versionmark
+          echo "✓ Tool versions captured"
+
+      # === RUN INTEGRATION TESTS ===
+      # This section runs the integration tests for the tool.
+      # Downstream projects: Add any additional integration test steps here.
+
       - name: Test version display
         shell: bash
         run: |
@@ -315,34 +389,21 @@ jobs:
         shell: bash
         run: |
           echo "Running self-validation..."
-          spdx-tool --validate --result \
-            validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx \
+          spdx-tool --validate \
+            --results artifacts/validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx \
             || { echo "✗ Self-validation failed"; exit 1; }
           echo "✓ Self-validation succeeded"
 
-      - name: Capture tool versions
-        shell: bash
-        run: |
-          echo "Capturing tool versions..."
-          # Create short job ID: int-win-8, int-win-9, int-ubuntu-8, etc.
-          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
-          DOTNET_SHORT=$(echo "${{ matrix.dotnet-version }}" | sed 's/\.x$//')
-          JOB_ID="int-${OS_SHORT}-${DOTNET_SHORT}"
-          dotnet versionmark --capture --job-id "${JOB_ID}" -- dotnet git versionmark
-          echo "✓ Tool versions captured"
+      # === UPLOAD ARTIFACTS ===
+      # This section uploads all generated artifacts for use by downstream jobs.
+      # Downstream projects: Add any additional artifact uploads here.
 
-      - name: Upload version capture
-        uses: actions/upload-artifact@v7
-        with:
-          name: version-capture-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
-          path: versionmark-int-*.json
-
-      - name: Upload validation test results
+      - name: Upload validation artifacts
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: validation-test-results-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
-          path: validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx
+          name: artifacts-validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}
+          path: artifacts/
 
   # Performs integration testing of the DemaConsulting.SpdxTool.Targets package
   # to verify the MSBuild targets work correctly with both single-TFM and
@@ -360,6 +421,10 @@ jobs:
         os: [windows-latest, ubuntu-latest]
 
     steps:
+      # === INSTALL DEPENDENCIES ===
+      # This section installs all required dependencies for targets integration testing.
+      # Downstream projects: Add any additional dependency installations here.
+
       - name: Checkout
         uses: actions/checkout@v6
 
@@ -387,20 +452,28 @@ jobs:
             DemaConsulting.SpdxTool
           echo "✓ spdx-tool installed"
 
+      # === RUN INTEGRATION TESTS ===
+      # This section runs the MSBuild targets integration tests.
+      # Downstream projects: Add any additional integration test steps here.
+
       - name: Run targets integration tests
         run: >
           dotnet test
           test/DemaConsulting.SpdxTool.Targets.Tests/DemaConsulting.SpdxTool.Targets.Tests.csproj
           --configuration Release
           --logger "trx;LogFilePrefix=targets-${{ matrix.os }}"
-          --results-directory targets-test-results
+          --results-directory artifacts
 
-      - name: Upload targets test results
+      # === UPLOAD ARTIFACTS ===
+      # This section uploads all generated artifacts for use by downstream jobs.
+      # Downstream projects: Add any additional artifact uploads here.
+
+      - name: Upload targets artifacts
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: targets-test-results-${{ matrix.os }}
-          path: targets-test-results/*.trx
+          name: artifacts-targets-${{ matrix.os }}
+          path: artifacts/
 
   # Builds the supporting documentation including user guides, code quality
   # reports, and build notes.
@@ -421,24 +494,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Download all test results
+      - name: Download all job artifacts
         uses: actions/download-artifact@v8
         with:
-          path: test-results
-          pattern: '*test-results*'
-        continue-on-error: true
-
-      - name: Download CodeQL SARIF
-        uses: actions/download-artifact@v8
-        with:
-          name: codeql-sarif
-          path: codeql-results
-
-      - name: Download all version captures
-        uses: actions/download-artifact@v8
-        with:
-          path: version-captures
-          pattern: 'version-capture-*'
+          path: artifacts
+          pattern: 'artifacts-*'
+          merge-multiple: true
         continue-on-error: true
 
       # === INSTALL DEPENDENCIES ===
@@ -470,10 +531,31 @@ jobs:
       - name: Capture tool versions for build-docs
         shell: bash
         run: |
+          mkdir -p artifacts
           echo "Capturing tool versions..."
-          dotnet versionmark --capture --job-id "build-docs" -- \
+          dotnet versionmark --capture --job-id "build-docs" \
+            --output "artifacts/versionmark-build-docs.json" -- \
             dotnet git node npm pandoc weasyprint sarifmark sonarmark reqstream buildmark versionmark
           echo "✓ Tool versions captured"
+
+      # === CAPTURE OTS SELF-VALIDATION RESULTS ===
+      # This section captures self-validation results from OTS tools.
+      # Downstream projects: Add any additional self-validation steps here.
+
+      - name: Run ReqStream self-validation
+        run: dotnet reqstream --validate --results artifacts/reqstream-self-validation.trx
+
+      - name: Run BuildMark self-validation
+        run: dotnet buildmark --validate --results artifacts/buildmark-self-validation.trx
+
+      - name: Run VersionMark self-validation
+        run: dotnet versionmark --validate --results artifacts/versionmark-self-validation.trx
+
+      - name: Run SarifMark self-validation
+        run: dotnet sarifmark --validate --results artifacts/sarifmark-self-validation.trx
+
+      - name: Run SonarMark self-validation
+        run: dotnet sonarmark --validate --results artifacts/sonarmark-self-validation.trx
 
       # === GENERATE MARKDOWN REPORTS ===
       # This section generates all markdown reports from various tools and sources.
@@ -484,7 +566,7 @@ jobs:
         run: >
           dotnet reqstream
           --requirements requirements.yaml
-          --tests "test-results/**/*.trx"
+          --tests "artifacts/**/*.trx"
           --report docs/requirements/requirements.md
           --justifications docs/justifications/justifications.md
           --matrix docs/tracematrix/tracematrix.md
@@ -493,7 +575,7 @@ jobs:
       - name: Generate CodeQL Quality Report with SarifMark
         run: >
           dotnet sarifmark
-          --sarif codeql-results/csharp.sarif
+          --sarif artifacts/csharp.sarif
           --report docs/quality/codeql-quality.md
           --heading "SpdxTool CodeQL Analysis"
           --report-depth 1
@@ -543,7 +625,7 @@ jobs:
         run: |
           echo "Publishing tool versions..."
           dotnet versionmark --publish --report docs/buildnotes/versions.md --report-depth 1 \
-            -- "versionmark-*.json" "version-captures/**/versionmark-*.json"
+            -- "artifacts/**/versionmark-*.json"
           echo "✓ Tool versions published"
 
       - name: Display Tool Versions Report

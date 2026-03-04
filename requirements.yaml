@@ -393,6 +393,77 @@ sections:
             tests:
               - dotnet10.x@SpdxTool_Validate
 
+      - title: OTS Software
+        requirements:
+          - id: SpdxTool-OTS-MSTest
+            title: MSTest shall execute unit tests and report results.
+            tags:
+              - ots
+            justification: |
+              MSTest (MSTest.TestFramework and MSTest.TestAdapter) is the unit-testing framework
+              used by the project. It discovers and runs all test methods and writes TRX result
+              files that feed into coverage reporting and requirements traceability.
+            tests:
+              - Version_ShortFlag_DisplaysVersion
+              - Version_LongFlag_DisplaysVersion
+              - Usage_ShortHelpFlag_DisplaysUsage
+
+          - id: SpdxTool-OTS-ReqStream
+            title: ReqStream shall enforce that every requirement is linked to passing test evidence.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.ReqStream processes requirements.yaml and the TRX test-result files to
+              produce a requirements report, justifications document, and traceability matrix. When
+              run with --enforce, it exits with a non-zero code if any requirement lacks test evidence.
+            tests:
+              - ReqStream_EnforcementMode
+
+          - id: SpdxTool-OTS-BuildMark
+            title: BuildMark shall generate build-notes documentation from GitHub Actions metadata.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.BuildMark queries the GitHub API to capture workflow run details and
+              renders them as a markdown build-notes document included in the release artifacts.
+            tests:
+              - BuildMark_MarkdownReportGeneration
+
+          - id: SpdxTool-OTS-VersionMark
+            title: VersionMark shall publish captured tool-version information.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.VersionMark reads version metadata for each dotnet tool used in the
+              pipeline and writes a versions markdown document included in the release artifacts.
+            tests:
+              - VersionMark_CapturesVersions
+              - VersionMark_GeneratesMarkdownReport
+
+          - id: SpdxTool-OTS-SarifMark
+            title: SarifMark shall convert CodeQL SARIF results into a markdown report.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SarifMark reads the SARIF output produced by CodeQL code scanning and
+              renders it as a human-readable markdown document included in the release artifacts.
+            tests:
+              - SarifMark_SarifReading
+              - SarifMark_MarkdownReportGeneration
+
+          - id: SpdxTool-OTS-SonarMark
+            title: SonarMark shall generate a SonarCloud quality report.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SonarMark retrieves quality-gate and metrics data from SonarCloud and
+              renders it as a markdown document included in the release artifacts.
+            tests:
+              - SonarMark_QualityGateRetrieval
+              - SonarMark_IssuesRetrieval
+              - SonarMark_HotSpotsRetrieval
+              - SonarMark_MarkdownReportGeneration
+
       - title: MSBuild Targets Integration
         requirements:
           - id: SpdxTool-Tgt-DecorateSbom
