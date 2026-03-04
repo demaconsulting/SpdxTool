@@ -390,7 +390,7 @@ jobs:
         run: |
           echo "Running self-validation..."
           spdx-tool --validate \
-            --results artifacts/validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx \
+            --result artifacts/validation-${{ matrix.os }}-dotnet${{ matrix.dotnet-version }}.trx \
             || { echo "✗ Self-validation failed"; exit 1; }
           echo "✓ Self-validation succeeded"
 
