@@ -120,6 +120,25 @@ Tests:
 Validation Passed
 ```
 
+Each test in the report proves a specific command works correctly:
+
+- **SpdxTool_AddPackage** - `add-package` command adds a package with relationships to an SPDX file.
+- **SpdxTool_AddRelationship** - `add-relationship` command adds a relationship between SPDX elements.
+- **SpdxTool_Validate** - `validate` command accepts valid and rejects invalid SPDX files.
+- **SpdxTool_CopyPackage** - `copy-package` command copies a package with relationships between SPDX files.
+- **SpdxTool_Diagram** - `diagram` command generates a Mermaid diagram from an SPDX file.
+- **SpdxTool_FindPackage** - `find-package` command locates a package by name in an SPDX file.
+- **SpdxTool_GetVersion** - `get-version` command retrieves a package version from an SPDX file.
+- **SpdxTool_Hash** - `hash` command generates and verifies file hashes.
+- **SpdxTool_Ntia** - `validate` command enforces NTIA minimum SBOM element requirements.
+- **SpdxTool_Query** - `query` command extracts values from program output.
+- **SpdxTool_RenameId** - `rename-id` command renames an element identifier throughout an SPDX file.
+- **SpdxTool_RunNuGetWorkflow** - `run-workflow` command executes a workflow from a NuGet package.
+- **SpdxTool_ToMarkdown** - `to-markdown` command generates a Markdown summary from an SPDX file.
+- **SpdxTool_UpdatePackage** - `update-package` command updates all fields of a package in an SPDX file.
+
+For detailed descriptions of each validation test, see the [User Guide][user-guide].
+
 On validation failure the tool will exit with a non-zero exit code.
 
 This report may be useful in regulated industries requiring evidence of tool validation.
@@ -158,6 +177,7 @@ Additional information can be found at:
 
 [command-line-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-command-line.md
 [workflow-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md
+[user-guide]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/guide/guide.md
 [contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md
 [code-of-conduct]: https://github.com/demaconsulting/SpdxTool/blob/main/CODE_OF_CONDUCT.md
 [architecture]: https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md
