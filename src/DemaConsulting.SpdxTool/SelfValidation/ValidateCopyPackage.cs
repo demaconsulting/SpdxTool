@@ -39,7 +39,15 @@ internal static class ValidateCopyPackage
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_CopyPackage: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_CopyPackage - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_CopyPackage - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

@@ -39,7 +39,15 @@ internal static class ValidateAddRelationship
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_AddRelationship: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_AddRelationship - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_AddRelationship - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

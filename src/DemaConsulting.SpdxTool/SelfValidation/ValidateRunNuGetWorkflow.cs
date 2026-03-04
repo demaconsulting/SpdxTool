@@ -37,7 +37,15 @@ internal static class ValidateRunNuGetWorkflow
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_RunNuGetWorkflow: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_RunNuGetWorkflow - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_RunNuGetWorkflow - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

@@ -45,7 +45,15 @@ internal static partial class ValidateQuery
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_Query: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_Query - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_Query - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

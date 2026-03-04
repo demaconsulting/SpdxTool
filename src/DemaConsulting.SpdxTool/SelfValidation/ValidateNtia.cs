@@ -37,7 +37,15 @@ internal static class ValidateNtia
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_Ntia: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_Ntia - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_Ntia - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

@@ -38,7 +38,14 @@ internal static class ValidateDiagram
         var passed = DoValidate();
 
         // Report validation result to console
-        context.WriteLine($"- SpdxTool_Diagram: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_Diagram - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_Diagram - Failed");
+        }
 
         // Add validation result to test results collection
         results.Results.Add(

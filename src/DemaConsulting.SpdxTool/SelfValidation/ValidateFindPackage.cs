@@ -37,7 +37,15 @@ internal static class ValidateFindPackage
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_FindPackage: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_FindPackage - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_FindPackage - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

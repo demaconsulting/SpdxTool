@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using System.Runtime.InteropServices;
+using DemaConsulting.TestResults;
 using DemaConsulting.TestResults.IO;
 
 namespace DemaConsulting.SpdxTool.SelfValidation;
@@ -47,8 +48,6 @@ public static class Validate
              | DotNet Runtime      | {Environment.Version,-50} |
              | Time Stamp          | {DateTime.UtcNow,-50:u} |
 
-             Tests:
-              
              """);
 
         var results = new TestResults.TestResults
@@ -71,6 +70,22 @@ public static class Validate
         ValidateRunNuGetWorkflow.Run(context, results);
         ValidateToMarkdown.Run(context, results);
         ValidateUpdatePackage.Run(context, results);
+
+        // Calculate and print summary counts
+        var totalTests = results.Results.Count;
+        var passedTests = results.Results.Count(t => t.Outcome == TestOutcome.Passed);
+        var failedTests = results.Results.Count(t => t.Outcome == TestOutcome.Failed);
+
+        context.WriteLine($"\nTotal Tests: {totalTests}");
+        context.WriteLine($"Passed: {passedTests}");
+        if (failedTests > 0)
+        {
+            context.WriteError($"Failed: {failedTests}");
+        }
+        else
+        {
+            context.WriteLine($"Failed: {failedTests}");
+        }
 
         // If all validations succeeded (no errors) then report validation passed
         if (context.Errors == 0)

@@ -38,7 +38,15 @@ internal static class ValidateRenameId
         var passed = DoValidate();
 
         // Report validation result
-        context.WriteLine($"- SpdxTool_RenameId: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_RenameId - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_RenameId - Failed");
+        }
+
         results.Results.Add(
             new TestResult
             {

@@ -38,7 +38,14 @@ internal static class ValidateToMarkdown
         var passed = DoValidate();
 
         // Report validation result to console
-        context.WriteLine($"- SpdxTool_ToMarkdown: {(passed ? "Passed" : "Failed")}");
+        if (passed)
+        {
+            context.WriteLine($"✓ SpdxTool_ToMarkdown - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ SpdxTool_ToMarkdown - Failed");
+        }
 
         // Add validation result to test results collection
         results.Results.Add(
