@@ -22,7 +22,7 @@ on:
 
 jobs:
   build:
-    name: Build and Test
+    name: Build
     # Permissions for this job
     permissions:
       actions: read           # To read actions for CodeQL
