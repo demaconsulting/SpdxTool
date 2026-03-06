@@ -109,6 +109,8 @@
       "type": "shell",
       "args": [
         "yamllint",
+        "-c",
+        ".yamllint.yaml",
         "."
       ],
       "problemMatcher": [],
