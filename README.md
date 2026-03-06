@@ -196,4 +196,4 @@ Additional information can be found at:
 [github-ci-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md
 [sbom-tool-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md
 [link-continuous-compliance]: https://demaconsulting.github.io/SpdxTool/articles/continuous-compliance.html
-[link-license]: LICENSE
+[link-license]: https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE
