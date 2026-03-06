@@ -166,6 +166,14 @@ This project maintains high code quality standards:
 - ✓ Self-validation system for tool correctness
 - ✓ Warnings treated as errors
 - ✓ EditorConfig for consistent code style
+- ✓ **Continuous Compliance**: Compliance evidence generated automatically on every CI run,
+  following the [Continuous Compliance][link-continuous-compliance] methodology
+
+## License
+
+Copyright (c) DEMA Consulting. Licensed under the MIT License. See [LICENSE][link-license] for details.
+
+By contributing to this project, you agree that your contributions will be licensed under the MIT License.
 
 ## Additional Information
 
@@ -187,3 +195,5 @@ Additional information can be found at:
 [spdx-site]: https://spdx.dev/
 [github-ci-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md
 [sbom-tool-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md
+[link-continuous-compliance]: https://demaconsulting.github.io/SpdxTool/articles/continuous-compliance.html
+[link-license]: LICENSE

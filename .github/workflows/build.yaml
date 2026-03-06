@@ -58,6 +58,12 @@ jobs:
       # This section runs all quality checks for the project.
       # Downstream projects: Add any additional quality checks here.
 
+      - name: Run markdown linter
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          config: .markdownlint-cli2.jsonc
+          globs: '**/*.md'
+
       - name: Run spell checker
         uses: streetsidesoftware/cspell-action@v8
         with:
@@ -68,12 +74,6 @@ jobs:
             **/*.cs
             **/*.yaml
             **/*.yml
-
-      - name: Run markdown linter
-        uses: DavidAnson/markdownlint-cli2-action@v22
-        with:
-          config: .markdownlint-cli2.jsonc
-          globs: '**/*.md'
 
       - name: Run YAML linter
         uses: ibiqlik/action-yamllint@v3

@@ -65,6 +65,7 @@ var results = ProcessFile(options.InputFile);
 - These tests ship with the product and run via `--validate` flag
 - Must support TRX/JUnit output format
 - Located in `src/DemaConsulting.SpdxTool/SelfValidation/`
+- Link to requirements in `requirements.yaml`
 
 ## Defer To
 

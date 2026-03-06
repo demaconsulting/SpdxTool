@@ -19,7 +19,14 @@
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
+  <!-- Implicit Usings -->
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <Using Include="Polyfills" />
+  </ItemGroup>
+
   <!-- Test Framework Dependencies -->
+  <!-- coverlet.collector: PrivateAssets=all prevents transitive exposure; IncludeAssets controls what is consumed -->
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -48,12 +55,6 @@
       <Private>true</Private>
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
     </ProjectReference>
-  </ItemGroup>
-
-  <!-- Implicit Usings -->
-  <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
-    <Using Include="Polyfills" />
   </ItemGroup>
 
 </Project>
