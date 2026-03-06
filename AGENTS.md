@@ -108,9 +108,9 @@ dotnet run --project src/DemaConsulting.SpdxTool \
 ## CI/CD
 
 - **Quality Checks**: Markdown lint, spell check, YAML lint
-- **Build**: Multi-platform (Windows/Linux)
+- **Build**: Multi-platform (Windows/Linux/macOS)
 - **CodeQL**: Security scanning
-- **Integration Tests**: .NET 8/9/10 on Windows/Linux
+- **Integration Tests**: .NET 8/9/10 on Windows/Linux/macOS
 
 ## Common Tasks
 
