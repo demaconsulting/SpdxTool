@@ -58,6 +58,12 @@ jobs:
       # This section runs all quality checks for the project.
       # Downstream projects: Add any additional quality checks here.
 
+      - name: Run markdown linter
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          config: .markdownlint-cli2.jsonc
+          globs: '**/*.md'
+
       - name: Run spell checker
         uses: streetsidesoftware/cspell-action@v8
         with:
@@ -68,12 +74,6 @@ jobs:
             **/*.cs
             **/*.yaml
             **/*.yml
-
-      - name: Run markdown linter
-        uses: DavidAnson/markdownlint-cli2-action@v22
-        with:
-          config: .markdownlint-cli2.jsonc
-          globs: '**/*.md'
 
       - name: Run YAML linter
         uses: ibiqlik/action-yamllint@v3
@@ -98,7 +98,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -134,7 +134,8 @@ jobs:
         run: |
           mkdir -p artifacts
           echo "Capturing tool versions..."
-          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
+          # Create short job ID: build-windows, build-ubuntu, build-macos
+          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/-latest//')
           JOB_ID="build-${OS_SHORT}"
           dotnet versionmark --capture --job-id "${JOB_ID}" \
             --output "artifacts/versionmark-${JOB_ID}.json" -- \
@@ -310,7 +311,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         dotnet-version: ['8.x', '9.x', '10.x']
 
     steps:
@@ -358,8 +359,8 @@ jobs:
         run: |
           mkdir -p artifacts
           echo "Capturing tool versions..."
-          # Create short job ID: int-win-8, int-win-9, int-ubuntu-8, etc.
-          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/windows-latest/win/;s/ubuntu-latest/ubuntu/')
+          # Create short job ID: int-windows-8, int-ubuntu-9, int-macos-10, etc.
+          OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/-latest//')
           DOTNET_SHORT=$(echo "${{ matrix.dotnet-version }}" | sed 's/\.x$//')
           JOB_ID="int-${OS_SHORT}-${DOTNET_SHORT}"
           dotnet versionmark --capture --job-id "${JOB_ID}" \
@@ -418,7 +419,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
       # === INSTALL DEPENDENCIES ===

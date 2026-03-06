@@ -19,6 +19,7 @@
 # Source filter prefixes:
 #   windows@TestName    - proves the test passed on a Windows platform
 #   ubuntu@TestName     - proves the test passed on a Linux (Ubuntu) platform
+#   macos@TestName      - proves the test passed on a macOS platform
 #   net8.0@TestName     - proves the test passed under the .NET 8 target framework
 #   net9.0@TestName     - proves the test passed under the .NET 9 target framework
 #   net10.0@TestName    - proves the test passed under the .NET 10 target framework
@@ -359,6 +360,24 @@ sections:
               - ubuntu@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
               - ubuntu@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
               - ubuntu@SingleTfmProject_MissingWorkflow_ReportsError
+
+          - id: SpdxTool-Plt-MacOS
+            title: The tool shall run successfully on macOS platforms.
+            tags:
+              - platform
+              - msbuild
+            justification: |
+              macOS is a widely used operating system for development, especially
+              among software engineers and developers. The tool (both the dotnet-tool
+              and the MSBuild targets package) must function correctly on macOS to
+              support a broad user base.
+            tests:
+              - macos@SpdxTool_Validate
+              - macos@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - macos@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+              - macos@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+              - macos@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+              - macos@SingleTfmProject_MissingWorkflow_ReportsError
 
           - id: SpdxTool-Plt-Net8
             title: The tool shall run successfully on .NET 8.x.

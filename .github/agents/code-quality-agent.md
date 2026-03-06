@@ -38,7 +38,9 @@ Ensure the project is:
 3. **Static Analysis**:
    - Microsoft.CodeAnalysis.NetAnalyzers
    - SonarAnalyzer.CSharp
-4. **Tests**: All validation tests passing
+4. **Requirements Traceability**:
+   - `dotnet reqstream --requirements requirements.yaml --tests "test-results/**/*.trx" --enforce`
+5. **Tests**: All validation tests passing
 
 ### SpdxTool-Specific
 
@@ -59,8 +61,13 @@ dotnet build --configuration Release
 dotnet run --project src/DemaConsulting.SpdxTool \
   --configuration Release --framework net10.0 --no-build -- --validate
 
-# Run unit tests
-dotnet test --configuration Release
+# Requirements enforcement
+dotnet reqstream --requirements requirements.yaml \
+  --tests "test-results/**/*.trx" --enforce
+
+# Run all linters
+./lint.sh    # Linux/macOS
+lint.bat     # Windows
 ```
 
 ## Defer To

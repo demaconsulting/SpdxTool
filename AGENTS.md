@@ -12,6 +12,18 @@ manipulating SPDX SBOM files.
 - **Code Quality Agent** - Enforces linting, static analysis, and security standards
 - **Repo Consistency Agent** - Ensures SpdxTool remains consistent with TemplateDotNetTool patterns
 
+## Agent Selection Guide
+
+- Fix a bug → **Software Developer**
+- Add a new feature → **Requirements Agent** → **Software Developer** → **Test Developer**
+- Write a test → **Test Developer**
+- Fix linting or static analysis issues → **Code Quality Agent**
+- Update documentation → **Technical Writer**
+- Add or update requirements → **Requirements Agent**
+- Ensure test coverage linkage in `requirements.yaml` → **Requirements Agent**
+- Run security scanning or address CodeQL alerts → **Code Quality Agent**
+- Propagate template changes → **Repo Consistency Agent**
+
 ## Tech Stack
 
 - C# (latest), .NET 8.0/9.0/10.0, dotnet CLI, NuGet
@@ -21,6 +33,31 @@ manipulating SPDX SBOM files.
 - **`requirements.yaml`** - All requirements with test linkage (enforced via `dotnet reqstream --enforce`)
 - **`.editorconfig`** - Code style (file-scoped namespaces, 4-space indent, UTF-8+BOM, LF endings)
 - **`.cspell.json`, `.markdownlint-cli2.jsonc`, `.yamllint.yaml`** - Linting configs
+
+## Requirements
+
+- All requirements MUST be linked to tests (prefer `SpdxTool_*` self-validation tests)
+- Not all tests need to be linked to requirements (tests may exist for corner cases, ...)
+- Enforced in CI: `dotnet reqstream --requirements requirements.yaml --tests "test-results/**/*.trx" --enforce`
+- When adding features: add requirement + link to test
+
+## Test Source Filters
+
+Test links in `requirements.yaml` can include a source filter prefix to restrict which test results count as
+evidence. This is critical for platform and framework requirements - **do not remove these filters**.
+
+- `windows@TestName` - proves the test passed on a Windows platform
+- `ubuntu@TestName` - proves the test passed on a Linux (Ubuntu) platform
+- `macos@TestName` - proves the test passed on a macOS platform
+- `net8.0@TestName` - proves the test passed under the .NET 8 target framework
+- `net9.0@TestName` - proves the test passed under the .NET 9 target framework
+- `net10.0@TestName` - proves the test passed under the .NET 10 target framework
+- `dotnet8.x@TestName` - proves the self-validation test ran on a machine with .NET 8.x runtime
+- `dotnet9.x@TestName` - proves the self-validation test ran on a machine with .NET 9.x runtime
+- `dotnet10.x@TestName` - proves the self-validation test ran on a machine with .NET 10.x runtime
+
+Without the source filter, a test result from any platform/framework satisfies the requirement. Adding the filter
+ensures the CI evidence comes specifically from the required environment.
 
 ## Testing
 
@@ -71,9 +108,9 @@ dotnet run --project src/DemaConsulting.SpdxTool \
 ## CI/CD
 
 - **Quality Checks**: Markdown lint, spell check, YAML lint
-- **Build**: Multi-platform (Windows/Linux)
+- **Build**: Multi-platform (Windows/Linux/macOS)
 - **CodeQL**: Security scanning
-- **Integration Tests**: .NET 8/9/10 on Windows/Linux
+- **Integration Tests**: .NET 8/9/10 on Windows/Linux/macOS
 
 ## Common Tasks
 

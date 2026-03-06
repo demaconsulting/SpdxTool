@@ -11,7 +11,7 @@ Develop and maintain high-quality requirements with proper test coverage linkage
 
 Invoke the requirements-agent for:
 
-- Identifying missing or unclear requirements
+- Creating new requirements in `requirements.yaml`
 - Reviewing and improving existing requirements
 - Ensuring requirements have appropriate test coverage
 - Determining which type of test (unit, integration, or self-validation) is appropriate
@@ -26,6 +26,15 @@ Invoke the requirements-agent for:
 - Design details (implementation choices) are NOT requirements
 - Use clear, testable language with measurable acceptance criteria
 - Each requirement should be traceable to test evidence
+
+### Requirements Format
+
+Follow the `requirements.yaml` structure:
+
+- Clear ID and description
+- Justification explaining why the requirement is needed
+- Linked to appropriate test(s)
+- Enforced via: `dotnet reqstream --requirements requirements.yaml --tests "test-results/**/*.trx" --enforce`
 
 ### Test Coverage Strategy
 
