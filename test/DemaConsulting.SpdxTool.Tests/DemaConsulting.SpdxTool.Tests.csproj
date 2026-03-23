@@ -28,7 +28,7 @@
   <!-- Test Framework Dependencies -->
   <!-- coverlet.collector: PrivateAssets=all prevents transitive exposure; IncludeAssets controls what is consumed -->
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="8.0.0">
+    <PackageReference Include="coverlet.collector" Version="8.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
