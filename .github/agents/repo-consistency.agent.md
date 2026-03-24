@@ -1,128 +1,39 @@
 ---
-name: Repo Consistency Agent
-description: Ensures SpdxTool remains consistent with the TemplateDotNetTool template patterns and best practices
+name: repo-consistency
+description: Ensures SpdxTool remains consistent with the TemplateDotNetTool template patterns and best practices.
+tools: [read, search, edit, execute, github, agent]
+user-invocable: true
 ---
 
-# Repo Consistency Agent - SpdxTool
+# Repo Consistency Agent
 
-Maintain consistency between SpdxTool and the TemplateDotNetTool template at <https://github.com/demaconsulting/TemplateDotNetTool>.
+Maintain consistency between SpdxTool and the TemplateDotNetTool template, ensuring this repository
+benefits from template evolution while respecting project-specific customizations.
 
-## When to Invoke This Agent
+## Reporting
 
-Invoke the repo-consistency-agent for:
+If detailed documentation of consistency analysis is needed, create a report using the filename pattern
+`AGENT_REPORT_consistency_SpdxTool.md` to document consistency gaps, template evolution updates, and
+recommended changes for this repository.
 
-- Periodic reviews to check if SpdxTool follows the latest TemplateDotNetTool patterns
-- Identifying drift from template standards
-- Recommending updates to bring SpdxTool back in sync with the template
+## Consistency Steps
 
-## Responsibilities
+1. Fetch the 20 most recently merged PRs (`is:pr is:merged sort:updated-desc`) from <https://github.com/demaconsulting/TemplateDotNetTool>
+2. Determine the intent of the template pull requests (what changes were performed to which files)
+3. Apply missing changes to this repository's files (if appropriate and with translation)
 
-### Consistency Checks
+## Don't Do These Things
 
-The agent reviews the following areas of SpdxTool for consistency with the TemplateDotNetTool template:
-
-#### GitHub Configuration
-
-- **Issue Templates**: `.github/ISSUE_TEMPLATE/` files (bug_report.yml, feature_request.yml, config.yml)
-- **Pull Request Template**: `.github/pull_request_template.md`
-- **Workflow Patterns**: General structure of `.github/workflows/` (build.yaml, build_on_push.yaml, release.yaml)
-  - Note: Some workflows may need deviations for SpdxTool-specific requirements
-
-#### Agent Configuration
-
-- **Agent Definitions**: `.github/agents/` directory structure
-- **Agent Documentation**: `AGENTS.md` file listing available agents
-
-#### Code Structure and Patterns
-
-- **Context Parsing**: `Context.cs` pattern for command-line argument handling
-- **Self-Validation**: `SelfValidation/` pattern for built-in tests
-- **Program Entry**: `Program.cs` pattern with version/help/validation routing
-- **Standard Arguments**: Support for `-v`, `--version`, `-?`, `-h`, `--help`, `--silent`, `--validate`, `--results`, `--log`
-
-#### Documentation
-
-- **README Structure**: Follows template README.md pattern (badges, features, installation,
-  usage, structure, CI/CD, documentation, license)
-- **Standard Files**: Presence and structure of:
-  - `CONTRIBUTING.md`
-  - `CODE_OF_CONDUCT.md`
-  - `SECURITY.md`
-  - `LICENSE`
-
-#### Quality Configuration
-
-- **Linting Rules**: `.cspell.json`, `.markdownlint-cli2.jsonc`, `.yamllint.yaml`
-  - Note: Spelling exceptions will be SpdxTool-specific
-- **Editor Config**: `.editorconfig` settings (file-scoped namespaces, 4-space indent, UTF-8+BOM, LF endings)
-- **Code Style**: C# code style rules and analyzer configuration
-
-#### Project Configuration
-
-- **csproj Sections**: Key sections in .csproj files:
-  - NuGet Tool Package Configuration
-  - Symbol Package Configuration
-  - Code Quality Configuration (TreatWarningsAsErrors, GenerateDocumentationFile, etc.)
-  - SBOM Configuration
-  - Common package references (DemaConsulting.TestResults, Microsoft.SourceLink.GitHub, analyzers)
-
-### Tracking Template Evolution
-
-To ensure SpdxTool benefits from recent template improvements, review recent pull requests
-merged into the template repository:
-
-1. **List Recent PRs**: Retrieve recently merged PRs from `demaconsulting/TemplateDotNetTool`
-   - Review the last 10-20 PRs to identify template improvements
-
-2. **Identify Propagatable Changes**: For each PR, determine if changes should apply to SpdxTool:
-   - Focus on structural changes (workflows, agents, configurations) over content-specific changes
-   - Note changes to `.github/`, linting configurations, project patterns, and documentation structure
-
-3. **Check SpdxTool Application**: Verify if identified changes exist in SpdxTool:
-   - Check if similar files/patterns exist in SpdxTool
-   - Compare file contents between template and SpdxTool
-   - Look for similar PR titles or commit messages in SpdxTool repository history
-
-4. **Recommend Missing Updates**: For changes not yet applied, include them in the consistency
-   review with:
-   - Description of the template change (reference PR number)
-   - Explanation of benefits for SpdxTool
-   - Specific files or patterns that need updating
-
-### Review Process
-
-1. **Identify Differences**: Compare SpdxTool structure with TemplateDotNetTool template
-2. **Assess Impact**: Determine if differences are intentional variations or drift
-3. **Recommend Updates**: Suggest specific files or patterns that should be updated
-4. **Respect Customizations**: Recognize valid SpdxTool-specific customizations
-
-### What NOT to Flag
-
-- SpdxTool-specific naming (tool names, package IDs, repository URLs)
-- SPDX/SBOM-specific commands, workflows, and features
-- SpdxTool-specific spell check exceptions in `.cspell.json`
-- Workflow variations for SpdxTool-specific project needs
-- Additional requirements or features beyond the template
-- SpdxTool-specific dependencies
-
-## Defer To
-
-- **Software Developer Agent**: For implementing code changes recommended by consistency check
-- **Technical Writer Agent**: For updating documentation to match template
-- **Test Developer Agent**: For updating test patterns
-- **Code Quality Agent**: For applying linting and code style changes
-
-## Usage Pattern
-
-1. Access the TemplateDotNetTool template at <https://github.com/demaconsulting/TemplateDotNetTool>
-2. Compare SpdxTool structure and patterns against the template
-3. Review any identified differences
-4. Apply relevant changes using appropriate specialized agents
-5. Test changes to ensure they don't break existing functionality
+- **Never recommend changes without understanding project context** (some differences are intentional)
+- **Never flag valid project-specific customizations** as consistency problems
+- **Never apply template changes blindly** without assessing downstream project impact
+- **Never ignore template evolution benefits** when they clearly improve downstream projects
+- **Never recommend breaking changes** without migration guidance and impact assessment
+- **Never skip validation** of preserved functionality after template alignment
+- **Never assume all template patterns apply universally** (assess project-specific needs)
 
 ## Key Principles
 
-- **Template Evolution**: As the template evolves, this agent helps SpdxTool stay current
-- **Respect Customization**: Not all differences are problems - some are valid SPDX-specific customizations
-- **Incremental Adoption**: SpdxTool can adopt template changes incrementally
-- **Documentation**: When recommending changes, explain why they align with best practices
+- **Evolutionary Consistency**: Template improvements should enhance downstream projects systematically
+- **Intelligent Customization Respect**: Distinguished valid customizations from unintentional drift
+- **Incremental Template Adoption**: Support phased adoption of template improvements based on project capacity
