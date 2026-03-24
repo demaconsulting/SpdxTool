@@ -18,14 +18,10 @@ words:
   - Blockquotes
   - buildmark
   - BuildMark
-  - build_notes
-  - buildMultiTargeting
   - buildnotes
+  - buildMultiTargeting
   - camelcase
   - Checkmarx
-  - code_quality
-  - code_review_plan
-  - code_review_report
   - CodeQL
   - copilot
   - cspell
@@ -73,8 +69,6 @@ words:
   - Qube
   - reqstream
   - ReqStream
-  - requirements_doc
-  - requirements_report
   - reviewmark
   - ReviewMark
   - rezip
@@ -103,7 +97,6 @@ words:
   - TemplateDotNetTool
   - testname
   - TMPL
-  - trace_matrix
   - tracematrix
   - triaging
   - Trivy

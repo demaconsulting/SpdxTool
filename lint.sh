@@ -8,7 +8,7 @@
 # - NO command-line arguments, pretty printing, or colorization
 # - Agents execute this script to identify files needing fixes
 
-lint_error=0
+LINT_ERROR=0
 
 # Install npm dependencies
 npm install
@@ -21,15 +21,15 @@ source .venv/bin/activate
 pip install -r pip-requirements.txt
 
 # Run spell check
-npx cspell --no-progress --no-color "**/*.{md,yaml,yml,json,cs,cpp,hpp,h,txt}" || lint_error=1
+npx cspell --no-progress --no-color "**/*.{md,yaml,yml,json,cs,cpp,hpp,h,txt}" || LINT_ERROR=1
 
 # Run markdownlint check
-npx markdownlint-cli2 "**/*.md" || lint_error=1
+npx markdownlint-cli2 "**/*.md" || LINT_ERROR=1
 
 # Run yamllint check
-yamllint . || lint_error=1
+yamllint . || LINT_ERROR=1
 
 # Run .NET formatting check (verifies no changes are needed)
-dotnet format --verify-no-changes || lint_error=1
+dotnet format --verify-no-changes || LINT_ERROR=1
 
-exit $lint_error
+exit $LINT_ERROR
