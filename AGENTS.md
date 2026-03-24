@@ -10,6 +10,7 @@ manipulating SPDX SBOM files.
 - **Software Developer** - Writes production code and self-validation tests in literate style
 - **Test Developer** - Creates unit and integration tests following AAA pattern
 - **Code Quality Agent** - Enforces linting, static analysis, and security standards
+- **Code Review Agent** - Assists in performing formal file reviews
 - **Repo Consistency Agent** - Ensures SpdxTool remains consistent with TemplateDotNetTool patterns
 
 ## Agent Selection Guide
@@ -22,6 +23,7 @@ manipulating SPDX SBOM files.
 - Add or update requirements → **Requirements Agent**
 - Ensure test coverage linkage in `requirements.yaml` → **Requirements Agent**
 - Run security scanning or address CodeQL alerts → **Code Quality Agent**
+- Perform formal file reviews → **Code Review Agent**
 - Propagate template changes → **Repo Consistency Agent**
 
 ## Tech Stack
@@ -32,7 +34,7 @@ manipulating SPDX SBOM files.
 
 - **`requirements.yaml`** - All requirements with test linkage (enforced via `dotnet reqstream --enforce`)
 - **`.editorconfig`** - Code style (file-scoped namespaces, 4-space indent, UTF-8+BOM, LF endings)
-- **`.cspell.json`, `.markdownlint-cli2.jsonc`, `.yamllint.yaml`** - Linting configs
+- **`.cspell.yaml`, `.markdownlint-cli2.yaml`, `.yamllint.yaml`** - Linting configs
 
 ## Requirements
 

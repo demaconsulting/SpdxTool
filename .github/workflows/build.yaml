@@ -61,13 +61,13 @@ jobs:
       - name: Run markdown linter
         uses: DavidAnson/markdownlint-cli2-action@v22
         with:
-          config: .markdownlint-cli2.jsonc
+          config: .markdownlint-cli2.yaml
           globs: '**/*.md'
 
       - name: Run spell checker
         uses: streetsidesoftware/cspell-action@v8
         with:
-          config: .cspell.json
+          config: .cspell.yaml
           incremental_files_only: false
           files: |
             **/*.md
