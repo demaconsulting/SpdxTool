@@ -13,8 +13,8 @@ Continuous Compliance verification.
 ## Reporting
 
 If detailed documentation of testing activities is needed,
-create a report using the filename pattern `AGENT_REPORT_testing.md` to document test strategies, coverage analysis,
-and validation results.
+create a report in `.agent-logs/[agent-name]-[subject]-[unique-id].md` to document test strategies,
+coverage analysis, and validation results.
 
 ## When to Invoke This Agent
 
@@ -118,7 +118,7 @@ tests:
 
 ### Hand-off to Other Agents
 
-- If test quality gates and coverage metrics need verification, then call the @code-quality agent
+- If test quality gates and coverage metrics need verification, then call the @quality agent
 - If test linkage needs to satisfy requirements traceability, then call the @requirements agent
 - If testable code structure improvements are needed, then call the @software-developer agent
 

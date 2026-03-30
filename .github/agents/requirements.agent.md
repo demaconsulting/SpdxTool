@@ -12,8 +12,9 @@ Compliance methodology for automated evidence generation and audit compliance.
 
 ## Reporting
 
-If detailed documentation of requirements analysis is needed, create a report using the filename pattern
-`AGENT_REPORT_requirements.md` to document requirement mappings, gap analysis, and traceability results.
+If detailed documentation of requirements analysis is needed, create a report in
+`.agent-logs/[agent-name]-[subject]-[unique-id].md` to document requirement mappings, gap analysis,
+and traceability results.
 
 ## When to Invoke This Agent
 
@@ -87,7 +88,7 @@ Enforcement: `dotnet reqstream --requirements requirements.yaml --tests "test-re
 
 - If features need to be implemented to satisfy requirements, then call the @software-developer agent
 - If tests need to be created to validate requirements, then call the @test-developer agent
-- If requirements traceability needs to be enforced in CI/CD, then call the @code-quality agent
+- If requirements traceability needs to be enforced in CI/CD, then call the @quality agent
 - If requirements documentation needs generation or maintenance, then call the @technical-writer agent
 
 ## Don't Do These Things

@@ -8,28 +8,28 @@
 # - NO command-line arguments, pretty printing, or colorization
 # - Agents execute this script to identify files needing fixes
 
-LINT_ERROR=0
+lint_error=0
 
 # Install npm dependencies
-npm install
+npm install --silent
 
 # Create Python virtual environment (for yamllint)
 if [ ! -d ".venv" ]; then
   python -m venv .venv
 fi
 source .venv/bin/activate
-pip install -r pip-requirements.txt
+pip install -r pip-requirements.txt --quiet --disable-pip-version-check
 
 # Run spell check
-npx cspell --no-progress --no-color "**/*.{md,yaml,yml,json,cs,cpp,hpp,h,txt}" || LINT_ERROR=1
+npx cspell --no-progress --no-color --quiet "**/*.{md,yaml,yml,json,cs,cpp,hpp,h,txt}" || lint_error=1
 
 # Run markdownlint check
-npx markdownlint-cli2 "**/*.md" || LINT_ERROR=1
+npx markdownlint-cli2 "**/*.md" || lint_error=1
 
 # Run yamllint check
-yamllint . || LINT_ERROR=1
+yamllint . || lint_error=1
 
 # Run .NET formatting check (verifies no changes are needed)
-dotnet format --verify-no-changes || LINT_ERROR=1
+dotnet format --verify-no-changes || lint_error=1
 
-exit $LINT_ERROR
+exit $lint_error

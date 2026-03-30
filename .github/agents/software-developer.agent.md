@@ -11,8 +11,9 @@ Develop production code and self-validation tests with emphasis on testability, 
 
 ## Reporting
 
-If detailed documentation of development work is needed, create a report using the filename pattern
-`AGENT_REPORT_development.md` to document code changes, design decisions, and implementation details.
+If detailed documentation of development work is needed, create a report in
+`.agent-logs/[agent-name]-[subject]-[unique-id].md` to document code changes, design decisions,
+and implementation details.
 
 ## When to Invoke This Agent
 
@@ -103,7 +104,7 @@ Before completing any code changes, verify:
 ### Hand-off to Other Agents
 
 - If comprehensive tests need to be created for implemented functionality, then call the @test-developer agent
-- If quality gates and linting requirements need verification, then call the @code-quality agent
+- If quality gates and linting requirements need verification, then call the @quality agent
 - If documentation needs updating to reflect code changes, then call the @technical-writer agent
 - If implementation validation against requirements is needed, then call the @requirements agent
 
