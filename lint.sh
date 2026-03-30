@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Comprehensive Linting Script
 # 
@@ -11,15 +11,14 @@
 lint_error=0
 
 # Install npm dependencies
-npm install --silent || lint_error=1
+npm install --silent
 
 # Create Python virtual environment (for yamllint)
 if [ ! -d ".venv" ]; then
-  python -m venv .venv || lint_error=1
+  python -m venv .venv
 fi
-# shellcheck disable=SC1091
-source .venv/bin/activate || lint_error=1
-pip install -r pip-requirements.txt --quiet --disable-pip-version-check || lint_error=1
+source .venv/bin/activate
+pip install -r pip-requirements.txt --quiet --disable-pip-version-check
 
 # Run spell check
 npx cspell --no-progress --no-color --quiet "**/*.{md,yaml,yml,json,cs,cpp,hpp,h,txt}" || lint_error=1
