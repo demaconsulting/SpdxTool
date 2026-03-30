@@ -328,6 +328,9 @@ paket-files/
 __pycache__/
 *.pyc
 
+# Python virtual environment
+.venv/
+
 # Cake - Uncomment if you are using it
 # tools/**
 # !tools/packages.config
@@ -426,3 +429,6 @@ versionmark-*.json
 
 # Agent report files (temporary inter-agent communication)
 AGENT_REPORT_*.md
+
+# Agent log files (temporary agent work logs)
+.agent-logs/

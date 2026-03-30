@@ -11,7 +11,6 @@ on:
       SONAR_TOKEN:
         required: true
 
-
 jobs:
   # Performs quick quality checks for project formatting consistency including
   # markdown linting, spell checking, and YAML validation.
@@ -37,6 +36,16 @@ jobs:
         run: >
           dotnet tool restore
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
       - name: Capture tool versions
         shell: bash
         run: |
@@ -58,27 +67,9 @@ jobs:
       # This section runs all quality checks for the project.
       # Downstream projects: Add any additional quality checks here.
 
-      - name: Run markdown linter
-        uses: DavidAnson/markdownlint-cli2-action@v22
-        with:
-          config: .markdownlint-cli2.jsonc
-          globs: '**/*.md'
-
-      - name: Run spell checker
-        uses: streetsidesoftware/cspell-action@v8
-        with:
-          config: .cspell.json
-          incremental_files_only: false
-          files: |
-            **/*.md
-            **/*.cs
-            **/*.yaml
-            **/*.yml
-
-      - name: Run YAML linter
-        uses: ibiqlik/action-yamllint@v3
-        with:
-          config_file: .yamllint.yaml
+      - name: Run linters
+        shell: bash
+        run: bash ./lint.sh
 
       - name: Upload quality artifacts
         uses: actions/upload-artifact@v7
