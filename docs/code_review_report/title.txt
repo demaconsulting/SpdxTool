@@ -1,0 +1,13 @@
+---
+title: SpdxTool Review Report
+subtitle: File Review Report for the DemaConsulting SpdxTool
+author: DEMA Consulting
+description: File Review Report for the DemaConsulting SpdxTool
+lang: en-US
+keywords:
+  - SpdxTool
+  - Review Report
+  - File Reviews
+  - .NET
+  - Tool
+---

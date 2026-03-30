@@ -87,8 +87,8 @@ public class SelfValidationTests
             // Assert: Verify success
             Assert.AreEqual(0, exitCode);
 
-            // Read results file
-            var results = File.ReadAllText(resultFile);
+            // Read results file (normalize line endings for cross-platform compatibility)
+            var results = File.ReadAllText(resultFile).Replace("\r\n", "\n");
             Assert.IsNotNull(results);
 
             // Assert: Verify the results contain expected content

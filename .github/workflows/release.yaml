@@ -68,17 +68,12 @@ jobs:
           name: documents
           path: artifacts
 
-      - name: Move buildnotes.md to root
-        run: |
-          set -e
-          mv artifacts/buildnotes.md buildnotes.md
-
       - name: Create release
         if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
         uses: ncipollo/release-action@v1
         with:
           artifacts: "artifacts/*"
-          bodyFile: buildnotes.md
+          bodyFile: artifacts/build_notes.md
           generateReleaseNotes: false
           tag: ${{ inputs.version }}
 

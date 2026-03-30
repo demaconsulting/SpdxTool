@@ -1,0 +1,13 @@
+---
+title: SpdxTool Review Plan
+subtitle: File Review Plan for the DemaConsulting SpdxTool
+author: DEMA Consulting
+description: File Review Plan for the DemaConsulting SpdxTool
+lang: en-US
+keywords:
+  - SpdxTool
+  - Review Plan
+  - File Reviews
+  - .NET
+  - Tool
+---
