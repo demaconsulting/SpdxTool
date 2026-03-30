@@ -73,7 +73,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "artifacts/*"
-          bodyFile: artifacts/buildnotes.md
+          bodyFile: artifacts/build_notes.md
           generateReleaseNotes: false
           tag: ${{ inputs.version }}
 
