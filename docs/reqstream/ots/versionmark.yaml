@@ -1,0 +1,20 @@
+# DemaConsulting.SpdxTool VersionMark OTS Requirements
+#
+# This file contains requirements for the VersionMark OTS component used by SpdxTool.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: VersionMark
+        requirements:
+          - id: SpdxTool-OTS-VersionMark
+            title: VersionMark shall publish captured tool-version information.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.VersionMark reads version metadata for each dotnet tool used in the
+              pipeline and writes a versions markdown document included in the release artifacts.
+            tests:
+              - VersionMark_CapturesVersions
+              - VersionMark_GeneratesMarkdownReport

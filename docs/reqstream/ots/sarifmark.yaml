@@ -1,0 +1,20 @@
+# DemaConsulting.SpdxTool SarifMark OTS Requirements
+#
+# This file contains requirements for the SarifMark OTS component used by SpdxTool.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: SarifMark
+        requirements:
+          - id: SpdxTool-OTS-SarifMark
+            title: SarifMark shall convert CodeQL SARIF results into a markdown report.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SarifMark reads the SARIF output produced by CodeQL code scanning and
+              renders it as a human-readable markdown document included in the release artifacts.
+            tests:
+              - SarifMark_SarifReading
+              - SarifMark_MarkdownReportGeneration

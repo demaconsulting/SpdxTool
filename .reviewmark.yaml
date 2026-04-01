@@ -68,6 +68,8 @@ reviews:
   - id: SpdxTool-Commands
     title: Review of SpdxTool Commands Subsystem
     paths:
+      - "docs/reqstream/commands/commands.yaml"
+      - "docs/design/commands/commands.md"
       - "src/**/Commands/**"
       - "test/**/AddPackageTests.cs"
       - "test/**/AddRelationshipTests.cs"
@@ -95,6 +97,8 @@ reviews:
   - id: SpdxTool-SelfValidation
     title: Review of SpdxTool SelfValidation Subsystem
     paths:
+      - "docs/reqstream/self-validation/self-validation.yaml"
+      - "docs/design/self-validation/self-validation.md"
       - "src/**/SelfValidation/**"
       - "test/**/SelfValidationTests.cs"
 
@@ -109,13 +113,19 @@ reviews:
   - id: SpdxTool-Targets
     title: Review of SpdxTool MSBuild Targets Subsystem
     paths:
-      - "docs/reqstream/targets.yaml"
+      - "docs/reqstream/targets/targets.yaml"
+      - "docs/design/targets/targets.md"
       - "src/DemaConsulting.SpdxTool.Targets/**"
       - "test/DemaConsulting.SpdxTool.Targets.Tests/**"
 
   - id: SpdxTool-OTS
     title: Review of SpdxTool OTS Software
     paths:
-      - "docs/reqstream/ots/ots.yaml"
+      - "docs/reqstream/ots/mstest.yaml"
+      - "docs/reqstream/ots/reqstream.yaml"
+      - "docs/reqstream/ots/buildmark.yaml"
+      - "docs/reqstream/ots/versionmark.yaml"
+      - "docs/reqstream/ots/sarifmark.yaml"
+      - "docs/reqstream/ots/sonarmark.yaml"
       - "test/**/Runner.cs"
       - "test/**/AssemblyInfo.cs"
