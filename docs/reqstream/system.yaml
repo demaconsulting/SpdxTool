@@ -91,7 +91,8 @@ sections:
 
           - id: SpdxTool-Cmd-ResultsJUnit
             title: >-
-              The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
+              The tool shall write self-validation results as JUnit XML when the
+              --result flag uses .xml extension.
             tags:
               - cli
             justification: |
@@ -287,7 +288,8 @@ sections:
 
           - id: SpdxTool-Wkf-NuGetWorkflow
             title: >-
-              The tool shall support running workflow files from NuGet packages using the run-workflow command.
+              The tool shall support running workflow files from NuGet packages
+              using the run-workflow command.
             tags:
               - workflow
             justification: |

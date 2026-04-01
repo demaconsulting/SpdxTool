@@ -99,7 +99,7 @@ reviews:
       - "test/**/SelfValidationTests.cs"
 
   - id: SpdxTool-Utility
-    title: Review of SpdxTool Utility Unit Group
+    title: Review of SpdxTool Spdx and Utility Unit Groups
     paths:
       - "src/**/Spdx/**"
       - "src/**/Utility/**"
