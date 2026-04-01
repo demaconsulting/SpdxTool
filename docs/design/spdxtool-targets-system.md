@@ -1,11 +1,11 @@
-# DemaConsulting.SpdxTool Targets Subsystem Design
+# DemaConsulting.SpdxTool.Targets System Design
 
 ## Purpose
 
-The Targets subsystem provides the `DemaConsulting.SpdxTool.Targets` NuGet package,
-which integrates SPDX document decoration into the standard `dotnet pack` build workflow
-via MSBuild targets. It allows projects to automatically decorate their NuGet-generated
-SBOMs during the pack process without manual intervention.
+`DemaConsulting.SpdxTool.Targets` is a separate MSBuild targets NuGet package that
+integrates SPDX document decoration into the standard `dotnet pack` build workflow.
+It allows projects to automatically decorate their NuGet-generated SBOMs during the
+pack process without manual intervention.
 
 ## Architecture
 

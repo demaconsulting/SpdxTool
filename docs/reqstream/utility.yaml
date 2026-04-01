@@ -1,0 +1,50 @@
+# DemaConsulting.SpdxTool Utility Subsystem Requirements
+#
+# This file contains requirements for the DemaConsulting.SpdxTool Utility subsystem,
+# covering path safety and wildcard pattern matching.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Utility
+        requirements:
+          - id: SpdxTool-Util-SafePath
+            title: The PathHelpers unit shall reject path components containing traversal sequences or absolute paths.
+            tags:
+              - utility
+              - security
+            justification: |
+              Commands that accept user-supplied file paths must prevent directory
+              traversal attacks. SafePathCombine ensures that combined paths remain
+              within the intended base directory.
+            tests:
+              - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
+              - PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException
+              - PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException
+
+          - id: SpdxTool-Util-ValidPath
+            title: The PathHelpers unit shall correctly combine valid relative paths with a base path.
+            tags:
+              - utility
+            justification: |
+              Commands that resolve file paths need a reliable utility for combining
+              base and relative paths in a safe manner.
+            tests:
+              - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
+              - PathHelpers_SafePathCombine_CurrentDirectoryReference_CombinesCorrectly
+              - PathHelpers_SafePathCombine_NestedPaths_CombinesCorrectly
+              - PathHelpers_SafePathCombine_EmptyRelativePath_ReturnsBasePath
+
+          - id: SpdxTool-Util-Wildcard
+            title: The Wildcard unit shall match strings against glob-style wildcard patterns case-insensitively.
+            tags:
+              - utility
+            justification: |
+              Commands that filter SPDX content by name require wildcard matching that
+              is consistent across case-sensitive (Linux) and case-insensitive (Windows,
+              macOS) file systems.
+            tests:
+              - Wildcard_ExactMatch_ReturnsTrue
+              - Wildcard_AsteriskMatch_MatchesMultipleCharacters
+              - Wildcard_QuestionMarkMatch_MatchesSingleCharacter

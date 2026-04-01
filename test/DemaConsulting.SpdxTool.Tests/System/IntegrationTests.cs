@@ -21,10 +21,10 @@
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-///     Tests for the self-validation feature.
+///     Integration tests for the self-validation feature.
 /// </summary>
 [TestClass]
-public class SelfValidationTests
+public class IntegrationTests
 {
     /// <summary>
     ///     Test that the validate flag succeeds on self-validation

@@ -2,19 +2,26 @@
 
 ## Purpose
 
-This document introduces the design of DemaConsulting.SpdxTool, a .NET global tool
-for creating, validating, and manipulating SPDX (Software Package Data Exchange)
-documents. It serves as the entry point for design documentation supporting formal
+This document introduces the design of two related but independent systems in this
+repository:
+
+- **DemaConsulting.SpdxTool** — a .NET tool for creating, validating, and
+  manipulating SPDX (Software Package Data Exchange) documents.
+- **DemaConsulting.SpdxTool.Targets** — an MSBuild targets extension that integrates
+  SPDX document decoration into the standard `dotnet pack` build workflow.
+
+This document serves as the entry point for design documentation supporting formal
 code review, compliance evidence, and maintenance activities.
 
 ## Scope
 
-This design documentation covers the DemaConsulting.SpdxTool system and all its
-constituent subsystems and units. It applies to all source code under `src/` and
-test code under `test/`. Third-party (OTS) components are referenced but not
-designed in detail.
+This design documentation covers both systems and all their constituent subsystems
+and units. It applies to all source code under `src/`. Third-party (OTS) components
+are referenced but not designed in detail.
 
 ## Software Structure
+
+### DemaConsulting.SpdxTool (System)
 
 ```text
 DemaConsulting.SpdxTool (System)
@@ -56,15 +63,21 @@ DemaConsulting.SpdxTool (System)
 │   ├── ValidateRunNuGetWorkflow.cs (Unit)
 │   ├── ValidateToMarkdown.cs (Unit)
 │   └── ValidateUpdatePackage.cs (Unit)
-├── Targets (Subsystem)
-├── Spdx (Unit Group)
+├── Utility (Subsystem)
 │   ├── RelationshipDirection.cs (Unit)
-│   └── SpdxHelpers.cs (Unit)
-├── Utility (Unit Group)
+│   ├── SpdxHelpers.cs (Unit)
 │   ├── PathHelpers.cs (Unit)
 │   └── Wildcard.cs (Unit)
 ├── Context.cs (Unit)
 └── Program.cs (Unit)
+```
+
+### DemaConsulting.SpdxTool.Targets (System)
+
+```text
+DemaConsulting.SpdxTool.Targets (System)
+├── build/DemaConsulting.SpdxTool.Targets.targets  (Unit)
+└── buildMultiTargeting/DemaConsulting.SpdxTool.Targets.targets  (Unit)
 ```
 
 ## Folder Layout
@@ -93,7 +106,7 @@ src/DemaConsulting.SpdxTool/
 │   ├── ToMarkdown.cs               — to-markdown command implementation
 │   ├── UpdatePackage.cs            — update-package command implementation
 │   └── Validate.cs                 — validate command implementation
-├── SelfTest/
+├── SelfValidation/
 │   ├── Validate.cs                 — self-test orchestrator
 │   ├── ValidateAddPackage.cs       — validates add-package command
 │   ├── ValidateAddRelationship.cs  — validates add-relationship command
@@ -123,15 +136,6 @@ src/DemaConsulting.SpdxTool.Targets/
 │   └── DemaConsulting.SpdxTool.Targets.targets  — single-TFM MSBuild targets
 └── buildMultiTargeting/
     └── DemaConsulting.SpdxTool.Targets.targets  — multi-TFM MSBuild targets
-
-test/DemaConsulting.SpdxTool.Tests/
-│   — unit and integration tests for DemaConsulting.SpdxTool
-│   ├── Commands/       — tests for Commands subsystem units
-│   ├── SelfTest/       — tests for SelfTest subsystem units
-│   ├── System/         — system-level and CLI behavior tests
-│   └── Utility/        — tests for Spdx and Utility unit groups
-test/DemaConsulting.SpdxTool.Targets.Tests/
-    — MSBuild targets integration tests
 ```
 
 ## Per-Unit Design Documentation

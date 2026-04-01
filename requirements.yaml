@@ -29,7 +29,7 @@
 #
 ---
 includes:
-  - docs/reqstream/system.yaml
+  - docs/reqstream/spdxtool-system.yaml
   - docs/reqstream/self-test/self-test.yaml
   - docs/reqstream/self-test/validate.yaml
   - docs/reqstream/self-test/validate-basic.yaml
@@ -62,8 +62,9 @@ includes:
   - docs/reqstream/commands/to-markdown.yaml
   - docs/reqstream/commands/update-package.yaml
   - docs/reqstream/commands/validate.yaml
+  - docs/reqstream/utility.yaml
   - docs/reqstream/platform-requirements.yaml
-  - docs/reqstream/targets/targets.yaml
+  - docs/reqstream/spdxtool-targets-system.yaml
   - docs/reqstream/ots/mstest.yaml
   - docs/reqstream/ots/reqstream.yaml
   - docs/reqstream/ots/buildmark.yaml

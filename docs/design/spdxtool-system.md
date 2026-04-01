@@ -1,12 +1,20 @@
 # DemaConsulting.SpdxTool System Design
 
+## System Overview
+
+DemaConsulting.SpdxTool is one of two systems in this repository. It is a .NET tool
+distributed as a NuGet package that exposes a command-line interface for creating,
+validating, and manipulating SPDX documents. The companion system,
+`DemaConsulting.SpdxTool.Targets`, integrates SPDX decoration into the `dotnet pack`
+workflow via MSBuild targets.
+
 ## System Architecture
 
-DemaConsulting.SpdxTool is a .NET global tool distributed as a NuGet package. It exposes
-a command-line interface that accepts a set of subcommands for creating, validating, and
-manipulating SPDX documents. The tool is complemented by a separate MSBuild targets
-package (`DemaConsulting.SpdxTool.Targets`) that integrates SPDX decoration into the
-standard `dotnet pack` build workflow.
+DemaConsulting.SpdxTool is one of two systems in this repository. It is a .NET tool
+distributed as a NuGet package that exposes a command-line interface for creating,
+validating, and manipulating SPDX documents. The companion system,
+`DemaConsulting.SpdxTool.Targets`, integrates SPDX decoration into the `dotnet pack`
+workflow via MSBuild targets.
 
 ### Major Components
 

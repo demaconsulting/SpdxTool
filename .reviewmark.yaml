@@ -25,20 +25,36 @@ evidence-source:
 # Each review-set groups source and tests for a coherent software unit
 # so that an AI-assisted review can verify consistency across the full evidence chain.
 reviews:
-  # System-level review
+  # System-level review for DemaConsulting.SpdxTool
   - id: SpdxTool-System
-    title: Review of SpdxTool System
+    title: Review of DemaConsulting.SpdxTool System
     paths:
-      - "docs/reqstream/system.yaml"
+      - "docs/reqstream/spdxtool-system.yaml"
       - "docs/design/introduction.md"
-      - "docs/design/system.md"
-      - "test/**/SelfTest/SelfValidationTests.cs"
+      - "docs/design/spdxtool-system.md"
+      - "src/**/Program.cs"
+      - "src/**/Context.cs"
+      - "src/**/Runner.cs"
+      - "src/**/AssemblyInfo.cs"
+      - "test/**/System/IntegrationTests.cs"
+      - "test/**/System/ProgramTests.cs"
+      - "test/**/Runner.cs"
+      - "test/**/AssemblyInfo.cs"
+
+  # System-level review for DemaConsulting.SpdxTool.Targets
+  - id: SpdxTool-Targets
+    title: Review of DemaConsulting.SpdxTool.Targets System
+    paths:
+      - "docs/reqstream/spdxtool-targets-system.yaml"
+      - "docs/design/spdxtool-targets-system.md"
+      - "src/DemaConsulting.SpdxTool.Targets/**"
+      - "test/DemaConsulting.SpdxTool.Targets.Tests/**"
 
   # Design review
   - id: SpdxTool-Design
     title: Review of SpdxTool Design Documentation
     paths:
-      - "docs/reqstream/system.yaml"
+      - "docs/reqstream/spdxtool-system.yaml"
       - "docs/reqstream/platform-requirements.yaml"
       - "docs/design/**/*.md"
 
@@ -56,45 +72,30 @@ reviews:
       - "src/**/Context.cs"
       - "test/**/LogTests.cs"
 
-  - id: SpdxTool-Program
-    title: Review of SpdxTool Program Unit
-    paths:
-      - "src/**/Program.cs"
-      - "src/**/SelfValidation/**"
-      - "test/**/SelfTest/SelfValidationTests.cs"
-      - "test/**/Runner.cs"
-      - "test/**/AssemblyInfo.cs"
-
   - id: SpdxTool-Commands
     title: Review of SpdxTool Commands Subsystem
     paths:
-      - "docs/reqstream/commands/**/*.yaml"
-      - "docs/design/commands/**/*.md"
+      - "docs/reqstream/commands/*.yaml"
+      - "docs/design/commands/*.md"
       - "src/**/Commands/**"
       - "test/**/Commands/**"
 
   - id: SpdxTool-SelfTest
     title: Review of SpdxTool SelfTest Subsystem
     paths:
-      - "docs/reqstream/self-test/**/*.yaml"
-      - "docs/design/self-test/**/*.md"
+      - "docs/reqstream/self-test/self-test.yaml"
+      - "docs/design/self-test/self-test.md"
       - "src/**/SelfValidation/**"
-      - "test/**/SelfTest/SelfValidationTests.cs"
+      - "test/**/SelfTest/SelfTestTests.cs"
 
   - id: SpdxTool-Utility
-    title: Review of SpdxTool Spdx and Utility Unit Groups
+    title: Review of SpdxTool Utility Subsystem
     paths:
+      - "docs/reqstream/utility.yaml"
+      - "docs/design/utility.md"
       - "src/**/Spdx/**"
       - "src/**/Utility/**"
       - "test/**/Utility/**"
-
-  - id: SpdxTool-Targets
-    title: Review of SpdxTool MSBuild Targets Subsystem
-    paths:
-      - "docs/reqstream/targets/targets.yaml"
-      - "docs/design/targets/targets.md"
-      - "src/DemaConsulting.SpdxTool.Targets/**"
-      - "test/DemaConsulting.SpdxTool.Targets.Tests/**"
 
   - id: SpdxTool-OTS
     title: Review of SpdxTool OTS Software
@@ -105,5 +106,3 @@ reviews:
       - "docs/reqstream/ots/versionmark.yaml"
       - "docs/reqstream/ots/sarifmark.yaml"
       - "docs/reqstream/ots/sonarmark.yaml"
-      - "test/**/Runner.cs"
-      - "test/**/AssemblyInfo.cs"

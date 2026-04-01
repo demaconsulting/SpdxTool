@@ -1,6 +1,6 @@
 # DemaConsulting.SpdxTool System Requirements
 #
-# This file contains system-level requirements for the SpdxTool system,
+# This file contains system-level requirements for the DemaConsulting.SpdxTool system,
 # covering the command-line interface. It is included by the root requirements.yaml file.
 ---
 sections:
