@@ -1,0 +1,298 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Command-Line Interface
+        requirements:
+          - id: SpdxTool-Cmd-Version
+            title: The tool shall display version information when invoked with the -v or --version flag.
+            tags:
+              - cli
+            justification: |
+              Users need to check the version of the tool they are using for compatibility
+              and troubleshooting purposes.
+            tests:
+              - Version_ShortFlag_DisplaysVersion
+              - Version_LongFlag_DisplaysVersion
+
+          - id: SpdxTool-Cmd-Help
+            title: The tool shall display usage information when invoked with the -h, -?, or --help flag.
+            tags:
+              - cli
+            justification: |
+              Users need quick access to help documentation to understand how to use the
+              tool effectively.
+            tests:
+              - Usage_ShortHelpFlag_DisplaysUsage
+              - Usage_LongHelpFlag_DisplaysUsage
+
+          - id: SpdxTool-Cmd-InvalidArgs
+            title: The tool shall display an error and usage information when invoked without arguments.
+            tags:
+              - cli
+            justification: |
+              When users invoke the tool without any arguments, they should receive
+              guidance on proper usage rather than encountering undefined behavior.
+            tests:
+              - Usage_NoArguments_DisplaysError
+
+          - id: SpdxTool-Cmd-Silent
+            title: The tool shall silence console output when invoked with the -s or --silent flag.
+            tags:
+              - cli
+            justification: |
+              In automated scripts and CI/CD pipelines, users may want to suppress
+              console output to reduce log noise.
+            tests:
+              - Silent_ShortFlag_SuppressesOutput
+              - Silent_LongFlag_SuppressesOutput
+
+          - id: SpdxTool-Cmd-Log
+            title: The tool shall write output to a log file when invoked with the -l or --log flag.
+            tags:
+              - cli
+            justification: |
+              Users need the ability to capture tool output to files for auditing,
+              debugging, and record-keeping purposes.
+            tests:
+              - Log_ShortFlag_WritesOutputToFile
+              - Log_LongFlag_WritesOutputToFile
+
+          - id: SpdxTool-Cmd-Validate
+            title: The tool shall perform self-validation when invoked with the --validate flag.
+            tags:
+              - cli
+            justification: |
+              Self-validation ensures that the tool functions correctly after installation
+              or deployment. This is critical for CI/CD pipelines and quality assurance.
+            tests:
+              - SelfValidation_ValidateFlag_Succeeds
+
+          - id: SpdxTool-Cmd-Depth
+            title: The tool shall support depth control for self-validation output.
+            tags:
+              - cli
+            justification: |
+              Users may want to see detailed hierarchical results during self-validation
+              to understand which specific tests passed or failed at different depths.
+            tests:
+              - SelfValidation_ValidateFlagWithDepth_ShowsDepth
+
+          - id: SpdxTool-Cmd-ResultsTrx
+            title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
+            tags:
+              - cli
+            justification: |
+              CI/CD systems and test reporting tools often require test results in
+              standardized formats like TRX. This enables integration with existing
+              test infrastructure.
+            tests:
+              - SelfValidation_ValidateFlagWithResults_GeneratesTrxFile
+
+          - id: SpdxTool-Cmd-ResultsJUnit
+            title: >-
+              The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
+            tags:
+              - cli
+            justification: |
+              Many CI/CD systems and test reporting tools support JUnit XML format.
+              Auto-detecting the format from the file extension allows users to generate
+              JUnit output without requiring a separate flag.
+            tests:
+              - SelfValidation_ValidateFlagWithResults_GeneratesJUnitFile
+
+      - title: SPDX Document Validation
+        requirements:
+          - id: SpdxTool-Val-Validate
+            title: The tool shall validate SPDX documents using the validate command.
+            tags:
+              - spdx
+            justification: |
+              Users need to verify that SPDX documents conform to the SPDX specification
+              before using them in downstream processes or sharing them with others.
+            tests:
+              - SpdxTool_Validate
+
+          - id: SpdxTool-Val-NtiaMinimum
+            title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
+            tags:
+              - spdx
+            justification: |
+              The NTIA (National Telecommunications and Information Administration) has
+              defined minimum elements for SBOM. Users need to verify compliance with
+              these requirements for regulatory and industry standards.
+            tests:
+              - SpdxTool_Ntia
+
+      - title: SPDX Package Management
+        requirements:
+          - id: SpdxTool-Pkg-AddPackage
+            title: The tool shall add packages to SPDX documents using the add-package command.
+            tags:
+              - spdx
+            justification: |
+              Users need to incrementally build SPDX documents by adding new packages
+              that represent software components, libraries, or dependencies.
+            tests:
+              - SpdxTool_AddPackage
+
+          - id: SpdxTool-Pkg-CopyPackage
+            title: The tool shall copy packages between SPDX documents using the copy-package command.
+            tags:
+              - spdx
+            justification: |
+              Users need to reuse package information across multiple SPDX documents
+              to avoid duplication and ensure consistency of package metadata.
+            tests:
+              - SpdxTool_CopyPackage
+
+          - id: SpdxTool-Pkg-UpdatePackage
+            title: The tool shall update existing packages in SPDX documents using the update-package command.
+            tags:
+              - spdx
+            justification: |
+              Users need to modify package metadata as software components evolve,
+              such as updating versions, licenses, or other attributes.
+            tests:
+              - SpdxTool_UpdatePackage
+
+          - id: SpdxTool-Pkg-FindPackage
+            title: The tool shall find packages in SPDX documents using the find-package command.
+            tags:
+              - spdx
+            justification: |
+              Users need to locate specific packages within SPDX documents based on
+              criteria such as name, version, or other attributes to query or modify them.
+            tests:
+              - SpdxTool_FindPackage
+
+          - id: SpdxTool-Pkg-GetVersion
+            title: The tool shall retrieve package versions from SPDX documents using the get-version command.
+            tags:
+              - spdx
+            justification: |
+              Users need to extract version information from packages for reporting,
+              dependency management, and compatibility checking.
+            tests:
+              - SpdxTool_GetVersion
+
+      - title: SPDX Relationship Management
+        requirements:
+          - id: SpdxTool-Rel-AddRelationship
+            title: The tool shall add relationships to SPDX documents using the add-relationship command.
+            tags:
+              - spdx
+            justification: |
+              SPDX documents describe relationships between packages, files, and other
+              elements. Users need to define these relationships to accurately represent
+              dependency graphs and component hierarchies.
+            tests:
+              - SpdxTool_AddRelationship
+
+      - title: SPDX Document Transformation
+        requirements:
+          - id: SpdxTool-Xfm-ToMarkdown
+            title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
+            tags:
+              - spdx
+            justification: |
+              Users need human-readable representations of SPDX documents for
+              documentation, reporting, and review purposes. Markdown is a widely
+              supported format for documentation.
+            tests:
+              - SpdxTool_ToMarkdown
+
+          - id: SpdxTool-Xfm-Diagram
+            title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
+            tags:
+              - spdx
+            justification: |
+              Visual representations of SPDX relationships and package hierarchies
+              help users understand complex dependency graphs. Mermaid is a popular
+              text-based diagramming language.
+            tests:
+              - SpdxTool_Diagram
+
+      - title: SPDX Document Manipulation
+        requirements:
+          - id: SpdxTool-Man-RenameId
+            title: The tool shall rename SPDX element IDs using the rename-id command.
+            tags:
+              - spdx
+            justification: |
+              Users need to modify element IDs to resolve conflicts, follow naming
+              conventions, or reorganize SPDX documents while maintaining referential
+              integrity.
+            tests:
+              - SpdxTool_RenameId
+
+      - title: File Hashing
+        requirements:
+          - id: SpdxTool-Hsh-Hash
+            title: The tool shall compute and verify file hashes using the hash command.
+            tags:
+              - spdx
+            justification: |
+              SPDX documents often include file hashes for integrity verification.
+              Users need to compute hashes using various algorithms and verify that
+              files match expected hash values.
+            tests:
+              - SpdxTool_Hash
+
+      - title: Workflow Support
+        requirements:
+          - id: SpdxTool-Wkf-RunWorkflow
+            title: The tool shall execute workflow files using the run-workflow command.
+            tags:
+              - workflow
+            justification: |
+              Complex SPDX document operations often require multiple steps. Workflows
+              enable users to define and automate multi-step processes in a declarative
+              YAML format.
+            tests:
+              - SpdxTool_AddPackage
+              - SpdxTool_AddRelationship
+              - SpdxTool_CopyPackage
+              - SpdxTool_UpdatePackage
+
+          - id: SpdxTool-Wkf-SetVariable
+            title: The tool shall support setting variables within workflows using the set-variable command.
+            tags:
+              - workflow
+            justification: |
+              Workflows need to pass data between steps and parameterize operations.
+              Variables enable dynamic workflow execution based on computed or input values.
+            tests:
+              - SpdxTool_AddPackage
+
+          - id: SpdxTool-Wkf-Print
+            title: The tool shall support printing text within workflows using the print command.
+            tags:
+              - workflow
+            justification: |
+              Users need to output informational messages during workflow execution
+              for debugging, progress tracking, and user feedback.
+            tests:
+              - SpdxTool_AddPackage
+
+          - id: SpdxTool-Wkf-Query
+            title: The tool shall support querying external program output using the query command.
+            tags:
+              - workflow
+            justification: |
+              Workflows often need to extract information from external tools or
+              commands to incorporate into SPDX documents or workflow logic.
+            tests:
+              - SpdxTool_Query
+
+          - id: SpdxTool-Wkf-NuGetWorkflow
+            title: >-
+              The tool shall support running workflow files from NuGet packages using the run-workflow command.
+            tags:
+              - workflow
+            justification: |
+              Users need to reference workflow files stored in NuGet packages so that
+              workflows can be versioned, distributed, and cached locally rather than
+              downloaded on every run.
+            tests:
+              - SpdxTool_RunNuGetWorkflow
