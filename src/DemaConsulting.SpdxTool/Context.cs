@@ -236,6 +236,18 @@ public sealed class Context : IDisposable
             {
                 logWriter = new StreamWriter(logFile);
             }
+            catch (UnauthorizedAccessException e)
+            {
+                throw new InvalidOperationException($"Access denied creating log file '{logFile}': {e.Message}", e);
+            }
+            catch (ArgumentException e)
+            {
+                throw new InvalidOperationException($"Invalid log file path '{logFile}': {e.Message}", e);
+            }
+            catch (NotSupportedException e)
+            {
+                throw new InvalidOperationException($"Unsupported log file path '{logFile}': {e.Message}", e);
+            }
             catch (IOException e)
             {
                 throw new InvalidOperationException($"Cannot create log file '{logFile}': {e.Message}", e);

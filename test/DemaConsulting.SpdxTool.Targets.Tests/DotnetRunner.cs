@@ -59,8 +59,8 @@ internal static class DotnetRunner
         }
 
         // Start the process
-        var process = Process.Start(startInfo) ??
-                      throw new InvalidOperationException("Failed to start dotnet process");
+        using var process = Process.Start(startInfo) ??
+                            throw new InvalidOperationException("Failed to start dotnet process");
 
         // Save the output (read both streams concurrently to prevent deadlock)
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
