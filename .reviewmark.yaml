@@ -36,8 +36,8 @@ reviews:
       - "src/**/Context.cs"
       - "src/**/Runner.cs"
       - "src/**/AssemblyInfo.cs"
-      - "test/**/System/IntegrationTests.cs"
-      - "test/**/System/ProgramTests.cs"
+      - "test/**/IntegrationTests.cs"
+      - "test/**/ProgramTests.cs"
       - "test/**/Runner.cs"
       - "test/**/AssemblyInfo.cs"
 
