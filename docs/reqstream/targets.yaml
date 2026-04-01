@@ -1,3 +1,8 @@
+# DemaConsulting.SpdxTool MSBuild Targets Requirements
+#
+# This file contains requirements for the DemaConsulting.SpdxTool.Targets
+# MSBuild targets package, covering SBOM decoration and skip behaviors.
+# It is included by the root requirements.yaml file.
 ---
 sections:
   - title: SpdxTool Requirements

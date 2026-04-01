@@ -1,3 +1,8 @@
+# DemaConsulting.SpdxTool Platform Requirements
+#
+# This file contains platform support requirements for the SpdxTool system,
+# covering Windows, Linux, macOS, and .NET runtime version support.
+# It is included by the root requirements.yaml file.
 ---
 sections:
   - title: SpdxTool Requirements
