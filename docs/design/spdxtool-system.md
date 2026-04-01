@@ -10,11 +10,10 @@ workflow via MSBuild targets.
 
 ## System Architecture
 
-DemaConsulting.SpdxTool is one of two systems in this repository. It is a .NET tool
-distributed as a NuGet package that exposes a command-line interface for creating,
-validating, and manipulating SPDX documents. The companion system,
-`DemaConsulting.SpdxTool.Targets`, integrates SPDX decoration into the `dotnet pack`
-workflow via MSBuild targets.
+The system follows a command-pattern architecture where a central registry dispatches
+CLI subcommands to dedicated command classes. Global flags are processed by `Program`
+before dispatch, with `--validate` redirecting execution to the SelfTest subsystem
+rather than a regular command.
 
 ### Major Components
 
@@ -26,7 +25,7 @@ workflow via MSBuild targets.
   and performs command lookup and dispatch.
 - **Commands subsystem** — contains one `Command`-derived class per supported CLI
   subcommand (e.g., `AddPackage`, `RunWorkflow`, `Validate`).
-- **SelfValidation subsystem** — contains the `--validate` self-test suite that exercises
+- **SelfTest subsystem** — contains the `--validate` self-test suite that exercises
   all commands against embedded SPDX fixtures.
 - **Spdx unit group** — provides SPDX-domain helpers (`SpdxHelpers`) and the
   `RelationshipDirection` enumeration consumed throughout the commands.
@@ -74,10 +73,10 @@ Program.cs  ──────────────────────�
 Context.cs  (output, log, variables)               │
     │                                              │ --validate flag
     ▼                                              ▼
-CommandRegistry ──► Command.Execute()     SelfValidation.Validate.Run()
+CommandRegistry ──► Command.Execute()     SelfTest.Validate.Run()
                          │                        │
                          ▼                        ▼
-                   SPDX document I/O        SelfValidation.*
+                   SPDX document I/O        SelfTest.*
                    (read/write JSON)        (exercise each command)
 ```
 
@@ -90,7 +89,9 @@ CommandRegistry ──► Command.Execute()     SelfValidation.Validate.Run()
 - **Workflow isolation**: Each workflow step executes in the same `Context` instance,
   allowing variables set in one step to be consumed in subsequent steps.
 - **Self-contained validation**: The `--validate` flag runs the entire command suite
-  using only in-process calls; no external tools or network access are required.
+  using only in-process calls. The `ValidateQuery` step spawns `dotnet` as an external
+  process, and `ValidateRunNuGetWorkflow` may restore a NuGet package on a cache miss
+  (requiring network access). All other steps are fully in-process.
 
 ## Integration Patterns
 

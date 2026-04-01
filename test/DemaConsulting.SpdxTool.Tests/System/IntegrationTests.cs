@@ -30,7 +30,7 @@ public class IntegrationTests
     ///     Test that the validate flag succeeds on self-validation
     /// </summary>
     [TestMethod]
-    public void SelfValidation_ValidateFlag_Succeeds()
+    public void SelfTest_ValidateFlag_Succeeds()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -48,7 +48,7 @@ public class IntegrationTests
     ///     Test that the validate flag with depth shows depth in output
     /// </summary>
     [TestMethod]
-    public void SelfValidation_ValidateFlagWithDepth_ShowsDepth()
+    public void SelfTest_ValidateFlagWithDepth_ShowsDepth()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -69,7 +69,7 @@ public class IntegrationTests
     ///     Test that the validate flag with results generates a TRX file
     /// </summary>
     [TestMethod]
-    public void SelfValidation_ValidateFlagWithResults_GeneratesTrxFile()
+    public void SelfTest_ValidateFlagWithResults_GeneratesTrxFile()
     {
         const string resultFile = "results.trx";
 
@@ -124,7 +124,7 @@ public class IntegrationTests
     ///     Test that the validate flag with results generates a JUnit file
     /// </summary>
     [TestMethod]
-    public void SelfValidation_ValidateFlagWithResults_GeneratesJUnitFile()
+    public void SelfTest_ValidateFlagWithResults_GeneratesJUnitFile()
     {
         const string resultFile = "results.xml";
 

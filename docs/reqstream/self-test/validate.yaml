@@ -15,4 +15,4 @@ sections:
           in sequence, collecting pass/fail results, and reporting a summary. This
           ensures complete coverage of all commands during self-validation.
         tests:
-          - SelfValidation_ValidateFlag_Succeeds
+          - SelfTest_ValidateFlag_Succeeds

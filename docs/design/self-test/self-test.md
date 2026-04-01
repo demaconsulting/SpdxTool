@@ -77,7 +77,10 @@ Validate.Run(Context)
 
 ## Design Constraints
 
-- Self-validation is entirely in-process; no external tools or network access are needed.
+- Most self-validation steps run entirely in-process; however, `ValidateQuery` spawns
+  `dotnet` as an external process and requires `dotnet` on the system `PATH`, and
+  `ValidateRunNuGetWorkflow` may restore a NuGet package on a cache miss (requiring
+  network access to NuGet feeds).
 - Fixture files are embedded as resources to ensure they are always available.
 - The temporary working directory is cleaned up after validation completes.
 - Self-validation bypasses normal command dispatch; the `--validate` flag is processed

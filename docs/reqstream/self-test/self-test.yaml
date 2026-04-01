@@ -17,7 +17,7 @@ sections:
               Self-validation ensures that the tool functions correctly after installation
               or deployment. This is critical for CI/CD pipelines and quality assurance.
             tests:
-              - SelfValidation_ValidateFlag_Succeeds
+              - SelfTest_ValidateFlag_Succeeds
 
           - id: SpdxTool-Cmd-Depth
             title: The tool shall support depth control for self-validation output.
@@ -27,7 +27,7 @@ sections:
               Users may want to see detailed hierarchical results during self-validation
               to understand which specific tests passed or failed at different depths.
             tests:
-              - SelfValidation_ValidateFlagWithDepth_ShowsDepth
+              - SelfTest_ValidateFlagWithDepth_ShowsDepth
 
           - id: SpdxTool-Cmd-ResultsTrx
             title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
@@ -38,7 +38,7 @@ sections:
               standardized formats like TRX. This enables integration with existing
               test infrastructure.
             tests:
-              - SelfValidation_ValidateFlagWithResults_GeneratesTrxFile
+              - SelfTest_ValidateFlagWithResults_GeneratesTrxFile
 
           - id: SpdxTool-Cmd-ResultsJUnit
             title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
@@ -49,4 +49,4 @@ sections:
               Auto-detecting the format from the file extension allows users to generate
               JUnit output without requiring a separate flag.
             tests:
-              - SelfValidation_ValidateFlagWithResults_GeneratesJUnitFile
+              - SelfTest_ValidateFlagWithResults_GeneratesJUnitFile

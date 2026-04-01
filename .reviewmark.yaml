@@ -85,8 +85,8 @@ reviews:
     paths:
       - "docs/reqstream/self-test/self-test.yaml"
       - "docs/design/self-test/self-test.md"
-      - "src/**/SelfValidation/**"
-      - "test/**/SelfValidation/**"
+      - "src/**/SelfTest/**"
+      - "test/**/SelfTest/**"
 
   - id: SpdxTool-Utility
     title: Review of SpdxTool Utility Subsystem

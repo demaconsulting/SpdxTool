@@ -14,4 +14,4 @@ sections:
           Workflows need to pass data between steps and parameterize operations.
           Variables enable dynamic workflow execution based on computed or input values.
         tests:
-          - SpdxTool_AddPackage
+          - SetVariable_InWorkflow_SetsVariable

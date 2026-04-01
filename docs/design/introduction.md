@@ -106,7 +106,7 @@ src/DemaConsulting.SpdxTool/
 │   ├── ToMarkdown.cs               — to-markdown command implementation
 │   ├── UpdatePackage.cs            — update-package command implementation
 │   └── Validate.cs                 — validate command implementation
-├── SelfValidation/
+├── SelfTest/
 │   ├── Validate.cs                 — self-test orchestrator
 │   ├── ValidateAddPackage.cs       — validates add-package command
 │   ├── ValidateAddRelationship.cs  — validates add-relationship command

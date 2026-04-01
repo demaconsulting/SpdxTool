@@ -14,4 +14,4 @@ sections:
           Users need to output informational messages during workflow execution
           for debugging, progress tracking, and user feedback.
         tests:
-          - SpdxTool_AddPackage
+          - Print_InWorkflow_PrintsText
