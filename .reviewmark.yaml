@@ -42,7 +42,7 @@ reviews:
       - "test/**/AssemblyInfo.cs"
 
   # System-level review for DemaConsulting.SpdxTool.Targets
-  - id: SpdxTool-Targets
+  - id: SpdxTool-Targets-System
     title: Review of DemaConsulting.SpdxTool.Targets System
     paths:
       - "docs/reqstream/spdxtool-targets-system.yaml"
@@ -86,7 +86,7 @@ reviews:
       - "docs/reqstream/self-test/self-test.yaml"
       - "docs/design/self-test/self-test.md"
       - "src/**/SelfValidation/**"
-      - "test/**/SelfTest/SelfTestTests.cs"
+      - "test/**/SelfValidation/**"
 
   - id: SpdxTool-Utility
     title: Review of SpdxTool Utility Subsystem
