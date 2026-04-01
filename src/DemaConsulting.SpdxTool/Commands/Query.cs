@@ -163,10 +163,11 @@ public sealed class Query : Command
             throw new CommandErrorException($"Unable to start program '{program}'");
         }
 
-        // Save the output
-        var output =
-            process.StandardOutput.ReadToEnd().Trim() +
-            process.StandardError.ReadToEnd().Trim();
+        // Save the output (read both streams concurrently to prevent deadlock)
+        var stdoutTask = process.StandardOutput.ReadToEndAsync();
+        var stderrTask = process.StandardError.ReadToEndAsync();
+        Task.WaitAll(stdoutTask, stderrTask);
+        var output = stdoutTask.Result.Trim() + stderrTask.Result.Trim();
 
         // Wait for the process to exit
         process.WaitForExit();

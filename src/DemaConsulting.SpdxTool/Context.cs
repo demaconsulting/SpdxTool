@@ -203,7 +203,12 @@ public sealed class Context : IDisposable
 
                 case "--depth":
                     // Handle depth argument
-                    depth = int.Parse(ParseArgument(arg, "Missing depth argument"));
+                    var depthStr = ParseArgument(arg, "Missing depth argument");
+                    if (!int.TryParse(depthStr, out depth))
+                    {
+                        throw new InvalidOperationException($"Invalid depth value '{depthStr}': must be an integer");
+                    }
+
                     break;
 
                 case "-l":
@@ -224,7 +229,32 @@ public sealed class Context : IDisposable
         }
 
         // Return the new context
-        return new Context(logFile != null ? new StreamWriter(logFile) : null, extra.AsReadOnly())
+        StreamWriter? logWriter = null;
+        if (logFile != null)
+        {
+            try
+            {
+                logWriter = new StreamWriter(logFile);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                throw new InvalidOperationException($"Access denied creating log file '{logFile}': {e.Message}", e);
+            }
+            catch (ArgumentException e)
+            {
+                throw new InvalidOperationException($"Invalid log file path '{logFile}': {e.Message}", e);
+            }
+            catch (NotSupportedException e)
+            {
+                throw new InvalidOperationException($"Unsupported log file path '{logFile}': {e.Message}", e);
+            }
+            catch (IOException e)
+            {
+                throw new InvalidOperationException($"Cannot create log file '{logFile}': {e.Message}", e);
+            }
+        }
+
+        return new Context(logWriter, extra.AsReadOnly())
         {
             Version = version,
             Help = help,

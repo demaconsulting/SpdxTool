@@ -31,7 +31,7 @@ subsystem, including relationship traversal helpers and package attribute manipu
 ### RelationshipDirection
 
 `RelationshipDirection` is an enumeration expressing the traversal direction of an
-SPDX relationship query: `Forward`, `Reverse`, or `Both`. Consumed by query and
+SPDX relationship query: `Parent`, `Child`, or `Sibling`. Consumed by query and
 find operations in the Commands subsystem.
 
 ## Design Constraints
