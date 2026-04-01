@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool copy-package Command Requirements
+#
+# This file contains requirements for the copy-package command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: copy-package Command
+    requirements:
+      - id: SpdxTool-Pkg-CopyPackage
+        title: The tool shall copy packages between SPDX documents using the copy-package command.
+        tags:
+          - spdx
+        justification: |
+          Users need to reuse package information across multiple SPDX documents
+          to avoid duplication and ensure consistency of package metadata.
+        tests:
+          - SpdxTool_CopyPackage

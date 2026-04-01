@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool add-package Command Requirements
+#
+# This file contains requirements for the add-package command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: add-package Command
+    requirements:
+      - id: SpdxTool-Pkg-AddPackage
+        title: The tool shall add packages to SPDX documents using the add-package command.
+        tags:
+          - spdx
+        justification: |
+          Users need to incrementally build SPDX documents by adding new packages
+          that represent software components, libraries, or dependencies.
+        tests:
+          - SpdxTool_AddPackage

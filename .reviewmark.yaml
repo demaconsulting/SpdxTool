@@ -32,7 +32,7 @@ reviews:
       - "docs/reqstream/system.yaml"
       - "docs/design/introduction.md"
       - "docs/design/system.md"
-      - "test/**/SelfValidationTests.cs"
+      - "test/**/SelfTest/SelfValidationTests.cs"
 
   # Design review
   - id: SpdxTool-Design
@@ -61,54 +61,32 @@ reviews:
     paths:
       - "src/**/Program.cs"
       - "src/**/SelfValidation/**"
-      - "test/**/SelfValidationTests.cs"
+      - "test/**/SelfTest/SelfValidationTests.cs"
       - "test/**/Runner.cs"
       - "test/**/AssemblyInfo.cs"
 
   - id: SpdxTool-Commands
     title: Review of SpdxTool Commands Subsystem
     paths:
-      - "docs/reqstream/commands/commands.yaml"
-      - "docs/design/commands/commands.md"
+      - "docs/reqstream/commands/**/*.yaml"
+      - "docs/design/commands/**/*.md"
       - "src/**/Commands/**"
-      - "test/**/AddPackageTests.cs"
-      - "test/**/AddRelationshipTests.cs"
-      - "test/**/CommandTests.cs"
-      - "test/**/CopyPackageTests.cs"
-      - "test/**/DiagramTests.cs"
-      - "test/**/FindPackageTests.cs"
-      - "test/**/GetVersionTests.cs"
-      - "test/**/HashTests.cs"
-      - "test/**/HelpTests.cs"
-      - "test/**/PrintTests.cs"
-      - "test/**/QueryTests.cs"
-      - "test/**/RenameIdTests.cs"
-      - "test/**/RunWorkflowTests.cs"
-      - "test/**/SetVariableTests.cs"
-      - "test/**/SilentTests.cs"
-      - "test/**/ToMarkdownTests.cs"
-      - "test/**/UnknownCommandTests.cs"
-      - "test/**/UpdatePackageTests.cs"
-      - "test/**/UsageTests.cs"
-      - "test/**/ValidateTests.cs"
-      - "test/**/VersionTests.cs"
-      - "test/**/WildcardTests.cs"
+      - "test/**/Commands/**"
 
-  - id: SpdxTool-SelfValidation
-    title: Review of SpdxTool SelfValidation Subsystem
+  - id: SpdxTool-SelfTest
+    title: Review of SpdxTool SelfTest Subsystem
     paths:
-      - "docs/reqstream/self-validation/self-validation.yaml"
-      - "docs/design/self-validation/self-validation.md"
+      - "docs/reqstream/self-test/**/*.yaml"
+      - "docs/design/self-test/**/*.md"
       - "src/**/SelfValidation/**"
-      - "test/**/SelfValidationTests.cs"
+      - "test/**/SelfTest/SelfValidationTests.cs"
 
   - id: SpdxTool-Utility
     title: Review of SpdxTool Spdx and Utility Unit Groups
     paths:
       - "src/**/Spdx/**"
       - "src/**/Utility/**"
-      - "test/**/PathHelpersTests.cs"
-      - "test/**/WildcardTests.cs"
+      - "test/**/Utility/**"
 
   - id: SpdxTool-Targets
     title: Review of SpdxTool MSBuild Targets Subsystem

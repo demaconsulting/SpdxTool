@@ -1,8 +1,8 @@
-# DemaConsulting.SpdxTool SelfValidation Subsystem Design
+# DemaConsulting.SpdxTool SelfTest Subsystem Design
 
 ## Purpose
 
-The SelfValidation subsystem implements the `--validate` self-test suite for
+The SelfTest subsystem implements the `--validate` self-test suite for
 DemaConsulting.SpdxTool. It exercises every command against embedded SPDX fixtures
 to verify that the tool is functioning correctly after installation or deployment,
 without requiring external tools or network access.

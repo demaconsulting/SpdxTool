@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool find-package Command Requirements
+#
+# This file contains requirements for the find-package command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: find-package Command
+    requirements:
+      - id: SpdxTool-Pkg-FindPackage
+        title: The tool shall find packages in SPDX documents using the find-package command.
+        tags:
+          - spdx
+        justification: |
+          Users need to locate specific packages within SPDX documents based on
+          criteria such as name, version, or other attributes to query or modify them.
+        tests:
+          - SpdxTool_FindPackage

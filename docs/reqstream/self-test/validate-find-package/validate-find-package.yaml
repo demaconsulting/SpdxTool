@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool SelfTest ValidateFindPackage Requirements
+#
+# This file contains requirements for the ValidateFindPackage self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateFindPackage
+    requirements:
+      - id: SpdxTool-ST-FindPackage
+        title: The SelfTest shall exercise the find-package command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the find-package command ensures it correctly locates
+          packages in SPDX documents by criteria after installation or deployment.
+        tests:
+          - SpdxTool_FindPackage

@@ -40,7 +40,7 @@ DemaConsulting.SpdxTool (System)
 │   ├── ToMarkdown.cs (Unit)
 │   ├── UpdatePackage.cs (Unit)
 │   └── Validate.cs (Unit)
-├── SelfValidation (Subsystem)
+├── SelfTest (Subsystem)
 │   ├── Validate.cs (Unit)
 │   ├── ValidateAddPackage.cs (Unit)
 │   ├── ValidateAddRelationship.cs (Unit)
@@ -93,8 +93,8 @@ src/DemaConsulting.SpdxTool/
 │   ├── ToMarkdown.cs               — to-markdown command implementation
 │   ├── UpdatePackage.cs            — update-package command implementation
 │   └── Validate.cs                 — validate command implementation
-├── SelfValidation/
-│   ├── Validate.cs                 — self-validation orchestrator
+├── SelfTest/
+│   ├── Validate.cs                 — self-test orchestrator
 │   ├── ValidateAddPackage.cs       — validates add-package command
 │   ├── ValidateAddRelationship.cs  — validates add-relationship command
 │   ├── ValidateBasic.cs            — validates basic tool functionality
@@ -126,6 +126,22 @@ src/DemaConsulting.SpdxTool.Targets/
 
 test/DemaConsulting.SpdxTool.Tests/
 │   — unit and integration tests for DemaConsulting.SpdxTool
+│   ├── Commands/       — tests for Commands subsystem units
+│   ├── SelfTest/       — tests for SelfTest subsystem units
+│   ├── System/         — system-level and CLI behavior tests
+│   └── Utility/        — tests for Spdx and Utility unit groups
 test/DemaConsulting.SpdxTool.Targets.Tests/
     — MSBuild targets integration tests
 ```
+
+## Per-Unit Design Documentation
+
+Per-unit design documentation is maintained for Commands and SelfTest subsystem units:
+
+- `docs/design/commands/<command>/` — design doc for each command unit
+- `docs/design/self-test/<unit>/` — design doc for each SelfTest unit
+
+Per-unit requirements are maintained alongside the design docs:
+
+- `docs/reqstream/commands/<command>/` — requirements for each command unit
+- `docs/reqstream/self-test/<unit>/` — requirements for each SelfTest unit

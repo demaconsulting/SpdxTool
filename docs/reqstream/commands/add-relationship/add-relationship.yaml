@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool add-relationship Command Requirements
+#
+# This file contains requirements for the add-relationship command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: add-relationship Command
+    requirements:
+      - id: SpdxTool-Rel-AddRelationship
+        title: The tool shall add relationships to SPDX documents using the add-relationship command.
+        tags:
+          - spdx
+        justification: |
+          SPDX documents describe relationships between packages, files, and other
+          elements. Users need to define these relationships to accurately represent
+          dependency graphs and component hierarchies.
+        tests:
+          - SpdxTool_AddRelationship

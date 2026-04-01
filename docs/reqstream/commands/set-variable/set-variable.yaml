@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool set-variable Command Requirements
+#
+# This file contains requirements for the set-variable command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: set-variable Command
+    requirements:
+      - id: SpdxTool-Wkf-SetVariable
+        title: The tool shall support setting variables within workflows using the set-variable command.
+        tags:
+          - workflow
+        justification: |
+          Workflows need to pass data between steps and parameterize operations.
+          Variables enable dynamic workflow execution based on computed or input values.
+        tests:
+          - SpdxTool_AddPackage

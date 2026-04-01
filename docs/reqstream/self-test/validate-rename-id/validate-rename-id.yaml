@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool SelfTest ValidateRenameId Requirements
+#
+# This file contains requirements for the ValidateRenameId self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateRenameId
+    requirements:
+      - id: SpdxTool-ST-RenameId
+        title: The SelfTest shall exercise the rename-id command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the rename-id command ensures it correctly renames
+          SPDX element IDs and updates all references throughout a document after
+          installation or deployment.
+        tests:
+          - SpdxTool_RenameId

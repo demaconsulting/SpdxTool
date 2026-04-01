@@ -1,6 +1,6 @@
-# DemaConsulting.SpdxTool Self-Validation Requirements
+# DemaConsulting.SpdxTool Self-Test Requirements
 #
-# This file contains requirements for the SpdxTool self-validation subsystem,
+# This file contains requirements for the SpdxTool self-test subsystem,
 # covering the --validate flag, depth control, and result output formats.
 # It is included by the root requirements.yaml file.
 ---

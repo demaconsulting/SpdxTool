@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool rename-id Command Requirements
+#
+# This file contains requirements for the rename-id command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: rename-id Command
+    requirements:
+      - id: SpdxTool-Man-RenameId
+        title: The tool shall rename SPDX element IDs using the rename-id command.
+        tags:
+          - spdx
+        justification: |
+          Users need to modify element IDs to resolve conflicts, follow naming
+          conventions, or reorganize SPDX documents while maintaining referential
+          integrity.
+        tests:
+          - SpdxTool_RenameId

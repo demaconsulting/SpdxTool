@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool update-package Command Requirements
+#
+# This file contains requirements for the update-package command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: update-package Command
+    requirements:
+      - id: SpdxTool-Pkg-UpdatePackage
+        title: The tool shall update existing packages in SPDX documents using the update-package command.
+        tags:
+          - spdx
+        justification: |
+          Users need to modify package metadata as software components evolve,
+          such as updating versions, licenses, or other attributes.
+        tests:
+          - SpdxTool_UpdatePackage

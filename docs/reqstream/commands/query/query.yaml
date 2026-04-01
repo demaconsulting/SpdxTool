@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool query Command Requirements
+#
+# This file contains requirements for the query command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: query Command
+    requirements:
+      - id: SpdxTool-Wkf-Query
+        title: The tool shall support querying external program output using the query command.
+        tags:
+          - workflow
+        justification: |
+          Workflows often need to extract information from external tools or
+          commands to incorporate into SPDX documents or workflow logic.
+        tests:
+          - SpdxTool_Query

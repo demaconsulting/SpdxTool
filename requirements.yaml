@@ -30,8 +30,38 @@
 ---
 includes:
   - docs/reqstream/system.yaml
-  - docs/reqstream/self-validation/self-validation.yaml
-  - docs/reqstream/commands/commands.yaml
+  - docs/reqstream/self-test/self-test.yaml
+  - docs/reqstream/self-test/validate/validate.yaml
+  - docs/reqstream/self-test/validate-basic/validate-basic.yaml
+  - docs/reqstream/self-test/validate-add-package/validate-add-package.yaml
+  - docs/reqstream/self-test/validate-add-relationship/validate-add-relationship.yaml
+  - docs/reqstream/self-test/validate-copy-package/validate-copy-package.yaml
+  - docs/reqstream/self-test/validate-diagram/validate-diagram.yaml
+  - docs/reqstream/self-test/validate-find-package/validate-find-package.yaml
+  - docs/reqstream/self-test/validate-get-version/validate-get-version.yaml
+  - docs/reqstream/self-test/validate-hash/validate-hash.yaml
+  - docs/reqstream/self-test/validate-ntia/validate-ntia.yaml
+  - docs/reqstream/self-test/validate-query/validate-query.yaml
+  - docs/reqstream/self-test/validate-rename-id/validate-rename-id.yaml
+  - docs/reqstream/self-test/validate-run-nuget-workflow/validate-run-nuget-workflow.yaml
+  - docs/reqstream/self-test/validate-to-markdown/validate-to-markdown.yaml
+  - docs/reqstream/self-test/validate-update-package/validate-update-package.yaml
+  - docs/reqstream/commands/add-package/add-package.yaml
+  - docs/reqstream/commands/add-relationship/add-relationship.yaml
+  - docs/reqstream/commands/copy-package/copy-package.yaml
+  - docs/reqstream/commands/diagram/diagram.yaml
+  - docs/reqstream/commands/find-package/find-package.yaml
+  - docs/reqstream/commands/get-version/get-version.yaml
+  - docs/reqstream/commands/hash/hash.yaml
+  - docs/reqstream/commands/help/help.yaml
+  - docs/reqstream/commands/print/print.yaml
+  - docs/reqstream/commands/query/query.yaml
+  - docs/reqstream/commands/rename-id/rename-id.yaml
+  - docs/reqstream/commands/run-workflow/run-workflow.yaml
+  - docs/reqstream/commands/set-variable/set-variable.yaml
+  - docs/reqstream/commands/to-markdown/to-markdown.yaml
+  - docs/reqstream/commands/update-package/update-package.yaml
+  - docs/reqstream/commands/validate/validate.yaml
   - docs/reqstream/platform-requirements.yaml
   - docs/reqstream/targets/targets.yaml
   - docs/reqstream/ots/mstest.yaml

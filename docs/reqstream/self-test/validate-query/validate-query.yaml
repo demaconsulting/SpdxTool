@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool SelfTest ValidateQuery Requirements
+#
+# This file contains requirements for the ValidateQuery self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateQuery
+    requirements:
+      - id: SpdxTool-ST-Query
+        title: The SelfTest shall exercise the query command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the query command ensures it correctly executes
+          external programs and extracts values from their output after installation
+          or deployment.
+        tests:
+          - SpdxTool_Query

@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool SelfTest ValidateCopyPackage Requirements
+#
+# This file contains requirements for the ValidateCopyPackage self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateCopyPackage
+    requirements:
+      - id: SpdxTool-ST-CopyPackage
+        title: The SelfTest shall exercise the copy-package command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the copy-package command ensures it correctly copies
+          packages between SPDX documents after installation or deployment.
+        tests:
+          - SpdxTool_CopyPackage

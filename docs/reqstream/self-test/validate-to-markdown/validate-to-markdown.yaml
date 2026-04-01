@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool SelfTest ValidateToMarkdown Requirements
+#
+# This file contains requirements for the ValidateToMarkdown self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateToMarkdown
+    requirements:
+      - id: SpdxTool-ST-ToMarkdown
+        title: The SelfTest shall exercise the to-markdown command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the to-markdown command ensures it correctly generates
+          Markdown summaries of SPDX documents after installation or deployment.
+        tests:
+          - SpdxTool_ToMarkdown
