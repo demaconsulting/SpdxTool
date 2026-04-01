@@ -1,15 +1,15 @@
 ---
 name: repo-consistency
 description: >
-  Ensures SpdxTool remains consistent with the TemplateDotNetTool template
-  patterns and best practices.
+  Ensures downstream repositories remain consistent with the TemplateDotNetTool
+  template patterns and best practices.
 user-invocable: true
 ---
 
 # Repo Consistency Agent
 
-Maintain consistency between SpdxTool and the TemplateDotNetTool template, ensuring this repository
-benefits from template evolution while respecting project-specific customizations.
+Maintain consistency between downstream projects and the TemplateDotNetTool template, ensuring repositories
+benefit from template evolution while respecting project-specific customizations.
 
 # Consistency Workflow (MANDATORY)
 
@@ -42,13 +42,13 @@ benefits from template evolution while respecting project-specific customization
 
 # Reporting
 
-Upon completion create a summary in `.agent-logs/[agent-name]-[subject]-[unique-id].md`
+Upon completion create a summary in `.agent-logs/{agent-name}-{subject}-{unique-id}.md`
 of the project consisting of:
 
 ```markdown
 # Repo Consistency Report
 
-**Result**: <SUCCEEDED/FAILED>
+**Result**: (SUCCEEDED|FAILED)
 
 ## Consistency Analysis
 
