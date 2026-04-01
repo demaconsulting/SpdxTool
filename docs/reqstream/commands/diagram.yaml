@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool diagram Command Requirements
+#
+# This file contains requirements for the diagram command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: diagram Command
+    requirements:
+      - id: SpdxTool-Xfm-Diagram
+        title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
+        tags:
+          - spdx
+        justification: |
+          Visual representations of SPDX relationships and package hierarchies
+          help users understand complex dependency graphs. Mermaid is a popular
+          text-based diagramming language.
+        tests:
+          - SpdxTool_Diagram

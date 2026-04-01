@@ -1,0 +1,20 @@
+# DemaConsulting.SpdxTool help Command Requirements
+#
+# This file contains requirements for the help command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: help Command
+    requirements:
+      - id: SpdxTool-Cmd-HelpCommand
+        title: The help command shall display extended usage information for a specified command.
+        tags:
+          - cli
+        justification: |
+          Users need access to detailed usage information for each command to
+          understand arguments, options, and workflow YAML syntax without consulting
+          external documentation.
+        tests:
+          - Help_NoArguments_ReportsError
+          - Help_UnknownCommand_ReportsError
+          - Help_RunWorkflowCommand_DisplaysHelp

@@ -1,0 +1,20 @@
+# DemaConsulting.SpdxTool ReqStream OTS Requirements
+#
+# This file contains requirements for the ReqStream OTS component used by SpdxTool.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: ReqStream
+        requirements:
+          - id: SpdxTool-OTS-ReqStream
+            title: ReqStream shall enforce that every requirement is linked to passing test evidence.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.ReqStream processes requirements.yaml and the TRX test-result files to
+              produce a requirements report, justifications document, and traceability matrix. When
+              run with --enforce, it exits with a non-zero code if any requirement lacks test evidence.
+            tests:
+              - ReqStream_EnforcementMode

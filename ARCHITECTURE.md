@@ -15,7 +15,7 @@ SpdxTool/
 ├── src/
 │   ├── DemaConsulting.SpdxTool/          # Main tool implementation
 │   │   ├── Commands/                      # Command implementations
-│   │   ├── SelfValidation/                # Self-validation logic
+│   │   ├── SelfTest/                # Self-validation logic
 │   │   ├── Spdx/                          # SPDX helper utilities
 │   │   ├── Utility/                       # General utilities
 │   │   ├── Context.cs                     # Execution context
@@ -170,7 +170,7 @@ steps:
 
 ### Self-Validation System
 
-**Directory**: `SelfValidation/`
+**Directory**: `SelfTest/`
 
 A unique feature that allows the tool to validate itself:
 
@@ -526,7 +526,7 @@ Located in `test/DemaConsulting.SpdxTool.Tests/`:
 
 ### Adding Self-Validation
 
-1. Create `Validate[Command].cs` in `SelfValidation/`
+1. Create `Validate[Command].cs` in `SelfTest/`
 2. Implement validation logic
 3. Register in main `Validate.cs` orchestrator
 4. Validate creates files, runs command, verifies results

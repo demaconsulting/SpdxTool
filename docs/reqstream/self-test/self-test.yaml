@@ -1,0 +1,52 @@
+# DemaConsulting.SpdxTool Self-Test Requirements
+#
+# This file contains requirements for the SpdxTool self-test subsystem,
+# covering the --validate flag, depth control, and result output formats.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Self-Validation
+        requirements:
+          - id: SpdxTool-Cmd-Validate
+            title: The tool shall perform self-validation when invoked with the --validate flag.
+            tags:
+              - cli
+            justification: |
+              Self-validation ensures that the tool functions correctly after installation
+              or deployment. This is critical for CI/CD pipelines and quality assurance.
+            tests:
+              - SelfTest_ValidateFlag_Succeeds
+
+          - id: SpdxTool-Cmd-Depth
+            title: The tool shall support depth control for self-validation output.
+            tags:
+              - cli
+            justification: |
+              Users may want to see detailed hierarchical results during self-validation
+              to understand which specific tests passed or failed at different depths.
+            tests:
+              - SelfTest_ValidateFlagWithDepth_ShowsDepth
+
+          - id: SpdxTool-Cmd-ResultsTrx
+            title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
+            tags:
+              - cli
+            justification: |
+              CI/CD systems and test reporting tools often require test results in
+              standardized formats like TRX. This enables integration with existing
+              test infrastructure.
+            tests:
+              - SelfTest_ValidateFlagWithResults_GeneratesTrxFile
+
+          - id: SpdxTool-Cmd-ResultsJUnit
+            title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
+            tags:
+              - cli
+            justification: |
+              Many CI/CD systems and test reporting tools support JUnit XML format.
+              Auto-detecting the format from the file extension allows users to generate
+              JUnit output without requiring a separate flag.
+            tests:
+              - SelfTest_ValidateFlagWithResults_GeneratesJUnitFile

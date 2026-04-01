@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool SelfTest ValidateGetVersion Requirements
+#
+# This file contains requirements for the ValidateGetVersion self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateGetVersion
+    requirements:
+      - id: SpdxTool-ST-GetVersion
+        title: The SelfTest shall exercise the get-version command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the get-version command ensures it correctly retrieves
+          package versions from SPDX documents after installation or deployment.
+        tests:
+          - SpdxTool_GetVersion

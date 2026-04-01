@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool SelfTest ValidateAddPackage Requirements
+#
+# This file contains requirements for the ValidateAddPackage self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateAddPackage
+    requirements:
+      - id: SpdxTool-ST-AddPackage
+        title: The SelfTest shall exercise the add-package command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the add-package command ensures it correctly adds
+          packages and relationships to SPDX documents after installation or
+          deployment.
+        tests:
+          - SpdxTool_AddPackage

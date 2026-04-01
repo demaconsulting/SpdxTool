@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool SelfTest ValidateAddRelationship Requirements
+#
+# This file contains requirements for the ValidateAddRelationship self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateAddRelationship
+    requirements:
+      - id: SpdxTool-ST-AddRelationship
+        title: The SelfTest shall exercise the add-relationship command.
+        tags:
+          - self-test
+        justification: |
+          Self-validation of the add-relationship command ensures it correctly adds
+          relationships between SPDX elements after installation or deployment.
+        tests:
+          - SpdxTool_AddRelationship

@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool print Command Requirements
+#
+# This file contains requirements for the print command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: print Command
+    requirements:
+      - id: SpdxTool-Wkf-Print
+        title: The tool shall support printing text within workflows using the print command.
+        tags:
+          - workflow
+        justification: |
+          Users need to output informational messages during workflow execution
+          for debugging, progress tracking, and user feedback.
+        tests:
+          - Print_InWorkflow_PrintsText

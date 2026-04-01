@@ -1,0 +1,63 @@
+# DemaConsulting.SpdxTool System Requirements
+#
+# This file contains system-level requirements for the DemaConsulting.SpdxTool system,
+# covering the command-line interface. It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Command-Line Interface
+        requirements:
+          - id: SpdxTool-Cmd-Version
+            title: The tool shall display version information when invoked with the -v or --version flag.
+            tags:
+              - cli
+            justification: |
+              Users need to check the version of the tool they are using for compatibility
+              and troubleshooting purposes.
+            tests:
+              - Version_ShortFlag_DisplaysVersion
+              - Version_LongFlag_DisplaysVersion
+
+          - id: SpdxTool-Cmd-Help
+            title: The tool shall display usage information when invoked with the -h, -?, or --help flag.
+            tags:
+              - cli
+            justification: |
+              Users need quick access to help documentation to understand how to use the
+              tool effectively.
+            tests:
+              - Usage_ShortHelpFlag_DisplaysUsage
+              - Usage_LongHelpFlag_DisplaysUsage
+
+          - id: SpdxTool-Cmd-InvalidArgs
+            title: The tool shall display an error and usage information when invoked without arguments.
+            tags:
+              - cli
+            justification: |
+              When users invoke the tool without any arguments, they should receive
+              guidance on proper usage rather than encountering undefined behavior.
+            tests:
+              - Usage_NoArguments_DisplaysError
+
+          - id: SpdxTool-Cmd-Silent
+            title: The tool shall silence console output when invoked with the -s or --silent flag.
+            tags:
+              - cli
+            justification: |
+              In automated scripts and CI/CD pipelines, users may want to suppress
+              console output to reduce log noise.
+            tests:
+              - Silent_ShortFlag_SuppressesOutput
+              - Silent_LongFlag_SuppressesOutput
+
+          - id: SpdxTool-Cmd-Log
+            title: The tool shall write output to a log file when invoked with the -l or --log flag.
+            tags:
+              - cli
+            justification: |
+              Users need the ability to capture tool output to files for auditing,
+              debugging, and record-keeping purposes.
+            tests:
+              - Log_ShortFlag_WritesOutputToFile
+              - Log_LongFlag_WritesOutputToFile

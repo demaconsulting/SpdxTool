@@ -6,9 +6,12 @@
 # Patterns identifying all files that require review.
 # Processed in order; prefix a pattern with '!' to exclude.
 needs-review:
-  - "**/*.cs"        # All C# source and test files
-  - "!**/obj/**"     # Exclude build output
-  - "!**/bin/**"     # Exclude build output
+  - "requirements.yaml"          # Root requirements file
+  - "docs/reqstream/**/*.yaml"   # Requirements files
+  - "docs/design/**/*.md"        # Design documentation
+  - "**/*.cs"                    # All C# source and test files
+  - "!**/obj/**"                 # Exclude build output
+  - "!**/bin/**"                 # Exclude build output
 
 # Evidence source: review data and index.json are located in the 'reviews' branch
 # of this repository, accessed through the GitHub public HTTPS raw content access.
@@ -22,6 +25,46 @@ evidence-source:
 # Each review-set groups source and tests for a coherent software unit
 # so that an AI-assisted review can verify consistency across the full evidence chain.
 reviews:
+  # System-level review for DemaConsulting.SpdxTool
+  - id: SpdxTool-System
+    title: Review of DemaConsulting.SpdxTool System
+    paths:
+      - "docs/reqstream/spdxtool-system.yaml"
+      - "docs/design/introduction.md"
+      - "docs/design/spdxtool-system.md"
+      - "src/**/Program.cs"
+      - "src/**/Context.cs"
+      - "src/**/Runner.cs"
+      - "src/**/AssemblyInfo.cs"
+      - "test/**/IntegrationTests.cs"
+      - "test/**/ProgramTests.cs"
+      - "test/**/Runner.cs"
+      - "test/**/AssemblyInfo.cs"
+
+  # System-level review for DemaConsulting.SpdxTool.Targets
+  - id: SpdxTool-Targets-System
+    title: Review of DemaConsulting.SpdxTool.Targets System
+    paths:
+      - "docs/reqstream/spdxtool-targets-system.yaml"
+      - "docs/design/spdxtool-targets-system.md"
+      - "src/DemaConsulting.SpdxTool.Targets/**"
+      - "test/DemaConsulting.SpdxTool.Targets.Tests/**"
+
+  # Design review
+  - id: SpdxTool-Design
+    title: Review of SpdxTool Design Documentation
+    paths:
+      - "docs/reqstream/spdxtool-system.yaml"
+      - "docs/reqstream/platform-requirements.yaml"
+      - "docs/design/**/*.md"
+
+  # All requirements review
+  - id: SpdxTool-AllRequirements
+    title: Review of All SpdxTool Requirements
+    paths:
+      - "requirements.yaml"
+      - "docs/reqstream/**/*.yaml"
+
   # Software unit reviews
   - id: SpdxTool-Context
     title: Review of SpdxTool Context Unit
@@ -29,49 +72,37 @@ reviews:
       - "src/**/Context.cs"
       - "test/**/LogTests.cs"
 
-  - id: SpdxTool-Program
-    title: Review of SpdxTool Program Unit
-    paths:
-      - "src/**/Program.cs"
-      - "src/**/SelfValidation/**"
-      - "test/**/SelfValidationTests.cs"
-      - "test/**/Runner.cs"
-      - "test/**/AssemblyInfo.cs"
-
   - id: SpdxTool-Commands
-    title: Review of SpdxTool Commands Unit
+    title: Review of SpdxTool Commands Subsystem
     paths:
+      - "docs/reqstream/commands/*.yaml"
+      - "docs/design/commands/*.md"
       - "src/**/Commands/**"
-      - "test/**/AddPackageTests.cs"
-      - "test/**/AddRelationshipTests.cs"
-      - "test/**/CommandTests.cs"
-      - "test/**/CopyPackageTests.cs"
-      - "test/**/DiagramTests.cs"
-      - "test/**/FindPackageTests.cs"
-      - "test/**/GetVersionTests.cs"
-      - "test/**/HashTests.cs"
-      - "test/**/HelpTests.cs"
-      - "test/**/PrintTests.cs"
-      - "test/**/QueryTests.cs"
-      - "test/**/RenameIdTests.cs"
-      - "test/**/RunWorkflowTests.cs"
-      - "test/**/SetVariableTests.cs"
-      - "test/**/SilentTests.cs"
-      - "test/**/ToMarkdownTests.cs"
-      - "test/**/UnknownCommandTests.cs"
-      - "test/**/UpdatePackageTests.cs"
-      - "test/**/UsageTests.cs"
-      - "test/**/ValidateTests.cs"
-      - "test/**/VersionTests.cs"
-      - "test/**/WildcardTests.cs"
+      - "test/**/Commands/**"
+
+  - id: SpdxTool-SelfTest
+    title: Review of SpdxTool SelfTest Subsystem
+    paths:
+      - "docs/reqstream/self-test/self-test.yaml"
+      - "docs/design/self-test/self-test.md"
+      - "src/**/SelfTest/**"
+      - "test/**/SelfTest/**"
 
   - id: SpdxTool-Utility
-    title: Review of SpdxTool Utility Unit
+    title: Review of SpdxTool Utility Subsystem
     paths:
+      - "docs/reqstream/utility.yaml"
+      - "docs/design/utility.md"
       - "src/**/Spdx/**"
-      - "test/**/PathHelpersTests.cs"
+      - "src/**/Utility/**"
+      - "test/**/Utility/**"
 
-  - id: SpdxTool-Targets
-    title: Review of SpdxTool MSBuild Targets Unit
+  - id: SpdxTool-OTS
+    title: Review of SpdxTool OTS Software
     paths:
-      - "test/DemaConsulting.SpdxTool.Targets.Tests/**"
+      - "docs/reqstream/ots/mstest.yaml"
+      - "docs/reqstream/ots/reqstream.yaml"
+      - "docs/reqstream/ots/buildmark.yaml"
+      - "docs/reqstream/ots/versionmark.yaml"
+      - "docs/reqstream/ots/sarifmark.yaml"
+      - "docs/reqstream/ots/sonarmark.yaml"

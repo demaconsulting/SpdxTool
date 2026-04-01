@@ -1,0 +1,29 @@
+# DemaConsulting.SpdxTool validate Command Requirements
+#
+# This file contains requirements for the validate command, covering
+# SPDX document validation and NTIA minimum elements checking.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: validate Command
+    requirements:
+      - id: SpdxTool-Val-Validate
+        title: The tool shall validate SPDX documents using the validate command.
+        tags:
+          - spdx
+        justification: |
+          Users need to verify that SPDX documents conform to the SPDX specification
+          before using them in downstream processes or sharing them with others.
+        tests:
+          - SpdxTool_Validate
+
+      - id: SpdxTool-Val-NtiaMinimum
+        title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
+        tags:
+          - spdx
+        justification: |
+          The NTIA (National Telecommunications and Information Administration) has
+          defined minimum elements for SBOM. Users need to verify compliance with
+          these requirements for regulatory and industry standards.
+        tests:
+          - SpdxTool_Ntia

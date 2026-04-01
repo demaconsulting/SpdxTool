@@ -20,7 +20,7 @@
 
 using System.Reflection;
 using DemaConsulting.SpdxTool.Commands;
-using Validate = DemaConsulting.SpdxTool.SelfValidation.Validate;
+using Validate = DemaConsulting.SpdxTool.SelfTest.Validate;
 
 namespace DemaConsulting.SpdxTool;
 

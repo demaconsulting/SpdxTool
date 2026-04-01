@@ -1,0 +1,22 @@
+# DemaConsulting.SpdxTool SonarMark OTS Requirements
+#
+# This file contains requirements for the SonarMark OTS component used by SpdxTool.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: SonarMark
+        requirements:
+          - id: SpdxTool-OTS-SonarMark
+            title: SonarMark shall generate a SonarCloud quality report.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SonarMark retrieves quality-gate and metrics data from SonarCloud and
+              renders it as a markdown document included in the release artifacts.
+            tests:
+              - SonarMark_QualityGateRetrieval
+              - SonarMark_IssuesRetrieval
+              - SonarMark_HotSpotsRetrieval
+              - SonarMark_MarkdownReportGeneration

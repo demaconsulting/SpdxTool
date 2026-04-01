@@ -1,0 +1,17 @@
+# DemaConsulting.SpdxTool get-version Command Requirements
+#
+# This file contains requirements for the get-version command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: get-version Command
+    requirements:
+      - id: SpdxTool-Pkg-GetVersion
+        title: The tool shall retrieve package versions from SPDX documents using the get-version command.
+        tags:
+          - spdx
+        justification: |
+          Users need to extract version information from packages for reporting,
+          dependency management, and compatibility checking.
+        tests:
+          - SpdxTool_GetVersion

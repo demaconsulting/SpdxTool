@@ -1,0 +1,19 @@
+# DemaConsulting.SpdxTool BuildMark OTS Requirements
+#
+# This file contains requirements for the BuildMark OTS component used by SpdxTool.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: BuildMark
+        requirements:
+          - id: SpdxTool-OTS-BuildMark
+            title: BuildMark shall generate build-notes documentation from GitHub Actions metadata.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.BuildMark queries the GitHub API to capture workflow run details and
+              renders them as a markdown build-notes document included in the release artifacts.
+            tests:
+              - BuildMark_MarkdownReportGeneration

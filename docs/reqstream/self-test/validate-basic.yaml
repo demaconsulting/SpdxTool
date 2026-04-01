@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool SelfTest ValidateBasic Requirements
+#
+# This file contains requirements for the ValidateBasic self-test step.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest ValidateBasic
+    requirements:
+      - id: SpdxTool-ST-Basic
+        title: The SelfTest shall exercise the basic commands (version, help, silent, log).
+        tags:
+          - self-test
+        justification: |
+          Self-validation of basic tool functionality ensures the core CLI features
+          (version reporting, help display, silent mode, logging) work correctly
+          after installation or deployment.
+        tests:
+          - SpdxTool_Basic

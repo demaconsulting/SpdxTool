@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool SelfTest Orchestrator Requirements
+#
+# This file contains requirements for the SelfTest orchestrator (Validate.cs).
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest Orchestrator
+    requirements:
+      - id: SpdxTool-ST-Orchestrate
+        title: The SelfTest orchestrator shall execute all validation steps and collect results.
+        tags:
+          - self-test
+        justification: |
+          The orchestrator is responsible for running all individual self-test steps
+          in sequence, collecting pass/fail results, and reporting a summary. This
+          ensures complete coverage of all commands during self-validation.
+        tests:
+          - SelfTest_ValidateFlag_Succeeds

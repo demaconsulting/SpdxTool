@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool hash Command Requirements
+#
+# This file contains requirements for the hash command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: hash Command
+    requirements:
+      - id: SpdxTool-Hsh-Hash
+        title: The tool shall compute and verify file hashes using the hash command.
+        tags:
+          - spdx
+        justification: |
+          SPDX documents often include file hashes for integrity verification.
+          Users need to compute hashes using various algorithms and verify that
+          files match expected hash values.
+        tests:
+          - SpdxTool_Hash

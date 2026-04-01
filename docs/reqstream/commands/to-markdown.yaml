@@ -1,0 +1,18 @@
+# DemaConsulting.SpdxTool to-markdown Command Requirements
+#
+# This file contains requirements for the to-markdown command.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: to-markdown Command
+    requirements:
+      - id: SpdxTool-Xfm-ToMarkdown
+        title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
+        tags:
+          - spdx
+        justification: |
+          Users need human-readable representations of SPDX documents for
+          documentation, reporting, and review purposes. Markdown is a widely
+          supported format for documentation.
+        tests:
+          - SpdxTool_ToMarkdown

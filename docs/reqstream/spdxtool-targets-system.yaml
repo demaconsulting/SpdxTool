@@ -1,0 +1,59 @@
+# DemaConsulting.SpdxTool.Targets System Requirements
+#
+# This file contains system-level requirements for the DemaConsulting.SpdxTool.Targets
+# system, covering SBOM decoration and skip behaviors.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: MSBuild Targets Integration
+        requirements:
+          - id: SpdxTool-Tgt-DecorateSbom
+            title: The MSBuild targets package shall decorate SBOMs during dotnet pack.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users need SBOM decoration integrated into their standard build process
+              without manual intervention. Automatic decoration during pack ensures
+              SBOMs are consistently enhanced for both single-TFM and multi-TFM projects.
+            tests:
+              - SingleTfmProject_DecorateSbomTrue_DecoratesSbom
+              - MultiTfmProject_DecorateSbomTrue_DecoratesSbom
+
+          - id: SpdxTool-Tgt-SkipDecorate
+            title: The MSBuild targets package shall skip SBOM decoration when DecorateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users must be able to opt-out of SBOM decoration for projects where it is
+              not needed or desired. The default behavior respects user choice by not
+              decorating unless explicitly enabled.
+            tests:
+              - SingleTfmProject_DecorateSbomFalse_SkipsDecoration
+
+          - id: SpdxTool-Tgt-SkipGenerateSbom
+            title: The MSBuild targets package shall skip SBOM decoration when GenerateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              SBOM decoration depends on SBOM generation being enabled. When no SBOM
+              is generated, decoration should be skipped entirely to avoid errors and
+              unnecessary processing.
+            tests:
+              - SingleTfmProject_GenerateSbomFalse_SkipsEntirely
+
+          - id: SpdxTool-Tgt-MissingWorkflowError
+            title: The MSBuild targets package shall report a clear error when the workflow file is missing.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              When users enable SBOM decoration but the required workflow file is not
+              present, they need a clear error message to understand the problem and
+              take corrective action.
+            tests:
+              - SingleTfmProject_MissingWorkflow_ReportsError
