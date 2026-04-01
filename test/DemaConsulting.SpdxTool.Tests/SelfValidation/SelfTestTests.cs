@@ -66,7 +66,7 @@ public class SelfTestTests
     [TestMethod]
     public void SelfTest_ValidateWithTrxResult_GeneratesTrxFile()
     {
-        var resultFile = Path.Combine(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.trx");
+        var resultFile = Path.Join(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.trx");
 
         try
         {
@@ -94,7 +94,7 @@ public class SelfTestTests
     [TestMethod]
     public void SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile()
     {
-        var resultFile = Path.Combine(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.xml");
+        var resultFile = Path.Join(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.xml");
 
         try
         {
