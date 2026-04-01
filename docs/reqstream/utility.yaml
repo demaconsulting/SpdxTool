@@ -46,5 +46,5 @@ sections:
               macOS) file systems.
             tests:
               - Wildcard_ExactMatch_ReturnsTrue
-              - Wildcard_AsteriskMatch_MatchesMultipleCharacters
-              - Wildcard_QuestionMarkMatch_MatchesSingleCharacter
+              - Wildcard_AsteriskPattern_MatchesMultipleChars
+              - Wildcard_QuestionMarkPattern_MatchesSingleChar
