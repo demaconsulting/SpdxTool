@@ -4,14 +4,14 @@
 
 The Commands subsystem provides the implementations for all CLI subcommands exposed
 by DemaConsulting.SpdxTool. Each subcommand corresponds to a discrete SPDX document
-operation or workflow step, registered by name in the `CommandRegistry` and dispatched
+operation or workflow step, registered by name in the `CommandsRegistry` and dispatched
 by `Program`.
 
 ## Architecture
 
 ### Command Registry Pattern
 
-All commands are registered in `CommandRegistry` as `CommandEntry` instances. When
+All commands are registered in `CommandsRegistry` as `CommandEntry` instances. When
 `Program` parses a command name from the CLI arguments, it looks up the corresponding
 `Command` implementation in the registry and calls `Execute(Context, string[])`.
 
@@ -51,7 +51,7 @@ Error handling uses two exception types:
 CLI arguments
       │
       ▼
-CommandRegistry.Lookup(commandName)
+CommandsRegistry.Lookup(commandName)
       │
       ▼
 Command.Execute(Context, args)
@@ -69,7 +69,7 @@ Command.Execute(Context, args)
 
 The `RunWorkflow` command reads a YAML workflow file and iterates over its steps.
 Each step specifies a command name and its arguments. Steps are dispatched back
-through `CommandRegistry`, allowing any registered command to be used as a workflow
+through `CommandsRegistry`, allowing any registered command to be used as a workflow
 step. Variable substitution (`${{ variables.name }}`) is performed on step arguments
 before dispatch, using values from the `Context` variable map.
 
@@ -89,6 +89,6 @@ enabling versioned and distributable workflow definitions.
 
 - Commands are stateless; all mutable state is carried by the `Context` parameter.
 - Commands do not reference each other directly; all cross-command calls go through
-  `CommandRegistry` to maintain loose coupling.
+  `CommandsRegistry` to maintain loose coupling.
 - File paths in command arguments are resolved relative to the current working directory
   using `PathHelpers`.

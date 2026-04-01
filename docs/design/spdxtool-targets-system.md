@@ -24,7 +24,7 @@ in the MSBuild pipeline.
 
 The `DecorateNuGetSbom` target conditionally invokes `spdx-tool run-workflow` with
 a user-supplied workflow file. The workflow file path is specified via the
-`SpdxToolWorkflow` MSBuild property. The `spdx-tool` global tool must be installed
+`SpdxWorkflowFile` MSBuild property. The `spdx-tool` global tool must be installed
 and available on the system `PATH`.
 
 ### Configuration Properties
@@ -33,7 +33,7 @@ and available on the system `PATH`.
 |----------------------|---------|------------------------------------------------------|
 | `DecorateSBOM`       | `false` | Set to `true` to enable SBOM decoration during pack  |
 | `GenerateSBOM`       | `true`  | When `false`, skips decoration (no SBOM to decorate) |
-| `SpdxToolWorkflow`   | —       | Path to the workflow YAML file for decoration        |
+| `SpdxWorkflowFile`   | —       | Path to the workflow YAML file for decoration        |
 
 ## Conditional Execution
 
@@ -41,7 +41,7 @@ The `DecorateNuGetSbom` target is skipped when:
 
 - `DecorateSBOM` is not set to `true` (opt-in required)
 - `GenerateSBOM` is `false` (no SBOM generated to decorate)
-- `SpdxToolWorkflow` path does not exist (build error reported)
+- `SpdxWorkflowFile` path does not exist (build error reported)
 
 ## Data Flow
 
@@ -58,9 +58,9 @@ DecorateNuGetSbom target
       │
       ├─► Check GenerateSBOM == true  (skip if false)
       │
-      ├─► Check SpdxToolWorkflow exists  (error if missing)
+      ├─► Check SpdxWorkflowFile exists  (error if missing)
       │
-      └─► Execute: spdx-tool run-workflow <SpdxToolWorkflow>
+      └─► Execute: spdx-tool run-workflow <SpdxWorkflowFile>
                         │
                         └─► Workflow modifies the SPDX JSON embedded in .nupkg
 ```

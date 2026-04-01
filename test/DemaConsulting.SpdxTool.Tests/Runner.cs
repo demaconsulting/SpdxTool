@@ -56,8 +56,10 @@ internal static class Runner
         var process = Process.Start(startInfo) ??
                       throw new InvalidOperationException("Failed to start process");
 
-        // Save the output
-        output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
+        // Save the output (read both streams concurrently to prevent deadlock)
+        var stdoutTask = process.StandardOutput.ReadToEndAsync();
+        var stderrTask = process.StandardError.ReadToEndAsync();
+        output = stdoutTask.Result + stderrTask.Result;
 
         // Wait for the process to exit
         process.WaitForExit();

@@ -98,7 +98,7 @@ public sealed class RenameId : Command
 
         // Get the 'old' input
         var oldId = GetMapString(inputs, "old", variables) ??
-                    throw new YamlException(step.Start, step.End, "'rename-id' command missing 'spdx' input");
+                    throw new YamlException(step.Start, step.End, "'rename-id' command missing 'old' input");
 
         // Rename the ID
         Rename(spdxFile, oldId, newId);
@@ -148,12 +148,6 @@ public sealed class RenameId : Command
         if (newId.Length == 0 || newId == "SPDXRef-DOCUMENT")
         {
             throw new CommandUsageException("Invalid new ID");
-        }
-
-        // Verify the IDs are different
-        if (oldId == newId)
-        {
-            throw new CommandUsageException("Old and new IDs are the same");
         }
 
         // Verify ID is not in use
