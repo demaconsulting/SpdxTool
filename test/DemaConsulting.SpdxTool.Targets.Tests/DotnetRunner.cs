@@ -65,6 +65,7 @@ internal static class DotnetRunner
         // Save the output (read both streams concurrently to prevent deadlock)
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
         var stderrTask = process.StandardError.ReadToEndAsync();
+        Task.WaitAll(stdoutTask, stderrTask);
         output = stdoutTask.Result + stderrTask.Result;
 
         // Wait for the process to exit

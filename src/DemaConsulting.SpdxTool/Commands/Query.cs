@@ -166,6 +166,7 @@ public sealed class Query : Command
         // Save the output (read both streams concurrently to prevent deadlock)
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
         var stderrTask = process.StandardError.ReadToEndAsync();
+        Task.WaitAll(stdoutTask, stderrTask);
         var output = stdoutTask.Result.Trim() + stderrTask.Result.Trim();
 
         // Wait for the process to exit
