@@ -47,7 +47,7 @@ public sealed class CopyPackage : Command
     public static readonly CommandEntry Entry = new(
         Command,
         "copy-package <spdx.json> <args>",
-        "Copy package between SPDX documents (workflow only).",
+        "Copy package between SPDX documents.",
         [
             "This command copies a package from one SPDX document to another.",
             "",
