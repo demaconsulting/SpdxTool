@@ -68,5 +68,5 @@ sections:
           variable expansion to present entries, enabling consistent argument
           handling across all commands.
         tests:
-          - Command_GetMapString_MissingEntry_ThrowsException
+          - Command_GetMapString_MissingEntry_ReturnsNull
           - Command_GetMapString_WithVariableExpansion_ReturnsExpanded

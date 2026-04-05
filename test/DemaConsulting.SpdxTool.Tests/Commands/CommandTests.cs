@@ -81,10 +81,10 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test that Command.GetMapString with missing entry throws exception
+    ///     Test that Command.GetMapString with missing entry returns null
     /// </summary>
     [TestMethod]
-    public void Command_GetMapString_MissingEntry_ThrowsException()
+    public void Command_GetMapString_MissingEntry_ReturnsNull()
     {
         // Test getting a missing parameter
         var map = new YamlMappingNode();
