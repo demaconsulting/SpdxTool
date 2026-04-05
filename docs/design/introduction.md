@@ -143,10 +143,10 @@ src/DemaConsulting.SpdxTool.Targets/
 
 Per-unit design documentation is maintained for Commands and SelfTest subsystem units:
 
-- `docs/design/commands/<command>.md` — design doc for each command unit
-- `docs/design/self-test/<unit>.md` — design doc for each SelfTest unit
+- `docs/design/spdx-tool/commands/<command>.md` — design doc for each command unit
+- `docs/design/spdx-tool/self-test/<unit>.md` — design doc for each SelfTest unit
 
 Per-unit requirements are maintained alongside the design docs:
 
-- `docs/reqstream/commands/<command>.yaml` — requirements for each command unit
-- `docs/reqstream/self-test/<unit>.yaml` — requirements for each SelfTest unit
+- `docs/reqstream/spdx-tool/commands/<command>.yaml` — requirements for each command unit
+- `docs/reqstream/spdx-tool/self-test/<unit>.yaml` — requirements for each SelfTest unit
