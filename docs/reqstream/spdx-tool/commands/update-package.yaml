@@ -14,4 +14,5 @@ sections:
           Users need to modify package metadata as software components evolve,
           such as updating versions, licenses, or other attributes.
         tests:
-          - SpdxTool_UpdatePackage
+          - UpdatePackage_OnCommandLine_ReportsWorkflowOnlyError
+          - UpdatePackage_InWorkflow_UpdatesPackage

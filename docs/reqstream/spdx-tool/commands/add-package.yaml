@@ -14,4 +14,7 @@ sections:
           Users need to incrementally build SPDX documents by adding new packages
           that represent software components, libraries, or dependencies.
         tests:
-          - SpdxTool_AddPackage
+          - AddPackage_OnCommandLine_ReportsWorkflowOnlyError
+          - AddPackage_InWorkflowWithRelationship_AddsPackageAndRelationship
+          - AddPackage_InWorkflowNoRelationship_AddsPackageOnly
+          - AddPackage_InWorkflowWithQueryVersion_AddsPackage

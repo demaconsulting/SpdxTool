@@ -14,4 +14,7 @@ sections:
           Users need to reuse package information across multiple SPDX documents
           to avoid duplication and ensure consistency of package metadata.
         tests:
-          - SpdxTool_CopyPackage
+          - CopyPackage_OnCommandLine_ReportsWorkflowOnlyError
+          - CopyPackage_InWorkflow_CopiesPackage
+          - CopyPackage_InWorkflowRecursive_CopiesPackageRecursively
+          - CopyPackage_InWorkflowWithFiles_CopiesPackageAndFiles

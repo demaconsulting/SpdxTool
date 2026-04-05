@@ -14,4 +14,8 @@ sections:
           Users need to locate specific packages within SPDX documents based on
           criteria such as name, version, or other attributes to query or modify them.
         tests:
-          - SpdxTool_FindPackage
+          - FindPackage_OnCommandLine_ReportsWorkflowOnlyError
+          - FindPackage_ByName_FindsPackage
+          - FindPackage_ByVersion_FindsPackage
+          - FindPackage_ByFileName_FindsPackage
+          - FindPackage_ByDownloadUrl_FindsPackage

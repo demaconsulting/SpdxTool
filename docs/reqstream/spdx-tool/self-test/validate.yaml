@@ -15,4 +15,7 @@ sections:
           in sequence, collecting pass/fail results, and reporting a summary. This
           ensures complete coverage of all commands during self-validation.
         tests:
-          - SelfTest_ValidateFlag_Succeeds
+          - SelfTest_Validate_Succeeds
+          - SelfTest_ValidateWithDepth_Succeeds
+          - SelfTest_ValidateWithTrxResult_GeneratesTrxFile
+          - SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile

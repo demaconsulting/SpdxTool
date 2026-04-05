@@ -16,10 +16,11 @@ sections:
           enable users to define and automate multi-step processes in a declarative
           YAML format.
         tests:
-          - SpdxTool_AddPackage
-          - SpdxTool_AddRelationship
-          - SpdxTool_CopyPackage
-          - SpdxTool_UpdatePackage
+          - RunWorkflow_ValidWorkflowFile_ExecutesWorkflow
+          - RunWorkflow_WithDefaultParameters_UsesDefaults
+          - RunWorkflow_WithSpecifiedParameters_UsesSpecified
+          - RunWorkflow_WithOutputs_PopulatesOutputs
+          - RunWorkflow_UrlWorkflow_ExecutesWorkflow
 
       - id: SpdxTool-Wkf-NuGetWorkflow
         title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
@@ -30,4 +31,4 @@ sections:
           workflows can be versioned, distributed, and cached locally rather than
           downloaded on every run.
         tests:
-          - SpdxTool_RunNuGetWorkflow
+          - RunWorkflow_NuGetWorkflow_ExecutesWorkflow

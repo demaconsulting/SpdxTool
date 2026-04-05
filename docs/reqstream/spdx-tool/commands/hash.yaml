@@ -15,4 +15,6 @@ sections:
           Users need to compute hashes using various algorithms and verify that
           files match expected hash values.
         tests:
-          - SpdxTool_Hash
+          - Hash_GenerateOperation_UpdatesPackageHash
+          - Hash_VerifyOperation_SucceedsForValidHash
+          - Hash_VerifyOperation_FailsForInvalidHash

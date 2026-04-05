@@ -15,7 +15,8 @@ sections:
           Users need to verify that SPDX documents conform to the SPDX specification
           before using them in downstream processes or sharing them with others.
         tests:
-          - SpdxTool_Validate
+          - Validate_ValidSpdxDocument_Succeeds
+          - Validate_ValidDocumentNoFilesAnalyzed_Succeeds
 
       - id: SpdxTool-Val-NtiaMinimum
         title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
@@ -26,4 +27,5 @@ sections:
           defined minimum elements for SBOM. Users need to verify compliance with
           these requirements for regulatory and industry standards.
         tests:
-          - SpdxTool_Ntia
+          - Validate_NtiaValidDocument_Succeeds
+          - Validate_NtiaInvalidDocument_ReportsNtiaErrors

@@ -14,6 +14,25 @@ sections:
           supported by the SpdxTool. This enables dynamic dispatch and allows the
           help system to enumerate available commands. The registry must correctly
           map command names to their implementations.
+        children:
+          - SpdxTool-Pkg-AddPackage
+          - SpdxTool-Rel-AddRelationship
+          - SpdxTool-Pkg-CopyPackage
+          - SpdxTool-Xfm-Diagram
+          - SpdxTool-Pkg-FindPackage
+          - SpdxTool-Pkg-GetVersion
+          - SpdxTool-Hsh-Hash
+          - SpdxTool-Cmd-HelpCommand
+          - SpdxTool-Wkf-Print
+          - SpdxTool-Wkf-Query
+          - SpdxTool-Man-RenameId
+          - SpdxTool-Wkf-RunWorkflow
+          - SpdxTool-Wkf-NuGetWorkflow
+          - SpdxTool-Wkf-SetVariable
+          - SpdxTool-Xfm-ToMarkdown
+          - SpdxTool-Pkg-UpdatePackage
+          - SpdxTool-Val-Validate
+          - SpdxTool-Val-NtiaMinimum
         tests:
           - Command_Expand_NoVariables_ReturnsOriginal
           - UnknownCommand_UnrecognizedCommand_ReportsError

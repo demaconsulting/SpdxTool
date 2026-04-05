@@ -15,4 +15,5 @@ sections:
           help users understand complex dependency graphs. Mermaid is a popular
           text-based diagramming language.
         tests:
-          - SpdxTool_Diagram
+          - Diagram_ValidSpdxFile_GeneratesDiagram
+          - Diagram_WithToolsOption_GeneratesDiagramWithTools
