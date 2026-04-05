@@ -14,4 +14,5 @@ sections:
           Users need to extract version information from packages for reporting,
           dependency management, and compatibility checking.
         tests:
-          - SpdxTool_GetVersion
+          - GetVersion_OnCommandLine_ReportsWorkflowOnlyError
+          - GetVersion_InWorkflow_ReturnsPackageVersion

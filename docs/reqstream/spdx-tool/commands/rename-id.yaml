@@ -15,4 +15,4 @@ sections:
           conventions, or reorganize SPDX documents while maintaining referential
           integrity.
         tests:
-          - SpdxTool_RenameId
+          - RenameId_ValidSpdxFile_RenamesId

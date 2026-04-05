@@ -187,7 +187,7 @@ Additional information can be found at:
 
 [command-line-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-command-line.md
 [workflow-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md
-[user-guide]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/guide/guide.md
+[user-guide]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/user_guide/introduction.md
 [contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md
 [code-of-conduct]: https://github.com/demaconsulting/SpdxTool/blob/main/CODE_OF_CONDUCT.md
 [architecture]: https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md

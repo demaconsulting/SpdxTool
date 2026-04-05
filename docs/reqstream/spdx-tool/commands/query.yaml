@@ -14,4 +14,5 @@ sections:
           Workflows often need to extract information from external tools or
           commands to incorporate into SPDX documents or workflow logic.
         tests:
-          - SpdxTool_Query
+          - Query_DotNetVersion_OnCommandLine_ReturnsVersion
+          - Query_DotNetVersion_InWorkflow_StoresVersion

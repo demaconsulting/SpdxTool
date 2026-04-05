@@ -1,0 +1,51 @@
+# DemaConsulting.SpdxTool Self-Test Subsystem Requirements
+#
+# This file contains subsystem-level requirements for the SelfTest subsystem,
+# covering self-validation orchestration and result output formats.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: SelfTest Subsystem Requirements
+    requirements:
+      - id: SpdxTool-SelfTest-Validate
+        title: The SelfTest subsystem shall perform self-validation of all commands and report results.
+        justification: |
+          Self-validation ensures that the tool functions correctly after installation
+          or deployment. The subsystem must orchestrate all validation steps and
+          collect pass/fail results into a structured outcome.
+        children:
+          - SpdxTool-ST-Orchestrate
+        tests:
+          - SelfTest_Validate_Succeeds
+
+      - id: SpdxTool-SelfTest-Depth
+        title: The SelfTest subsystem shall support depth-controlled output for validation results.
+        justification: |
+          Users may want to see detailed hierarchical results during self-validation
+          to understand which specific steps passed or failed at different depths.
+        children:
+          - SpdxTool-ST-Orchestrate
+        tests:
+          - SelfTest_ValidateWithDepth_Succeeds
+
+      - id: SpdxTool-SelfTest-ResultsTrx
+        title: The SelfTest subsystem shall write validation results in TRX format.
+        justification: |
+          CI/CD systems and test reporting tools often require test results in
+          standardized formats like TRX. This enables integration with existing
+          test infrastructure.
+        children:
+          - SpdxTool-ST-Orchestrate
+        tests:
+          - SelfTest_ValidateWithTrxResult_GeneratesTrxFile
+
+      - id: SpdxTool-SelfTest-ResultsJUnit
+        title: The SelfTest subsystem shall write validation results in JUnit XML format.
+        justification: |
+          Many CI/CD systems and test reporting tools support JUnit XML format.
+          Auto-detecting the format from the file extension allows users to generate
+          JUnit output without requiring a separate flag.
+        children:
+          - SpdxTool-ST-Orchestrate
+        tests:
+          - SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile

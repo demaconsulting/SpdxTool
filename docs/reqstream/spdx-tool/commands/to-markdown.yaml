@@ -15,4 +15,4 @@ sections:
           documentation, reporting, and review purposes. Markdown is a widely
           supported format for documentation.
         tests:
-          - SpdxTool_ToMarkdown
+          - ToMarkdown_ValidSpdxFile_GeneratesMarkdown

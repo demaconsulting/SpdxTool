@@ -3,13 +3,13 @@
 
 # Resource paths for finding files and templates
 resource-path:
-  - docs/guide
+  - docs/user_guide
   - docs/template
 
 # Input files in order (relative to resource-path)
 input-files:
-  - docs/guide/title.txt
-  - docs/guide/guide.md
+  - docs/user_guide/title.txt
+  - docs/user_guide/introduction.md
 
 # Template configuration
 template: template.html

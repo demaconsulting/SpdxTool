@@ -15,4 +15,6 @@ sections:
           elements. Users need to define these relationships to accurately represent
           dependency graphs and component hierarchies.
         tests:
-          - SpdxTool_AddRelationship
+          - AddRelationship_OnCommandLine_ReportsWorkflowOnlyError
+          - AddRelationship_InWorkflow_AddsRelationship
+          - AddRelationship_ReplaceMode_ReplacesExistingRelationship

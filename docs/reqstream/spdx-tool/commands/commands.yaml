@@ -1,0 +1,72 @@
+# DemaConsulting.SpdxTool Commands Subsystem Requirements
+#
+# This file contains subsystem-level requirements for the Commands subsystem,
+# covering command registry, dispatch, and variable expansion.
+# It is included by the root requirements.yaml file.
+---
+sections:
+  - title: Commands Subsystem Requirements
+    requirements:
+      - id: SpdxTool-Commands-Registry
+        title: The Commands subsystem shall maintain a registry of all available commands.
+        justification: |
+          The command registry provides a central lookup mechanism for all commands
+          supported by the SpdxTool. This enables dynamic dispatch and allows the
+          help system to enumerate available commands. The registry must correctly
+          map command names to their implementations.
+        children:
+          - SpdxTool-Pkg-AddPackage
+          - SpdxTool-Rel-AddRelationship
+          - SpdxTool-Pkg-CopyPackage
+          - SpdxTool-Xfm-Diagram
+          - SpdxTool-Pkg-FindPackage
+          - SpdxTool-Pkg-GetVersion
+          - SpdxTool-Hsh-Hash
+          - SpdxTool-Cmd-HelpCommand
+          - SpdxTool-Wkf-Print
+          - SpdxTool-Wkf-Query
+          - SpdxTool-Man-RenameId
+          - SpdxTool-Wkf-RunWorkflow
+          - SpdxTool-Wkf-NuGetWorkflow
+          - SpdxTool-Wkf-SetVariable
+          - SpdxTool-Xfm-ToMarkdown
+          - SpdxTool-Pkg-UpdatePackage
+          - SpdxTool-Val-Validate
+          - SpdxTool-Val-NtiaMinimum
+        tests:
+          - Command_Expand_NoVariables_ReturnsOriginal
+          - UnknownCommand_UnrecognizedCommand_ReportsError
+
+      - id: SpdxTool-Commands-Dispatch
+        title: The Commands subsystem shall dispatch commands by name to their implementations.
+        justification: |
+          Command dispatch is the core responsibility of the Commands subsystem.
+          When a command name is provided, the subsystem must locate and execute
+          the correct implementation, or report an appropriate error when the
+          command is not found.
+        tests:
+          - UnknownCommand_UnrecognizedCommand_ReportsError
+
+      - id: SpdxTool-Commands-VariableExpansion
+        title: The Commands subsystem shall expand variables in command arguments using ${{ variable }} syntax.
+        justification: |
+          Variable expansion allows workflow authors to parameterize command
+          arguments. The expansion must handle missing variables, simple variable
+          substitution, and nested variable references where a variable name
+          itself contains a variable reference.
+        tests:
+          - Command_Expand_MissingVariable_ReturnsMissingToken
+          - Command_Expand_NoVariables_ReturnsOriginal
+          - Command_Expand_BasicVariable_ReturnsExpanded
+          - Command_Expand_NestedVariable_ReturnsFullyExpanded
+
+      - id: SpdxTool-Commands-MapString
+        title: The Commands subsystem shall extract string values from YAML mapping nodes with variable expansion.
+        justification: |
+          Command implementations read their arguments from YAML mapping nodes.
+          The GetMapString helper must return null for missing entries and apply
+          variable expansion to present entries, enabling consistent argument
+          handling across all commands.
+        tests:
+          - Command_GetMapString_MissingEntry_ReturnsNull
+          - Command_GetMapString_WithVariableExpansion_ReturnsExpanded
