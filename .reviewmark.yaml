@@ -30,7 +30,7 @@ reviews:
     title: Review that Advertised Features Match System Design
     paths:
       - "README.md"
-      - "docs/guide/**/*.md"
+      - "docs/user_guide/**/*.md"
       - "docs/reqstream/spdx-tool/spdx-tool.yaml"
       - "docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml"
       - "docs/design/introduction.md"
