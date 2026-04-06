@@ -6,7 +6,7 @@
 sections:
   - title: update-package Command
     requirements:
-      - id: SpdxTool-Pkg-UpdatePackage
+      - id: SpdxTool-Package-UpdatePackage
         title: The tool shall update existing packages in SPDX documents using the update-package command.
         tags:
           - spdx

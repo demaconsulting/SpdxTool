@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateGetVersion
     requirements:
-      - id: SpdxTool-ST-GetVersion
+      - id: SpdxTool-SelfTest-GetVersion
         title: The SelfTest shall exercise the get-version command.
         tags:
           - self-test

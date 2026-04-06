@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateUpdatePackage
     requirements:
-      - id: SpdxTool-ST-UpdatePackage
+      - id: SpdxTool-SelfTest-UpdatePackage
         title: The SelfTest shall exercise the update-package command.
         tags:
           - self-test

@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateDiagram
     requirements:
-      - id: SpdxTool-ST-Diagram
+      - id: SpdxTool-SelfTest-Diagram
         title: The SelfTest shall exercise the diagram command.
         tags:
           - self-test

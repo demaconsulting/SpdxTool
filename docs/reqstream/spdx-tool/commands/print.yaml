@@ -6,7 +6,7 @@
 sections:
   - title: print Command
     requirements:
-      - id: SpdxTool-Wkf-Print
+      - id: SpdxTool-Workflow-Print
         title: The tool shall support printing text within workflows using the print command.
         tags:
           - workflow

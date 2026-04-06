@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateNtia
     requirements:
-      - id: SpdxTool-ST-Ntia
+      - id: SpdxTool-SelfTest-Ntia
         title: The SelfTest shall exercise the NTIA minimum elements validation.
         tags:
           - self-test

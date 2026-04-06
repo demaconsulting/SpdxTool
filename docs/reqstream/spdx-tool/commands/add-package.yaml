@@ -6,7 +6,7 @@
 sections:
   - title: add-package Command
     requirements:
-      - id: SpdxTool-Pkg-AddPackage
+      - id: SpdxTool-Package-AddPackage
         title: The tool shall add packages to SPDX documents using the add-package command.
         tags:
           - spdx

@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateToMarkdown
     requirements:
-      - id: SpdxTool-ST-ToMarkdown
+      - id: SpdxTool-SelfTest-ToMarkdown
         title: The SelfTest shall exercise the to-markdown command.
         tags:
           - self-test

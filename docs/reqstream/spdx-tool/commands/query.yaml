@@ -6,7 +6,7 @@
 sections:
   - title: query Command
     requirements:
-      - id: SpdxTool-Wkf-Query
+      - id: SpdxTool-Workflow-Query
         title: The tool shall support querying external program output using the query command.
         tags:
           - workflow

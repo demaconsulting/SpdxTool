@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateRenameId
     requirements:
-      - id: SpdxTool-ST-RenameId
+      - id: SpdxTool-SelfTest-RenameId
         title: The SelfTest shall exercise the rename-id command.
         tags:
           - self-test

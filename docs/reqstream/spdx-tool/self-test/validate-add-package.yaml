@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateAddPackage
     requirements:
-      - id: SpdxTool-ST-AddPackage
+      - id: SpdxTool-SelfTest-AddPackage
         title: The SelfTest shall exercise the add-package command.
         tags:
           - self-test

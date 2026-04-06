@@ -7,7 +7,7 @@
 sections:
   - title: run-workflow Command
     requirements:
-      - id: SpdxTool-Wkf-RunWorkflow
+      - id: SpdxTool-Workflow-RunWorkflow
         title: The tool shall execute workflow files using the run-workflow command.
         tags:
           - workflow
@@ -22,7 +22,7 @@ sections:
           - RunWorkflow_WithOutputs_PopulatesOutputs
           - RunWorkflow_UrlWorkflow_ExecutesWorkflow
 
-      - id: SpdxTool-Wkf-NuGetWorkflow
+      - id: SpdxTool-Workflow-NuGetWorkflow
         title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
         tags:
           - workflow

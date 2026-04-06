@@ -9,7 +9,7 @@ sections:
     sections:
       - title: MSBuild Targets Integration
         requirements:
-          - id: SpdxTool-Tgt-DecorateSbom
+          - id: SpdxTool-Target-DecorateSbom
             title: The MSBuild targets package shall decorate SBOMs during dotnet pack.
             tags:
               - msbuild
@@ -22,7 +22,7 @@ sections:
               - SingleTfmProject_DecorateSbomTrue_DecoratesSbom
               - MultiTfmProject_DecorateSbomTrue_DecoratesSbom
 
-          - id: SpdxTool-Tgt-SkipDecorate
+          - id: SpdxTool-Target-SkipDecorate
             title: The MSBuild targets package shall skip SBOM decoration when DecorateSBOM is false.
             tags:
               - msbuild
@@ -34,7 +34,7 @@ sections:
             tests:
               - SingleTfmProject_DecorateSbomFalse_SkipsDecoration
 
-          - id: SpdxTool-Tgt-SkipGenerateSbom
+          - id: SpdxTool-Target-SkipGenerateSbom
             title: The MSBuild targets package shall skip SBOM decoration when GenerateSBOM is false.
             tags:
               - msbuild
@@ -46,7 +46,7 @@ sections:
             tests:
               - SingleTfmProject_GenerateSbomFalse_SkipsEntirely
 
-          - id: SpdxTool-Tgt-MissingWorkflowError
+          - id: SpdxTool-Target-MissingWorkflowError
             title: The MSBuild targets package shall report a clear error when the workflow file is missing.
             tags:
               - msbuild

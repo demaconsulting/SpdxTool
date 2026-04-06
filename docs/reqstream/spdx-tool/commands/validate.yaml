@@ -7,7 +7,7 @@
 sections:
   - title: validate Command
     requirements:
-      - id: SpdxTool-Val-Validate
+      - id: SpdxTool-Validate-Validate
         title: The tool shall validate SPDX documents using the validate command.
         tags:
           - spdx
@@ -18,7 +18,7 @@ sections:
           - Validate_ValidSpdxDocument_Succeeds
           - Validate_ValidDocumentNoFilesAnalyzed_Succeeds
 
-      - id: SpdxTool-Val-NtiaMinimum
+      - id: SpdxTool-Validate-NtiaMinimum
         title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
         tags:
           - spdx

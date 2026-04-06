@@ -8,7 +8,7 @@ sections:
     sections:
       - title: Command-Line Interface
         requirements:
-          - id: SpdxTool-Cmd-Version
+          - id: SpdxTool-Command-Version
             title: The tool shall display version information when invoked with the -v or --version flag.
             tags:
               - cli
@@ -19,7 +19,7 @@ sections:
               - Version_ShortFlag_DisplaysVersion
               - Version_LongFlag_DisplaysVersion
 
-          - id: SpdxTool-Cmd-Help
+          - id: SpdxTool-Command-Help
             title: The tool shall display usage information when invoked with the -h, -?, or --help flag.
             tags:
               - cli
@@ -30,7 +30,7 @@ sections:
               - Usage_ShortHelpFlag_DisplaysUsage
               - Usage_LongHelpFlag_DisplaysUsage
 
-          - id: SpdxTool-Cmd-InvalidArgs
+          - id: SpdxTool-Command-InvalidArgs
             title: The tool shall display an error and usage information when invoked without arguments.
             tags:
               - cli
@@ -40,7 +40,7 @@ sections:
             tests:
               - Usage_NoArguments_DisplaysError
 
-          - id: SpdxTool-Cmd-Silent
+          - id: SpdxTool-Command-Silent
             title: The tool shall silence console output when invoked with the -s or --silent flag.
             tags:
               - cli
@@ -51,7 +51,7 @@ sections:
               - Silent_ShortFlag_SuppressesOutput
               - Silent_LongFlag_SuppressesOutput
 
-          - id: SpdxTool-Cmd-Log
+          - id: SpdxTool-Command-Log
             title: The tool shall write output to a log file when invoked with the -l or --log flag.
             tags:
               - cli
@@ -62,7 +62,7 @@ sections:
               - Log_ShortFlag_WritesOutputToFile
               - Log_LongFlag_WritesOutputToFile
 
-          - id: SpdxTool-Cmd-Validate
+          - id: SpdxTool-Command-Validate
             title: The tool shall perform self-validation when invoked with the --validate flag.
             tags:
               - cli
@@ -74,7 +74,7 @@ sections:
             tests:
               - SelfTest_ValidateFlag_Succeeds
 
-          - id: SpdxTool-Cmd-Depth
+          - id: SpdxTool-Command-Depth
             title: The tool shall support depth control for self-validation output.
             tags:
               - cli
@@ -86,7 +86,7 @@ sections:
             tests:
               - SelfTest_ValidateFlagWithDepth_ShowsDepth
 
-          - id: SpdxTool-Cmd-ResultsTrx
+          - id: SpdxTool-Command-ResultsTrx
             title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
             tags:
               - cli
@@ -99,7 +99,7 @@ sections:
             tests:
               - SelfTest_ValidateFlagWithResults_GeneratesTrxFile
 
-          - id: SpdxTool-Cmd-ResultsJUnit
+          - id: SpdxTool-Command-ResultsJUnit
             title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
             tags:
               - cli

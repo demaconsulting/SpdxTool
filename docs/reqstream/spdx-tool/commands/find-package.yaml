@@ -6,7 +6,7 @@
 sections:
   - title: find-package Command
     requirements:
-      - id: SpdxTool-Pkg-FindPackage
+      - id: SpdxTool-Package-FindPackage
         title: The tool shall find packages in SPDX documents using the find-package command.
         tags:
           - spdx

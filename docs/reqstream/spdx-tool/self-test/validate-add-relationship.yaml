@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateAddRelationship
     requirements:
-      - id: SpdxTool-ST-AddRelationship
+      - id: SpdxTool-SelfTest-AddRelationship
         title: The SelfTest shall exercise the add-relationship command.
         tags:
           - self-test

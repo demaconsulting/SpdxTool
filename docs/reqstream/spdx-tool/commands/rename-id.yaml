@@ -6,7 +6,7 @@
 sections:
   - title: rename-id Command
     requirements:
-      - id: SpdxTool-Man-RenameId
+      - id: SpdxTool-Manage-RenameId
         title: The tool shall rename SPDX element IDs using the rename-id command.
         tags:
           - spdx

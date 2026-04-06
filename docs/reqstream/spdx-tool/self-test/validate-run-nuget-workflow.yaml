@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateRunNuGetWorkflow
     requirements:
-      - id: SpdxTool-ST-RunNuGetWorkflow
+      - id: SpdxTool-SelfTest-RunNuGetWorkflow
         title: The SelfTest shall exercise the run-workflow command with NuGet packages.
         tags:
           - self-test

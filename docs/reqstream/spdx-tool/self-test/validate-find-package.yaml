@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateFindPackage
     requirements:
-      - id: SpdxTool-ST-FindPackage
+      - id: SpdxTool-SelfTest-FindPackage
         title: The SelfTest shall exercise the find-package command.
         tags:
           - self-test
