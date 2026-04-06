@@ -139,7 +139,7 @@ internal static class ValidateRenameId
                 ],
                 Relationships:
                 [
-                    { RelatedElement: "SPDXRef-Package-2" }
+                    { RelatedSpdxElement: "SPDXRef-Package-2" }
                 ]
             };
         }

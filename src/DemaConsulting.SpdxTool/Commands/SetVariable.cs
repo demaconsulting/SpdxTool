@@ -79,7 +79,7 @@ public sealed class SetVariable : Command
                     throw new YamlException(step.Start, step.End, "'set-variable' command missing 'value' input");
 
         // Get the 'output' input (not expanded - used literally as the variable key)
-        var output = GetMapString(inputs, "output") ??
+        var output = GetMapString(inputs, "output", []) ??
                      throw new YamlException(step.Start, step.End, "'set-variable' command missing 'output' input");
 
         // Save the value to the variables
