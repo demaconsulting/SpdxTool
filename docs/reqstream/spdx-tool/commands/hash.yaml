@@ -6,7 +6,7 @@
 sections:
   - title: hash Command
     requirements:
-      - id: SpdxTool-Hsh-Hash
+      - id: SpdxTool-Hash-Hash
         title: The tool shall compute and verify file hashes using the hash command.
         tags:
           - spdx

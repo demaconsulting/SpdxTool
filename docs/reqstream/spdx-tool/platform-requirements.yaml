@@ -9,7 +9,7 @@ sections:
     sections:
       - title: Platform Support
         requirements:
-          - id: SpdxTool-Plt-Windows
+          - id: SpdxTool-Platform-Windows
             title: The tool shall run successfully on Windows platforms.
             tags:
               - platform
@@ -19,14 +19,14 @@ sections:
               (both the dotnet-tool and the MSBuild targets package) must function
               correctly on Windows to support a broad user base.
             tests:
-              - windows@SpdxTool_Validate
+              - windows@SpdxTool_Basic
               - windows@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
               - windows@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
               - windows@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
               - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
               - windows@SingleTfmProject_MissingWorkflow_ReportsError
 
-          - id: SpdxTool-Plt-Linux
+          - id: SpdxTool-Platform-Linux
             title: The tool shall run successfully on Linux platforms.
             tags:
               - platform
@@ -37,14 +37,14 @@ sections:
               the MSBuild targets package) must function correctly on Linux to support
               a broad user base.
             tests:
-              - ubuntu@SpdxTool_Validate
+              - ubuntu@SpdxTool_Basic
               - ubuntu@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
               - ubuntu@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
               - ubuntu@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
               - ubuntu@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
               - ubuntu@SingleTfmProject_MissingWorkflow_ReportsError
 
-          - id: SpdxTool-Plt-MacOS
+          - id: SpdxTool-Platform-MacOS
             title: The tool shall run successfully on macOS platforms.
             tags:
               - platform
@@ -55,14 +55,14 @@ sections:
               and the MSBuild targets package) must function correctly on macOS to
               support a broad user base.
             tests:
-              - macos@SpdxTool_Validate
+              - macos@SpdxTool_Basic
               - macos@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
               - macos@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
               - macos@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
               - macos@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
               - macos@SingleTfmProject_MissingWorkflow_ReportsError
 
-          - id: SpdxTool-Plt-Net8
+          - id: SpdxTool-Platform-Net8
             title: The tool shall run successfully on .NET 8.x.
             tags:
               - platform
@@ -71,9 +71,9 @@ sections:
               support this version to provide stability and compatibility for users
               who require LTS support.
             tests:
-              - dotnet8.x@SpdxTool_Validate
+              - dotnet8.x@SpdxTool_Basic
 
-          - id: SpdxTool-Plt-Net9
+          - id: SpdxTool-Platform-Net9
             title: The tool shall run successfully on .NET 9.x.
             tags:
               - platform
@@ -82,9 +82,9 @@ sections:
               version to enable users to take advantage of the latest .NET features
               and improvements.
             tests:
-              - dotnet9.x@SpdxTool_Validate
+              - dotnet9.x@SpdxTool_Basic
 
-          - id: SpdxTool-Plt-Net10
+          - id: SpdxTool-Platform-Net10
             title: The tool shall run successfully on .NET 10.x.
             tags:
               - platform
@@ -93,4 +93,4 @@ sections:
               future .NET releases to ensure users can upgrade their runtime without
               losing tool functionality.
             tests:
-              - dotnet10.x@SpdxTool_Validate
+              - dotnet10.x@SpdxTool_Basic

@@ -149,12 +149,13 @@ public static class Program
             Usage: spdx-tool [options] <command> [arguments]
 
             Options:
-              -h, --help                               Show this help message and exit
+              -h, -?, --help                           Show this help message and exit
               -v, --version                            Show version information and exit
               -l, --log <log-file>                     Log output to file
               -s, --silent                             Silence console output
                   --validate                           Perform self-validation
               -r, --result <file>                      Self-validation result file (.trx or .xml for JUnit)
+                  --depth <level>                      Self-validation report depth level
 
             Commands:
             """);

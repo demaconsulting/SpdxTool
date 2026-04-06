@@ -167,7 +167,7 @@ public sealed class Query : Command
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
         var stderrTask = process.StandardError.ReadToEndAsync();
         Task.WaitAll(stdoutTask, stderrTask);
-        var output = stdoutTask.Result.Trim() + stderrTask.Result.Trim();
+        var output = (stdoutTask.Result + "\n" + stderrTask.Result).Trim();
 
         // Wait for the process to exit
         process.WaitForExit();

@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateHash
     requirements:
-      - id: SpdxTool-ST-Hash
+      - id: SpdxTool-SelfTest-Hash
         title: The SelfTest shall exercise the hash command.
         tags:
           - self-test

@@ -6,7 +6,7 @@
 sections:
   - title: diagram Command
     requirements:
-      - id: SpdxTool-Xfm-Diagram
+      - id: SpdxTool-Transform-Diagram
         title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
         tags:
           - spdx

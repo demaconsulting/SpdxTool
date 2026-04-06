@@ -15,24 +15,24 @@ sections:
           help system to enumerate available commands. The registry must correctly
           map command names to their implementations.
         children:
-          - SpdxTool-Pkg-AddPackage
-          - SpdxTool-Rel-AddRelationship
-          - SpdxTool-Pkg-CopyPackage
-          - SpdxTool-Xfm-Diagram
-          - SpdxTool-Pkg-FindPackage
-          - SpdxTool-Pkg-GetVersion
-          - SpdxTool-Hsh-Hash
-          - SpdxTool-Cmd-HelpCommand
-          - SpdxTool-Wkf-Print
-          - SpdxTool-Wkf-Query
-          - SpdxTool-Man-RenameId
-          - SpdxTool-Wkf-RunWorkflow
-          - SpdxTool-Wkf-NuGetWorkflow
-          - SpdxTool-Wkf-SetVariable
-          - SpdxTool-Xfm-ToMarkdown
-          - SpdxTool-Pkg-UpdatePackage
-          - SpdxTool-Val-Validate
-          - SpdxTool-Val-NtiaMinimum
+          - SpdxTool-Package-AddPackage
+          - SpdxTool-Relationship-AddRelationship
+          - SpdxTool-Package-CopyPackage
+          - SpdxTool-Transform-Diagram
+          - SpdxTool-Package-FindPackage
+          - SpdxTool-Package-GetVersion
+          - SpdxTool-Hash-Hash
+          - SpdxTool-Command-HelpCommand
+          - SpdxTool-Workflow-Print
+          - SpdxTool-Workflow-Query
+          - SpdxTool-Manage-RenameId
+          - SpdxTool-Workflow-RunWorkflow
+          - SpdxTool-Workflow-NuGetWorkflow
+          - SpdxTool-Workflow-SetVariable
+          - SpdxTool-Transform-ToMarkdown
+          - SpdxTool-Package-UpdatePackage
+          - SpdxTool-Validate-Validate
+          - SpdxTool-Validate-NtiaMinimum
         tests:
           - Command_Expand_NoVariables_ReturnsOriginal
           - UnknownCommand_UnrecognizedCommand_ReportsError

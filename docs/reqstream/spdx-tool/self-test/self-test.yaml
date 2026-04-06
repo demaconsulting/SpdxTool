@@ -14,7 +14,7 @@ sections:
           or deployment. The subsystem must orchestrate all validation steps and
           collect pass/fail results into a structured outcome.
         children:
-          - SpdxTool-ST-Orchestrate
+          - SpdxTool-SelfTest-Orchestrate
         tests:
           - SelfTest_Validate_Succeeds
 
@@ -24,7 +24,7 @@ sections:
           Users may want to see detailed hierarchical results during self-validation
           to understand which specific steps passed or failed at different depths.
         children:
-          - SpdxTool-ST-Orchestrate
+          - SpdxTool-SelfTest-Orchestrate
         tests:
           - SelfTest_ValidateWithDepth_Succeeds
 
@@ -35,7 +35,7 @@ sections:
           standardized formats like TRX. This enables integration with existing
           test infrastructure.
         children:
-          - SpdxTool-ST-Orchestrate
+          - SpdxTool-SelfTest-Orchestrate
         tests:
           - SelfTest_ValidateWithTrxResult_GeneratesTrxFile
 
@@ -46,6 +46,6 @@ sections:
           Auto-detecting the format from the file extension allows users to generate
           JUnit output without requiring a separate flag.
         children:
-          - SpdxTool-ST-Orchestrate
+          - SpdxTool-SelfTest-Orchestrate
         tests:
           - SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile

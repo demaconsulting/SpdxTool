@@ -17,27 +17,28 @@ The subsystem consists of two MSBuild `.targets` files:
 - `buildMultiTargeting/DemaConsulting.SpdxTool.Targets.targets` — injected for
   multi-TFM projects
 
-Both files define the `DecorateNuGetSbom` target, which runs after the `Pack` target
+Both files define the `DecorateSbomTarget` target, which runs after the `Pack` target
 in the MSBuild pipeline.
 
 ### Workflow Invocation
 
-The `DecorateNuGetSbom` target conditionally invokes `spdx-tool run-workflow` with
+The `DecorateSbomTarget` target conditionally invokes `spdx-tool run-workflow` with
 a user-supplied workflow file. The workflow file path is specified via the
-`SpdxWorkflowFile` MSBuild property. The `spdx-tool` global tool must be installed
-and available on the system `PATH`.
+`SpdxWorkflowFile` MSBuild property. The `spdx-tool` command is configurable via the
+`SpdxToolCommand` property (defaults to `dotnet spdx-tool`).
 
 ### Configuration Properties
 
-| MSBuild Property     | Default | Description                                          |
-|----------------------|---------|------------------------------------------------------|
-| `DecorateSBOM`       | `false` | Set to `true` to enable SBOM decoration during pack  |
-| `GenerateSBOM`       | `true`  | When `false`, skips decoration (no SBOM to decorate) |
-| `SpdxWorkflowFile`   | —       | Path to the workflow YAML file for decoration        |
+| MSBuild Property     | Default              | Description                                          |
+|----------------------|----------------------|------------------------------------------------------|
+| `DecorateSBOM`       | `false`              | Set to `true` to enable SBOM decoration during pack  |
+| `GenerateSBOM`       | `true`               | When `false`, skips decoration (no SBOM to decorate) |
+| `SpdxWorkflowFile`   | `spdx-workflow.yaml` | Path to the workflow YAML file for decoration        |
+| `SpdxToolCommand`    | `dotnet spdx-tool`   | Command used to invoke the spdx-tool                 |
 
 ## Conditional Execution
 
-The `DecorateNuGetSbom` target is skipped when:
+The `DecorateSbomTarget` target is skipped when:
 
 - `DecorateSBOM` is not set to `true` (opt-in required)
 - `GenerateSBOM` is `false` (no SBOM generated to decorate)
@@ -52,7 +53,7 @@ dotnet pack
 Pack target completes (NuGet .nupkg + embedded SBOM generated)
       │
       ▼
-DecorateNuGetSbom target
+DecorateSbomTarget target
       │
       ├─► Check DecorateSBOM == true  (skip if false)
       │

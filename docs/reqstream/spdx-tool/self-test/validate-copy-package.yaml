@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateCopyPackage
     requirements:
-      - id: SpdxTool-ST-CopyPackage
+      - id: SpdxTool-SelfTest-CopyPackage
         title: The SelfTest shall exercise the copy-package command.
         tags:
           - self-test

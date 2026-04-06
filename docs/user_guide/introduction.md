@@ -92,8 +92,8 @@ spdx-tool [options] <command> [arguments]
 * `help <command>` - Display extended help about a command
 * `add-package` - Add package to SPDX document (workflow only)
 * `add-relationship <spdx.json> <args>` - Add relationship between elements
-* `copy-package <spdx.json> <args>` - Copy package between SPDX documents (workflow only)
-* `diagram <spdx.json> <mermaid.txt>` - Generate mermaid diagram
+* `copy-package <spdx.json> <args>` - Copy package between SPDX documents
+* `diagram <spdx.json> <mermaid.txt> [tools]` - Generate mermaid diagram
 * `find-package <spdx.json> <criteria>` - Find package ID in SPDX document
 * `get-version <spdx.json> <criteria>` - Get the version of an SPDX package
 * `hash <operation> <algorithm> <file>` - Generate or verify hashes of files
@@ -914,7 +914,7 @@ Example validation report:
 
 ✓ SpdxTool_AddPackage - Passed
 ✓ SpdxTool_AddRelationship - Passed
-✓ SpdxTool_Validate - Passed
+✓ SpdxTool_Basic - Passed
 ✓ SpdxTool_CopyPackage - Passed
 ✓ SpdxTool_Diagram - Passed
 ✓ SpdxTool_FindPackage - Passed
@@ -946,7 +946,7 @@ Each test exercises a specific SpdxTool command end-to-end and verifies the expe
   `add-relationship` command to add a `CONTAINS` relationship with a comment between them.
   Verifies that the resulting document contains the relationship with the correct type and comment.
 
-* **SpdxTool_Validate** - Creates a valid SPDX document and verifies that the `validate` command
+* **SpdxTool_Basic** - Creates a valid SPDX document and verifies that the `validate` command
   accepts it (exit code 0). Then creates an invalid SPDX document (package missing its SPDXID)
   and verifies that the `validate` command rejects it with an appropriate error message.
 

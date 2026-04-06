@@ -6,7 +6,7 @@
 sections:
   - title: to-markdown Command
     requirements:
-      - id: SpdxTool-Xfm-ToMarkdown
+      - id: SpdxTool-Transform-ToMarkdown
         title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
         tags:
           - spdx

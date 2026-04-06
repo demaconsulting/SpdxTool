@@ -9,7 +9,7 @@ sections:
     sections:
       - title: Utility
         requirements:
-          - id: SpdxTool-Util-SafePath
+          - id: SpdxTool-Utility-SafePath
             title: The PathHelpers unit shall reject path components containing traversal sequences or absolute paths.
             tags:
               - utility
@@ -23,7 +23,7 @@ sections:
               - PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException
               - PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException
 
-          - id: SpdxTool-Util-ValidPath
+          - id: SpdxTool-Utility-ValidPath
             title: The PathHelpers unit shall correctly combine valid relative paths with a base path.
             tags:
               - utility
@@ -36,7 +36,7 @@ sections:
               - PathHelpers_SafePathCombine_NestedPaths_CombinesCorrectly
               - PathHelpers_SafePathCombine_EmptyRelativePath_ReturnsBasePath
 
-          - id: SpdxTool-Util-Wildcard
+          - id: SpdxTool-Utility-Wildcard
             title: The Wildcard unit shall match strings against glob-style wildcard patterns case-insensitively.
             tags:
               - utility

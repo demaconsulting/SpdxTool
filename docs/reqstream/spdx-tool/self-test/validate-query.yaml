@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest ValidateQuery
     requirements:
-      - id: SpdxTool-ST-Query
+      - id: SpdxTool-SelfTest-Query
         title: The SelfTest shall exercise the query command.
         tags:
           - self-test

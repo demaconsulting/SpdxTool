@@ -6,7 +6,7 @@
 sections:
   - title: add-relationship Command
     requirements:
-      - id: SpdxTool-Rel-AddRelationship
+      - id: SpdxTool-Relationship-AddRelationship
         title: The tool shall add relationships to SPDX documents using the add-relationship command.
         tags:
           - spdx

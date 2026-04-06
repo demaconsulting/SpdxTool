@@ -6,7 +6,7 @@
 sections:
   - title: SelfTest Orchestrator
     requirements:
-      - id: SpdxTool-ST-Orchestrate
+      - id: SpdxTool-SelfTest-Orchestrate
         title: The SelfTest orchestrator shall execute all validation steps and collect results.
         tags:
           - self-test

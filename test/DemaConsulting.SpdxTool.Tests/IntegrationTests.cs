@@ -106,7 +106,7 @@ public class IntegrationTests
             Assert.Contains("SpdxTool_RunNuGetWorkflow", results);
             Assert.Contains("SpdxTool_ToMarkdown", results);
             Assert.Contains("SpdxTool_UpdatePackage", results);
-            Assert.Contains("SpdxTool_Validate", results);
+            Assert.Contains("SpdxTool_Basic", results);
             Assert.Contains("""
                                              <ResultSummary outcome="Completed">
                                                <Counters total="14" executed="14" passed="14" failed="0" />
@@ -161,7 +161,7 @@ public class IntegrationTests
             Assert.Contains("SpdxTool_RunNuGetWorkflow", results);
             Assert.Contains("SpdxTool_ToMarkdown", results);
             Assert.Contains("SpdxTool_UpdatePackage", results);
-            Assert.Contains("SpdxTool_Validate", results);
+            Assert.Contains("SpdxTool_Basic", results);
             Assert.Contains("<testsuites name=\"DemaConsulting.SpdxTool Validation Results -", results);
         }
         finally

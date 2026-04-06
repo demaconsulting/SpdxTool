@@ -6,7 +6,7 @@
 sections:
   - title: get-version Command
     requirements:
-      - id: SpdxTool-Pkg-GetVersion
+      - id: SpdxTool-Package-GetVersion
         title: The tool shall retrieve package versions from SPDX documents using the get-version command.
         tags:
           - spdx

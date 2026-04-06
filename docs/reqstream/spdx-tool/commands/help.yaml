@@ -6,7 +6,7 @@
 sections:
   - title: help Command
     requirements:
-      - id: SpdxTool-Cmd-HelpCommand
+      - id: SpdxTool-Command-HelpCommand
         title: The help command shall display extended usage information for a specified command.
         tags:
           - cli

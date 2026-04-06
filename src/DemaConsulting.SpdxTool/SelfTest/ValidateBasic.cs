@@ -40,18 +40,18 @@ internal static class ValidateBasic
         // Report validation result to console
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_Validate - Passed");
+            context.WriteLine($"✓ SpdxTool_Basic - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_Validate - Failed");
+            context.WriteError($"✗ SpdxTool_Basic - Failed");
         }
 
         // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
-                Name = "SpdxTool_Validate",
+                Name = "SpdxTool_Basic",
                 ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateBasic",
                 ComputerName = Environment.MachineName,
                 StartTime = DateTime.Now,

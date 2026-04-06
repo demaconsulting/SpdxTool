@@ -6,7 +6,7 @@
 sections:
   - title: set-variable Command
     requirements:
-      - id: SpdxTool-Wkf-SetVariable
+      - id: SpdxTool-Workflow-SetVariable
         title: The tool shall support setting variables within workflows using the set-variable command.
         tags:
           - workflow

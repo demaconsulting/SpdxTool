@@ -6,7 +6,7 @@
 sections:
   - title: copy-package Command
     requirements:
-      - id: SpdxTool-Pkg-CopyPackage
+      - id: SpdxTool-Package-CopyPackage
         title: The tool shall copy packages between SPDX documents using the copy-package command.
         tags:
           - spdx
