@@ -92,7 +92,7 @@ spdx-tool [options] <command> [arguments]
 * `help <command>` - Display extended help about a command
 * `add-package` - Add package to SPDX document (workflow only)
 * `add-relationship <spdx.json> <args>` - Add relationship between elements
-* `copy-package <spdx.json> <args>` - Copy package between SPDX documents (workflow only)
+* `copy-package <spdx.json> <args>` - Copy package between SPDX documents
 * `diagram <spdx.json> <mermaid.txt> [tools]` - Generate mermaid diagram
 * `find-package <spdx.json> <criteria>` - Find package ID in SPDX document
 * `get-version <spdx.json> <criteria>` - Get the version of an SPDX package
