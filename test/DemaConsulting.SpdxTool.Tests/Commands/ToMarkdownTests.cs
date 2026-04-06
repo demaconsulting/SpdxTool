@@ -154,15 +154,15 @@ public class ToMarkdownTests
 
             // Assert: Verify the root packages section
             var rootPackagesIndex = markdown.IndexOf("# Root Packages", StringComparison.Ordinal);
-            Assert.IsGreaterThanOrEqualTo(0, rootPackagesIndex);
+            Assert.IsGreaterThanOrEqualTo(rootPackagesIndex, 0);
 
             // Assert: Verify the packages section
             var packagesIndex = markdown.IndexOf("# Packages", StringComparison.Ordinal);
-            Assert.IsGreaterThanOrEqualTo(0, packagesIndex);
+            Assert.IsGreaterThanOrEqualTo(packagesIndex, 0);
 
             // Assert: Verify the tools section
             var toolsIndex = markdown.IndexOf("# Tools", StringComparison.Ordinal);
-            Assert.IsGreaterThanOrEqualTo(0, toolsIndex);
+            Assert.IsGreaterThanOrEqualTo(toolsIndex, 0);
 
             // Assert: Verify "Test Application" is a root package
             var testPackageIndex = markdown.IndexOf("| Test Application | 1.2.3 | MIT |", StringComparison.Ordinal);
@@ -174,7 +174,7 @@ public class ToMarkdownTests
 
             // Assert: Verify "Test Tool" is a tool
             var testToolPosition = markdown.IndexOf("| Test Tool | 3.4.5 | MIT |", StringComparison.Ordinal);
-            Assert.IsGreaterThan(toolsIndex, testToolPosition);
+            Assert.IsGreaterThan(testToolPosition, toolsIndex);
         }
         finally
         {

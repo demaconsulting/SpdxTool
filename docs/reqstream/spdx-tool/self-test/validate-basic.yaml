@@ -7,12 +7,12 @@ sections:
   - title: SelfTest ValidateBasic
     requirements:
       - id: SpdxTool-ST-Basic
-        title: The SelfTest shall exercise the basic commands (version, help, silent, log).
+        title: The SelfTest shall exercise the validate command with basic CLI flags (silent, log).
         tags:
           - self-test
         justification: |
-          Self-validation of basic tool functionality ensures the core CLI features
-          (version reporting, help display, silent mode, logging) work correctly
+          Self-validation of basic tool functionality ensures the core CLI flags
+          (silent mode, logging) work correctly with the validate command
           after installation or deployment.
         tests:
           - SpdxTool_Basic

@@ -136,6 +136,10 @@ internal static class ValidateRenameId
                 Packages:
                 [
                     { Id: "SPDXRef-Package-2" }
+                ],
+                Relationships:
+                [
+                    { RelatedElement: "SPDXRef-Package-2" }
                 ]
             };
         }
