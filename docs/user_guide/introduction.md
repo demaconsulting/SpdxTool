@@ -914,7 +914,7 @@ Example validation report:
 
 ✓ SpdxTool_AddPackage - Passed
 ✓ SpdxTool_AddRelationship - Passed
-✓ SpdxTool_Validate - Passed
+✓ SpdxTool_Basic - Passed
 ✓ SpdxTool_CopyPackage - Passed
 ✓ SpdxTool_Diagram - Passed
 ✓ SpdxTool_FindPackage - Passed
@@ -946,7 +946,7 @@ Each test exercises a specific SpdxTool command end-to-end and verifies the expe
   `add-relationship` command to add a `CONTAINS` relationship with a comment between them.
   Verifies that the resulting document contains the relationship with the correct type and comment.
 
-* **SpdxTool_Validate** - Creates a valid SPDX document and verifies that the `validate` command
+* **SpdxTool_Basic** - Creates a valid SPDX document and verifies that the `validate` command
   accepts it (exit code 0). Then creates an invalid SPDX document (package missing its SPDXID)
   and verifies that the `validate` command rejects it with an appropriate error message.
 

@@ -102,7 +102,7 @@ Running self-validation produces a report containing the following information:
 
 ✓ SpdxTool_AddPackage - Passed
 ✓ SpdxTool_AddRelationship - Passed
-✓ SpdxTool_Validate - Passed
+✓ SpdxTool_Basic - Passed
 ✓ SpdxTool_CopyPackage - Passed
 ✓ SpdxTool_Diagram - Passed
 ✓ SpdxTool_FindPackage - Passed
@@ -126,7 +126,7 @@ Each test in the report proves a specific command works correctly:
 
 - **SpdxTool_AddPackage** - `add-package` command adds a package with relationships to an SPDX file.
 - **SpdxTool_AddRelationship** - `add-relationship` command adds a relationship between SPDX elements.
-- **SpdxTool_Validate** - `validate` command accepts valid and rejects invalid SPDX files.
+- **SpdxTool_Basic** - `validate` command accepts valid and rejects invalid SPDX files.
 - **SpdxTool_CopyPackage** - `copy-package` command copies a package with relationships between SPDX files.
 - **SpdxTool_Diagram** - `diagram` command generates a Mermaid diagram from an SPDX file.
 - **SpdxTool_FindPackage** - `find-package` command locates a package by name in an SPDX file.
