@@ -1,0 +1,20 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Utility Requirements
+        sections:
+          - title: Wildcard Requirements
+            requirements:
+              - id: SpdxTool-Utility-Wildcard
+                title: The Wildcard unit shall match strings against glob-style wildcard patterns case-insensitively.
+                tags:
+                  - utility
+                justification: |
+                  Commands that filter SPDX content by name require wildcard matching that
+                  is consistent across case-sensitive (Linux) and case-insensitive (Windows,
+                  macOS) file systems.
+                tests:
+                  - Wildcard_ExactMatch_ReturnsTrue
+                  - Wildcard_AsteriskPattern_MatchesMultipleChars
+                  - Wildcard_QuestionMarkPattern_MatchesSingleChar

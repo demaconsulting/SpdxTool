@@ -67,10 +67,19 @@ public sealed class Validate : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Run the validate command from CLI arguments.
+    /// </summary>
+    /// <param name="context">Program context</param>
+    /// <param name="args">CLI arguments: args[0] is the SPDX file path; optional subsequent args may include "ntia".</param>
+    /// <remarks>
+    ///     Parses the SPDX file path from the first argument and detects the case-sensitive literal
+    ///     "ntia" in any subsequent argument to enable NTIA minimum-elements checking.
+    /// </remarks>
+    /// <exception cref="CommandUsageException">Thrown when no arguments are provided.</exception>
     public override void Run(Context context, string[] args)
     {
-        // Report an error if for missing arguments
+        // Report an error for missing arguments
         if (args.Length == 0)
         {
             throw new CommandUsageException("'validate' command missing arguments");
@@ -84,7 +93,18 @@ public sealed class Validate : Command
         DoValidate(context, spdxFile, ntia);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Run the validate command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context</param>
+    /// <param name="step">The YAML mapping node representing the workflow step.</param>
+    /// <param name="variables">Variable map for substitution in input values.</param>
+    /// <remarks>
+    ///     Reads the required <c>spdx</c> input and the optional <c>ntia</c> input from the YAML step.
+    ///     The <c>ntia</c> input is evaluated case-insensitively (via <c>ToLowerInvariant()</c>),
+    ///     so "true", "True", and "TRUE" all enable NTIA checking.
+    /// </remarks>
+    /// <exception cref="YamlException">Thrown when the required <c>spdx</c> input is missing.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -107,7 +127,7 @@ public sealed class Validate : Command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="spdxFile">SPDX document file name</param>
-    /// <param name="ntia">NTIA flag</param>
+    /// <param name="ntia">When <c>true</c>, NTIA minimum-elements checks are applied in addition to SPDX specification validation.</param>
     /// <exception cref="CommandErrorException">on issues</exception>
     public static void DoValidate(Context context, string spdxFile, bool ntia)
     {
@@ -130,6 +150,7 @@ public sealed class Validate : Command
             context.WriteWarning(issue);
         }
 
+        // Write a blank line to visually separate the warning list from the error summary in user output
         context.WriteLine("");
 
         // Throw error

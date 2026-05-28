@@ -1,0 +1,59 @@
+---
+# Pandoc document definition for SpdxTool Software Design Document
+
+# Resource paths for finding files and templates
+resource-path:
+  - docs/design
+  - docs/template
+
+# Input files in reading order (relative to project root)
+input-files:
+  - docs/design/title.txt
+  - docs/design/introduction.md
+  - docs/design/spdx-tool/spdx-tool.md
+  - docs/design/spdx-tool/commands/commands.md
+  - docs/design/spdx-tool/commands/add-package.md
+  - docs/design/spdx-tool/commands/add-relationship.md
+  - docs/design/spdx-tool/commands/copy-package.md
+  - docs/design/spdx-tool/commands/diagram.md
+  - docs/design/spdx-tool/commands/find-package.md
+  - docs/design/spdx-tool/commands/get-version.md
+  - docs/design/spdx-tool/commands/hash.md
+  - docs/design/spdx-tool/commands/help.md
+  - docs/design/spdx-tool/commands/print.md
+  - docs/design/spdx-tool/commands/query.md
+  - docs/design/spdx-tool/commands/rename-id.md
+  - docs/design/spdx-tool/commands/run-workflow.md
+  - docs/design/spdx-tool/commands/set-variable.md
+  - docs/design/spdx-tool/commands/to-markdown.md
+  - docs/design/spdx-tool/commands/update-package.md
+  - docs/design/spdx-tool/commands/validate.md
+  - docs/design/spdx-tool/self-test/self-test.md
+  - docs/design/spdx-tool/self-test/validate.md
+  - docs/design/spdx-tool/self-test/validate-add-package.md
+  - docs/design/spdx-tool/self-test/validate-add-relationship.md
+  - docs/design/spdx-tool/self-test/validate-basic.md
+  - docs/design/spdx-tool/self-test/validate-copy-package.md
+  - docs/design/spdx-tool/self-test/validate-diagram.md
+  - docs/design/spdx-tool/self-test/validate-find-package.md
+  - docs/design/spdx-tool/self-test/validate-get-version.md
+  - docs/design/spdx-tool/self-test/validate-hash.md
+  - docs/design/spdx-tool/self-test/validate-ntia.md
+  - docs/design/spdx-tool/self-test/validate-query.md
+  - docs/design/spdx-tool/self-test/validate-rename-id.md
+  - docs/design/spdx-tool/self-test/validate-run-nuget-workflow.md
+  - docs/design/spdx-tool/self-test/validate-to-markdown.md
+  - docs/design/spdx-tool/self-test/validate-update-package.md
+  - docs/design/spdx-tool/utility/utility.md
+  - docs/design/spdx-tool-targets/spdx-tool-targets.md
+# Template configuration
+template: template.html
+
+# Table of contents settings
+table-of-contents: true
+
+# Enable numbered sections
+number-sections: true
+
+# Standalone document
+standalone: true

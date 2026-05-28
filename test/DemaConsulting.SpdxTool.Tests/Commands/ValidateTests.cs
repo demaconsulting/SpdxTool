@@ -23,13 +23,12 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'validate' command
 /// </summary>
-[TestClass]
 public class ValidateTests
 {
     /// <summary>
     ///     Test that validate command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Validate_MissingArguments_ReportsError()
     {
         // Act: Run the command
@@ -40,14 +39,14 @@ public class ValidateTests
             "validate");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'validate' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that validate command with missing SPDX file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Validate_MissingSpdxFile_ReportsError()
     {
         // Act: Run the command
@@ -59,14 +58,14 @@ public class ValidateTests
             "missing.spdx.json");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
     ///     Test that validate command with valid SPDX document succeeds
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Validate_ValidSpdxDocument_Succeeds()
     {
         const string spdxContents =
@@ -116,7 +115,7 @@ public class ValidateTests
                 "test.spdx.json");
 
             // Assert: Verify success reported
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
         }
         finally
         {
@@ -127,7 +126,7 @@ public class ValidateTests
     /// <summary>
     ///     Test that validate command with valid document with no files analyzed succeeds
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Validate_ValidDocumentNoFilesAnalyzed_Succeeds()
     {
         const string spdxContents =
@@ -177,7 +176,7 @@ public class ValidateTests
                 "test.spdx.json");
 
             // Assert: Verify success (validation checks are lenient)
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
         }
         finally
         {
@@ -188,7 +187,7 @@ public class ValidateTests
     /// <summary>
     ///     Test that validate command with NTIA-valid document succeeds
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Validate_NtiaValidDocument_Succeeds()
     {
         const string spdxContents =
@@ -240,7 +239,7 @@ public class ValidateTests
                 "ntia");
 
             // Assert: Verify success reported
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
         }
         finally
         {
@@ -251,7 +250,7 @@ public class ValidateTests
     /// <summary>
     ///     Test that validate command with NTIA-invalid document reports NTIA errors
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Validate_NtiaInvalidDocument_ReportsNtiaErrors()
     {
         const string spdxContents =
@@ -302,7 +301,7 @@ public class ValidateTests
                 "ntia");
 
             // Assert: Verify error reported (missing supplier for NTIA)
-            Assert.AreEqual(1, exitCode);
+            Assert.Equal(1, exitCode);
             Assert.Contains("Issues in test.spdx.json", output);
         }
         finally

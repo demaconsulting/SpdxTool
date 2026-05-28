@@ -57,6 +57,12 @@ dlldata.c
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
 
+# .NET
+*.user
+*.suo
+.vs/
+*.slnx.user
+
 # .NET Core
 project.lock.json
 project.fragment.lock.json

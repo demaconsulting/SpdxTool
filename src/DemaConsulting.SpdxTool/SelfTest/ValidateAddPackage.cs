@@ -25,15 +25,29 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of AddPackage
+///     Self-test step that exercises the <c>add-package</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that a package and its BUILD_TOOL_OF relationship can be added to an SPDX document
+///     via a workflow file, and that the resulting document contains the expected entries. Uses a
+///     temporary <c>validate.tmp</c> directory in the current working directory; callers must ensure
+///     sequential execution to avoid races on that directory and on the process-wide current directory
+///     set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateAddPackage
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the add-package self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_AddPackage</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
@@ -41,7 +55,7 @@ internal static class ValidateAddPackage
         // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_AddPackage - Passed");
+            context.WriteLine("✓ SpdxTool_AddPackage - Passed");
         }
         else
         {
@@ -60,9 +74,23 @@ internal static class ValidateAddPackage
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual add-package validation in a temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns><c>true</c> if the command succeeded and the SPDX document matches expectations; otherwise <c>false</c>.</returns>
+    /// <remarks>
+    ///     <para>
+    ///         Creates <c>validate.tmp</c>, writes the test SPDX document and workflow file, invokes
+    ///         <see cref="Validate.RunSpdxTool(string, string[])"/>, then reads and verifies the
+    ///         modified SPDX document using a positional list pattern match — the order of packages
+    ///         and relationships in the deserialized document is significant.
+    ///     </para>
+    ///     <para>
+    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
+    ///         even if directory creation or file writes only partially succeeded.
+    ///     </para>
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try

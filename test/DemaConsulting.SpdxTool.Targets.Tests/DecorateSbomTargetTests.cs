@@ -30,14 +30,13 @@ namespace DemaConsulting.SpdxTool.Targets.Tests;
 ///     DecorateSbomTarget behavior. They require spdx-tool to be available
 ///     on the PATH (installed globally in CI via dotnet tool install --global).
 /// </remarks>
-[TestClass]
 public class DecorateSbomTargetTests
 {
     /// <summary>
     ///     Test that a single-TFM project pack with DecorateSBOM=true decorates the SBOM.
     /// </summary>
-    [TestMethod]
-    public void SingleTfmProject_DecorateSbomTrue_DecoratesSbom()
+    [Fact]
+    public void SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom()
     {
         // Arrange
         var fixtureDir = FixturePaths.GetSingleTfmProjectPath();
@@ -51,23 +50,23 @@ public class DecorateSbomTargetTests
             "--configuration", "Release");
 
         // Assert: pack succeeded and decoration ran
-        Assert.AreEqual(0, exitCode, $"dotnet pack failed:\n{output}");
+        Assert.True(exitCode == 0, $"dotnet pack failed:\n{output}");
         Assert.Contains("SpdxTool: Decorating SBOM in TestFixtures.SingleTfmProject.1.0.0.nupkg", output);
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgDir = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(fixtureDir, "bin");
-        nupkgDir = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(nupkgDir, "Release");
-        var nupkgPath = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(nupkgDir, "TestFixtures.SingleTfmProject.1.0.0.nupkg");
-        Assert.IsTrue(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
+        var nupkgDir = Path.Combine(fixtureDir, "bin");
+        nupkgDir = Path.Combine(nupkgDir, "Release");
+        var nupkgPath = Path.Combine(nupkgDir, "TestFixtures.SingleTfmProject.1.0.0.nupkg");
+        Assert.True(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
 
     /// <summary>
     ///     Test that a multi-TFM project pack with DecorateSBOM=true decorates the SBOM.
     /// </summary>
-    [TestMethod]
-    public void MultiTfmProject_DecorateSbomTrue_DecoratesSbom()
+    [Fact]
+    public void SpdxToolTargets_DecorateSbom_MultiTfm_True_DecoratesSbom()
     {
         // Arrange
         var fixtureDir = FixturePaths.GetMultiTfmProjectPath();
@@ -81,23 +80,23 @@ public class DecorateSbomTargetTests
             "--configuration", "Release");
 
         // Assert: pack succeeded and decoration ran
-        Assert.AreEqual(0, exitCode, $"dotnet pack failed:\n{output}");
+        Assert.True(exitCode == 0, $"dotnet pack failed:\n{output}");
         Assert.Contains("SpdxTool: Decorating SBOM in TestFixtures.MultiTfmProject.1.0.0.nupkg", output);
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgDir = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(fixtureDir, "bin");
-        nupkgDir = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(nupkgDir, "Release");
-        var nupkgPath = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(nupkgDir, "TestFixtures.MultiTfmProject.1.0.0.nupkg");
-        Assert.IsTrue(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
+        var nupkgDir = Path.Combine(fixtureDir, "bin");
+        nupkgDir = Path.Combine(nupkgDir, "Release");
+        var nupkgPath = Path.Combine(nupkgDir, "TestFixtures.MultiTfmProject.1.0.0.nupkg");
+        Assert.True(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
 
     /// <summary>
     ///     Test that DecorateSBOM=false skips the decoration target.
     /// </summary>
-    [TestMethod]
-    public void SingleTfmProject_DecorateSbomFalse_SkipsDecoration()
+    [Fact]
+    public void SpdxToolTargets_DecorateSbom_SingleTfm_False_SkipsDecoration()
     {
         // Arrange
         var fixtureDir = FixturePaths.GetSingleTfmProjectPath();
@@ -112,16 +111,15 @@ public class DecorateSbomTargetTests
             "/p:DecorateSBOM=false");
 
         // Assert: pack succeeded but decoration did NOT run
-        Assert.AreEqual(0, exitCode, $"dotnet pack failed:\n{output}");
-        Assert.DoesNotContain("SpdxTool: Decorating SBOM", output,
-            "Decoration should not run when DecorateSBOM=false");
+        Assert.True(exitCode == 0, $"dotnet pack failed:\n{output}");
+        Assert.DoesNotContain("SpdxTool: Decorating SBOM", output);
     }
 
     /// <summary>
     ///     Test that GenerateSBOM=false skips both SBOM generation and decoration.
     /// </summary>
-    [TestMethod]
-    public void SingleTfmProject_GenerateSbomFalse_SkipsEntirely()
+    [Fact]
+    public void SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely()
     {
         // Arrange
         var fixtureDir = FixturePaths.GetSingleTfmProjectPath();
@@ -136,16 +134,15 @@ public class DecorateSbomTargetTests
             "/p:GenerateSBOM=false");
 
         // Assert: pack succeeded but decoration did NOT run
-        Assert.AreEqual(0, exitCode, $"dotnet pack failed:\n{output}");
-        Assert.DoesNotContain("SpdxTool: Decorating SBOM", output,
-            "Decoration should not run when GenerateSBOM=false");
+        Assert.True(exitCode == 0, $"dotnet pack failed:\n{output}");
+        Assert.DoesNotContain("SpdxTool: Decorating SBOM", output);
     }
 
     /// <summary>
     ///     Test that a missing workflow file produces a clear error message.
     /// </summary>
-    [TestMethod]
-    public void SingleTfmProject_MissingWorkflow_ReportsError()
+    [Fact]
+    public void SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError()
     {
         // Arrange
         var fixtureDir = FixturePaths.GetSingleTfmProjectPath();
@@ -160,7 +157,7 @@ public class DecorateSbomTargetTests
             "/p:SpdxWorkflowFile=nonexistent-workflow.yaml");
 
         // Assert: pack failed with clear error
-        Assert.AreNotEqual(0, exitCode, "dotnet pack should fail with missing workflow file");
+        Assert.NotEqual(0, exitCode);
         Assert.Contains("SpdxTool workflow file not found", output);
     }
 
@@ -170,8 +167,8 @@ public class DecorateSbomTargetTests
     /// <param name="projectDir">Path to the project directory.</param>
     private static void CleanBinObj(string projectDir)
     {
-        var binDir = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(projectDir, "bin");
-        var objDir = DemaConsulting.SpdxTool.Utility.PathHelpers.SafePathCombine(projectDir, "obj");
+        var binDir = Path.Combine(projectDir, "bin");
+        var objDir = Path.Combine(projectDir, "obj");
 
         if (Directory.Exists(binDir))
         {
@@ -195,6 +192,6 @@ public class DecorateSbomTargetTests
             e => e.FullName.Contains("_manifest") &&
                  e.FullName.EndsWith("manifest.spdx.json", StringComparison.OrdinalIgnoreCase));
 
-        Assert.IsNotNull(sbomEntry, "NuPkg should contain _manifest/spdx_2.2/manifest.spdx.json");
+        Assert.NotNull(sbomEntry);
     }
 }

@@ -1,19 +1,59 @@
-# DemaConsulting.SpdxTool diagram Command Requirements
-#
-# This file contains requirements for the diagram command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: diagram Command
-    requirements:
-      - id: SpdxTool-Transform-Diagram
-        title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
-        tags:
-          - spdx
-        justification: |
-          Visual representations of SPDX relationships and package hierarchies
-          help users understand complex dependency graphs. Mermaid is a popular
-          text-based diagramming language.
-        tests:
-          - Diagram_ValidSpdxFile_GeneratesDiagram
-          - Diagram_WithToolsOption_GeneratesDiagramWithTools
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: Diagram Requirements
+            requirements:
+              - id: SpdxTool-Transform-Diagram
+                title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
+                tags:
+                  - spdx
+                justification: |
+                  Visual representations of SPDX relationships and package hierarchies
+                  help users understand complex dependency graphs. Mermaid is a popular
+                  text-based diagramming language.
+                tests:
+                  - Diagram_ValidSpdxFile_GeneratesDiagram
+                  - Diagram_WithToolsOption_GeneratesDiagramWithTools
+
+              - id: SpdxTool-Transform-Diagram-Workflow
+                title: >-
+                  The diagram command shall accept spdx, mermaid, and optional tools inputs when invoked
+                  from a workflow step.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow users need to generate Mermaid diagrams as part of automated
+                  pipelines using structured YAML inputs rather than positional CLI arguments.
+                tests:
+                  - Diagram_ValidSpdxFile_GeneratesDiagram
+
+              - id: SpdxTool-Transform-Diagram-ToolsFilter
+                title: >-
+                  When the tools option is not specified, the diagram command shall exclude tool-related
+                  relationships from the generated Mermaid diagram.
+                tags:
+                  - spdx
+                justification: |
+                  Tool relationships (GENERATED_FROM, BUILD_TOOL_OF, etc.) are implementation
+                  details that clutter diagrams when not requested. Excluding them by default
+                  produces cleaner, more readable diagrams.
+                tests:
+                  - Diagram_WithoutToolsOption_ExcludesToolRelationships
+
+              - id: SpdxTool-Transform-Diagram-Validate
+                title: >-
+                  The diagram command shall validate its inputs and report an error for missing or
+                  invalid values.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that users can
+                  diagnose configuration mistakes quickly.
+                tests:
+                  - Diagram_MissingArguments_ReportsError
+                  - Diagram_InsufficientArguments_ReportsError
+                  - Diagram_MissingSpdxFile_ReportsError
+                  - Diagram_InvalidOption_ReportsError

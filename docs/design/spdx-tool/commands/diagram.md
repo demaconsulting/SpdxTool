@@ -1,73 +1,80 @@
-# DemaConsulting.SpdxTool diagram Command Design
+### Diagram
 
-## Purpose
+#### Purpose
 
-The `diagram` command generates a Mermaid entity-relationship diagram from the
-relationships in an SPDX document. Only package-to-package relationships are
-rendered. Tool relationships (`BUILD_TOOL_OF`, `DEV_TOOL_OF`, `TEST_TOOL_OF`) are
-excluded by default unless the `tools` option is specified.
+Diagram generates a Mermaid entity-relationship diagram file from the relationships defined in an
+SPDX document. Only package-to-package relationships are rendered. Build, dev, and test tool
+relationships are optionally filtered out. It is available from both the CLI and from workflow
+YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+N/A — Diagram is a stateless singleton.
 
-```text
-spdx-tool diagram <spdx.json> <mermaid.txt> [tools]
-```
+**Instance**: `Diagram` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record advertising name, summary, usage details, and the
+  singleton instance.
 
-- `spdx.json` — SPDX document to read
-- `mermaid.txt` — Output file for the Mermaid diagram
-- `tools` — Optional flag; includes tool relationships in the diagram
+#### Key Methods
 
-### Workflow YAML usage
+**Run(Context, string[])**: Parses spdxFile, mermaidFile, and an optional "tools" flag from CLI
+arguments and calls GenerateDiagram.
 
-```yaml
+- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, mermaidFile,
+  optional "tools"].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 2.
+- *Post-conditions*: The mermaid file is written to disk.
+- *Note*: The `Context` parameter is not used by this command because all output is written directly
+  to the mermaid file via `File.WriteAllText`.
 
-- command: diagram
+**Run(Context, YamlMappingNode, Dictionary)**: Parses spdx, mermaid, and tools inputs from the YAML
+step node and calls GenerateDiagram.
 
-  inputs:
-    spdx: <spdx.json>             # SPDX file name (required)
-    mermaid: <mermaid.txt>        # Output Mermaid file (required)
-    tools: true                   # Optional: include tools (default: false)
-```
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: spdx and mermaid inputs are required.
+- *Post-conditions*: The mermaid file is written.
+- *Note*: The `Context` parameter is not used by this command because all output is written directly
+  to the mermaid file via `File.WriteAllText`.
 
-## Implementation
+**GenerateDiagram(string, string, bool)**: Loads the SPDX document, filters relationships to those
+between two packages, optionally excludes BuildToolOf/DevToolOf/TestToolOf relationships, resolves
+RelationshipDirection to determine parent/child orientation, and writes an erDiagram block to the
+output file. Each line uses the format "Name / Version" ||--|| "Name / Version" : "TYPE".
 
-1. Loads the SPDX document from `spdx.json`.
-2. Initializes a `StringBuilder` with `erDiagram` as the opening line.
-3. Filters relationships:
-   - Excludes tool relationships unless `tools = true`.
-   - Retains only relationships where both `Id` and `RelatedSpdxElement` resolve
+- *Parameters*: `string spdxFile` — SPDX JSON file path; `string mermaidFile` — output file path;
+  `bool tools` — include build/dev/test tool relationships (default false).
+- *Returns*: `void`
+- *Preconditions*: spdxFile must be a valid SPDX JSON document.
+- *Post-conditions*: mermaidFile is written with an erDiagram block containing one line per
+  qualifying relationship.
 
-     to `SpdxPackage` elements in the document.
+#### Error Handling
 
-4. For each retained relationship, determines the direction (Parent, Child, Sibling)
+**CommandUsageException** — thrown by Run(Context, string[]) when fewer than two arguments are
+provided or an unrecognized option token is encountered.
 
-   and writes a Mermaid edge of the form:
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when spdx or mermaid inputs
+are missing, or when the tools value is not a valid boolean.
 
-   ```text
-   "from.Name / from.Version" ||--|| "to.Name / to.Version" : "TYPE"
-   ```
+**InvalidDataException** — defensive dead code in GenerateDiagram: the `switch` expression
+on `RelationshipDirection` includes a `_ => throw new InvalidDataException()` arm, but
+`RelationshipDirection.GetDirection()` always returns `Parent`, `Child`, or `Sibling`
+(unmapped relationship types default to `Sibling`), making this arm permanently unreachable.
+The arm is retained as a defensive guard against future changes to the direction enum.
 
-5. Writes the resulting diagram string to the output file via `File.WriteAllText`.
+#### Dependencies
 
-## Error Handling
+- Command (abstract base class)
+- SpdxDocument, SpdxPackage, SpdxRelationship, SpdxRelationshipType (DemaConsulting.SpdxModel)
+- RelationshipDirection (Spdx units — GetDirection extension method)
+- SpdxHelpers (Spdx units)
+- System.Text.StringBuilder
+- YamlDotNet (YamlMappingNode, YamlException)
 
-| Condition | Exception |
-| :--- | :--- |
-| Fewer than 2 CLI arguments | `CommandUsageException` |
-| Unknown CLI option | `CommandUsageException` |
-| Invalid `tools` value (workflow) | `YamlException` |
-| Missing `spdx` input (workflow) | `YamlException` |
-| Missing `mermaid` input (workflow) | `YamlException` |
-| Relationship direction is unknown | `InvalidDataException` (internal guard) |
+#### Callers
 
-## Constraints
-
-- Only package-to-package relationships appear in the diagram; file or snippet
-
-  relationships are silently skipped.
-
-- Package labels use the format `"Name / Version"`.
-- The output file is overwritten unconditionally.
-- Variable expansion is applied to all string inputs via `GetMapString`.
+- CommandsRegistry — routes CLI and workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: diagram

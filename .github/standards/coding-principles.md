@@ -3,21 +3,45 @@ name: Coding Principles
 description: Follow these standards when developing any software code.
 ---
 
-# Coding Principles Standards
-
-This document defines universal coding principles and quality standards for software development within
-Continuous Compliance environments.
-
 # Core Principles
 
 ## Literate Coding
 
 All code MUST follow literate programming principles:
 
-- **Intent Comments**: Every function/method begins with a comment explaining WHY (not what)
-- **Logical Separation**: Complex functions use comments to separate logical blocks
-- **Public Documentation**: All public interfaces have comprehensive documentation
+- **Intent Documentation**: Function and method documentation (XmlDoc, Doxygen,
+  JSDoc, etc.) MUST explain WHY the function exists and its design purpose -
+  not just restate what it does - because reviewers must verify implementation
+  matches design intent without reading the full codebase
+- **Logical Separation**: Complex functions use block comments to separate and
+  describe logical steps within the implementation
+- **Full Symbol Documentation**: ALL symbols have comprehensive documentation —
+  not just the public interface, because reviewers and auditors must verify every
+  implementation detail. Access-level specifics vary by language; see the language-specific standard.
 - **Clarity Over Cleverness**: Code should be immediately understandable by team members
+
+## API Documentation
+
+Good API documentation enables consumers, reviewers, and agents to use an
+interface correctly without reading the implementation:
+
+- **Self-Contained**: Each member's documentation must be fully understandable
+  in isolation - consumers must not need to read the implementation to call it
+  correctly
+- **Intent-Focused**: Explain WHY the member exists and WHAT problem it solves,
+  not just restate the name - this lets reviewers verify the implementation
+  matches design intent
+- **Parameter and Return Contracts**: Document valid ranges, null handling, and
+  boundary cases - agents and consumers rely on these contracts to call the API
+  correctly
+- **Error Conditions**: Document every exception or error code, the condition
+  that triggers it, and how the caller should respond - undocumented errors
+  cannot be handled correctly
+- **Side Effects**: Document I/O, state mutation, resource allocation, or
+  network calls - hidden side effects cause integration bugs that are hard to
+  diagnose
+- **Thread Safety**: State whether the API is safe for concurrent use - missing
+  this forces consumers to read the implementation or risk data races
 
 ## Universal Code Architecture Principles
 
@@ -28,9 +52,8 @@ All code MUST follow literate programming principles:
 - **Pure Functions**: Minimize side effects and hidden state
 - **Clear Interfaces**: Well-defined API contracts
 - **Separation of Concerns**: Business logic separate from infrastructure
-- **Repository Structure Adherence**: Before creating any new files, analyze the repository structure to
-  understand established directory conventions and file placement patterns. Place new files in locations
-  consistent with existing patterns.
+- **Repository Structure Adherence**: Analyze existing directory conventions
+  before creating files; place new files consistent with established patterns
 
 ### Compliance-Ready Code Structure
 
@@ -50,21 +73,18 @@ All code MUST follow literate programming principles:
 
 ## Universal Anti-Patterns
 
-- **Skip Literate Coding**: Don't skip literate programming comments - they are required for maintainability
-- **Ignore Compiler Warnings**: Don't ignore compiler warnings - they exist for quality enforcement
+- **Skip Literate Coding**: Don't skip literate programming comments
+- **Ignore Compiler Warnings**: Don't ignore compiler warnings
 - **Hidden Dependencies**: Don't create untestable code with hidden dependencies
-- **Hidden Functionality**: Don't implement functionality without requirement traceability
+- **Hidden Functionality**: Don't implement functionality without requirement
+  traceability because untraced functionality cannot be validated during audits
 - **Monolithic Functions**: Don't write monolithic functions with multiple responsibilities
-- **Overcomplicated Solutions**: Don't make solutions more complex than necessary - favor simplicity and clarity
+- **Overcomplicated Solutions**: Don't make solutions more complex than necessary
 - **Premature Optimization**: Don't optimize for performance before establishing correctness
 - **Copy-Paste Programming**: Don't duplicate logic - extract common functionality into reusable components
 - **Magic Numbers**: Don't use unexplained constants - either name them or add clear comments
 
 # Language-Specific Implementation
 
-For each detected language:
-
-- **Load Standards**: Read the appropriate `{language}-language.md` file from `.github/standards/`
-- **Apply Tooling**: Use language-specific formatting, linting, and build tools
-- **Follow Conventions**: Apply language-specific naming, patterns, and best practices
-- **Generate Documentation**: Use language-appropriate documentation format (XmlDoc, Doxygen, JSDoc, etc.)
+For each detected language, read `{language}-language.md` from `.github/standards/`
+and apply its standards, tooling, and conventions.

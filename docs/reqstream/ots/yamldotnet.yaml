@@ -1,0 +1,17 @@
+---
+# YamlDotNet OTS requirements
+sections:
+  - title: OTS Software Requirements
+    sections:
+      - title: YamlDotNet Requirements
+        requirements:
+          - id: SpdxTool-OTS-YamlDotNet
+            title: YamlDotNet shall provide YAML deserialization for workflow files.
+            tags:
+              - ots
+            justification: |
+              YamlDotNet provides the YAML parsing infrastructure used by the run-workflow
+              command to load and traverse workflow YAML files. The RepresentationModel API
+              gives direct access to YAML nodes for flexible, schema-free parsing.
+            tests:
+              - SpdxTool_SelfTest_ValidateFlag_Succeeds

@@ -1,0 +1,15 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Program Requirements
+        requirements:
+          - id: SpdxTool-Program-EntryPoint
+            title: Program shall parse command-line flags, dispatch commands, and set the process exit code.
+            justification: |
+              Program is the application entry point and must correctly route every invocation
+              to the right handler based on the supplied global flags and command name.
+            tests:
+              - SpdxTool_Usage_NoArguments_DisplaysError
+              - SpdxTool_Version_ShortFlag_DisplaysVersion
+              - SpdxTool_Usage_ShortHelpFlag_DisplaysUsage

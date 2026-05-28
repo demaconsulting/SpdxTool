@@ -1,24 +1,19 @@
 ---
-# Pandoc document definition for SpdxTool User Guide
-
-# Resource paths for finding files and templates
+# cspell:ignore cicd
 resource-path:
   - docs/user_guide
   - docs/template
-
-# Input files in order (relative to resource-path)
 input-files:
   - docs/user_guide/title.txt
   - docs/user_guide/introduction.md
-
-# Template configuration
+  - docs/user_guide/installation.md
+  - docs/user_guide/usage.md
+  - docs/user_guide/workflows.md
+  - docs/user_guide/msbuild.md
+  - docs/user_guide/validation.md
+  - docs/user_guide/cicd.md
+  - docs/user_guide/use-cases.md
+  - docs/user_guide/troubleshooting.md
 template: template.html
-
-# Table of contents settings
 table-of-contents: true
-
-# Enable numbered sections
 number-sections: true
-
-# Standalone document
-standalone: true

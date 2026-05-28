@@ -32,7 +32,7 @@ public sealed class UpdatePackage : Command
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "update-package";
+    private const string CommandName = "update-package";
 
     /// <summary>
     ///     Singleton instance of this command
@@ -43,7 +43,7 @@ public sealed class UpdatePackage : Command
     ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "update-package",
         "Update package in SPDX document (workflow only).",
         [
@@ -113,8 +113,14 @@ public sealed class UpdatePackage : Command
     /// <param name="spdxFile">SPDX document filename</param>
     /// <param name="packageId">Package ID</param>
     /// <param name="updates">Update information</param>
-    /// <exception cref="CommandUsageException">On usage error</exception>
     /// <exception cref="CommandErrorException">On error</exception>
+    /// <remarks>
+    ///     When the <c>license</c> field is specified, both
+    ///     <see cref="DemaConsulting.SpdxModel.SpdxLicenseElement.ConcludedLicense"/> and
+    ///     <see cref="DemaConsulting.SpdxModel.SpdxPackage.DeclaredLicense"/> are set to the
+    ///     same value. This dual assignment is intentional: SPDX requires both fields, and a
+    ///     single user-supplied license expression is applied to both.
+    /// </remarks>
     public static void UpdatePackageInSpdxFile(string spdxFile, string packageId, Dictionary<string, string> updates)
     {
         // Load the SPDX document
@@ -173,11 +179,16 @@ public sealed class UpdatePackage : Command
     }
 
     /// <summary>
-    ///     Read the package criteria from the inputs
+    ///     Read the package update fields from the YAML inputs.
     /// </summary>
     /// <param name="map">Criteria map</param>
     /// <param name="variables">Currently defined variables</param>
     /// <param name="updates">Criteria dictionary to populate</param>
+    /// <remarks>
+    ///     Only fields present in <paramref name="map"/> are added to <paramref name="updates"/>.
+    ///     Fields absent from the map produce a null from <see cref="Command.GetMapString"/> and
+    ///     are silently omitted, so unspecified fields are never updated on the target package.
+    /// </remarks>
     public static void ParseUpdates(
         YamlMappingNode? map,
         Dictionary<string, string> variables,
@@ -258,6 +269,31 @@ public sealed class UpdatePackage : Command
         if (license != null)
         {
             updates["license"] = license;
+        }
+
+        // Detect any unrecognized keys — these will be passed to UpdatePackageInSpdxFile,
+        // which will throw CommandErrorException for any key not in its switch statement.
+        // This ensures users receive a clear diagnostic rather than silent data loss.
+        if (map == null)
+        {
+            return;
+        }
+
+        var knownKeys = new HashSet<string>
+        {
+            "id", "name", "download", "version", "filename",
+            "supplier", "originator", "homepage", "copyright",
+            "summary", "description", "license"
+        };
+
+        foreach (var (keyNode, _) in map.Children)
+        {
+            var key = keyNode.ToString();
+            if (!knownKeys.Contains(key))
+            {
+                // Add the unknown key so UpdatePackageInSpdxFile's switch default throws
+                updates[key] = string.Empty;
+            }
         }
     }
 }

@@ -1,79 +1,97 @@
-# DemaConsulting.SpdxTool find-package Command Design
+### FindPackage
 
-## Purpose
+#### Purpose
 
-The `find-package` command searches an SPDX document for a package matching
-specified criteria and returns the package's SPDX element ID. Criteria support
-wildcard patterns for flexible matching. The command is available from the
-command-line and from workflow YAML files.
+FindPackage searches an SPDX document for a package that matches a set of key-value criteria (id,
+name, version, filename, download). Wildcard patterns are supported for each criterion. In CLI mode
+it prints the matching package ID to the console; in workflow mode it stores the ID in the named
+output variable. It is available from both the CLI and workflow YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+N/A — FindPackage is a stateless singleton.
 
-```text
-spdx-tool find-package <spdx.json> [criteria]
-```
+**Instance**: `FindPackage` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record for FindPackage.
 
-Criteria are key=value pairs:
+#### Key Methods
 
-- `id=<id>` — Match by SPDX element ID
-- `name=<name>` — Match by package name
-- `version=<version>` — Match by package version
-- `filename=<filename>` — Match by package file name
-- `download=<url>` — Match by download location
+**Run(Context, string[])**: Parses spdxFile and key=value criteria from CLI arguments, finds the
+matching package, and writes its ID to the console.
 
-### Workflow YAML usage
+- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, criteria...].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 2. Each criterion must be in key=value format.
+- *Post-conditions*: The matching package ID is written to context.
 
-```yaml
+**Run(Context, YamlMappingNode, Dictionary)**: Parses output, spdx, and criteria inputs from the
+YAML step node, finds the matching package, and stores its ID in variables[output].
 
-- command: find-package
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: output and spdx inputs are required; at least one criterion should be provided.
+- *Post-conditions*: variables[output] is set to the matching package ID.
 
-  inputs:
-    output: <variable>            # Output variable to store the package ID (required)
-    spdx: <spdx.json>             # SPDX file name (required)
-    id: <id>                      # Optional package ID criterion
-    name: <name>                  # Optional package name criterion
-    version: <version>            # Optional package version criterion
-    filename: <filename>          # Optional package filename criterion
-    download: <url>               # Optional download location criterion
-```
+**ParseCriteria(IEnumerable, Dictionary)**: Splits each "key=value" string from args into a
+criteria dictionary entry. Throws CommandUsageException if any entry does not contain "=".
 
-## Implementation
+- *Parameters*: `IEnumerable<string> args` — criterion strings;
+  `Dictionary<string, string> criteria` — dictionary to populate.
+- *Returns*: `void`
+- *Preconditions*: None.
+- *Post-conditions*: criteria contains all parsed key-value pairs.
 
-1. Loads the SPDX document from `spdx.json`.
-2. `ParseCriteria` populates a `Dictionary<string, string>` from the inputs.
-   - CLI path: splits each `key=value` argument.
-   - Workflow path: reads named fields from the YAML map.
-3. `FindPackageByCriteria` iterates over `doc.Packages` and calls `IsPackageMatch`
+**ParseCriteria(YamlMappingNode?, Dictionary, Dictionary)**: Extracts the optional id, name,
+version, filename, and download fields from a YAML inputs map into the criteria dictionary.
 
-   for each package.
+- *Parameters*: `YamlMappingNode? map` — YAML inputs map;
+  `Dictionary<string, string> variables` — variable map;
+  `Dictionary<string, string> criteria` — dictionary to populate.
+- *Returns*: `void`
+- *Preconditions*: None.
+- *Post-conditions*: criteria contains any criteria fields present in the map.
 
-4. `IsPackageMatch` evaluates each criterion against the corresponding package
+**FindPackageByCriteria(string, IReadOnlyDictionary)**: Loads the SPDX document and returns the
+unique package matching all criteria. Throws if zero or more than one package matches.
 
-   field using `Wildcard.IsMatch`.
+- *Parameters*: `string spdxFile` — SPDX JSON file path;
+  `IReadOnlyDictionary<string, string> criteria` — search criteria.
+- *Returns*: `SpdxPackage`
+- *Preconditions*: spdxFile must exist.
+- *Post-conditions*: Returns exactly one matching package.
 
-5. Exactly one match must exist; zero or multiple matches raise `CommandErrorException`.
-6. CLI path: writes the package ID to the console via `context.WriteLine`.
-7. Workflow path: stores the package ID in `variables[output]`.
+**IsPackageMatch(SpdxPackage, IReadOnlyDictionary)**: Tests a single package against all supplied
+criteria using Wildcard.IsMatch for each field.
 
-## Error Handling
+- *Parameters*: `SpdxPackage package` — package to test;
+  `IReadOnlyDictionary<string, string> criteria` — criteria to match.
+- *Returns*: `bool`
+- *Preconditions*: None.
+- *Post-conditions*: Pure function; no side effects.
 
-| Condition | Exception |
-| :--- | :--- |
-| Fewer than 2 CLI arguments | `CommandUsageException` |
-| Invalid `key=value` format in CLI criterion | `CommandUsageException` |
-| Missing `output` input (workflow) | `YamlException` |
-| Missing `spdx` input (workflow) | `YamlException` |
-| No package matching criteria | `CommandErrorException` |
-| Multiple packages matching criteria | `CommandErrorException` |
+#### Error Handling
 
-## Constraints
+**CommandUsageException** — thrown by Run(Context, string[]) when fewer than two arguments are
+provided; thrown by ParseCriteria(IEnumerable, Dictionary) when a criterion string does not
+contain "=".
 
-- All criteria are optional; with no criteria all packages match (multiple match
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the output or spdx
+inputs are missing.
 
-  error if more than one package exists).
+**CommandErrorException** — thrown by FindPackageByCriteria when no package matches or when multiple
+packages match.
 
-- Criterion values support wildcard patterns (`*`, `?`) via `Wildcard.IsMatch`.
-- The `version` and `filename` criteria only match packages that have those fields set.
-- Variable expansion is applied to all string inputs via `GetMapString`.
+#### Dependencies
+
+- Command (abstract base class)
+- SpdxDocument, SpdxPackage (DemaConsulting.SpdxModel)
+- SpdxHelpers (Spdx units)
+- Wildcard (Utility subsystem — wildcard pattern matching)
+- YamlDotNet (YamlMappingNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — routes CLI and workflow steps
+- GetVersion — calls ParseCriteria and FindPackageByCriteria to locate the target package
+- RunWorkflow — dispatches this command when a workflow step specifies command: find-package

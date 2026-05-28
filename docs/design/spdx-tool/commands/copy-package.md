@@ -1,94 +1,105 @@
-# DemaConsulting.SpdxTool copy-package Command Design
+﻿### CopyPackage
 
-## Purpose
+#### Purpose
 
-The `copy-package` command copies a package (and optionally its children and files)
-from one SPDX document to another. It is available both from the command-line and
-from a workflow YAML file. If the target package already exists in the destination,
-it is enhanced (merged) rather than duplicated.
+CopyPackage copies a package (and optionally its child packages and associated files) from one SPDX
+JSON document to another. If the destination already contains a package with the same identity it is
+enhanced rather than duplicated. It is available from both the CLI and from workflow YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+N/A — CopyPackage is a stateless singleton.
 
-```text
-spdx-tool copy-package <from.spdx.json> <to.spdx.json> <package> [recursive] [files]
-```
+**Instance**: `CopyPackage` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record advertising name, summary, usage details, and the
+  singleton instance.
 
-- `from.spdx.json` — Source SPDX document
-- `to.spdx.json` — Destination SPDX document
-- `package` — Package ID to copy
-- `recursive` — Optional flag; copies child packages recursively
-- `files` — Optional flag; copies associated files
+#### Key Methods
 
-### Workflow YAML usage
+**Run(Context, string[])**: Parses from, to, package, and optional recursive/files flags from
+positional CLI arguments and calls CopyPackageBetweenSpdxFiles.
 
-```yaml
+- *Parameters*: `Context context` — execution context; `string[] args` — [fromFile, toFile,
+  packageId, optional: "recursive", "files"].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 3. packageId must not be empty or "SPDXRef-DOCUMENT".
+- *Post-conditions*: The package (and optionally children) are copied to the destination file.
 
-- command: copy-package
+**Run(Context, YamlMappingNode, Dictionary)**: Parses from, to, package, recursive, files, and
+relationships inputs from the YAML step node and calls CopyPackageBetweenSpdxFiles.
 
-  inputs:
-    from: <from.spdx.json>        # Source SPDX file (required)
-    to: <to.spdx.json>            # Destination SPDX file (required)
-    package: <package>            # Package ID to copy (required)
-    recursive: true               # Optional recursive copy (default: false)
-    files: true                   # Optional copy files (default: false)
-    relationships:                # Optional relationships to add in destination
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: from, to, and package inputs are required.
+- *Post-conditions*: The package is copied with any specified relationships added.
 
-    - type: <relationship>        # Relationship type
+**CopyPackageBetweenSpdxFiles(string, string, string, SpdxRelationship[], bool, bool)**: Loads both
+documents, calls Copy to copy the root package, calls AddRelationship.Add for root relationships,
+optionally calls CopyChildren for recursive copy, and saves the destination document.
 
-      element: <element>          # Related element ID
-      comment: <comment>          # Optional comment
-```
+- *Parameters*: `string fromFile` — source SPDX file; `string toFile` — destination SPDX file;
+  `string packageId` — ID of the package to copy; `SpdxRelationship[] relationships` — additional
+  relationships to add to destination; `bool recursive` — copy child packages recursively;
+  `bool files` — copy package files.
+- *Returns*: `void`
+- *Preconditions*: Both files must exist. packageId must not be empty or "SPDXRef-DOCUMENT".
+- *Post-conditions*: toFile is updated in place.
 
-## Implementation
+**Copy(SpdxDocument, SpdxDocument, string, bool)**: Copies or enhances a single package in memory.
+Sets FilesAnalyzed to false on a new copy unless files is true. Copies SpdxFile entries when files
+is true and the source package has analyzed files.
 
-1. Validates that `package` is not empty and not `"SPDXRef-DOCUMENT"`.
-2. Loads both source (`fromDoc`) and destination (`toDoc`) SPDX documents.
-3. Calls `Copy(fromDoc, toDoc, packageId, files)` to copy or enhance the package:
-   - Looks up the source package by ID; raises `CommandErrorException` if not found.
-   - If a same-identity package exists in the destination, it is enhanced and
+- *Parameters*: `SpdxDocument fromDoc` — source document; `SpdxDocument toDoc` — destination
+  document; `string packageId` — package to copy; `bool files` — include analyzed files.
+- *Returns*: `void`
+- *Preconditions*: The package identified by packageId must exist in fromDoc.
+- *Post-conditions*: toDoc contains the package; any required SpdxFile entries are added.
 
-     renamed; otherwise a deep copy is appended with `FilesAnalyzed = false`.
+**CopyChildren(SpdxDocument, SpdxDocument, string, HashSet, bool)**: Recursively copies child
+packages (identified via RelationshipDirection on fromDoc relationships) and their relationships to
+toDoc, guarding against infinite recursion with a visited set.
 
-   - When `files = true` and the source package has analyzed files, each file is
+- *Parameters*: `SpdxDocument fromDoc` — source; `SpdxDocument toDoc` — destination;
+  `string parentId` — parent package ID; `HashSet<string> copied` — already-copied IDs;
+  `bool files` — include files.
+- *Returns*: `void`
+- *Preconditions*: None beyond document validity.
+- *Post-conditions*: All reachable child packages and their relationships are present in toDoc.
 
-     also copied or enhanced in the destination.
+**GetChild(SpdxRelationship, string)**: Returns the child package ID for a given relationship and
+parent ID, using RelationshipDirection to determine the parent/child orientation, or null if the
+relationship does not express a child of the given parent.
 
-4. Calls `AddRelationship.Add(toDoc, relationships)` to add any new relationships.
-5. If `recursive = true`, calls `CopyChildren` to recursively copy child packages
+- *Parameters*: `SpdxRelationship relationship` — relationship to test; `string parentId` —
+  candidate parent ID.
+- *Returns*: `string?` — child package ID or null.
+- *Preconditions*: None.
+- *Post-conditions*: Pure function; no side effects.
 
-   determined by `GetChild` (based on relationship direction).
+#### Error Handling
 
-6. Saves the destination document.
+**CommandUsageException** — thrown by Run(Context, string[]) for fewer than three arguments or
+unrecognized option tokens; thrown by CopyPackageBetweenSpdxFiles for an invalid packageId (empty
+or "SPDXRef-DOCUMENT").
 
-### Helper: `GetChild`
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) for missing from, to, or
+package inputs, or for non-boolean recursive/files values.
 
-Determines whether a relationship implies a child package given a parent ID, based
-on `RelationshipDirection` (Parent, Child, or Sibling).
+**CommandErrorException** — thrown by Copy when the source package is not found in fromDoc; also
+thrown when a HasFiles entry references a missing SpdxFile in the source document.
 
-## Error Handling
+#### Dependencies
 
-| Condition | Exception |
-| :--- | :--- |
-| Fewer than 3 CLI arguments | `CommandUsageException` |
-| Unknown CLI option | `CommandUsageException` |
-| Empty or `SPDXRef-DOCUMENT` package ID | `CommandUsageException` |
-| Missing `from` input (workflow) | `YamlException` |
-| Missing `to` input (workflow) | `YamlException` |
-| Missing `package` input (workflow) | `YamlException` |
-| Invalid `recursive` value (workflow) | `YamlException` |
-| Invalid `files` value (workflow) | `YamlException` |
-| Package not found in source | `CommandErrorException` |
-| File referenced by package not found in source | `CommandErrorException` |
+- Command (abstract base class)
+- SpdxDocument, SpdxPackage, SpdxFile, SpdxRelationship (DemaConsulting.SpdxModel)
+- SpdxRelationships (DemaConsulting.SpdxModel.Transform)
+- SpdxHelpers (Spdx units)
+- AddRelationship (sibling command — Add static method for relationship insertion)
+- RenameId (sibling command — Rename static method for package ID reconciliation on enhance)
+- YamlDotNet (YamlMappingNode, YamlException)
 
-## Constraints
+#### Callers
 
-- The source document is not modified; only the destination document is saved.
-- Package identity comparison uses `SpdxPackage.Same` (by name and download location).
-- File identity comparison uses `SpdxFile.Same`.
-- Recursive copy tracks already-copied packages in a `HashSet<string>` to avoid
-
-  infinite loops in cyclic relationship graphs.
-
-- Variable expansion is applied to all string inputs via `GetMapString`.
+- CommandsRegistry — routes CLI and workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: copy-package

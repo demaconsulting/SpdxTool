@@ -84,7 +84,7 @@ jobs:
     name: Build ${{ matrix.os }}
     needs: quality-checks
     permissions:
-      contents: read        # To read repository contents
+      contents: read  # To read repository contents
       pull-requests: write  # To write pull requests analysis
 
     strategy:
@@ -782,6 +782,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: documents
-          path: |
+          path: |-
             docs/*.pdf
             docs/build_notes.md

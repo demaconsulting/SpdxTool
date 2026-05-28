@@ -1,18 +1,17 @@
 ---
-title: SpdxTool Library
-subtitle: Code Quality Report
-author: DEMA Consulting
-description: Code Quality Report for the SpdxTool C# library for manipulating SPDX SBOM files
+title: "SpdxTool Code Quality Report"
+subtitle: ".NET tool for manipulating SPDX SBOM files"
+author: "DEMA Consulting"
+description: "Code Quality Report for SpdxTool"
 lang: en-US
 keywords:
-  - SpdxTool
   - Code Quality
+  - Static Analysis
+  - SpdxTool
   - SonarCloud
-  - Analysis
+  - CodeQL
   - C#
   - .NET
   - SPDX
   - SBOM
-  - Software Bill of Materials
-  - Security
 ---

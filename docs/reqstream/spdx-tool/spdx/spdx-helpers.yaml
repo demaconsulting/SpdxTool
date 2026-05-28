@@ -1,0 +1,27 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Spdx Requirements
+        sections:
+          - title: SpdxHelpers Requirements
+            requirements:
+              - id: SpdxTool-Spdx-SpdxHelpers-LoadDocument
+                title: SpdxHelpers shall load an SPDX document or throw CommandUsageException if the file is missing.
+                justification: |
+                  Commands that process SPDX documents must have a reliable way to load them
+                  from the file system. Centralizing the file-existence check in SpdxHelpers
+                  ensures a consistent error message and exception type across all commands.
+                tests:
+                  - SpdxHelpers_LoadJsonDocument_MissingFile_ThrowsCommandUsageException
+                  - SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument
+                  - Diagram_ValidSpdxFile_GeneratesDiagram
+
+              - id: SpdxTool-Spdx-SpdxHelpers-SaveDocument
+                title: SpdxHelpers shall save an SPDX document to JSON, stamping the tool creator entry.
+                justification: |
+                  Commands that modify SPDX documents must save the result back to disk.
+                  Stamping the creator entry ensures traceability of which tool version
+                  last modified the document.
+                tests:
+                  - SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator

@@ -1,20 +1,60 @@
-# DemaConsulting.SpdxTool add-package Command Requirements
-#
-# This file contains requirements for the add-package command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: add-package Command
-    requirements:
-      - id: SpdxTool-Package-AddPackage
-        title: The tool shall add packages to SPDX documents using the add-package command.
-        tags:
-          - spdx
-        justification: |
-          Users need to incrementally build SPDX documents by adding new packages
-          that represent software components, libraries, or dependencies.
-        tests:
-          - AddPackage_OnCommandLine_ReportsWorkflowOnlyError
-          - AddPackage_InWorkflowWithRelationship_AddsPackageAndRelationship
-          - AddPackage_InWorkflowNoRelationship_AddsPackageOnly
-          - AddPackage_InWorkflowWithQueryVersion_AddsPackage
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: AddPackage Requirements
+            requirements:
+              - id: SpdxTool-Package-AddPackage
+                title: The tool shall add packages to SPDX documents using the add-package command.
+                tags:
+                  - spdx
+                justification: |
+                  Users need to incrementally build SPDX documents by adding new packages
+                  that represent software components, libraries, or dependencies.
+                tests:
+                  - AddPackage_InWorkflowWithRelationship_AddsPackageAndRelationship
+                  - AddPackage_InWorkflowNoRelationship_AddsPackageOnly
+                  - AddPackage_InWorkflowWithQueryVersion_AddsPackage
+
+              - id: SpdxTool-Package-AddPackage-WorkflowOnly
+                title: >-
+                  The add-package command shall only be available in workflow mode; direct CLI invocation
+                  shall be rejected with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  The add-package command requires workflow context to provide structured
+                  package data via YAML inputs. Direct CLI invocation cannot supply the
+                  necessary structured input.
+                tests:
+                  - AddPackage_OnCommandLine_ReportsWorkflowOnlyError
+
+              - id: SpdxTool-Package-AddPackage-Enhance
+                title: >-
+                  When a package with the same identity already exists in the target SPDX document,
+                  the add-package command shall enhance the existing package rather than adding a duplicate.
+                tags:
+                  - spdx
+                justification: |
+                  Users may run add-package multiple times with the same package identity.
+                  Enhancing rather than duplicating ensures SPDX document consistency and
+                  avoids invalid documents with duplicate package entries.
+                tests:
+                  - AddPackage_InWorkflowWithExistingPackage_EnhancesPackage
+
+              - id: SpdxTool-Package-AddPackage-Validate
+                title: >-
+                  The add-package command shall validate its workflow inputs and report an error for missing
+                  or invalid values.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that workflow
+                  authors can diagnose configuration mistakes quickly.
+                tests:
+                  - AddPackage_InWorkflowMissingSpdxInput_ReportsError
+                  - AddPackage_InWorkflowMissingPackageInput_ReportsError
+                  - AddPackage_InWorkflowWithEmptyPackageId_ReportsError
+                  - AddPackage_InWorkflowWithDocumentPackageId_ReportsError

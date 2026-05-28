@@ -21,8 +21,15 @@
 namespace DemaConsulting.SpdxTool;
 
 /// <summary>
-///     Program Context class
+///     Single mutable execution-state holder for one SpdxTool invocation.
 /// </summary>
+/// <remarks>
+///     Created once per invocation by <see cref="Create"/>, passed to every command and
+///     subsystem, and disposed by <see cref="Program"/> after the command completes.
+///     Encapsulates the parsed global flag values, the remaining command arguments,
+///     an optional log-file writer, and an error counter. Implements
+///     <see cref="IDisposable"/> to close the log file when the invocation ends.
+/// </remarks>
 public sealed class Context : IDisposable
 {
     /// <summary>
@@ -44,21 +51,25 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Gets a value indicating the version has been requested
     /// </summary>
+    /// <remarks>Set to <see langword="true"/> when <c>-v</c> or <c>--version</c> appears on the command line.</remarks>
     public bool Version { get; private init; }
 
     /// <summary>
     ///     Gets a value indicating help has been requested
     /// </summary>
+    /// <remarks>Set to <see langword="true"/> when <c>-h</c>, <c>-?</c>, or <c>--help</c> appears on the command line.</remarks>
     public bool Help { get; private init; }
 
     /// <summary>
     ///     Gets a value indicating silent-output has been requested
     /// </summary>
+    /// <remarks>When <see langword="true"/>, <see cref="WriteLine"/>, <see cref="WriteWarning"/>, and <see cref="WriteError"/> suppress console output but still write to the log file.</remarks>
     public bool Silent { get; private init; }
 
     /// <summary>
     ///     Gets a value indicating whether to perform self-validation
     /// </summary>
+    /// <remarks>Set to <see langword="true"/> when <c>--validate</c> appears on the command line. Program routes to the SelfTest subsystem when this is true.</remarks>
     public bool Validate { get; private init; }
 
     /// <summary>
@@ -79,11 +90,16 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Gets the number of errors reported
     /// </summary>
+    /// <remarks>Incremented by each call to <see cref="WriteError"/>. Read by <see cref="ExitCode"/> to determine the process exit code.</remarks>
     public int Errors { get; private set; }
 
     /// <summary>
     ///     Gets the proposed exit code
     /// </summary>
+    /// <value>
+    ///     0 when no errors have been recorded (<see cref="Errors"/> is zero);
+    ///     1 when one or more errors have been recorded.
+    /// </value>
     public int ExitCode => Errors > 0 ? 1 : 0;
 
     /// <summary>
@@ -132,6 +148,12 @@ public sealed class Context : IDisposable
     ///     Write an error message to output
     /// </summary>
     /// <param name="message">Error message to write</param>
+    /// <remarks>
+    ///     Each call to this method increments the <see cref="Errors"/> counter by one.
+    ///     Because <see cref="ExitCode"/> returns 1 whenever <see cref="Errors"/> is greater
+    ///     than zero, a single call to <see cref="WriteError"/> is sufficient to cause the
+    ///     process to exit with a non-zero code.
+    /// </remarks>
     public void WriteError(string message)
     {
         // Write to the console unless silent

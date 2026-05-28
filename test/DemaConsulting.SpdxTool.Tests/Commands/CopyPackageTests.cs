@@ -26,13 +26,12 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'copy-package' command.
 /// </summary>
-[TestClass]
 public class CopyPackageTests
 {
     /// <summary>
     ///     Test that copy-package command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void CopyPackage_MissingArguments_ReportsError()
     {
         // Act: Run the command
@@ -43,14 +42,14 @@ public class CopyPackageTests
             "copy-package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'copy-package' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that copy-package command with missing file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void CopyPackage_MissingFile_ReportsError()
     {
         // Act: Run the command
@@ -64,15 +63,15 @@ public class CopyPackageTests
             "some-package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
-    ///     Test that copy-package command on command line reports workflow-only error
+    ///     Test that copy-package command on command line copies a package
     /// </summary>
-    [TestMethod]
-    public void CopyPackage_OnCommandLine_ReportsWorkflowOnlyError()
+    [Fact]
+    public void CopyPackage_OnCommandLine_CopiesPackage()
     {
         const string toSpdxContents =
             """
@@ -155,16 +154,16 @@ public class CopyPackageTests
                 "SPDXRef-Package-2");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.HasCount(2, doc.Packages);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Packages[1].Id);
+            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Package-2", doc.Packages[1].Id);
         }
         finally
         {
@@ -176,7 +175,7 @@ public class CopyPackageTests
     /// <summary>
     ///     Test that copy-package command in workflow copies the package
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void CopyPackage_InWorkflow_CopiesPackage()
     {
         const string toSpdxContents =
@@ -273,22 +272,22 @@ public class CopyPackageTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.HasCount(2, doc.Packages);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Packages[1].Id);
+            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Package-2", doc.Packages[1].Id);
 
             // Assert: Verify the relationship
-            Assert.HasCount(2, doc.Relationships);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[1].Id);
-            Assert.AreEqual(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
+            Assert.Equal(2, doc.Relationships.Count());
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[1].Id);
+            Assert.Equal(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
         }
         finally
         {
@@ -301,7 +300,7 @@ public class CopyPackageTests
     /// <summary>
     ///     Test that copy-package command in workflow with recursive flag copies package recursively
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void CopyPackage_InWorkflowRecursive_CopiesPackageRecursively()
     {
         const string toSpdxContents =
@@ -435,33 +434,33 @@ public class CopyPackageTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify expected packages
-            Assert.HasCount(4, doc.Packages);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Application", doc.Packages[1].Id);
-            Assert.AreEqual("SPDXRef-Library", doc.Packages[2].Id);
-            Assert.AreEqual("SPDXRef-Compiler", doc.Packages[3].Id);
+            Assert.Equal(4, doc.Packages.Count());
+            Assert.Equal("SPDXRef-MainPackage", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Application", doc.Packages[1].Id);
+            Assert.Equal("SPDXRef-Library", doc.Packages[2].Id);
+            Assert.Equal("SPDXRef-Compiler", doc.Packages[3].Id);
 
             // Assert: Verify expected relationships
-            Assert.HasCount(4, doc.Packages);
-            Assert.AreEqual("SPDXRef-DOCUMENT", doc.Relationships[0].Id);
-            Assert.AreEqual(SpdxRelationshipType.Describes, doc.Relationships[0].RelationshipType);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Relationships[0].RelatedSpdxElement);
-            Assert.AreEqual("SPDXRef-Application", doc.Relationships[1].Id);
-            Assert.AreEqual(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Relationships[1].RelatedSpdxElement);
-            Assert.AreEqual("SPDXRef-Application", doc.Relationships[2].Id);
-            Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[2].RelationshipType);
-            Assert.AreEqual("SPDXRef-Library", doc.Relationships[2].RelatedSpdxElement);
-            Assert.AreEqual("SPDXRef-Compiler", doc.Relationships[3].Id);
-            Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[3].RelationshipType);
-            Assert.AreEqual("SPDXRef-Application", doc.Relationships[3].RelatedSpdxElement);
+            Assert.Equal(4, doc.Packages.Count());
+            Assert.Equal("SPDXRef-DOCUMENT", doc.Relationships[0].Id);
+            Assert.Equal(SpdxRelationshipType.Describes, doc.Relationships[0].RelationshipType);
+            Assert.Equal("SPDXRef-MainPackage", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Application", doc.Relationships[1].Id);
+            Assert.Equal(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
+            Assert.Equal("SPDXRef-MainPackage", doc.Relationships[1].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Application", doc.Relationships[2].Id);
+            Assert.Equal(SpdxRelationshipType.Contains, doc.Relationships[2].RelationshipType);
+            Assert.Equal("SPDXRef-Library", doc.Relationships[2].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Compiler", doc.Relationships[3].Id);
+            Assert.Equal(SpdxRelationshipType.BuildToolOf, doc.Relationships[3].RelationshipType);
+            Assert.Equal("SPDXRef-Application", doc.Relationships[3].RelatedSpdxElement);
         }
         finally
         {
@@ -474,7 +473,7 @@ public class CopyPackageTests
     /// <summary>
     ///     Test that copy-package command in workflow with files copies package and files
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void CopyPackage_InWorkflowWithFiles_CopiesPackageAndFiles()
     {
         const string toSpdxContents =
@@ -591,21 +590,126 @@ public class CopyPackageTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify expected packages
-            Assert.HasCount(2, doc.Packages);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Application", doc.Packages[1].Id);
+            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal("SPDXRef-MainPackage", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Application", doc.Packages[1].Id);
 
             // Assert: Verify expected files
-            Assert.HasCount(2, doc.Files);
-            Assert.AreEqual("SPDXRef-File1", doc.Files[0].Id);
-            Assert.AreEqual("SPDXRef-File2", doc.Files[1].Id);
+            Assert.Equal(2, doc.Files.Count());
+            Assert.Equal("SPDXRef-File1", doc.Files[0].Id);
+            Assert.Equal("SPDXRef-File2", doc.Files[1].Id);
+        }
+        finally
+        {
+            File.Delete("to.spdx.json");
+            File.Delete("from.spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command in workflow with existing same-identity package enhances rather than duplicates
+    /// </summary>
+    [Fact]
+    public void CopyPackage_InWorkflowWithExistingPackage_EnhancesPackage()
+    {
+        const string toSpdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Package-Dest",
+                  "name": "Shared Package",
+                  "versionInfo": "2.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
+
+        const string fromSpdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Package-Src",
+                  "name": "Shared Package",
+                  "versionInfo": "2.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxModel",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "From Document",
+              "documentNamespace": "https://sbom.spdx.org/from",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
+
+        // Workflow contents
+        const string workflowContents =
+            """
+            steps:
+            - command: copy-package
+              inputs:
+                from: from.spdx.json
+                to: to.spdx.json
+                package: SPDXRef-Package-Src
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX files
+            File.WriteAllText("to.spdx.json", toSpdxContents);
+            File.WriteAllText("from.spdx.json", fromSpdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+
+            // Read the SPDX document
+            Assert.True(File.Exists("to.spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
+
+            // Assert: Verify only one package (enhanced, not duplicated) and ID renamed
+            Assert.Single(doc.Packages);
+            Assert.Equal("SPDXRef-Package-Src", doc.Packages[0].Id);
         }
         finally
         {

@@ -1,4 +1,7 @@
-# SPDX Tool
+# SpdxTool
+
+<!-- IMPORTANT: All links in this file must be absolute URLs.
+     This file is distributed in packages and relative links will not resolve. -->
 
 ![GitHub forks](https://img.shields.io/github/forks/demaconsulting/SpdxTool?style=plastic)
 ![GitHub Repo stars](https://img.shields.io/github/stars/demaconsulting/SpdxTool?style=plastic)
@@ -9,11 +12,28 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=demaconsulting_SpdxTool&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=demaconsulting_SpdxTool)
 [![NuGet Version](https://img.shields.io/nuget/v/DemaConsulting.SpdxTool?style=plastic)](https://www.nuget.org/packages/DemaConsulting.SpdxTool)
 
-Dotnet tool for manipulating SPDX SBOM files
+.NET tool for manipulating SPDX SBOM files
+
+## Overview
+
+DemaConsulting.SpdxTool is a .NET tool for creating, validating, and manipulating SPDX
+(Software Package Data Exchange) documents. The repository also contains
+DemaConsulting.SpdxTool.Targets, an MSBuild targets extension that integrates SPDX document
+decoration into the standard `dotnet pack` build workflow.
+
+## Features
+
+- Create, validate, and manipulate SPDX (Software Package Data Exchange) documents from the command line.
+- Drive SBOM operations through workflow YAML files for repeatable, automated pipelines.
+- Self-validation system generates evidence of tool correctness for regulated environments.
+- MSBuild targets integration automatically decorates SBOMs during `dotnet pack`.
+- Multi-command CLI supporting add-package, validate, copy-package, to-markdown, diagram, and more.
+- Multi-framework support targeting .NET 8, .NET 9, and .NET 10.
+- Continuous compliance evidence generated automatically on every CI run.
 
 ## Installation
 
-The following will add SpdxTool to a Dotnet tool manifest file:
+The following will add SpdxTool to a .NET tool manifest file:
 
 ```bash
 dotnet new tool-manifest # if you are setting up this repo
@@ -28,24 +48,37 @@ dotnet spdx-tool <arguments>
 
 ## Usage
 
-The following shows the command-line usage of SpdxTool:
+Validate an SPDX document:
+
+```bash
+dotnet spdx-tool validate sbom.spdx.json
+```
+
+Run a workflow file:
+
+```bash
+dotnet spdx-tool run-workflow spdx-workflow.yaml
+```
+
+Full command reference:
 
 ```text
 Usage: spdx-tool [options] <command> [arguments]
 
 Options:
-  -h, --help                               Show this help message and exit
+  -h, -?, --help                           Show this help message and exit
   -v, --version                            Show version information and exit
   -l, --log <log-file>                     Log output to file
   -s, --silent                             Silence console output
       --validate                           Perform self-validation
   -r, --result <file>                      Self-validation result file (.trx TRX or .xml JUnit XML)
+      --depth <level>                      Self-validation report depth level
 
 Commands:
   help <command>                           Display extended help about a command
   add-package                              Add package to SPDX document (workflow only).
   add-relationship <spdx.json> <args>      Add relationship between elements.
-  copy-package <spdx.json> <args>          Copy package between SPDX documents (workflow only).
+  copy-package <spdx.json> <args>          Copy package between SPDX documents.
   diagram <spdx.json> <mermaid.txt> [tools] Generate mermaid diagram.
   find-package <spdx.json> <criteria>      Find package ID in SPDX document
   get-version <spdx.json> <criteria>       Get the version of an SPDX package.
@@ -60,11 +93,42 @@ Commands:
   validate <spdx.json> [ntia]              Validate SPDX document for issues
 ```
 
-A more detailed description of the usage can be found in the [command-line documentation][command-line-docs]
+## Building
+
+```pwsh
+pwsh ./build.ps1
+```
+
+## User Guide
+
+The SpdxTool User Guide is available on the
+[SpdxTool releases page](https://github.com/demaconsulting/SpdxTool/releases).
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md) for
+guidelines on setting up your development environment, coding standards, running tests, and
+submitting pull requests.
+
+Before contributing, please read our
+[Code of Conduct](https://github.com/demaconsulting/SpdxTool/blob/main/CODE_OF_CONDUCT.md).
+
+## License
+
+This project is licensed under the MIT License — see
+[LICENSE](https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE) for details.
+
+By contributing to this project, you agree that your contributions will be licensed under the
+MIT License.
+
+## Support
+
+- [Report a bug or request a feature](https://github.com/demaconsulting/SpdxTool/issues)
+- [Ask a question or start a discussion](https://github.com/demaconsulting/SpdxTool/discussions)
 
 ## Workflow YAML Files
 
-The SpdxTool can be driven using workflow yaml files of the following format:
+The SpdxTool can be driven using workflow YAML files of the following format:
 
 ```yaml
 # Workflow parameters
@@ -73,17 +137,15 @@ parameters:
 
 # Workflow steps
 steps:
-- command: <command-name>
-  inputs:
-    <arguments mapping>
+  - command: <command-name>
+    inputs:
+      <arguments mapping>
 
-- command: <command-name>
-  inputs:
-    input1: value
-    input2: ${{ parameter-name }}
+  - command: <command-name>
+    inputs:
+      input1: value
+      input2: ${{ parameter-name }}
 ```
-
-A more detailed description of workflow YAML files can be found in the [workflow documentation][workflow-docs]
 
 ## Self Validation
 
@@ -139,22 +201,9 @@ Each test in the report proves a specific command works correctly:
 - **SpdxTool_ToMarkdown** - `to-markdown` command generates a Markdown summary from an SPDX file.
 - **SpdxTool_UpdatePackage** - `update-package` command updates all fields of a package in an SPDX file.
 
-For detailed descriptions of each validation test, see the [User Guide][user-guide].
-
 On validation failure the tool will exit with a non-zero exit code.
 
 This report may be useful in regulated industries requiring evidence of tool validation.
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide][contributing] for details on:
-
-- Setting up your development environment
-- Coding standards and conventions
-- Running tests and quality checks
-- Submitting pull requests
-
-Before contributing, please read our [Code of Conduct][code-of-conduct].
 
 ## Project Quality
 
@@ -169,31 +218,11 @@ This project maintains high code quality standards:
 - ✓ **Continuous Compliance**: Compliance evidence generated automatically on every CI run,
   following the [Continuous Compliance][link-continuous-compliance] methodology
 
-## License
-
-Copyright (c) DEMA Consulting. Licensed under the MIT License. See [LICENSE][link-license] for details.
-
-By contributing to this project, you agree that your contributions will be licensed under the MIT License.
-
 ## Additional Information
 
 Additional information can be found at:
 
-- [Architecture Documentation][architecture]
-- [MSBuild Integration][msbuild-integration]
-- [SPDX Site][spdx-site]
-- [GitHub CI][github-ci-docs]
-- [Using with Microsoft SBOM Tool][sbom-tool-docs]
+- [Architecture Documentation](https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md)
+- [SPDX Specification](https://spdx.dev/)
 
-[command-line-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-command-line.md
-[workflow-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-workflow-files.md
-[user-guide]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/user_guide/introduction.md
-[contributing]: https://github.com/demaconsulting/SpdxTool/blob/main/CONTRIBUTING.md
-[code-of-conduct]: https://github.com/demaconsulting/SpdxTool/blob/main/CODE_OF_CONDUCT.md
-[architecture]: https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md
-[msbuild-integration]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/msbuild-integration.md
-[spdx-site]: https://spdx.dev/
-[github-ci-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-github-ci.md
-[sbom-tool-docs]: https://github.com/demaconsulting/SpdxTool/blob/main/docs/spdx-tool-and-sbom-tool.md
 [link-continuous-compliance]: https://demaconsulting.github.io/SpdxTool/articles/continuous-compliance.html
-[link-license]: https://github.com/demaconsulting/SpdxTool/blob/main/LICENSE

@@ -23,8 +23,17 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Command base class
+///     Abstract base class for all SpdxTool commands.
 /// </summary>
+/// <remarks>
+///     Each concrete command subclass implements two overloads of <c>Run</c>:
+///     one for CLI invocation (receives a <c>string[]</c> arguments array) and one for
+///     workflow step invocation (receives a <see cref="YamlDotNet.RepresentationModel.YamlMappingNode"/>
+///     and a variables dictionary). Helper methods such as <see cref="Expand"/>,
+///     <see cref="GetMapString"/>, <see cref="GetMapMap"/>, <see cref="GetMapSequence"/>,
+///     and <see cref="GetSequenceString"/> are provided for consistent YAML node extraction
+///     and variable substitution across all commands.
+/// </remarks>
 public abstract class Command
 {
     /// <summary>
@@ -47,8 +56,13 @@ public abstract class Command
     /// </summary>
     /// <param name="text">Text to expand</param>
     /// <param name="variables">Variables</param>
-    /// <returns>Expanded text</returns>
-    /// <exception cref="InvalidOperationException">on error</exception>
+    /// <returns>The input text with all <c>${{ variable }}</c> references replaced by their values.</returns>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when a referenced variable is not present in <paramref name="variables"/>
+    ///     and does not resolve as an environment variable, when a variable name is empty,
+    ///     when <c>}}</c> appears without a matching <c>${{</c>, or when a <c>${{</c> is
+    ///     not closed by <c>}}</c>.
+    /// </exception>
     public static string Expand(string text, Dictionary<string, string> variables)
     {
         // Use a StringBuilder to assemble the expanded string

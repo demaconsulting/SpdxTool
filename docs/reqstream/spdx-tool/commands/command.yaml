@@ -1,0 +1,25 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: Command Requirements
+            requirements:
+              - id: SpdxTool-Command-AbstractContract
+                title: The Command base class shall define the abstract execution contract for all commands.
+                justification: |
+                  All commands must expose a consistent interface for both CLI and workflow
+                  invocation. The abstract base class enforces this contract at compile time.
+                tests:
+                  - Command_Expand_NoVariables_ReturnsOriginal
+              - id: SpdxTool-Command-VariableExpansion
+                title: The Command base class shall expand ${{ variable }} tokens using the provided variable map.
+                justification: |
+                  Variable expansion enables workflow authors to parameterize command arguments.
+                  Centralizing this in the base class ensures consistent behavior across all commands.
+                tests:
+                  - Command_Expand_MissingVariable_ReturnsMissingToken
+                  - Command_Expand_NoVariables_ReturnsOriginal
+                  - Command_Expand_BasicVariable_ReturnsExpanded
+                  - Command_Expand_NestedVariable_ReturnsFullyExpanded

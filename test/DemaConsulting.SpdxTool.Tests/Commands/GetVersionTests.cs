@@ -23,7 +23,6 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'get-version' command
 /// </summary>
-[TestClass]
 public class GetVersionTests
 {
     /// <summary>
@@ -72,9 +71,11 @@ public class GetVersionTests
     /// <summary>
     ///     Test that get-version command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void GetVersion_MissingArguments_ReportsError()
     {
+        // Arrange: N/A — no test fixture required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -83,16 +84,18 @@ public class GetVersionTests
             "get-version");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'get-version' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that get-version command with missing file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void GetVersion_MissingFile_ReportsError()
     {
+        // Arrange: N/A — no test fixture required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -103,15 +106,15 @@ public class GetVersionTests
             "id=SPDXRef-Package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
-    ///     Test that get-version command on command line reports workflow-only error
+    ///     Test that get-version command on command line returns the package version
     /// </summary>
-    [TestMethod]
-    public void GetVersion_OnCommandLine_ReportsWorkflowOnlyError()
+    [Fact]
+    public void GetVersion_OnCommandLine_ReturnsPackageVersion()
     {
         try
         {
@@ -127,8 +130,8 @@ public class GetVersionTests
                 "spdx.json",
                 "id=SPDXRef-Package-2");
 
-            // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            // Assert: Verify package version is written to output
+            Assert.Equal(0, exitCode);
             Assert.Contains("2.0.0", output);
         }
         finally
@@ -140,7 +143,7 @@ public class GetVersionTests
     /// <summary>
     ///     Test that get-version command in workflow returns the package version
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void GetVersion_InWorkflow_ReturnsPackageVersion()
     {
         // Workflow contents
@@ -173,7 +176,7 @@ public class GetVersionTests
                 "workflow.yaml");
 
             // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("Found version 2.0.0", output);
         }
         finally

@@ -26,6 +26,22 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Set Variable Command
 /// </summary>
+/// <remarks>
+///     <para>
+///         This class follows the singleton pattern: a single instance is registered with
+///         <see cref="CommandsRegistry"/> and shared across all workflow executions.
+///     </para>
+///     <para>
+///         The command is workflow-only by design: direct CLI invocation is rejected with a
+///         <see cref="CommandUsageException"/> so that users receive a clear diagnostic rather
+///         than a silent no-op. Variable assignment is only meaningful within a running workflow
+///         context where a variable map already exists.
+///     </para>
+///     <para>
+///         The class is stateless and thread-safe: all mutable state is passed through the
+///         <c>variables</c> parameter and never stored as instance data.
+///     </para>
+/// </remarks>
 public sealed class SetVariable : Command
 {
     /// <summary>

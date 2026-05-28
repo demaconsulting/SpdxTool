@@ -1,38 +1,53 @@
-# DemaConsulting.SpdxTool ValidateToMarkdown SelfTest Design
+﻿### ValidateToMarkdown
 
-## Purpose
+#### Purpose
 
-`ValidateToMarkdown.cs` exercises the `to-markdown` command end-to-end within the
-SelfTest subsystem. It verifies that an SPDX document can be converted to a
-Markdown summary file.
+ValidateToMarkdown exercises the to-markdown command end-to-end within the Self-Test subsystem. It
+verifies that an SPDX document can be converted to a Markdown summary file and that the output
+contains the expected title, section headings, and package information.
 
-## Test: `SpdxTool_ToMarkdown`
+#### Data Model
 
-### Setup
+N/A - this unit is a static class with no instance state.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes an SPDX JSON document containing packages and metadata.
+#### Key Methods
 
-### Execution
+**Run**: executes the to-markdown self-test and records the result.
 
-Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "to-markdown", "<spdx.json>", "<out.md>"])`.
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: None.
+- *Post-conditions*: A TestResult entry named SpdxTool_ToMarkdown has been appended to results; a
+  pass or fail message has been written to the Context.
 
-### Verification
+**DoValidate**: performs the actual to-markdown validation in a temporary directory.
 
-- The workflow must complete with exit code 0.
-- The output Markdown file must exist and contain expected table headers and content.
+- *Parameters*: None.
+- *Returns*: `bool` — true if the command succeeded and the Markdown output matches expectations.
+- *Preconditions*: A writable working directory is available.
+- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
 
-### Teardown
+Creates a validate.tmp directory and writes an SPDX JSON document containing two packages (Test
+Application at version 1.0.0 with MIT license, and Test Library at version 2.0.0 with Apache-2.0
+license) connected by a CONTAINS relationship. Calls Validate.RunSpdxTool with --silent, to-markdown,
+the SPDX file path, an output .md file path, and the title "Test SBOM Summary". Verifies that the
+output Markdown file exists and contains the title, "Root Packages" and "Packages" section headings,
+both package names, and both version strings.
 
-Deletes the `validate.tmp` directory.
+#### Error Handling
 
-## Error Handling
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the output
+Markdown file does not exist or does not contain all expected strings. The temporary directory is
+always deleted in a finally block.
 
-- Returns `false` if `RunSpdxTool` returns a non-zero exit code.
-- Returns `false` if the Markdown output does not match expectations.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
+#### Dependencies
 
-## Constraints
+- **Validate** — provides the RunSpdxTool helper used to invoke the to-markdown command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
 
-- The test is self-contained; all fixture data is embedded as string literals.
-- The temporary directory is always deleted in a `finally` block.
+#### Callers
+
+- **Validate** — the Self-Test orchestrator invokes this step.

@@ -1,40 +1,61 @@
-# DemaConsulting.SpdxTool ValidateQuery SelfTest Design
+﻿### ValidateQuery
 
-## Purpose
+#### Purpose
 
-`ValidateQuery.cs` exercises the `query` command end-to-end within the SelfTest
-subsystem. It verifies that an external program can be queried and a value extracted
-from its output using a regular expression pattern.
+ValidateQuery exercises the query command end-to-end within the Self-Test subsystem. It verifies that
+an external program can be queried and a version string extracted from its output using a regular
+expression pattern, with the result captured into a workflow variable.
 
-## Test: `SpdxTool_Query`
+#### Data Model
 
-### Setup
+N/A - this unit is a static class with no instance state.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes a workflow YAML that executes `query` against a known program
+#### Key Methods
 
-   (e.g., `dotnet --version`) to extract a version string.
+**Run**: executes the query self-test and records the result.
 
-### Execution
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: None.
+- *Post-conditions*: A TestResult entry named SpdxTool_Query has been appended to results; a pass or
+  fail message has been written to the Context.
 
-Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "run-workflow", "workflow.yaml"])`.
+**DoValidate**: performs the actual query validation in a temporary directory.
 
-### Verification
+- *Parameters*: None.
+- *Returns*: `bool` — true if the command succeeded and the log matches the version pattern.
+- *Preconditions*: The dotnet executable must be available on the system PATH.
+- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
 
-- The workflow must complete with exit code 0.
-- The extracted value must match the expected pattern.
+Creates a validate.tmp directory and writes a workflow YAML that executes query against dotnet
+--version, extracts the version using a regex pattern into the version variable, and prints it using
+the print command. Calls Validate.RunSpdxTool with --silent, --log, and run-workflow arguments. Reads
+the log file and verifies it matches the VersionRegex pattern (a dotted decimal version prefixed by
+"Dotnet version ").
 
-### Teardown
+**VersionRegex**: source-generated regular expression used to validate the query output.
 
-Deletes the `validate.tmp` directory.
+- *Parameters*: None.
+- *Returns*: `Regex` — a compiled regular expression matching "Dotnet version N.N.N".
+- *Preconditions*: None.
+- *Post-conditions*: None.
 
-## Error Handling
+#### Error Handling
 
-- Returns `false` if `RunSpdxTool` returns a non-zero exit code.
-- Returns `false` if the extracted value does not match expectations.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the log file
+content does not match the VersionRegex pattern. This step requires dotnet to be on the PATH; if
+dotnet is unavailable the RunSpdxTool call will return a non-zero exit code. The temporary directory
+is always deleted in a finally block.
 
-## Constraints
+#### Dependencies
 
-- The test requires `dotnet` to be available on the system PATH.
-- The temporary directory is always deleted in a `finally` block.
+- **Validate** — provides the RunSpdxTool helper used to invoke the query command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
+- **System.Text.RegularExpressions** — used for the source-generated VersionRegex method.
+
+#### Callers
+
+- **Validate** — the Self-Test orchestrator invokes this step.

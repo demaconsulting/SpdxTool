@@ -3,11 +3,6 @@ name: Testing Principles
 description: Follow these standards when developing any software tests.
 ---
 
-# Testing Principles Standards
-
-This document defines universal testing principles and quality standards for test development within
-Continuous Compliance environments.
-
 # Test Dependency Boundaries (MANDATORY)
 
 Respect software item hierarchy boundaries to ensure review-sets can validate proper architectural scope.
@@ -34,7 +29,9 @@ file organization patterns, and tooling requirements.
 - [ ] Cross-hierarchy test dependencies documented in design documentation
 - [ ] All tests follow AAA pattern with descriptive comments
 - [ ] Test names follow hierarchical naming conventions for requirement linkage
-- [ ] Tests linkable to requirements through ReqStream
+- [ ] Every requirement has at least one linked passing test
+- [ ] Tests without a corresponding requirement are accepted as valid
+  (corner-case, defensive, and regression tests need not link to a requirement)
 - [ ] Platform-specific tests use appropriate source filters
 - [ ] Both success and error scenarios covered
 - [ ] External dependencies properly mocked for isolation

@@ -1,47 +1,59 @@
-# DemaConsulting.SpdxTool ValidateAddPackage SelfTest Design
+﻿### ValidateAddPackage
 
-## Purpose
+#### Purpose
 
-`ValidateAddPackage.cs` exercises the `add-package` command end-to-end within the
-SelfTest subsystem. It verifies that a package can be added to an SPDX document
-via a workflow file, and that the resulting document contains the expected content.
+ValidateAddPackage exercises the add-package command end-to-end within the Self-Test subsystem. It
+verifies that a package can be added to an SPDX document via a workflow file and that the resulting
+document contains the expected package and relationship entries.
 
-## Test: `SpdxTool_AddPackage`
+#### Data Model
 
-### Setup
+N/A - this unit is a static class with no instance state.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes a minimal SPDX JSON document (`test.spdx.json`) containing one package
+#### Key Methods
 
-   (`SPDXRef-Package-1`).
+**Run**: executes the add-package self-test and records the result.
 
-3. Writes a workflow YAML (`workflow.yaml`) that executes the `add-package` command
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: None.
+- *Post-conditions*: A TestResult entry named SpdxTool_AddPackage has been appended to results; a
+  pass or fail message has been written to the Context.
 
-   to add `SPDXRef-Package-2` with a `BUILD_TOOL_OF` relationship to `SPDXRef-Package-1`,
-   including a `purl` external reference.
+**DoValidate**: performs the actual add-package validation in a temporary directory.
 
-### Execution
+- *Parameters*: None.
+- *Returns*: `bool` — true if the command succeeded and the SPDX document matches expectations.
+- *Preconditions*: A writable working directory is available.
+- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
 
-Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "run-workflow", "workflow.yaml"])`.
+Creates a validate.tmp directory, writes a minimal SPDX JSON document containing one package
+(SPDXRef-Package-1), and writes a workflow YAML that executes add-package to add SPDXRef-Package-2
+with a BUILD_TOOL_OF relationship to SPDXRef-Package-1 and a purl external reference. Calls
+Validate.RunSpdxTool with --silent and run-workflow arguments, then reads the modified SPDX document
+and verifies the content using a positional list pattern match — package and relationship order in
+the deserialized document is significant. The validate.tmp directory is deleted unconditionally in a
+finally block, even if creation or file writes only partially succeeded.
 
-### Verification
+#### Error Handling
 
-Reads the modified SPDX document and verifies:
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
+SPDX document does not contain exactly two packages with the expected IDs or does not contain the
+expected BUILD_TOOL_OF relationship. Any exception thrown by DoValidate propagates uncaught from Run;
+no TestResult is recorded for this step if an exception is thrown — the exception surfaces to the
+Self-Test orchestrator.
 
-- Exactly two packages exist with IDs `SPDXRef-Package-1` and `SPDXRef-Package-2`.
-- A `BUILD_TOOL_OF` relationship exists from `SPDXRef-Package-2` to `SPDXRef-Package-1`.
+#### Dependencies
 
-### Teardown
+- **Validate** — provides the RunSpdxTool helper used to invoke the add-package command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
+- **Spdx2JsonDeserializer** — from DemaConsulting.SpdxModel.IO; deserializes the output SPDX document
+  for structural verification.
+- **SpdxRelationshipType** — from DemaConsulting.SpdxModel; used in pattern-matching the relationship.
 
-Deletes the `validate.tmp` directory.
+#### Callers
 
-## Error Handling
-
-- Returns `false` if `RunSpdxTool` returns a non-zero exit code.
-- Returns `false` if the document structure does not match expectations.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
-
-## Constraints
-
-- The test is self-contained; all fixture data is embedded as string literals.
-- The temporary directory is always deleted in a `finally` block.
+- **Validate** — the Self-Test orchestrator invokes this step.

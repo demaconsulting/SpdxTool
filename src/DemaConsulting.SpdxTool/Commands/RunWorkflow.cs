@@ -305,6 +305,13 @@ public sealed class RunWorkflow : Command
     /// <param name="integrity">Optional integrity hash</param>
     /// <param name="parameters">Parameters</param>
     /// <returns>Workflow outputs</returns>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the integrity hash does not match the computed SHA-256 hash of
+    ///     <paramref name="bytes"/>, when the YAML root node is not a mapping node, when the
+    ///     <c>steps</c> key is absent from the root mapping, when a step node is not a mapping
+    ///     node, when a provided parameter name is not declared in the workflow's
+    ///     <c>parameters</c> section, or when the YAML is structurally invalid.
+    /// </exception>
     public static Dictionary<string, string> RunBytes(Context context, string source, byte[] bytes, string? integrity,
         Dictionary<string, string> parameters)
     {

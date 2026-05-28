@@ -203,8 +203,8 @@ public sealed class FindPackage : Command
     /// </summary>
     /// <param name="spdxFile">SPDX document filename</param>
     /// <param name="criteria">Search criteria</param>
-    /// <returns>SPDX package or null</returns>
-    /// <exception cref="CommandUsageException"></exception>
+    /// <returns>The unique SPDX package matching all supplied criteria.</returns>
+    /// <exception cref="CommandErrorException">Thrown when the file cannot be loaded or no unique package matches.</exception>
     public static SpdxPackage FindPackageByCriteria(string spdxFile, IReadOnlyDictionary<string, string> criteria)
     {
         // Load the SPDX document
@@ -227,7 +227,7 @@ public sealed class FindPackage : Command
     /// </summary>
     /// <param name="package">Package to match</param>
     /// <param name="criteria">Criteria</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the package matches all supplied criteria; <see langword="false"/> otherwise.</returns>
     public static bool IsPackageMatch(SpdxPackage package, IReadOnlyDictionary<string, string> criteria)
     {
         // Check the id

@@ -1,21 +1,36 @@
-# DemaConsulting.SpdxTool SelfTest Orchestrator Requirements
-#
-# This file contains requirements for the SelfTest orchestrator (Validate.cs).
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: SelfTest Orchestrator
-    requirements:
-      - id: SpdxTool-SelfTest-Orchestrate
-        title: The SelfTest orchestrator shall execute all validation steps and collect results.
-        tags:
-          - self-test
-        justification: |
-          The orchestrator is responsible for running all individual self-test steps
-          in sequence, collecting pass/fail results, and reporting a summary. This
-          ensures complete coverage of all commands during self-validation.
-        tests:
-          - SelfTest_Validate_Succeeds
-          - SelfTest_ValidateWithDepth_Succeeds
-          - SelfTest_ValidateWithTrxResult_GeneratesTrxFile
-          - SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile
+  - title: SpdxTool Requirements
+    sections:
+      - title: SelfTest Requirements
+        sections:
+          - title: Validate Requirements
+            requirements:
+              - id: SpdxTool-SelfTest-Orchestrate
+                title: The SelfTest orchestrator shall execute all validation steps and collect results.
+                tags:
+                  - self-test
+                justification: |
+                  The orchestrator is responsible for running all individual self-test steps
+                  in sequence, collecting pass/fail results, and reporting a summary. This
+                  ensures complete coverage of all commands during self-validation.
+                children:
+                  - SpdxTool-SelfTest-AddPackage
+                  - SpdxTool-SelfTest-AddRelationship
+                  - SpdxTool-SelfTest-Basic
+                  - SpdxTool-SelfTest-CopyPackage
+                  - SpdxTool-SelfTest-Diagram
+                  - SpdxTool-SelfTest-FindPackage
+                  - SpdxTool-SelfTest-GetVersion
+                  - SpdxTool-SelfTest-Hash
+                  - SpdxTool-SelfTest-Ntia
+                  - SpdxTool-SelfTest-Query
+                  - SpdxTool-SelfTest-RenameId
+                  - SpdxTool-SelfTest-RunNuGetWorkflow
+                  - SpdxTool-SelfTest-ToMarkdown
+                  - SpdxTool-SelfTest-UpdatePackage
+                tests:
+                  - SelfTest_Validate_ValidContext_Succeeds
+                  - SelfTest_Validate_WithDepth_Succeeds
+                  - SelfTest_ValidateWithTrxResult_GeneratesTrxFile
+                  - SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile

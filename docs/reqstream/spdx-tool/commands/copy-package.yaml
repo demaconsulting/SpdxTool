@@ -1,20 +1,45 @@
-# DemaConsulting.SpdxTool copy-package Command Requirements
-#
-# This file contains requirements for the copy-package command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: copy-package Command
-    requirements:
-      - id: SpdxTool-Package-CopyPackage
-        title: The tool shall copy packages between SPDX documents using the copy-package command.
-        tags:
-          - spdx
-        justification: |
-          Users need to reuse package information across multiple SPDX documents
-          to avoid duplication and ensure consistency of package metadata.
-        tests:
-          - CopyPackage_OnCommandLine_ReportsWorkflowOnlyError
-          - CopyPackage_InWorkflow_CopiesPackage
-          - CopyPackage_InWorkflowRecursive_CopiesPackageRecursively
-          - CopyPackage_InWorkflowWithFiles_CopiesPackageAndFiles
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: CopyPackage Requirements
+            requirements:
+              - id: SpdxTool-Package-CopyPackage
+                title: The tool shall copy packages between SPDX documents using the copy-package command.
+                tags:
+                  - spdx
+                justification: |
+                  Users need to reuse package information across multiple SPDX documents
+                  to avoid duplication and ensure consistency of package metadata.
+                tests:
+                  - CopyPackage_OnCommandLine_CopiesPackage
+                  - CopyPackage_InWorkflow_CopiesPackage
+                  - CopyPackage_InWorkflowRecursive_CopiesPackageRecursively
+                  - CopyPackage_InWorkflowWithFiles_CopiesPackageAndFiles
+
+              - id: SpdxTool-Package-CopyPackage-Enhance
+                title: >-
+                  When a package with the same identity already exists in the destination SPDX document,
+                  the copy-package command shall enhance the existing package rather than adding a duplicate.
+                tags:
+                  - spdx
+                justification: |
+                  Users may copy packages that already exist in the destination document.
+                  Enhancing rather than duplicating ensures SPDX document consistency.
+                tests:
+                  - CopyPackage_InWorkflowWithExistingPackage_EnhancesPackage
+
+              - id: SpdxTool-Package-CopyPackage-Validate
+                title: >-
+                  The copy-package command shall validate its inputs and report an error for missing
+                  or invalid values.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that users can
+                  diagnose configuration mistakes quickly.
+                tests:
+                  - CopyPackage_MissingArguments_ReportsError
+                  - CopyPackage_MissingFile_ReportsError

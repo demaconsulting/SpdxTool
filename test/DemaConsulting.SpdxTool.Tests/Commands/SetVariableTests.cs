@@ -23,13 +23,12 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'set-variable' command.
 /// </summary>
-[TestClass]
 public class SetVariableTests
 {
     /// <summary>
     ///     Test that set-variable command on command line reports workflow-only error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void SetVariable_OnCommandLine_ReportsWorkflowOnlyError()
     {
         // Act: Run the command
@@ -40,14 +39,14 @@ public class SetVariableTests
             "set-variable");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'set-variable' command is only valid in a workflow", output);
     }
 
     /// <summary>
     ///     Test that set-variable command in workflow sets the variable
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void SetVariable_InWorkflow_SetsVariable()
     {
         // Workflow contents
@@ -70,7 +69,7 @@ public class SetVariableTests
 
         try
         {
-            // Arrange: Write the SPDX files
+            // Arrange: Write the workflow file
             File.WriteAllText("workflow.yaml", workflowContents);
 
             // Act: Run the command
@@ -82,7 +81,7 @@ public class SetVariableTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("p1p2 is Hello and World", output);
         }
         finally

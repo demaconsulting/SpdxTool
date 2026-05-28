@@ -1,13 +1,13 @@
 ---
-title: SpdxTool Review Plan
-subtitle: File Review Plan for the DemaConsulting SpdxTool
-author: DEMA Consulting
-description: File Review Plan for the DemaConsulting SpdxTool
+title: "SpdxTool Code Review Plan"
+subtitle: ".NET tool for manipulating SPDX SBOM files"
+author: "DEMA Consulting"
+description: "Code Review Plan for SpdxTool"
 lang: en-US
 keywords:
-  - SpdxTool
-  - Review Plan
-  - File Reviews
+  - Code Review
+  - SPDX
+  - SBOM
   - .NET
-  - Tool
+  - MSBuild
 ---

@@ -1,22 +1,20 @@
-# DemaConsulting.SpdxTool MSTest OTS Requirements
-#
-# This file contains requirements for the MSTest OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# xUnit OTS requirements
+# cspell:words xunit
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: MSTest
+      - title: xUnit Requirements
         requirements:
-          - id: SpdxTool-OTS-MSTest
-            title: MSTest shall execute unit tests and report results.
+          - id: SpdxTool-OTS-xUnit
+            title: xUnit v3 shall execute unit tests and report results.
             tags:
               - ots
             justification: |
-              MSTest (MSTest.TestFramework and MSTest.TestAdapter) is the unit-testing framework
+              xUnit v3 (xunit.v3 and xunit.runner.visualstudio) is the unit-testing framework
               used by the project. It discovers and runs all test methods and writes TRX result
               files that feed into coverage reporting and requirements traceability.
             tests:
-              - Version_ShortFlag_DisplaysVersion
-              - Version_LongFlag_DisplaysVersion
-              - Usage_ShortHelpFlag_DisplaysUsage
+              - SpdxTool_Version_ShortFlag_DisplaysVersion
+              - SpdxTool_Version_LongFlag_DisplaysVersion
+              - SpdxTool_Usage_ShortHelpFlag_DisplaysUsage

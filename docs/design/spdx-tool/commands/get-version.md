@@ -1,63 +1,56 @@
-# DemaConsulting.SpdxTool get-version Command Design
+﻿### GetVersion
 
-## Purpose
+#### Purpose
 
-The `get-version` command retrieves the version string of a package in an SPDX
-document, matched by criteria. It is available from the command-line and from
-workflow YAML files.
+GetVersion retrieves the version string of a package from an SPDX document that matches the
+supplied search criteria. In CLI mode it writes the version to the console; in workflow mode it
+stores the version in the named output variable. It delegates package lookup to FindPackage. It
+is available from both the CLI and workflow YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+N/A — GetVersion is a stateless singleton.
 
-```text
-spdx-tool get-version <spdx.json> [criteria]
-```
+**Instance**: `GetVersion` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record for GetVersion.
 
-Criteria are key=value pairs (same as `find-package`):
+#### Key Methods
 
-- `id=<id>`, `name=<name>`, `version=<version>`, `filename=<filename>`,
+**Run(Context, string[])**: Parses spdxFile and key=value criteria from CLI arguments, finds the
+matching package via FindPackage.FindPackageByCriteria, and writes the version to the console.
 
-  `download=<url>`
+- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, criteria...].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 2.
+- *Post-conditions*: The version string (or empty string if null) is written to context.
 
-### Workflow YAML usage
+**Run(Context, YamlMappingNode, Dictionary)**: Parses spdx, criteria, and output inputs from the
+YAML step node, finds the matching package, and stores the version in variables[output].
 
-```yaml
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: spdx and output inputs are required.
+- *Post-conditions*: variables[output] is set to the version string or empty string.
 
-- command: get-version
+#### Error Handling
 
-  inputs:
-    output: <variable>            # Output variable to store the version (required)
-    spdx: <spdx.json>             # SPDX file name (required)
-    id: <id>                      # Optional package ID criterion
-    name: <name>                  # Optional package name criterion
-    version: <version>            # Optional package version criterion
-    filename: <filename>          # Optional package filename criterion
-    download: <url>               # Optional download location criterion
-```
+**CommandUsageException** — thrown by Run(Context, string[]) when fewer than two arguments are
+provided.
 
-## Implementation
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the spdx or output
+inputs are missing.
 
-1. Delegates criteria parsing to `FindPackage.ParseCriteria`.
-2. Calls `FindPackage.FindPackageByCriteria` to locate the matching package.
-3. Reads the `Version` property from the returned package.
-4. CLI path: writes the version (or empty string if null) to the console.
-5. Workflow path: stores the version in `variables[output]`.
+**CommandErrorException** — propagated from FindPackage.FindPackageByCriteria when no package
+matches or multiple packages match.
 
-The `output` field is read in the workflow path _after_ finding the package to
-allow the `spdx` and criterion inputs to be validated first.
+#### Dependencies
 
-## Error Handling
+- Command (abstract base class)
+- FindPackage (sibling command — ParseCriteria and FindPackageByCriteria static methods)
+- YamlDotNet (YamlMappingNode, YamlException)
 
-| Condition | Exception |
-| :--- | :--- |
-| Fewer than 2 CLI arguments | `CommandUsageException` |
-| Missing `spdx` input (workflow) | `YamlException` |
-| Missing `output` input (workflow) | `YamlException` |
-| Package not found or multiple matches | `CommandErrorException` (from `FindPackage`) |
+#### Callers
 
-## Constraints
-
-- The version is returned as an empty string when the package has no version set.
-- All `FindPackage` constraints apply (wildcard matching, etc.).
-- Variable expansion is applied to all string inputs via `GetMapString`.
+- CommandsRegistry — routes CLI and workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: get-version

@@ -21,17 +21,24 @@
 using DemaConsulting.SpdxTool.SelfTest;
 using DemaConsulting.TestResults;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.SelfTest;
+
 /// <summary>
 ///     Unit tests for the ValidateAddRelationship self-validation unit.
 /// </summary>
-[TestClass]
+[Collection("SelfTestValidation")]
 public class ValidateAddRelationshipTests
 {
     /// <summary>
     ///     Test that ValidateAddRelationship validation passes.
     /// </summary>
-    [TestMethod]
+    /// <remarks>
+    ///     The test method name <c>SpdxTool_AddRelationship</c> intentionally matches the
+    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateAddRelationship.Run"/> so that
+    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
+    ///     naming convention is appropriate for self-test integration tests.
+    /// </remarks>
+    [Fact]
     public void SpdxTool_AddRelationship()
     {
         // Arrange
@@ -42,7 +49,7 @@ public class ValidateAddRelationshipTests
         ValidateAddRelationship.Run(context, results);
 
         // Assert
-        Assert.AreEqual(1, results.Results.Count);
-        Assert.AreEqual(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Single(results.Results);
+        Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }
 }

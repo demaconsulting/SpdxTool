@@ -23,15 +23,30 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of basic SPDX validation
+///     Self-test step that exercises the <c>validate</c> command with both a well-formed and a
+///     malformed SPDX document.
 /// </summary>
+/// <remarks>
+///     Verifies that the tool correctly accepts a conformant SPDX document and rejects a malformed
+///     one, confirming that basic validation logic functions correctly after installation. Uses a
+///     temporary <c>validate.tmp</c> directory in the current working directory; callers must ensure
+///     sequential execution to avoid races on that directory and on the process-wide current
+///     directory set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateBasic
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the basic SPDX validation self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_Basic</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         // Perform the validation
@@ -60,9 +75,20 @@ internal static class ValidateBasic
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs both the valid-document and invalid-document sub-tests in a shared temporary
+    ///     directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if both <see cref="DoValidateValid"/> and <see cref="DoValidateInvalid"/>
+    ///     succeed; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Creates <c>validate.tmp</c> once and runs both sub-tests within it. The
+    ///     <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
+    ///     even if directory creation only partially succeeded. Uses short-circuit evaluation:
+    ///     <see cref="DoValidateInvalid"/> is not called if <see cref="DoValidateValid"/> returns
+    ///     <c>false</c>.
+    /// </remarks>
     private static bool DoValidate()
     {
         try
@@ -81,9 +107,16 @@ internal static class ValidateBasic
     }
 
     /// <summary>
-    ///     Validate that basic validation passes for valid document
+    ///     Verifies that a well-formed SPDX document is accepted by the <c>validate</c> command.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns><c>true</c> if RunSpdxTool returns exit code zero; otherwise <c>false</c>.</returns>
+    /// <remarks>
+    ///     Writes a minimal valid SPDX document to <c>validate.tmp/test-valid.spdx.json</c> and
+    ///     invokes <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c> and
+    ///     <c>validate</c> arguments. Expects a zero exit code as evidence that no issues were found.
+    ///     Depends on <c>validate.tmp</c> already existing; must be called after
+    ///     <see cref="DoValidate"/> creates the directory.
+    /// </remarks>
     private static bool DoValidateValid()
     {
         // Write test SPDX file that is valid
@@ -132,9 +165,20 @@ internal static class ValidateBasic
     }
 
     /// <summary>
-    ///     Validate that basic validation detects invalid document
+    ///     Verifies that a malformed SPDX document is rejected by the <c>validate</c> command.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if RunSpdxTool returns a non-zero exit code and the log contains the expected
+    ///     error text; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Writes an SPDX document with a package missing the required SPDXID field to
+    ///     <c>validate.tmp/test-invalid.spdx.json</c> and invokes
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c>, <c>--log</c>,
+    ///     and <c>validate</c> arguments. Expects a non-zero exit code and verifies that the log file
+    ///     contains error text referencing the validation issue. Depends on <c>validate.tmp</c> already
+    ///     existing; must be called after <see cref="DoValidate"/> creates the directory.
+    /// </remarks>
     private static bool DoValidateInvalid()
     {
         // Write test SPDX file that is invalid (missing required SPDXID)
@@ -183,6 +227,6 @@ internal static class ValidateBasic
         var log = File.ReadAllText("validate.tmp/output.log");
 
         // Verify log contains error about missing SPDXID
-        return log.Contains("Issues in test-invalid.spdx.json") || log.Contains("Package") || log.Contains("SPDXID");
+        return log.Contains("Issues in test-invalid.spdx.json") || log.Contains("SPDXID");
     }
 }

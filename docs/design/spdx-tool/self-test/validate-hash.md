@@ -1,39 +1,71 @@
-# DemaConsulting.SpdxTool ValidateHash SelfTest Design
+﻿### ValidateHash
 
-## Purpose
+#### Purpose
 
-`ValidateHash.cs` exercises the `hash` command end-to-end within the SelfTest
-subsystem. It verifies that a SHA-256 hash can be generated for a file and then
-successfully verified.
+ValidateHash exercises the hash command end-to-end within the Self-Test subsystem. It verifies that
+a SHA-256 hash file can be generated for a known file and that the generated hash file can subsequently
+be verified, confirming both the generate and verify sub-commands function correctly.
 
-## Test: `SpdxTool_Hash`
+#### Data Model
 
-### Setup
+N/A - this unit is a static class with no instance state.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes a test file to hash.
+#### Key Methods
 
-### Execution
+**Run**: executes the hash self-test and records the result.
 
-1. Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "hash", "generate", "sha256", "<file>"])`.
-2. Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "hash", "verify", "sha256", "<file>"])`.
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: None.
+- *Post-conditions*: A TestResult entry named SpdxTool_Hash has been appended to results; a pass or
+  fail message has been written to the Context.
 
-### Verification
+**DoValidate**: orchestrates both sub-tests in a shared temporary directory.
 
-- Both invocations must return exit code 0.
-- The `.sha256` hash file must exist after generate.
+- *Parameters*: None.
+- *Returns*: `bool` — true if both DoValidateGenerate and DoValidateVerify succeed.
+- *Preconditions*: A writable working directory is available.
+- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
 
-### Teardown
+**DoValidateGenerate**: verifies that the hash generate sub-command produces the correct SHA-256 hash.
 
-Deletes the `validate.tmp` directory.
+- *Parameters*: None.
+- *Returns*: `bool` — true if RunSpdxTool returns exit code zero, the .sha256 file exists, and the
+  hash value matches the known expected digest.
+- *Preconditions*: validate.tmp exists.
+- *Post-conditions*: test-file.txt.sha256 has been created in validate.tmp.
 
-## Error Handling
+Writes a test file containing "The quick brown fox jumps over the lazy dog", calls Validate.RunSpdxTool
+with --silent, hash, generate, sha256, and the file path, then verifies the generated hash file
+contains the expected SHA-256 digest value.
 
-- Returns `false` if either `RunSpdxTool` call returns a non-zero exit code.
-- Returns `false` if the hash file is not created.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
+**DoValidateVerify**: verifies that the hash verify sub-command accepts a correct hash and rejects a
+corrupted one.
 
-## Constraints
+- *Parameters*: None.
+- *Returns*: `bool` — true if verification with the correct hash returns exit code zero and
+  verification with a corrupted hash returns a non-zero exit code.
+- *Preconditions*: validate.tmp and test-file.txt.sha256 exist from DoValidateGenerate.
+- *Post-conditions*: The hash file has been overwritten with an invalid value.
 
-- The test is self-contained; all fixture data is embedded as string literals.
-- The temporary directory is always deleted in a `finally` block.
+Calls Validate.RunSpdxTool twice: first with the correct hash (expects exit code zero), then after
+overwriting the hash file with zeros (expects non-zero exit code).
+
+#### Error Handling
+
+Returns false if hash generate returns a non-zero exit code, the hash file is not created, or the
+hash value does not match the expected digest. Returns false if hash verify with the correct hash
+returns a non-zero exit code, or if hash verify with the corrupted hash returns exit code zero. The
+temporary directory is always deleted in a finally block.
+
+#### Dependencies
+
+- **Validate** — provides the RunSpdxTool helper used to invoke the hash command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
+
+#### Callers
+
+- **Validate** — the Self-Test orchestrator invokes this step.

@@ -1,94 +1,128 @@
-# DemaConsulting.SpdxTool run-workflow Command Design
+﻿### RunWorkflow
 
-## Purpose
+#### Purpose
 
-The `run-workflow` command executes a multi-step SPDX workflow defined in a YAML
-file, a URL, or a NuGet package. It supports parameterized workflows, integrity
-verification, and output extraction. It is available from the command-line and
-from workflow YAML files (workflows can be nested).
+RunWorkflow executes a multi-step SPDX workflow defined in a YAML file, a URL, or a NuGet package.
+It supports parameterized execution with named parameters, SHA-256 integrity verification of the
+workflow source, and extraction of named output variables after execution. Workflows may be nested
+(a workflow step may call run-workflow). It is available from both the CLI and workflow YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+N/A — RunWorkflow is a stateless singleton.
 
-```text
-spdx-tool run-workflow <workflow.yaml> [parameter=value] [--verbose]
-```
+**Instance**: `RunWorkflow` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record for RunWorkflow.
 
-- `workflow.yaml` or `http://...` — Workflow file path or HTTP URL.
-- `parameter=value` — Optional parameters passed to the workflow.
-- `--verbose` — Print workflow outputs after execution.
+#### Key Methods
 
-### Workflow YAML usage
+**Run(Context, string[])**: Parses the workflow path or URL, optional key=value parameters, and the
+--verbose flag from CLI arguments. Dispatches to RunUrl for HTTP paths or RunFile for local file
+paths. Optionally prints the resulting output variables.
 
-```yaml
+- *Parameters*: `Context context` — execution context; `string[] args` — [workflowPathOrUrl,
+  optional parameter=value pairs, optional --verbose].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 1.
+- *Post-conditions*: All workflow steps are executed; outputs are optionally printed.
 
-- command: run-workflow
+**Run(Context, YamlMappingNode, Dictionary)**: Reads file, url, nuget, integrity, parameters, and
+outputs inputs. Resolves NuGet package paths when nuget is specified, then dispatches to
+Run(Context, YamlMappingNode, string?, string?, string?, Dictionary). Maps declared output
+variables back into the caller's variable dictionary.
 
-  inputs:
-    file: <workflow.yaml>         # Optional local workflow file
-    url: <url>                    # Optional workflow URL
-    nuget: <package:version>      # Optional NuGet package (requires file)
-    integrity: <sha256>           # Optional SHA-256 integrity check
-    parameters:                   # Optional parameter overrides
-      name: <value>
-    outputs:                      # Optional output extraction
-      name: <variable>
-```
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — caller's variable map.
+- *Returns*: `void`
+- *Preconditions*: One of file or url must be specified (unless nuget + file is used).
+- *Post-conditions*: All steps are executed; requested outputs are stored in variables.
 
-## Implementation
+**Run(Context, YamlMappingNode, string?, string?, string?, Dictionary)**: Validates that file and
+url are not both specified, then dispatches to RunFile or RunUrl. At least one of file or url must
+be non-null.
 
-### CLI path
+- *Parameters*: `Context context`; `YamlMappingNode step` — for error reporting; `string? file`;
+  `string? url`; `string? integrity`; `Dictionary<string, string> parameters`.
+- *Returns*: `Dictionary<string, string>` — the resulting variable map (workflow outputs).
+- *Preconditions*: Exactly one of file or url must be non-null.
+- *Post-conditions*: Workflow is executed; output variables returned.
 
-1. Requires at least one argument (workflow path or URL).
-2. Parses `--verbose` flag and `key=value` parameters.
-3. Dispatches to `RunUrl` for HTTP paths or `RunFile` for local paths.
-4. Optionally prints outputs if `--verbose`.
+**RunFile(Context, string, string?, Dictionary)**: Reads the workflow YAML file from disk and calls
+RunBytes.
 
-### Workflow path
+- *Parameters*: `Context context`; `string workflowFile` — local file path; `string? integrity`;
+  `Dictionary<string, string> parameters`.
+- *Returns*: `Dictionary<string, string>`
+- *Preconditions*: workflowFile must exist.
+- *Post-conditions*: Workflow steps executed; variables returned.
 
-1. Reads `file`, `url`, `nuget`, `integrity`, `parameters`, and `outputs`.
-2. If `nuget` is specified, resolves the workflow file path from the local NuGet
+**RunUrl(Context, string, string?, Dictionary)**: Downloads the workflow YAML bytes via an
+HttpClient configured to use the system proxy and calls RunBytes.
 
-   cache via `NuGetCache.EnsureCachedAsync`; `url` must not also be set; `file`
-   must specify the relative path within the package.
+- *Parameters*: `Context context`; `string url` — HTTP or HTTPS URL; `string? integrity`;
+  `Dictionary<string, string> parameters`.
+- *Returns*: `Dictionary<string, string>`
+- *Preconditions*: url must be reachable and return HTTP 200.
+- *Post-conditions*: Workflow steps executed; variables returned.
 
-3. Uses `PathHelpers.SafePathCombine` to prevent path traversal.
-4. Dispatches to `RunFile` or `RunUrl`.
-5. After execution, reads requested outputs from the returned variables map.
+**RunBytes(Context, string, byte[], string?, Dictionary)**: Optionally verifies SHA-256 integrity,
+parses the YAML stream, processes the parameters section, validates provided parameters, and
+iterates over the steps sequence dispatching each command via CommandsRegistry.Commands.
 
-### `RunBytes`
+- *Parameters*: `Context context`; `string source` — display name for error messages;
+  `byte[] bytes` — YAML content; `string? integrity`;
+  `Dictionary<string, string> parameters`.
+- *Returns*: `Dictionary<string, string>` — the local variables map after all steps execute.
+- *Preconditions*: bytes must be valid YAML with a root mapping node containing a steps sequence.
+- *Post-conditions*: All steps executed in order; local variables returned as outputs.
 
-1. Optionally verifies SHA-256 integrity against the provided hash.
-2. Parses the YAML document.
-3. Processes `parameters` section into local variables with expansion.
-4. Validates that provided parameters are declared by the workflow.
-5. Executes each `steps` entry by dispatching to `CommandsRegistry`.
-6. Returns the resulting variables map as outputs.
+**ResolveNuGetFile(YamlMappingNode, string, string?, string?)**: Validates that nuget and url are
+not both specified, that file is present, parses the PackageName:version format, calls
+NuGetCache.EnsureCachedAsync to download and cache the package, and uses
+PathHelpers.SafePathCombine to construct the resolved file path. Path-traversal is prevented by
+SafePathCombine, which rejects any file argument that escapes the package root directory.
 
-## Error Handling
+- *Parameters*: `YamlMappingNode step` — for error reporting; `string nuget` — NuGet package spec
+  in "PackageName:version" format; `string? file` — required relative path within the package;
+  `string? url` — must be null when nuget is specified.
+- *Returns*: `string` — the absolute local file path to the resolved workflow file.
+- *Preconditions*: nuget must be non-null; url must be null; file must be non-null and must not
+  escape the package root.
+- *Error conditions*: YamlException when url is also specified, when file is null, or when nuget
+  lacks the ":" separator. CommandErrorException (from PathHelpers.SafePathCombine) when file
+  attempts path traversal.
+- *Security rationale*: SafePathCombine prevents path-traversal attacks by rejecting any
+  file argument that resolves outside the NuGet package root directory.
 
-| Condition | Exception |
-| :--- | :--- |
-| No arguments (CLI) | `CommandUsageException` |
-| Invalid `key=value` argument (CLI) | `CommandUsageException` |
-| Both `file` and `url` specified | `YamlException` |
-| Neither `file` nor `url` specified | `YamlException` |
-| Both `nuget` and `url` specified | `YamlException` |
-| `nuget` without `file` | `YamlException` |
-| `nuget` value not `PackageName:version` format | `YamlException` |
-| File not found | `CommandUsageException` |
-| HTTP error fetching URL | `CommandErrorException` |
-| Integrity check failure | `CommandErrorException` |
-| Invalid YAML structure | `CommandErrorException` |
-| Missing `steps` in workflow | `CommandErrorException` |
-| Unknown command in step | `CommandUsageException` |
-| Undeclared parameter | `CommandErrorException` |
-| Requested output not produced | `CommandUsageException` |
+#### Error Handling
 
-## Constraints
+**CommandUsageException** — thrown by Run(Context, string[]) when no arguments are provided or a
+parameter is malformed (missing "="); thrown by Run(Context, YamlMappingNode, Dictionary) when a
+requested workflow output is not produced; thrown by RunBytes when an unknown command is referenced
+in a step.
 
-- Workflows may be nested (a workflow step can call `run-workflow`).
-- Each nested workflow has its own isolated variables scope.
-- NuGet package resolution is synchronous (blocking) using `GetAwaiter().GetResult()`.
-- Variable expansion is applied to step inputs via the standard `Expand` helper.
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when both file and url are
+specified, when neither is specified, when both nuget and url are specified, when nuget is used
+without file, or when the nuget value is not in "PackageName:version" format.
+
+**CommandUsageException** — thrown by RunFile when the workflow file does not exist.
+
+**CommandErrorException** — thrown by RunUrl when the HTTP response is not 200; thrown by RunBytes
+when the integrity check fails, when the YAML structure is invalid, when the steps key is missing,
+when a step is not a mapping node, or when a required parameter is undeclared.
+
+#### Dependencies
+
+- Command (abstract base class)
+- CommandsRegistry (sibling registry — dispatches each workflow step)
+- Context (execution context)
+- NuGetCache (DemaConsulting.NuGet.Caching — NuGet package resolution)
+- PathHelpers (Utility subsystem — safe path combination)
+- System.Net.Http.HttpClient, HttpClientHandler
+- System.Security.Cryptography.SHA256
+- YamlDotNet (YamlStream, YamlMappingNode, YamlSequenceNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — routes CLI and workflow steps
+- Itself (recursively, when a workflow step specifies command: run-workflow)

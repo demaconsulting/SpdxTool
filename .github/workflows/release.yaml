@@ -1,6 +1,4 @@
 ---
-# Release workflow for creating and publishing releases
-# This workflow is manually triggered
 name: Release
 
 on:
@@ -11,9 +9,8 @@ on:
         required: true
         type: string
       publish:
-        description: 'Release Type'
+        description: 'Publish type'
         required: true
-        default: 'publish'
         type: choice
         options:
           - none
@@ -21,45 +18,43 @@ on:
           - publish
 
 jobs:
+  # Calls the reusable build workflow to build, test, and generate documentation
+  # for the release version.
   build:
     name: Build
-    # Permissions for this job
     permissions:
-      actions: read           # To read actions for CodeQL
-      contents: read          # To read repository contents
-      pull-requests: write    # To write pull requests analysis
-      security-events: write  # To write security events for CodeQL
+      actions: read
+      contents: read
+      pull-requests: write
+      security-events: write
     uses: ./.github/workflows/build.yaml
     with:
       version: ${{ inputs.version }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+  # Cuts and publishes the release, creating a GitHub release with artifacts
+  # and optionally publishing the NuGet package.
   release:
-    # Permissions for this job
-    permissions:
-      contents: write  # To create releases
-
+    name: Release
     runs-on: ubuntu-latest
-
     needs: build
+    permissions:
+      contents: write
 
     steps:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.x'
+          dotnet-version: |
+            8.x
+            9.x
+            10.x
 
-      - name: Download SpdxTool package artifacts
+      - name: Download package artifacts
         uses: actions/download-artifact@v8
         with:
           name: packages-ubuntu-latest
-          path: artifacts
-
-      - name: Download SpdxTool.Targets package artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: targets-packages-ubuntu-latest
           path: artifacts
 
       - name: Download documents artifact
@@ -68,19 +63,20 @@ jobs:
           name: documents
           path: artifacts
 
-      - name: Create release
-        if: ${{ inputs.publish == 'release' || inputs.publish == 'publish' }}
+      - name: Create GitHub Release
+        if: inputs.publish == 'release' || inputs.publish == 'publish'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "artifacts/*"
+          tag: ${{ inputs.version }}
+          artifacts: artifacts/*
           bodyFile: artifacts/build_notes.md
           generateReleaseNotes: false
-          tag: ${{ inputs.version }}
 
-      - name: Publish to Nuget
-        if: ${{ inputs.publish == 'publish' }}
-        run: >
-          dotnet nuget push
-          artifacts/*.nupkg
-          --source "https://api.nuget.org/v3/index.json"
-          --api-key "${{ secrets.DEMACONSULTINGNUGETKEY }}"
+      - name: Publish to NuGet.org
+        if: inputs.publish == 'publish'
+        run: |-
+          set -e
+          dotnet nuget push artifacts/*.nupkg \
+            --api-key ${{ secrets.DEMACONSULTINGNUGETKEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate

@@ -25,13 +25,12 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'rename-id' command.
 /// </summary>
-[TestClass]
 public class RenameIdTests
 {
     /// <summary>
     ///     Test that rename-id command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RenameId_MissingArguments_ReportsError()
     {
         // Act: Run the command
@@ -42,14 +41,14 @@ public class RenameIdTests
             "rename-id");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'rename-id' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that rename-id command with missing file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RenameId_MissingFile_ReportsError()
     {
         // Act: Run the command
@@ -63,14 +62,14 @@ public class RenameIdTests
             "SPDXRef-Package-2");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
     ///     Test that rename-id command with valid SPDX file renames the ID
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RenameId_ValidSpdxFile_RenamesId()
     {
         const string spdxContents =
@@ -120,16 +119,120 @@ public class RenameIdTests
                 "SPDXRef-Package-2");
 
             // Assert: Verify the conversion succeeded
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("test.spdx.json"));
+            Assert.True(File.Exists("test.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("test.spdx.json"));
 
             // Assert: Verify the SPDX ID was updated
-            Assert.AreEqual("SPDXRef-Package-2", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Describes[0]);
+            Assert.Equal("SPDXRef-Package-2", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Package-2", doc.Describes[0]);
+        }
+        finally
+        {
+            File.Delete("test.spdx.json");
+        }
+    }
+
+    /// <summary>
+    ///     Test that rename-id command with valid SPDX file renames all collections
+    /// </summary>
+    [Fact]
+    public void RenameId_ValidSpdxFile_RenamesAllCollections()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [
+                {
+                  "SPDXID": "SPDXRef-File-1",
+                  "fileName": "./test-file.txt",
+                  "licenseConcluded": "MIT",
+                  "copyrightText": "NOASSERTION"
+                }
+              ],
+              "snippets": [
+                {
+                  "SPDXID": "SPDXRef-Snippet-1",
+                  "snippetFromFile": "SPDXRef-File-1",
+                  "ranges": [
+                    {
+                      "startPointer": { "offset": 0, "reference": "SPDXRef-File-1" },
+                      "endPointer": { "offset": 10, "reference": "SPDXRef-File-1" }
+                    }
+                  ],
+                  "licenseConcluded": "MIT",
+                  "copyrightText": "NOASSERTION"
+                }
+              ],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT",
+                  "hasFiles": ["SPDXRef-File-1"]
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-File-1",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "CONTAINED_BY"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("test.spdx.json", spdxContents);
+
+            // Act: Run the tool
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "rename-id",
+                "test.spdx.json",
+                "SPDXRef-File-1",
+                "SPDXRef-File-2");
+
+            // Assert: Verify the conversion succeeded
+            Assert.Equal(0, exitCode);
+
+            // Read the SPDX document
+            Assert.True(File.Exists("test.spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("test.spdx.json"));
+
+            // Assert: Verify the file ID was updated
+            Assert.Equal("SPDXRef-File-2", doc.Files[0].Id);
+
+            // Assert: Verify the snippet from-file reference was updated
+            Assert.Equal("SPDXRef-File-2", doc.Snippets[0].SnippetFromFile);
+
+            // Assert: Verify the package hasFiles entry was updated
+            Assert.Equal("SPDXRef-File-2", doc.Packages[0].HasFiles[0]);
+
+            // Assert: Verify the relationship from-element was updated
+            Assert.Equal("SPDXRef-File-2", doc.Relationships[1].Id);
         }
         finally
         {

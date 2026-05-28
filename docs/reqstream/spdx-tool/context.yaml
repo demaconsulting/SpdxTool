@@ -1,0 +1,32 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Context Requirements
+        requirements:
+          - id: SpdxTool-Context-ExecutionState
+            title: Context shall hold all mutable execution state for a single tool invocation.
+            justification: |
+              Centralizing execution state in Context enables all commands and subsystems to
+              share a consistent view of flag values, output channels, and error counts without
+              using global variables.
+            tests:
+              - SpdxTool_Silent_ShortFlag_SuppressesOutput
+          - id: SpdxTool-Context-ErrorCount
+            title: Context shall record errors via WriteError and expose the count through ExitCode.
+            justification: |
+              Error counting enables the process exit code to reflect whether any errors occurred
+              during the invocation, which is essential for CI/CD pipeline integration.
+            tests:
+              - SpdxTool_Usage_NoArguments_DisplaysError
+          - id: SpdxTool-Context-LogOutput
+            title: Context shall write output to a log file when the -l/--log flag is supplied.
+            justification: |
+              CI pipelines and automated workflows sometimes need a persistent record of
+              tool output independent of the terminal. The --log flag creates a file writer
+              in Context that receives every WriteLine/WriteWarning/WriteError call, even
+              when --silent is also active.
+            tests:
+              - SpdxTool_Log_ShortFlag_WritesOutputToFile
+              - SpdxTool_Log_LongFlag_WritesOutputToFile
+              - SpdxTool_Log_SilentFlag_WritesToLogButNotConsole

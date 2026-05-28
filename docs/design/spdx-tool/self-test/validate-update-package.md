@@ -1,41 +1,55 @@
-# DemaConsulting.SpdxTool ValidateUpdatePackage SelfTest Design
+﻿### ValidateUpdatePackage
 
-## Purpose
+#### Purpose
 
-`ValidateUpdatePackage.cs` exercises the `update-package` command end-to-end within
-the SelfTest subsystem. It verifies that package metadata fields can be updated in
-an SPDX document via a workflow file.
+ValidateUpdatePackage exercises the update-package command end-to-end within the Self-Test subsystem.
+It verifies that all updatable metadata fields of a package in an SPDX document can be modified via
+a workflow file and that the resulting document reflects every changed value.
 
-## Test: `SpdxTool_UpdatePackage`
+#### Data Model
 
-### Setup
+N/A - this unit is a static class with no instance state.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes an SPDX JSON document containing a package with initial metadata.
-3. Writes a workflow YAML that executes the `update-package` command to change
+#### Key Methods
 
-   one or more fields (e.g., version, supplier).
+**Run**: executes the update-package self-test and records the result.
 
-### Execution
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: None.
+- *Post-conditions*: A TestResult entry named SpdxTool_UpdatePackage has been appended to results; a
+  pass or fail message has been written to the Context.
 
-Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "run-workflow", "workflow.yaml"])`.
+**DoValidate**: performs the actual update-package validation in a temporary directory.
 
-### Verification
+- *Parameters*: None.
+- *Returns*: `bool` — true if the command succeeded and every updated field matches the new value.
+- *Preconditions*: A writable working directory is available.
+- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
 
-Reads the modified SPDX document and verifies that the updated fields match the
-new values specified in the workflow.
+Creates a validate.tmp directory, writes an SPDX JSON document containing a single package
+(SPDXRef-Package-1) with initial metadata, and writes a workflow YAML that executes update-package
+to change the name, download location, version, filename, supplier, originator, homepage, copyright
+text, summary, description, and license fields. Calls Validate.RunSpdxTool with --silent and
+run-workflow arguments, then reads the modified SPDX document and verifies that all twelve updated
+fields match the values specified in the workflow.
 
-### Teardown
+#### Error Handling
 
-Deletes the `validate.tmp` directory.
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
+SPDX document does not exactly match all twelve updated field values. The temporary directory is
+always deleted in a finally block.
 
-## Error Handling
+#### Dependencies
 
-- Returns `false` if `RunSpdxTool` returns a non-zero exit code.
-- Returns `false` if the updated package fields do not match expectations.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
+- **Validate** — provides the RunSpdxTool helper used to invoke the update-package command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
+- **Spdx2JsonDeserializer** — from DemaConsulting.SpdxModel.IO; deserializes the output SPDX document
+  for structural verification.
 
-## Constraints
+#### Callers
 
-- The test is self-contained; all fixture data is embedded as string literals.
-- The temporary directory is always deleted in a `finally` block.
+- **Validate** — the Self-Test orchestrator invokes this step.

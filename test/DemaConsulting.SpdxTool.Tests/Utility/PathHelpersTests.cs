@@ -20,18 +20,17 @@
 
 using DemaConsulting.SpdxTool.Utility;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Utility;
 
 /// <summary>
 ///     Tests for the PathHelpers class.
 /// </summary>
-[TestClass]
 public class PathHelpersTests
 {
     /// <summary>
     ///     Test that SafePathCombine correctly combines valid paths.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly()
     {
         // Arrange
@@ -42,13 +41,13 @@ public class PathHelpersTests
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.Equal(Path.Combine(basePath, relativePath), result);
     }
 
     /// <summary>
     ///     Test that SafePathCombine throws ArgumentException for path traversal with double dots.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException()
     {
         // Arrange
@@ -64,7 +63,7 @@ public class PathHelpersTests
     /// <summary>
     ///     Test that SafePathCombine throws ArgumentException for path with double dots in middle.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException()
     {
         // Arrange
@@ -80,7 +79,7 @@ public class PathHelpersTests
     /// <summary>
     ///     Test that SafePathCombine throws ArgumentException for absolute paths.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException()
     {
         // Test Unix absolute path
@@ -104,7 +103,7 @@ public class PathHelpersTests
     /// <summary>
     ///     Test that SafePathCombine correctly handles current directory reference.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void PathHelpers_SafePathCombine_CurrentDirectoryReference_CombinesCorrectly()
     {
         // Arrange
@@ -115,13 +114,13 @@ public class PathHelpersTests
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.Equal(Path.Combine(basePath, relativePath), result);
     }
 
     /// <summary>
     ///     Test that SafePathCombine correctly handles nested paths.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void PathHelpers_SafePathCombine_NestedPaths_CombinesCorrectly()
     {
         // Arrange
@@ -132,13 +131,13 @@ public class PathHelpersTests
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.Equal(Path.Combine(basePath, relativePath), result);
     }
 
     /// <summary>
     ///     Test that SafePathCombine correctly handles empty relative path.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void PathHelpers_SafePathCombine_EmptyRelativePath_ReturnsBasePath()
     {
         // Arrange
@@ -149,6 +148,6 @@ public class PathHelpersTests
         var result = PathHelpers.SafePathCombine(basePath, relativePath);
 
         // Assert
-        Assert.AreEqual(Path.Combine(basePath, relativePath), result);
+        Assert.Equal(Path.Combine(basePath, relativePath), result);
     }
 }

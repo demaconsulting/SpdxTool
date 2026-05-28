@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for unknown command handling.
 /// </summary>
-[TestClass]
 public class UnknownCommandTests
 {
     /// <summary>
-    ///     Test that unrecognized commands report an error
+    ///     Test that dispatching an unknown command reports an error
     /// </summary>
-    [TestMethod]
-    public void UnknownCommand_UnrecognizedCommand_ReportsError()
+    [Fact]
+    public void Commands_Dispatch_UnknownCommand_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -40,7 +41,7 @@ public class UnknownCommandTests
             "unknown-command");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("Error: Unknown command 'unknown-command'", output);
     }
 }

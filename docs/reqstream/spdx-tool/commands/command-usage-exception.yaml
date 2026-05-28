@@ -1,0 +1,16 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: CommandUsageException Requirements
+            requirements:
+              - id: SpdxTool-CommandUsageException-IncorrectUsage
+                title: CommandUsageException shall signal incorrect command usage, causing Program to print usage help.
+                justification: |
+                  When a command is invoked incorrectly, the user needs to see usage information
+                  to understand the correct syntax. The dedicated exception type enables Program
+                  to distinguish this case from other errors.
+                tests:
+                  - AddPackage_OnCommandLine_ReportsWorkflowOnlyError

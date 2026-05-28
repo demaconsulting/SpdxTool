@@ -1,39 +1,52 @@
-# DemaConsulting.SpdxTool ValidateGetVersion SelfTest Design
+﻿### ValidateGetVersion
 
-## Purpose
+#### Purpose
 
-`ValidateGetVersion.cs` exercises the `get-version` command end-to-end within
-the SelfTest subsystem. It verifies that a package version can be retrieved from
-an SPDX document by criteria.
+ValidateGetVersion exercises the get-version command end-to-end within the Self-Test subsystem. It
+verifies that a package version can be retrieved from an SPDX document by package ID and captured
+into a workflow variable that is subsequently printed to the log output.
 
-## Test: `SpdxTool_GetVersion`
+#### Data Model
 
-### Setup
+N/A - this unit is a static class with no instance state.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes an SPDX JSON document containing a package with a known version.
-3. Writes a workflow YAML that executes `get-version` to retrieve the version.
+#### Key Methods
 
-### Execution
+**Run**: executes the get-version self-test and records the result.
 
-Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "run-workflow", "workflow.yaml"])`.
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: None.
+- *Post-conditions*: A TestResult entry named SpdxTool_GetVersion has been appended to results; a
+  pass or fail message has been written to the Context.
 
-### Verification
+**DoValidate**: performs the actual get-version validation in a temporary directory.
 
-Verifies that the workflow completed successfully and the extracted version matches
-the known expected value.
+- *Parameters*: None.
+- *Returns*: `bool` — true if the command succeeded and the log contains the expected version string.
+- *Preconditions*: A writable working directory is available. Callers must execute serially because Validate.RunSpdxTool temporarily mutates the process-wide current working directory.
+- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
 
-### Teardown
+Creates a validate.tmp directory, writes an SPDX JSON document containing two packages where
+SPDXRef-Package-2 has version "2.0.0", and writes a workflow YAML that executes get-version to
+retrieve the version of SPDXRef-Package-2 into the version variable and then prints it using the
+print command. Calls Validate.RunSpdxTool with --silent, --log, and run-workflow arguments. Reads
+the log file and verifies it contains the text "Found version 2.0.0".
 
-Deletes the `validate.tmp` directory.
+#### Error Handling
 
-## Error Handling
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the log file
+does not contain the expected "Found version 2.0.0" text. The temporary directory is always deleted
+in a finally block.
 
-- Returns `false` if `RunSpdxTool` returns a non-zero exit code.
-- Returns `false` if the extracted version does not match expectations.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
+#### Dependencies
 
-## Constraints
+- **Validate** — provides the RunSpdxTool helper used to invoke the get-version command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
 
-- The test is self-contained; all fixture data is embedded as string literals.
-- The temporary directory is always deleted in a `finally` block.
+#### Callers
+
+- **Validate** — the Self-Test orchestrator invokes this step.

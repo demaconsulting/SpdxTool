@@ -1,12 +1,9 @@
-# DemaConsulting.SpdxTool SarifMark OTS Requirements
-#
-# This file contains requirements for the SarifMark OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# SarifMark OTS requirements
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: SarifMark
+      - title: SarifMark Requirements
         requirements:
           - id: SpdxTool-OTS-SarifMark
             title: SarifMark shall convert CodeQL SARIF results into a markdown report.

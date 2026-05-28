@@ -21,7 +21,7 @@
 
   <!-- Implicit Usings -->
   <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <Using Include="Xunit" />
     <Using Include="Polyfills" />
   </ItemGroup>
 
@@ -33,8 +33,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="4.2.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.2.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="2.0.3" />
   </ItemGroup>
 
   <!-- Code Analysis Dependencies -->

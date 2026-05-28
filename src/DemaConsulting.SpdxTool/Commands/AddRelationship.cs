@@ -141,6 +141,8 @@ public sealed class AddRelationship : Command
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="relationships">SPDX relationships</param>
     /// <param name="replace">Replace existing relationships</param>
+    /// <exception cref="System.IO.IOException">Thrown when the SPDX file cannot be read or written.</exception>
+    /// <exception cref="CommandErrorException">Thrown when SpdxRelationships.Add raises an error (for example, duplicate relationships when replace is false).</exception>
     public static void Add(string spdxFile, SpdxRelationship[] relationships, bool replace = false)
     {
         // Load the SPDX document
@@ -158,6 +160,7 @@ public sealed class AddRelationship : Command
     /// <param name="doc">SPDX document</param>
     /// <param name="relationships">SPDX relationships</param>
     /// <param name="replace">Replace existing relationships</param>
+    /// <exception cref="CommandErrorException">Thrown when SpdxRelationships.Add raises an error (for example, duplicate relationships when replace is false).</exception>
     public static void Add(SpdxDocument doc, SpdxRelationship[] relationships, bool replace = false)
     {
         try

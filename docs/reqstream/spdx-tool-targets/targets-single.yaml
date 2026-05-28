@@ -1,0 +1,50 @@
+---
+# SpdxToolTargets single-TFM unit requirements
+sections:
+  - title: SpdxToolTargets Requirements
+    sections:
+      - title: Single-TFM Target Requirements
+        requirements:
+          - id: SpdxToolTargets-SingleTfm-DecorateWhenEnabled
+            title: The targets shall decorate the SBOM for a single-TFM project when DecorateSBOM is true.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Single-TFM projects are the common case. Ensuring decoration works correctly
+              for this configuration provides confidence in the primary execution path.
+            tests:
+              - SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom
+
+          - id: SpdxToolTargets-SingleTfm-SkipWhenDecorationDisabled
+            title: The targets shall skip SBOM decoration for a single-TFM project when DecorateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Users must be able to opt out of decoration per-project. Verifying the skip
+              behavior for the single-TFM path ensures the flag is respected.
+            tests:
+              - SpdxToolTargets_DecorateSbom_SingleTfm_False_SkipsDecoration
+
+          - id: SpdxToolTargets-SingleTfm-SkipWhenGenerationDisabled
+            title: The targets shall skip all SBOM processing for a single-TFM project when GenerateSBOM is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              When SBOM generation is disabled, decoration cannot proceed. The single-TFM
+              path must exit cleanly in this scenario without errors.
+            tests:
+              - SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely
+
+          - id: SpdxToolTargets-SingleTfm-ReportMissingWorkflow
+            title: The targets shall report a clear error for a single-TFM project when the workflow file is missing.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Missing workflow files are a common configuration error. Providing a clear
+              diagnostic message guides users to the corrective action.
+            tests:
+              - SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError

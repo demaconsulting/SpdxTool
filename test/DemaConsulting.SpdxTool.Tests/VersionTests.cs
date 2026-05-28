@@ -25,7 +25,6 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for version information.
 /// </summary>
-[TestClass]
 public partial class VersionTests
 {
     /// <summary>
@@ -38,9 +37,11 @@ public partial class VersionTests
     /// <summary>
     ///     Test that the short version flag displays the version information
     /// </summary>
-    [TestMethod]
-    public void Version_ShortFlag_DisplaysVersion()
+    [Fact]
+    public void SpdxTool_Version_ShortFlag_DisplaysVersion()
     {
+        // Arrange: no setup required
+
         // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
@@ -49,18 +50,20 @@ public partial class VersionTests
             "-v");
 
         // Assert: Check the output
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify version response
-        Assert.MatchesRegex(VersionRegex(), output);
+        Assert.Matches(VersionRegex(), output);
     }
 
     /// <summary>
     ///     Test that the long version flag displays the version information
     /// </summary>
-    [TestMethod]
-    public void Version_LongFlag_DisplaysVersion()
+    [Fact]
+    public void SpdxTool_Version_LongFlag_DisplaysVersion()
     {
+        // Arrange: no setup required
+
         // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
@@ -69,9 +72,9 @@ public partial class VersionTests
             "--version");
 
         // Assert: Check the output
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify version response
-        Assert.MatchesRegex(VersionRegex(), output);
+        Assert.Matches(VersionRegex(), output);
     }
 }

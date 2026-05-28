@@ -1,8 +1,3 @@
-# DemaConsulting.SpdxTool Utility Subsystem Requirements
-#
-# This file contains requirements for the DemaConsulting.SpdxTool Utility subsystem,
-# covering path safety and wildcard pattern matching.
-# It is included by the root requirements.yaml file.
 ---
 sections:
   - title: SpdxTool Requirements

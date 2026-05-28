@@ -25,14 +25,29 @@ using DemaConsulting.TestResults.IO;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation class
+///     Orchestrates the complete Self-Test suite for DemaConsulting.SpdxTool.
 /// </summary>
+/// <remarks>
+///     This class is the entry point invoked by <see cref="Program"/> when the <c>--validate</c>
+///     flag is detected. It runs all individual validation step classes in sequence, collects
+///     pass/fail <see cref="DemaConsulting.TestResults.TestResult"/> entries, prints a summary,
+///     and optionally serializes the results to a TRX or JUnit XML file.
+/// </remarks>
 public static class Validate
 {
     /// <summary>
-    ///     Run self-validation
+    ///     Executes the complete self-test suite using the supplied Program context.
     /// </summary>
-    /// <param name="context">Program context</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <remarks>
+    ///     Writes a system-information header (tool version, machine name, OS description, .NET runtime
+    ///     version, UTC timestamp) before invoking any steps. All step classes are invoked in sequence;
+    ///     individual step failures are captured as <see cref="DemaConsulting.TestResults.TestResult"/>
+    ///     entries and do not abort the suite. Computes total, passed, and failed counts after all steps
+    ///     complete, writing "Validation Passed" if <see cref="Context.Errors"/> is zero. If
+    ///     <see cref="Context.ValidationFile"/> is set, the results file is written via
+    ///     <see cref="WriteResultsFile"/>.
+    /// </remarks>
     public static void Run(Context context)
     {
         // Write validation header
@@ -101,10 +116,14 @@ public static class Validate
     }
 
     /// <summary>
-    ///     Write the test results to the specified file
+    ///     Serializes the collected test results to the file path in <see cref="Context.ValidationFile"/>.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context; provides the output file path and error stream.</param>
+    /// <param name="results">The collected test results to serialize.</param>
+    /// <remarks>
+    ///     Supports <c>.trx</c> (Visual Studio TRX) and <c>.xml</c> (JUnit XML) output formats.
+    ///     For an unsupported extension, an error message is written to the context and no file is produced.
+    /// </remarks>
     private static void WriteResultsFile(Context context, TestResults.TestResults results)
     {
         var extension = Path.GetExtension(context.ValidationFile).ToLowerInvariant();
@@ -129,10 +148,14 @@ public static class Validate
     }
 
     /// <summary>
-    ///     Run SpdxTool with the specified arguments
+    ///     Runs SpdxTool in-process with the supplied argument array.
     /// </summary>
-    /// <param name="args">Arguments</param>
-    /// <returns>Exit code</returns>
+    /// <param name="args">The command-line arguments to pass to SpdxTool.</param>
+    /// <returns>The exit code returned by <see cref="Program.Run"/>.</returns>
+    /// <remarks>
+    ///     Creates a new <see cref="Context"/>, invokes <see cref="Program.Run"/>, then disposes
+    ///     the context and returns its exit code. This overload does not change the current directory.
+    /// </remarks>
     internal static int RunSpdxTool(string[] args)
     {
         // Create the context
@@ -146,11 +169,22 @@ public static class Validate
     }
 
     /// <summary>
-    ///     Run SpdxTool in the specified folder with the specified arguments
+    ///     Runs SpdxTool in the specified folder with the supplied argument array.
     /// </summary>
-    /// <param name="workingFolder">Working folder</param>
-    /// <param name="args">Arguments</param>
-    /// <returns>Exit code</returns>
+    /// <param name="workingFolder">The directory to set as the current working directory before running.</param>
+    /// <param name="args">The command-line arguments to pass to SpdxTool.</param>
+    /// <returns>The exit code returned by <see cref="Program.Run"/>.</returns>
+    /// <remarks>
+    ///     <para>
+    ///         Changes the process-wide current working directory to <paramref name="workingFolder"/> before
+    ///         running, and restores the original directory in a <c>finally</c> block regardless of outcome.
+    ///     </para>
+    ///     <para>
+    ///         <strong>Thread safety:</strong> <see cref="Directory.SetCurrentDirectory"/> mutates global
+    ///         process state. Concurrent calls to this overload (or any code that depends on the current
+    ///         directory) will race. All callers within the Self-Test subsystem must execute serially.
+    ///     </para>
+    /// </remarks>
     internal static int RunSpdxTool(string workingFolder, string[] args)
     {
         var cwd = Directory.GetCurrentDirectory();

@@ -114,7 +114,7 @@ public sealed class Hash : Command
     /// <param name="operation">Operation to perform (generate or verify)</param>
     /// <param name="algorithm">Hash algorithm</param>
     /// <param name="file">File to perform operation on</param>
-    /// <exception cref="CommandUsageException">On usage error</exception>
+    /// <exception cref="CommandUsageException">Thrown when the algorithm is not "sha256", or when the operation is not "generate" or "verify".</exception>
     public static void DoHashOperation(Context context, string operation, string algorithm, string file)
     {
         // Check the algorithm
@@ -157,7 +157,7 @@ public sealed class Hash : Command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="file">Name of the file to verify</param>
-    /// <exception cref="CommandErrorException"></exception>
+    /// <exception cref="CommandErrorException">Thrown when the sidecar hash file does not exist, or when the computed digest does not match the stored digest.</exception>
     public static void VerifySha256(Context context, string file)
     {
         // Check the hash file exists
@@ -187,7 +187,7 @@ public sealed class Hash : Command
     ///     Calculate the Sha256 hash of a file
     /// </summary>
     /// <param name="file">File to hash</param>
-    /// <returns>Sh256 hash</returns>
+    /// <returns>SHA-256 hash as a lowercase hexadecimal string</returns>
     /// <exception cref="CommandErrorException">On error</exception>
     public static string CalculateSha256(string file)
     {

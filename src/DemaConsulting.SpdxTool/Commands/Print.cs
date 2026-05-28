@@ -24,8 +24,13 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Print command
+///     Prints one or more lines of text to the console.
 /// </summary>
+/// <remarks>
+///     In CLI mode each argument is printed as a separate line. In workflow mode the
+///     <c>text</c> YAML sequence provides the lines, with variable expansion applied.
+///     This command is available from both the CLI and workflow YAML steps.
+/// </remarks>
 public sealed class Print : Command
 {
     /// <summary>

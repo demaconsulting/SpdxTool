@@ -42,6 +42,12 @@ public static class Program
     ///     Application entry point
     /// </summary>
     /// <param name="args">Program arguments</param>
+    /// <remarks>
+    ///     InvalidOperationException from Context.Create (e.g., missing argument, invalid depth)
+    ///     is caught and reported as 'Error: {message}' with exit code 1. All other unhandled
+    ///     exceptions are reported and re-thrown. Environment.ExitCode is set from context.ExitCode
+    ///     (1 if any errors were recorded, 0 otherwise).
+    /// </remarks>
     public static void Main(string[] args)
     {
         try
@@ -71,6 +77,10 @@ public static class Program
     ///     Run the program context
     /// </summary>
     /// <param name="context">Program context</param>
+    /// <remarks>
+    ///     Each call to context.WriteError increments the error counter; the caller should check
+    ///     context.ExitCode after Run returns to determine whether any errors occurred.
+    /// </remarks>
     public static void Run(Context context)
     {
         // Handle version query

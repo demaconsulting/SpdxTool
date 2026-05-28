@@ -1,12 +1,9 @@
-# DemaConsulting.SpdxTool VersionMark OTS Requirements
-#
-# This file contains requirements for the VersionMark OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# VersionMark OTS requirements
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: VersionMark
+      - title: VersionMark Requirements
         requirements:
           - id: SpdxTool-OTS-VersionMark
             title: VersionMark shall publish captured tool-version information.

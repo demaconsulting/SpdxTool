@@ -121,6 +121,9 @@ public sealed class Diagram : Command
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="mermaidFile">Mermaid diagram file name</param>
     /// <param name="tools">True to include tools</param>
+    /// <exception cref="System.IO.FileNotFoundException">Thrown when <paramref name="spdxFile"/> does not exist on disk.</exception>
+    /// <exception cref="System.IO.IOException">Thrown when <paramref name="spdxFile"/> cannot be read or <paramref name="mermaidFile"/> cannot be written.</exception>
+    /// <exception cref="System.Text.Json.JsonException">Thrown when <paramref name="spdxFile"/> is not valid JSON.</exception>
     public static void GenerateDiagram(string spdxFile, string mermaidFile, bool tools = false)
     {
         // Load the SPDX document

@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Integration tests for the self-validation feature.
 /// </summary>
-[TestClass]
 public class IntegrationTests
 {
     /// <summary>
     ///     Test that the validate flag succeeds on self-validation
     /// </summary>
-    [TestMethod]
-    public void SelfTest_ValidateFlag_Succeeds()
+    [Fact]
+    public void SpdxTool_SelfTest_ValidateFlag_Succeeds()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -40,16 +41,18 @@ public class IntegrationTests
             "--validate");
 
         // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
         Assert.Contains("Validation Passed", output);
     }
 
     /// <summary>
     ///     Test that the validate flag with depth shows depth in output
     /// </summary>
-    [TestMethod]
-    public void SelfTest_ValidateFlagWithDepth_ShowsDepth()
+    [Fact]
+    public void SpdxTool_SelfTest_ValidateFlagWithDepth_ShowsDepth()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -59,7 +62,7 @@ public class IntegrationTests
             "--depth", "3");
 
         // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify depth of result
         Assert.Contains("### DemaConsulting.SpdxTool", output);
@@ -68,8 +71,8 @@ public class IntegrationTests
     /// <summary>
     ///     Test that the validate flag with results generates a TRX file
     /// </summary>
-    [TestMethod]
-    public void SelfTest_ValidateFlagWithResults_GeneratesTrxFile()
+    [Fact]
+    public void SpdxTool_SelfTest_ValidateFlagWithResults_GeneratesTrxFile()
     {
         const string resultFile = "results.trx";
 
@@ -85,11 +88,11 @@ public class IntegrationTests
                 resultFile);
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read results file (normalize line endings for cross-platform compatibility)
             var results = File.ReadAllText(resultFile).Replace("\r\n", "\n");
-            Assert.IsNotNull(results);
+            Assert.NotNull(results);
 
             // Assert: Verify the results contain expected content
             Assert.Contains("DemaConsulting.SpdxTool Validation Results -", results);
@@ -121,15 +124,59 @@ public class IntegrationTests
     }
 
     /// <summary>
+    ///     Test that the -r short flag generates a TRX file
+    /// </summary>
+    [Fact]
+    public void SpdxTool_SelfTest_ValidateFlagWithResults_ShortFlag_GeneratesTrxFile()
+    {
+        const string resultFile = "results-short.trx";
+
+        try
+        {
+            // Arrange: no setup required
+
+            // Act: Run the command using the short -r flag
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "--validate",
+                "-r",
+                resultFile);
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+
+            // Assert: Verify result file was created
+            Assert.True(File.Exists(resultFile));
+
+            // Read results file (normalize line endings for cross-platform compatibility)
+            var results = File.ReadAllText(resultFile).Replace("\r\n", "\n");
+            Assert.NotNull(results);
+
+            // Assert: Verify the results contain expected content
+            Assert.Contains("DemaConsulting.SpdxTool Validation Results -", results);
+            Assert.Contains("SpdxTool_Basic", results);
+        }
+        finally
+        {
+            // Delete the output file
+            File.Delete(resultFile);
+        }
+    }
+
+    /// <summary>
     ///     Test that the validate flag with results generates a JUnit file
     /// </summary>
-    [TestMethod]
-    public void SelfTest_ValidateFlagWithResults_GeneratesJUnitFile()
+    [Fact]
+    public void SpdxTool_SelfTest_ValidateFlagWithResults_GeneratesJUnitFile()
     {
         const string resultFile = "results.xml";
 
         try
         {
+            // Arrange: no setup required
+
             // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
@@ -140,11 +187,11 @@ public class IntegrationTests
                 resultFile);
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read results file
             var results = File.ReadAllText(resultFile);
-            Assert.IsNotNull(results);
+            Assert.NotNull(results);
 
             // Assert: Verify the results contain expected content
             Assert.Contains("DemaConsulting.SpdxTool Validation Results -", results);

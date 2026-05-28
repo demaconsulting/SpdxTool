@@ -23,15 +23,29 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of Diagram command
+///     Self-test step that exercises the <c>diagram</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that a Mermaid entity-relationship diagram can be generated from an SPDX document
+///     and that the output file is created with the expected diagram syntax and package content.
+///     Uses a temporary <c>validate.tmp</c> directory in the current working directory; callers
+///     must ensure sequential execution to avoid races on that directory and on the process-wide
+///     current directory set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateDiagram
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the diagram self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_Diagram</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         // Perform the validation
@@ -60,9 +74,27 @@ internal static class ValidateDiagram
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual diagram validation in a temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if the command succeeded and the output Mermaid file contains the expected
+    ///     diagram syntax and package content; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     <para>
+    ///         Creates <c>validate.tmp</c> and writes an SPDX JSON document containing two packages
+    ///         (Test Application and Test Library) connected by a DEPENDS_ON relationship. Invokes
+    ///         <see cref="Validate.RunSpdxTool(string, string[])"/> with the <c>diagram</c> command,
+    ///         then verifies that the output file exists and contains the <c>erDiagram</c> keyword,
+    ///         both package names and versions, and the DEPENDS_ON relationship label.
+    ///     </para>
+    ///     <para>
+    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
+    ///         even if directory creation or file writes only partially succeeded.
+    ///     </para>
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try

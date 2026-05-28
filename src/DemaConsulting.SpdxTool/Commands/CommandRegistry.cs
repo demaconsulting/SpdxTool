@@ -21,8 +21,15 @@
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Commands Registry
+///     Static registry mapping command-name strings to their <see cref="CommandEntry"/> instances.
 /// </summary>
+/// <remarks>
+///     All sixteen built-in commands are registered at static initialization time.
+///     The registry is read-only at runtime; no entry can be added or removed after
+///     the application starts. Callers obtain command instances via the
+///     <see cref="Commands"/> property and invoke them through
+///     <see cref="CommandEntry.Instance"/>.
+/// </remarks>
 public static class CommandsRegistry
 {
     /// <summary>
@@ -49,7 +56,12 @@ public static class CommandsRegistry
     };
 
     /// <summary>
-    ///     Gets the commands
+    ///     Gets the read-only mapping of command names to their <see cref="CommandEntry"/> instances.
     /// </summary>
+    /// <value>
+    ///     An <see cref="IReadOnlyDictionary{TKey,TValue}"/> whose keys are the command-name strings
+    ///     (e.g., <c>"validate"</c>, <c>"add-package"</c>) and whose values are the corresponding
+    ///     <see cref="CommandEntry"/> records.
+    /// </value>
     public static IReadOnlyDictionary<string, CommandEntry> Commands => InternalCommands;
 }

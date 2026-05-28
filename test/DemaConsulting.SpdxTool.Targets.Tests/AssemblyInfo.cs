@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+// cspell:ignore Xunit
+using Xunit;
 
-[assembly: DoNotParallelize]
+// Disable parallelism: tests write to fixed file paths in test fixture directories
+[assembly: CollectionBehavior(DisableTestParallelization = true)]

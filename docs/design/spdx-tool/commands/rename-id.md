@@ -1,57 +1,83 @@
-# DemaConsulting.SpdxTool rename-id Command Design
+﻿### RenameId
 
-## Purpose
+#### Purpose
 
-The `rename-id` command renames an SPDX element ID throughout an SPDX document,
-updating all packages, files, snippets, relationships, and describes entries that
-reference the old ID. It is available from the command-line and from workflow YAML
-files.
+RenameId renames an SPDX element ID throughout an SPDX document, updating all package IDs, file
+IDs, snippet IDs, relationship references, HasFiles arrays, and the Describes array. It is
+available from both the CLI and workflow YAML files, and exposes a static Rename method used
+internally by AddPackage and CopyPackage.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+N/A — RenameId is a stateless singleton.
 
-```text
-spdx-tool rename-id <spdx.json> <old-id> <new-id>
-```
+**Instance**: `RenameId` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record for RenameId.
 
-### Workflow YAML usage
+#### Key Methods
 
-```yaml
-- command: rename-id
-  inputs:
-    spdx: <spdx.json>             # SPDX file name (required)
-    old: <old-id>                 # Old element ID (required)
-    new: <new-id>                 # New element ID (required)
-```
+**Run(Context, string[])**: Validates that exactly three arguments are provided and calls
+Rename(string, string, string).
 
-## Implementation
+- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, oldId, newId].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be exactly 3.
+- *Post-conditions*: All occurrences of oldId in the SPDX file are replaced with newId.
 
-1. Reads `spdx`, `old`, and `new` from inputs.
-2. Validates `old` and `new` IDs:
-   - Neither may be empty or `"SPDXRef-DOCUMENT"`.
-   - They must differ.
-   - `new` must not already be in use by another element.
-3. Iterates all packages, files, snippets, relationships, and document describes
-   arrays, replacing every occurrence of `old` with `new` using `UpdateId`.
-4. If `old == new`, returns without modification (no-op).
+**Run(Context, YamlMappingNode, Dictionary)**: Reads spdx, old, and new inputs from the YAML step
+node and calls Rename(string, string, string).
 
-## Error Handling
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: spdx, old, and new inputs are required.
+- *Post-conditions*: All occurrences of old are replaced with new in the SPDX file.
 
-| Condition | Exception |
-| :--- | :--- |
-| Not exactly 3 CLI arguments | `CommandUsageException` |
-| Missing `spdx` input (workflow) | `YamlException` |
-| Missing `new` input (workflow) | `YamlException` |
-| Missing `old` input (workflow) | `YamlException` |
-| Empty or `SPDXRef-DOCUMENT` old ID | `CommandUsageException` |
-| Empty or `SPDXRef-DOCUMENT` new ID | `CommandUsageException` |
-| New ID already in use | `CommandErrorException` |
+**Rename(string, string, string)**: Loads the SPDX document, calls
+Rename(SpdxDocument, string, string), and saves the updated document.
 
-## Constraints
+- *Parameters*: `string spdxFile` — SPDX file path; `string oldId` — element ID to replace;
+  `string newId` — replacement ID.
+- *Returns*: `void`
+- *Preconditions*: spdxFile must exist.
+- *Post-conditions*: spdxFile is updated in place.
 
-- Renaming `old` to itself is silently treated as a no-op.
-- The new ID must not collide with any existing package, file, or snippet ID.
-- References in `HasFiles`, `RelatedSpdxElement`, and `Describes` arrays are all
-  updated so that referential integrity is maintained.
-- Variable expansion is applied to all string inputs via `GetMapString`.
+**Rename(SpdxDocument, string, string)**: Performs the in-memory rename across all element
+collections. Skips the operation when oldId == newId. Validates that neither ID is empty or
+"SPDXRef-DOCUMENT". Validates that newId is not already in use.
+
+- *Parameters*: `SpdxDocument doc` — in-memory SPDX document; `string oldId` — old element ID;
+  `string newId` — new element ID.
+- *Returns*: `void`
+- *Preconditions*: oldId and newId must not be empty or equal to "SPDXRef-DOCUMENT". newId must
+  not already be used by any package, file, or snippet in doc.
+- *Post-conditions*: All references to oldId in packages, files, snippets, relationships, HasFiles
+  arrays, and Describes are updated to newId.
+
+#### Error Handling
+
+**CommandUsageException** — thrown by Run(Context, string[]) when the argument count is not exactly
+3; thrown by Rename(SpdxDocument, string, string) when oldId or newId is empty or equals
+"SPDXRef-DOCUMENT".
+
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when spdx, old, or new
+inputs are missing.
+
+**CommandErrorException** — thrown by Rename(SpdxDocument, string, string) when newId is already
+used by another element in the document.
+
+#### Dependencies
+
+- Command (abstract base class)
+- SpdxDocument, SpdxPackage, SpdxFile, SpdxSnippet, SpdxRelationship (DemaConsulting.SpdxModel)
+- SpdxHelpers (Spdx units)
+- YamlDotNet (YamlMappingNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — routes CLI and workflow steps
+- AddPackage — calls Rename(SpdxDocument, string, string) when enhancing an existing package to
+  reconcile the package ID
+- CopyPackage — calls Rename(SpdxDocument, string, string) when enhancing an existing package or
+  file in the destination document
+- RunWorkflow — dispatches this command when a workflow step specifies command: rename-id

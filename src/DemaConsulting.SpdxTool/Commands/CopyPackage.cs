@@ -211,6 +211,11 @@ public sealed class CopyPackage : Command
     /// <param name="packageId">ID of the SPDX package to copy</param>
     /// <param name="files">Copy files option</param>
     /// <exception cref="CommandErrorException">On error</exception>
+    /// <remarks>
+    ///     New copies have <see cref="SpdxPackage.FilesAnalyzed"/> reset to <see langword="false"/> because the
+    ///     destination document does not carry the source file entries unless the <paramref name="files"/> flag
+    ///     is set. This prevents the destination SPDX document from advertising unverifiable file data.
+    /// </remarks>
     public static void Copy(SpdxDocument fromDoc, SpdxDocument toDoc, string packageId, bool files)
     {
         // Verify the package exists in the source
@@ -285,6 +290,11 @@ public sealed class CopyPackage : Command
     /// <param name="parentId">ID of the parent package</param>
     /// <param name="copied">Packages already copied</param>
     /// <param name="files">Copy files option</param>
+    /// <remarks>
+    ///     The <paramref name="copied"/> set guards against infinite recursion in graphs that contain cycles.
+    ///     A package ID is added to the set before its children are processed, so any back-edge to an
+    ///     already-visited package is skipped without re-entering the recursive call.
+    /// </remarks>
     public static void CopyChildren(SpdxDocument fromDoc, SpdxDocument toDoc, string parentId, HashSet<string> copied,
         bool files)
     {

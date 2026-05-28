@@ -25,7 +25,6 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'query' command
 /// </summary>
-[TestClass]
 public partial class QueryTests
 {
     /// <summary>
@@ -38,7 +37,7 @@ public partial class QueryTests
     /// <summary>
     ///     Test that query command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Query_MissingArguments_ReportsError()
     {
         // Act: Run the command
@@ -49,15 +48,15 @@ public partial class QueryTests
             "query");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'query' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that query command with bad regex pattern reports an error
     /// </summary>
-    [TestMethod]
-    public void Query_BadRegexPattern_ReportsError()
+    [Fact]
+    public void Query_PatternMissingValueGroup_ReportsError()
     {
         // Act: Run the command
         var exitCode = Runner.Run(
@@ -70,14 +69,14 @@ public partial class QueryTests
             "--version");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("Pattern must contain a 'value' capture group", output);
     }
 
     /// <summary>
     ///     Test that query command with invalid program reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Query_InvalidProgram_ReportsError()
     {
         // Act: Run the command
@@ -90,14 +89,14 @@ public partial class QueryTests
             "does-not-exist");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("Unable to start program 'does-not-exist'", output);
     }
 
     /// <summary>
     ///     Test that query command for dotnet version on command line returns the version
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Query_DotNetVersion_OnCommandLine_ReturnsVersion()
     {
         // Act: Run the command
@@ -110,15 +109,15 @@ public partial class QueryTests
             "dotnet",
             "--version");
 
-        // Assert: Verify error reported
-        Assert.AreEqual(0, exitCode);
-        Assert.MatchesRegex(VersionRegex(), output);
+        // Assert: Verify version returned
+        Assert.Equal(0, exitCode);
+        Assert.Matches(VersionRegex(), output);
     }
 
     /// <summary>
     ///     Test that query command for dotnet version in workflow stores the version
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Query_DotNetVersion_InWorkflow_StoresVersion()
     {
         // Workflow contents
@@ -156,12 +155,54 @@ public partial class QueryTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
-            Assert.MatchesRegex(VersionRegex(), output);
+            Assert.Equal(0, exitCode);
+            Assert.Matches(VersionRegex(), output);
         }
         finally
         {
             File.Delete("workflow.yaml");
         }
+    }
+
+    /// <summary>
+    ///     Test that query command with an invalid regex pattern reports an error
+    /// </summary>
+    [Fact]
+    public void Query_InvalidRegexPattern_ReportsError()
+    {
+        // Act: Run the command
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "query",
+            "[unclosed",
+            "dotnet",
+            "--version");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("Invalid regular expression pattern", output);
+    }
+
+    /// <summary>
+    ///     Test that query command with a pattern not found in output reports an error
+    /// </summary>
+    [Fact]
+    public void Query_PatternNotFound_ReportsError()
+    {
+        // Act: Run the command
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "query",
+            @"(?<value>THIS_WILL_NEVER_MATCH)",
+            "dotnet",
+            "--version");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("not found in program output", output);
     }
 }

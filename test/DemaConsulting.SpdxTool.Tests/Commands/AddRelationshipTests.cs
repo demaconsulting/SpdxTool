@@ -26,7 +26,6 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'add-relationship' command
 /// </summary>
-[TestClass]
 public class AddRelationshipTests
 {
     /// <summary>
@@ -69,7 +68,7 @@ public class AddRelationshipTests
     /// <summary>
     ///     Test that add-relationship command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void AddRelationship_MissingArguments_ReportsError()
     {
         // Act: Run the command
@@ -80,14 +79,14 @@ public class AddRelationshipTests
             "add-relationship");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'add-relationship' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that add-relationship command with missing file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void AddRelationship_MissingFile_ReportsError()
     {
         // Act: Run the command
@@ -102,15 +101,15 @@ public class AddRelationshipTests
             "to-package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
-    ///     Test that add-relationship command on command line reports workflow-only error
+    ///     Test that add-relationship command on command line adds a relationship
     /// </summary>
-    [TestMethod]
-    public void AddRelationship_OnCommandLine_ReportsWorkflowOnlyError()
+    [Fact]
+    public void AddRelationship_OnCommandLine_AddsRelationship()
     {
         try
         {
@@ -129,19 +128,19 @@ public class AddRelationshipTests
                 "SPDXRef-Package-2",
                 "Package 1 contains Package 2");
 
-            // Assert: Verify error reported
-            Assert.AreEqual(0, exitCode);
+            // Assert: Verify relationship added successfully
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("spdx.json"));
+            Assert.True(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationship added
-            Assert.HasCount(1, doc.Relationships);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
-            Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
-            Assert.AreEqual("Package 1 contains Package 2", doc.Relationships[0].Comment);
+            Assert.Single(doc.Relationships);
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[0].Id);
+            Assert.Equal(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("Package 1 contains Package 2", doc.Relationships[0].Comment);
         }
         finally
         {
@@ -152,7 +151,7 @@ public class AddRelationshipTests
     /// <summary>
     ///     Test that add-relationship command in workflow adds the relationship
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void AddRelationship_InWorkflow_AddsRelationship()
     {
         // Workflow contents
@@ -183,19 +182,19 @@ public class AddRelationshipTests
                 "run-workflow",
                 "workflow.yaml");
 
-            // Assert: Verify error reported
-            Assert.AreEqual(0, exitCode);
+            // Assert: Verify relationship added successfully
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("spdx.json"));
+            Assert.True(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationship added
-            Assert.HasCount(1, doc.Relationships);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
-            Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
-            Assert.AreEqual("Package 1 contains Package 2", doc.Relationships[0].Comment);
+            Assert.Single(doc.Relationships);
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[0].Id);
+            Assert.Equal(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("Package 1 contains Package 2", doc.Relationships[0].Comment);
         }
         finally
         {
@@ -207,7 +206,7 @@ public class AddRelationshipTests
     /// <summary>
     ///     Test that add-relationship command with replace mode replaces existing relationships
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void AddRelationship_ReplaceMode_ReplacesExistingRelationship()
     {
         // Workflow1 contents
@@ -257,23 +256,23 @@ public class AddRelationshipTests
                 "run-workflow",
                 "workflow1.yaml");
 
-            // Assert: Verify error reported
-            Assert.AreEqual(0, exitCode);
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("spdx.json"));
+            Assert.True(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationships added
-            Assert.HasCount(2, doc.Relationships);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
-            Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
-            Assert.AreEqual("Package 1 contains Package 2", doc.Relationships[0].Comment);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[1].Id);
-            Assert.AreEqual(SpdxRelationshipType.Describes, doc.Relationships[1].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[1].RelatedSpdxElement);
-            Assert.AreEqual("Package 1 describes Package 2", doc.Relationships[1].Comment);
+            Assert.Equal(2, doc.Relationships.Count());
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[0].Id);
+            Assert.Equal(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("Package 1 contains Package 2", doc.Relationships[0].Comment);
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[1].Id);
+            Assert.Equal(SpdxRelationshipType.Describes, doc.Relationships[1].RelationshipType);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[1].RelatedSpdxElement);
+            Assert.Equal("Package 1 describes Package 2", doc.Relationships[1].Comment);
 
             // Act: Run the second workflow
             exitCode = Runner.Run(
@@ -283,25 +282,312 @@ public class AddRelationshipTests
                 "run-workflow",
                 "workflow2.yaml");
 
-            // Assert: Verify error reported
-            Assert.AreEqual(0, exitCode);
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("spdx.json"));
+            Assert.True(File.Exists("spdx.json"));
             doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationship replaced
-            Assert.HasCount(1, doc.Relationships);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[0].Id);
-            Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[0].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
-            Assert.AreEqual("Package 1 builds Package 2", doc.Relationships[0].Comment);
+            Assert.Single(doc.Relationships);
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[0].Id);
+            Assert.Equal(SpdxRelationshipType.BuildToolOf, doc.Relationships[0].RelationshipType);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("Package 1 builds Package 2", doc.Relationships[0].Comment);
         }
         finally
         {
             File.Delete("spdx.json");
             File.Delete("workflow1.yaml");
             File.Delete("workflow2.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-relationship command in workflow with missing spdx input reports error
+    /// </summary>
+    [Fact]
+    public void AddRelationship_InWorkflowMissingSpdxInput_ReportsError()
+    {
+        // Workflow contents - missing 'spdx' input
+        const string workflowContents =
+            """
+            steps:
+            - command: add-relationship
+              inputs:
+                id: SPDXRef-Package-1
+                relationships:
+                - type: CONTAINS
+                  element: SPDXRef-Package-2
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-relationship' command missing 'spdx' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-relationship command in workflow with missing id input reports error
+    /// </summary>
+    [Fact]
+    public void AddRelationship_InWorkflowMissingIdInput_ReportsError()
+    {
+        // Workflow contents - missing 'id' input
+        const string workflowContents =
+            """
+            steps:
+            - command: add-relationship
+              inputs:
+                spdx: spdx.json
+                relationships:
+                - type: CONTAINS
+                  element: SPDXRef-Package-2
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-relationship' command missing 'id' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-relationship command in workflow with missing relationships input reports error
+    /// </summary>
+    [Fact]
+    public void AddRelationship_InWorkflowMissingRelationshipsInput_ReportsError()
+    {
+        // Workflow contents - missing 'relationships' input
+        const string workflowContents =
+            """
+            steps:
+            - command: add-relationship
+              inputs:
+                spdx: spdx.json
+                id: SPDXRef-Package-1
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-relationship' missing 'relationships' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-relationship command in workflow with invalid replace value reports error
+    /// </summary>
+    [Fact]
+    public void AddRelationship_InWorkflowInvalidReplaceValue_ReportsError()
+    {
+        // Workflow contents - invalid 'replace' value
+        const string workflowContents =
+            """
+            steps:
+            - command: add-relationship
+              inputs:
+                spdx: spdx.json
+                id: SPDXRef-Package-1
+                replace: not-a-bool
+                relationships:
+                - type: CONTAINS
+                  element: SPDXRef-Package-2
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-relationship' invalid 'replace' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-relationship command in workflow with non-mapping relationship node reports error
+    /// </summary>
+    [Fact]
+    public void AddRelationship_InWorkflowNonMappingRelationshipNode_ReportsError()
+    {
+        // Workflow contents - relationship is a scalar, not a mapping
+        const string workflowContents =
+            """
+            steps:
+            - command: add-relationship
+              inputs:
+                spdx: spdx.json
+                id: SPDXRef-Package-1
+                relationships:
+                - not-a-mapping
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-relationship' relationship must be a mapping", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-relationship command in workflow with missing relationship type reports error
+    /// </summary>
+    [Fact]
+    public void AddRelationship_InWorkflowMissingRelationshipType_ReportsError()
+    {
+        // Workflow contents - relationship missing 'type'
+        const string workflowContents =
+            """
+            steps:
+            - command: add-relationship
+              inputs:
+                spdx: spdx.json
+                id: SPDXRef-Package-1
+                relationships:
+                - element: SPDXRef-Package-2
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-relationship' missing relationship 'type' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-relationship command in workflow with missing relationship element reports error
+    /// </summary>
+    [Fact]
+    public void AddRelationship_InWorkflowMissingRelationshipElement_ReportsError()
+    {
+        // Workflow contents - relationship missing 'element'
+        const string workflowContents =
+            """
+            steps:
+            - command: add-relationship
+              inputs:
+                spdx: spdx.json
+                id: SPDXRef-Package-1
+                relationships:
+                - type: CONTAINS
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-relationship' missing relationship 'element' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
         }
     }
 }

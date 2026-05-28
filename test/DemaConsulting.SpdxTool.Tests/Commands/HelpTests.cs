@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'help' command
 /// </summary>
-[TestClass]
 public class HelpTests
 {
     /// <summary>
     ///     Test that help command with no arguments reports an error
     /// </summary>
-    [TestMethod]
-    public void Help_NoArguments_ReportsError()
+    [Fact]
+    public void Help_Run_NoArguments_ReportsError()
     {
+        // Arrange: no setup required — the tool binary is invoked as a self-contained process
+
         // Act: Run the help command with no arguments
         var exitCode = Runner.Run(
             out var output,
@@ -40,16 +41,18 @@ public class HelpTests
             "help");
 
         // Assert: Verify an error was detected
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'help' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that help command with unknown command reports an error
     /// </summary>
-    [TestMethod]
-    public void Help_UnknownCommand_ReportsError()
+    [Fact]
+    public void Help_Run_UnknownCommand_ReportsError()
     {
+        // Arrange: no setup required — the tool binary is invoked as a self-contained process
+
         // Act: Run the help command with an unknown command
         var exitCode = Runner.Run(
             out var output,
@@ -59,17 +62,19 @@ public class HelpTests
             "unknown-command");
 
         // Assert: Verify an error was detected
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("Unknown command: 'unknown-command'", output);
     }
 
     /// <summary>
     ///     Test that help command with run-workflow displays help information
     /// </summary>
-    [TestMethod]
-    public void Help_RunWorkflowCommand_DisplaysHelp()
+    [Fact]
+    public void Help_Run_RunWorkflowCommand_DisplaysHelp()
     {
-        // Act: Run the help command with an unknown command
+        // Arrange: no setup required — the tool binary is invoked as a self-contained process
+
+        // Act: Run the help command with the 'run-workflow' command name
         var exitCode = Runner.Run(
             out var output,
             "dotnet",
@@ -78,7 +83,45 @@ public class HelpTests
             "run-workflow");
 
         // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
         Assert.Contains("This command runs the steps specified in the workflow file/url.", output);
+    }
+
+    /// <summary>
+    ///     Test that help command in a YAML workflow step displays help
+    /// </summary>
+    [Fact]
+    public void Help_Run_YamlInvocation_DisplaysHelp()
+    {
+        // Workflow contents
+        const string workflowContents =
+            """
+            steps:
+            - command: help
+              inputs:
+                about: run-workflow
+            """;
+
+        try
+        {
+            // Arrange: no setup required — the tool binary is invoked as a self-contained process
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify help text is displayed
+            Assert.Equal(0, exitCode);
+            Assert.Contains("This command runs the steps specified in the workflow file/url.", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
     }
 }

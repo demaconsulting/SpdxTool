@@ -46,6 +46,12 @@ public enum RelationshipDirection
 /// <summary>
 ///     Relationship Direction Extensions
 /// </summary>
+/// <remarks>
+///     Maps <see cref="DemaConsulting.SpdxModel.SpdxRelationshipType"/> values to their
+///     traversal direction relative to the element that owns the relationship.
+///     Relationship types not present in the map default to
+///     <see cref="RelationshipDirection.Sibling"/>.
+/// </remarks>
 public static class RelationshipDirectionExtensions
 {
     /// <summary>

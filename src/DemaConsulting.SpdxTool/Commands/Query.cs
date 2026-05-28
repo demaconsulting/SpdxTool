@@ -76,13 +76,13 @@ public sealed class Query : Command
     /// <inheritdoc />
     public override void Run(Context context, string[] args)
     {
-        // Report an error if the number of arguments is not 1
+        // Report an error if fewer than 2 arguments are provided
         if (args.Length < 2)
         {
             throw new CommandUsageException("'query' command missing arguments");
         }
 
-        // Generate the markdown
+        // Query the program output
         var found = QueryProgramOutput(args[0], args[1], [.. args.Skip(2)]);
 
         // Write the found value
@@ -112,7 +112,7 @@ public sealed class Query : Command
         var arguments = argumentsSequence?.Children.Select(c => Expand(c.ToString(), variables)).ToArray() ??
                         [];
 
-        // Generate the markdown
+        // Query the program output
         var found = QueryProgramOutput(pattern, program, arguments);
 
         // Save the output to the variables
@@ -131,7 +131,16 @@ public sealed class Query : Command
     public static string QueryProgramOutput(string pattern, string program, string[] arguments)
     {
         // Construct the regular expression
-        var regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+        Regex regex;
+        try
+        {
+            regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+        }
+        catch (RegexParseException ex)
+        {
+            throw new CommandUsageException($"Invalid regular expression pattern: {ex.Message}");
+        }
+
         if (!regex.GetGroupNames().Contains("value"))
         {
             throw new CommandUsageException("Pattern must contain a 'value' capture group");

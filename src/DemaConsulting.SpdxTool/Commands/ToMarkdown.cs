@@ -142,7 +142,14 @@ public sealed class ToMarkdown : Command
     /// <param name="markdownFile">Markdown file</param>
     /// <param name="title">Markdown title</param>
     /// <param name="depth">Depth of the Markdown headers</param>
-    /// <exception cref="CommandUsageException">On usage error</exception>
+    /// <exception cref="System.IO.FileNotFoundException">
+    ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when
+    ///     <paramref name="spdxFile"/> does not exist.
+    /// </exception>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from <see cref="System.IO.File.WriteAllText(string,string)"/> when
+    ///     the output file cannot be written.
+    /// </exception>
     public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, string title = "SPDX Document",
         int depth = 2)
     {
@@ -192,6 +199,7 @@ public sealed class ToMarkdown : Command
         // Print the root packages
         if (rootPackages.Length > 0)
         {
+            // Sub-section headings are intentionally one level below the title heading (depth+1 hashes)
             markdown.AppendLine($"{header}# Root Packages");
             markdown.AppendLine();
             markdown.AppendLine("| Name | Version | License |");

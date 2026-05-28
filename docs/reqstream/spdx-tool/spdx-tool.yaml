@@ -1,7 +1,3 @@
-# DemaConsulting.SpdxTool System Requirements
-#
-# This file contains system-level requirements for the DemaConsulting.SpdxTool system,
-# covering the command-line interface. It is included by the root requirements.yaml file.
 ---
 sections:
   - title: SpdxTool Requirements
@@ -16,8 +12,8 @@ sections:
               Users need to check the version of the tool they are using for compatibility
               and troubleshooting purposes.
             tests:
-              - Version_ShortFlag_DisplaysVersion
-              - Version_LongFlag_DisplaysVersion
+              - SpdxTool_Version_ShortFlag_DisplaysVersion
+              - SpdxTool_Version_LongFlag_DisplaysVersion
 
           - id: SpdxTool-Command-Help
             title: The tool shall display usage information when invoked with the -h, -?, or --help flag.
@@ -27,8 +23,9 @@ sections:
               Users need quick access to help documentation to understand how to use the
               tool effectively.
             tests:
-              - Usage_ShortHelpFlag_DisplaysUsage
-              - Usage_LongHelpFlag_DisplaysUsage
+              - SpdxTool_Usage_ShortHelpFlag_DisplaysUsage
+              - SpdxTool_Usage_LongHelpFlag_DisplaysUsage
+              - SpdxTool_Usage_QuestionMarkHelpFlag_DisplaysUsage
 
           - id: SpdxTool-Command-InvalidArgs
             title: The tool shall display an error and usage information when invoked without arguments.
@@ -38,7 +35,7 @@ sections:
               When users invoke the tool without any arguments, they should receive
               guidance on proper usage rather than encountering undefined behavior.
             tests:
-              - Usage_NoArguments_DisplaysError
+              - SpdxTool_Usage_NoArguments_DisplaysError
 
           - id: SpdxTool-Command-Silent
             title: The tool shall silence console output when invoked with the -s or --silent flag.
@@ -48,8 +45,8 @@ sections:
               In automated scripts and CI/CD pipelines, users may want to suppress
               console output to reduce log noise.
             tests:
-              - Silent_ShortFlag_SuppressesOutput
-              - Silent_LongFlag_SuppressesOutput
+              - SpdxTool_Silent_ShortFlag_SuppressesOutput
+              - SpdxTool_Silent_LongFlag_SuppressesOutput
 
           - id: SpdxTool-Command-Log
             title: The tool shall write output to a log file when invoked with the -l or --log flag.
@@ -59,8 +56,8 @@ sections:
               Users need the ability to capture tool output to files for auditing,
               debugging, and record-keeping purposes.
             tests:
-              - Log_ShortFlag_WritesOutputToFile
-              - Log_LongFlag_WritesOutputToFile
+              - SpdxTool_Log_ShortFlag_WritesOutputToFile
+              - SpdxTool_Log_LongFlag_WritesOutputToFile
 
           - id: SpdxTool-Command-Validate
             title: The tool shall perform self-validation when invoked with the --validate flag.
@@ -72,7 +69,7 @@ sections:
             children:
               - SpdxTool-SelfTest-Validate
             tests:
-              - SelfTest_ValidateFlag_Succeeds
+              - SpdxTool_SelfTest_ValidateFlag_Succeeds
 
           - id: SpdxTool-Command-Depth
             title: The tool shall support depth control for self-validation output.
@@ -84,7 +81,7 @@ sections:
             children:
               - SpdxTool-SelfTest-Depth
             tests:
-              - SelfTest_ValidateFlagWithDepth_ShowsDepth
+              - SpdxTool_SelfTest_ValidateFlagWithDepth_ShowsDepth
 
           - id: SpdxTool-Command-ResultsTrx
             title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
@@ -97,7 +94,7 @@ sections:
             children:
               - SpdxTool-SelfTest-ResultsTrx
             tests:
-              - SelfTest_ValidateFlagWithResults_GeneratesTrxFile
+              - SpdxTool_SelfTest_ValidateFlagWithResults_GeneratesTrxFile
 
           - id: SpdxTool-Command-ResultsJUnit
             title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
@@ -110,4 +107,14 @@ sections:
             children:
               - SpdxTool-SelfTest-ResultsJUnit
             tests:
-              - SelfTest_ValidateFlagWithResults_GeneratesJUnitFile
+              - SpdxTool_SelfTest_ValidateFlagWithResults_GeneratesJUnitFile
+
+          - id: SpdxTool-Command-ResultShortFlag
+            title: The tool shall accept -r as an alias for the --result flag.
+            tags:
+              - cli
+            justification: |
+              Short flag aliases improve usability in scripts and interactive sessions where
+              brevity is preferred. The -r alias must be functionally identical to --result.
+            tests:
+              - SpdxTool_SelfTest_ValidateFlagWithResults_ShortFlag_GeneratesTrxFile

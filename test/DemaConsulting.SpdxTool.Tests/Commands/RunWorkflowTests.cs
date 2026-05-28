@@ -25,7 +25,6 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'run-workflow' command.
 /// </summary>
-[TestClass]
 public partial class RunWorkflowTests
 {
     /// <summary>
@@ -38,9 +37,11 @@ public partial class RunWorkflowTests
     /// <summary>
     ///     Test that run-workflow command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -49,16 +50,18 @@ public partial class RunWorkflowTests
             "run-workflow");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'run-workflow' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that run-workflow command with missing file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_MissingFile_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -68,14 +71,14 @@ public partial class RunWorkflowTests
             "does-not-exist.yaml");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: does-not-exist.yaml", output);
     }
 
     /// <summary>
     ///     Test that run-workflow command with invalid workflow file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_InvalidWorkflowFile_ReportsError()
     {
         const string fileContents =
@@ -95,7 +98,7 @@ public partial class RunWorkflowTests
                 "invalid.yaml");
 
             // Assert: Verify error reported
-            Assert.AreEqual(1, exitCode);
+            Assert.Equal(1, exitCode);
             Assert.Contains("Error: Workflow invalid.yaml missing steps", output);
         }
         finally
@@ -108,7 +111,7 @@ public partial class RunWorkflowTests
     /// <summary>
     ///     Test that run-workflow command with missing parameter reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_MissingParameter_ReportsError()
     {
         const string fileContents =
@@ -131,7 +134,7 @@ public partial class RunWorkflowTests
                 "invalid.yaml");
 
             // Assert: Verify error reported
-            Assert.AreEqual(1, exitCode);
+            Assert.Equal(1, exitCode);
             Assert.Contains("'help' command missing 'about' input", output);
         }
         finally
@@ -144,7 +147,7 @@ public partial class RunWorkflowTests
     /// <summary>
     ///     Test that run-workflow command with valid workflow file executes the workflow
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_ValidWorkflowFile_ExecutesWorkflow()
     {
         const string fileContents =
@@ -169,7 +172,7 @@ public partial class RunWorkflowTests
                 "help.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("This command displays extended help information about the specified command",
 output);
         }
@@ -183,7 +186,7 @@ output);
     /// <summary>
     ///     Test that run-workflow command with default parameters uses the defaults
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_WithDefaultParameters_UsesDefaults()
     {
         const string fileContents =
@@ -211,7 +214,7 @@ output);
                 "help.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("This command displays extended help information about the specified command",
 output);
         }
@@ -225,7 +228,7 @@ output);
     /// <summary>
     ///     Test that run-workflow command with specified parameters uses the specified values
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_WithSpecifiedParameters_UsesSpecified()
     {
         const string fileContents =
@@ -254,7 +257,7 @@ output);
                 "about=to-markdown");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("This command produces a Markdown summary of an SPDX document", output);
         }
         finally
@@ -267,7 +270,7 @@ output);
     /// <summary>
     ///     Test that run-workflow command with outputs populates the output variables
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_WithOutputs_PopulatesOutputs()
     {
         const string workflow1 =
@@ -318,7 +321,7 @@ output);
                 "arg=Fred");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("Output is Got Fred Param", output);
         }
         finally
@@ -332,7 +335,7 @@ output);
     /// <summary>
     ///     Test that run-workflow command with bad integrity reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_WithBadIntegrity_ReportsError()
     {
         const string workflow1 =
@@ -384,7 +387,7 @@ output);
                 "arg=Fred");
 
             // Assert: Verify success
-            Assert.AreEqual(1, exitCode);
+            Assert.Equal(1, exitCode);
             Assert.Contains("Error: Integrity check of workflow2.yaml failed", output);
         }
         finally
@@ -398,7 +401,7 @@ output);
     /// <summary>
     ///     Test that run-workflow command with NuGet workflow executes the workflow
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_NuGetWorkflow_ExecutesWorkflow()
     {
         const string workflow =
@@ -431,8 +434,8 @@ output);
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
-            Assert.MatchesRegex(DotnetVersionRegex(), output);
+            Assert.Equal(0, exitCode);
+            Assert.Matches(DotnetVersionRegex(), output);
         }
         finally
         {
@@ -444,7 +447,7 @@ output);
     /// <summary>
     ///     Test that run-workflow command with URL workflow executes the workflow
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void RunWorkflow_UrlWorkflow_ExecutesWorkflow()
     {
         const string workflow =
@@ -476,8 +479,8 @@ output);
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
-            Assert.MatchesRegex(DotnetVersionRegex(), output);
+            Assert.Equal(0, exitCode);
+            Assert.Matches(DotnetVersionRegex(), output);
         }
         finally
         {

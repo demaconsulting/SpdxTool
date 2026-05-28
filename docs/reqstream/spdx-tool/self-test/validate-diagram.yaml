@@ -1,17 +1,17 @@
-# DemaConsulting.SpdxTool SelfTest ValidateDiagram Requirements
-#
-# This file contains requirements for the ValidateDiagram self-test step.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: SelfTest ValidateDiagram
-    requirements:
-      - id: SpdxTool-SelfTest-Diagram
-        title: The SelfTest shall exercise the diagram command.
-        tags:
-          - self-test
-        justification: |
-          Self-validation of the diagram command ensures it correctly generates
-          Mermaid diagrams from SPDX documents after installation or deployment.
-        tests:
-          - SpdxTool_Diagram
+  - title: SpdxTool Requirements
+    sections:
+      - title: SelfTest Requirements
+        sections:
+          - title: ValidateDiagram Requirements
+            requirements:
+              - id: SpdxTool-SelfTest-Diagram
+                title: The SelfTest shall exercise the diagram command.
+                tags:
+                  - self-test
+                justification: |
+                  Self-validation of the diagram command ensures it correctly generates
+                  Mermaid diagrams from SPDX documents after installation or deployment.
+                tests:
+                  - SpdxTool_Diagram

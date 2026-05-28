@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'diagram' command
 /// </summary>
-[TestClass]
 public class DiagramTests
 {
     /// <summary>
     ///     Test that diagram command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Diagram_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -40,16 +41,18 @@ public class DiagramTests
             "diagram");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'diagram' command invalid arguments", output);
     }
 
     /// <summary>
     ///     Test that diagram command with insufficient arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Diagram_InsufficientArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -59,16 +62,18 @@ public class DiagramTests
             "test.spdx.json");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'diagram' command invalid arguments", output);
     }
 
     /// <summary>
     ///     Test that diagram command with missing SPDX file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Diagram_MissingSpdxFile_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -79,14 +84,14 @@ public class DiagramTests
             "output.mermaid.txt");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
     ///     Test that diagram command with invalid option reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Diagram_InvalidOption_ReportsError()
     {
         const string spdxContents =
@@ -123,7 +128,7 @@ public class DiagramTests
                 "invalid-option");
 
             // Assert: Verify error reported
-            Assert.AreEqual(1, exitCode);
+            Assert.Equal(1, exitCode);
             Assert.Contains("'diagram' command invalid option invalid-option", output);
         }
         finally
@@ -135,7 +140,7 @@ public class DiagramTests
     /// <summary>
     ///     Test that diagram command with valid SPDX file generates a diagram
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Diagram_ValidSpdxFile_GeneratesDiagram()
     {
         const string spdxContents =
@@ -197,10 +202,10 @@ public class DiagramTests
                 "test.mermaid.txt");
 
             // Assert: Verify success reported
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Assert: Verify the mermaid file was created
-            Assert.IsTrue(File.Exists("test.mermaid.txt"));
+            Assert.True(File.Exists("test.mermaid.txt"));
             var mermaid = File.ReadAllText("test.mermaid.txt");
             Assert.Contains("erDiagram", mermaid);
             Assert.Contains("Test Application / 1.2.3", mermaid);
@@ -217,8 +222,86 @@ public class DiagramTests
     /// <summary>
     ///     Test that diagram command with tools option generates diagram with tools
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Diagram_WithToolsOption_GeneratesDiagramWithTools()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-Tool",
+                  "name": "Build Tool",
+                  "versionInfo": "3.4.5",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-Tool",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "BUILD_TOOL_OF"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("test.spdx.json", spdxContents);
+
+            // Act: Run the command with tools option
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "diagram",
+                "test.spdx.json",
+                "test-with-tools.mermaid.txt",
+                "tools");
+
+            // Assert: Verify success and tools included
+            Assert.Equal(0, exitCode);
+            var mermaidWithTools = File.ReadAllText("test-with-tools.mermaid.txt");
+            Assert.Contains("Build Tool / 3.4.5", mermaidWithTools);
+            Assert.Contains("BUILD_TOOL_OF", mermaidWithTools);
+        }
+        finally
+        {
+            File.Delete("test.spdx.json");
+            File.Delete("test-with-tools.mermaid.txt");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command without tools option excludes tool relationships
+    /// </summary>
+    [Fact]
+    public void Diagram_WithoutToolsOption_ExcludesToolRelationships()
     {
         const string spdxContents =
             """
@@ -279,31 +362,14 @@ public class DiagramTests
                 "test-no-tools.mermaid.txt");
 
             // Assert: Verify success and tools not included
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             var mermaidNoTools = File.ReadAllText("test-no-tools.mermaid.txt");
             Assert.DoesNotContain("Build Tool", mermaidNoTools);
-
-            // Act: Run the command with tools option
-            exitCode = Runner.Run(
-                out _,
-                "dotnet",
-                "DemaConsulting.SpdxTool.dll",
-                "diagram",
-                "test.spdx.json",
-                "test-with-tools.mermaid.txt",
-                "tools");
-
-            // Assert: Verify success and tools included
-            Assert.AreEqual(0, exitCode);
-            var mermaidWithTools = File.ReadAllText("test-with-tools.mermaid.txt");
-            Assert.Contains("Build Tool / 3.4.5", mermaidWithTools);
-            Assert.Contains("BUILD_TOOL_OF", mermaidWithTools);
         }
         finally
         {
             File.Delete("test.spdx.json");
             File.Delete("test-no-tools.mermaid.txt");
-            File.Delete("test-with-tools.mermaid.txt");
         }
     }
 }

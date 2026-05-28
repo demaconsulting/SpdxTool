@@ -1,0 +1,47 @@
+---
+resource-path:
+  - docs/verification
+  - docs/template
+input-files:
+  - docs/verification/title.txt
+  - docs/verification/introduction.md
+  - docs/verification/spdx-tool.md
+  - docs/verification/spdx-tool/commands.md
+  - docs/verification/spdx-tool/commands/add-package.md
+  - docs/verification/spdx-tool/commands/add-relationship.md
+  - docs/verification/spdx-tool/commands/copy-package.md
+  - docs/verification/spdx-tool/commands/diagram.md
+  - docs/verification/spdx-tool/commands/find-package.md
+  - docs/verification/spdx-tool/commands/get-version.md
+  - docs/verification/spdx-tool/commands/hash.md
+  - docs/verification/spdx-tool/commands/help.md
+  - docs/verification/spdx-tool/commands/print.md
+  - docs/verification/spdx-tool/commands/query.md
+  - docs/verification/spdx-tool/commands/rename-id.md
+  - docs/verification/spdx-tool/commands/run-workflow.md
+  - docs/verification/spdx-tool/commands/set-variable.md
+  - docs/verification/spdx-tool/commands/to-markdown.md
+  - docs/verification/spdx-tool/commands/update-package.md
+  - docs/verification/spdx-tool/commands/validate.md
+  - docs/verification/spdx-tool/self-test.md
+  - docs/verification/spdx-tool/self-test/validate.md
+  - docs/verification/spdx-tool/self-test/validate-add-package.md
+  - docs/verification/spdx-tool/self-test/validate-add-relationship.md
+  - docs/verification/spdx-tool/self-test/validate-basic.md
+  - docs/verification/spdx-tool/self-test/validate-copy-package.md
+  - docs/verification/spdx-tool/self-test/validate-diagram.md
+  - docs/verification/spdx-tool/self-test/validate-find-package.md
+  - docs/verification/spdx-tool/self-test/validate-get-version.md
+  - docs/verification/spdx-tool/self-test/validate-hash.md
+  - docs/verification/spdx-tool/self-test/validate-ntia.md
+  - docs/verification/spdx-tool/self-test/validate-query.md
+  - docs/verification/spdx-tool/self-test/validate-rename-id.md
+  - docs/verification/spdx-tool/self-test/validate-run-nuget-workflow.md
+  - docs/verification/spdx-tool/self-test/validate-to-markdown.md
+  - docs/verification/spdx-tool/self-test/validate-update-package.md
+  - docs/verification/spdx-tool/utility.md
+  - docs/verification/spdx-tool-targets.md
+template: template.html
+table-of-contents: true
+number-sections: true
+standalone: true

@@ -24,7 +24,8 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Get Version Command
+///     Retrieves the version string of a named package from an SPDX document; available from both the CLI and workflow
+///     YAML steps.
 /// </summary>
 public sealed class GetVersion : Command
 {
@@ -109,16 +110,16 @@ public sealed class GetVersion : Command
         var spdxFile = GetMapString(inputs, "spdx", variables) ??
                        throw new YamlException(step.Start, step.End, "'get-version' command missing 'spdx' input");
 
+        // Get the 'output' input
+        var output = GetMapString(inputs, "output", variables) ??
+                     throw new YamlException(step.Start, step.End, "'get-version' command missing 'output' input");
+
         // Get the criteria
         var criteria = new Dictionary<string, string>();
         FindPackage.ParseCriteria(inputs, variables, criteria);
 
         // Find the package version
         var packageVersion = FindPackage.FindPackageByCriteria(spdxFile, criteria).Version;
-
-        // Get the 'output' input
-        var output = GetMapString(inputs, "output", variables) ??
-                     throw new YamlException(step.Start, step.End, "'get-version' command missing 'output' input");
 
         // Save the version
         variables[output] = packageVersion ?? string.Empty;

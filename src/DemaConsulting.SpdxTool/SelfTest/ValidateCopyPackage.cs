@@ -25,15 +25,30 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of CopyPackage
+///     Self-test step that exercises the <c>copy-package</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that a package can be copied from one SPDX document into another via a workflow
+///     file and that the destination document contains the copied package with the expected
+///     CONTAINED_BY relationship. Uses a temporary <c>validate.tmp</c> directory in the current
+///     working directory; callers must ensure sequential execution to avoid races on that directory
+///     and on the process-wide current directory set by
+///     <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateCopyPackage
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the copy-package self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_CopyPackage</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
@@ -60,9 +75,28 @@ internal static class ValidateCopyPackage
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual copy-package validation in a temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if the command succeeded and the destination SPDX document contains both
+    ///     packages with the expected CONTAINED_BY relationship; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     <para>
+    ///         Creates <c>validate.tmp</c>, writes a destination SPDX document (to.spdx.json) with
+    ///         SPDXRef-Package-1 and a source SPDX document (from.spdx.json) with SPDXRef-Package-2,
+    ///         then writes a workflow YAML that copies SPDXRef-Package-2 from the source into the
+    ///         destination with a CONTAINED_BY relationship to SPDXRef-Package-1. Invokes
+    ///         <see cref="Validate.RunSpdxTool(string, string[])"/>, then reads and structurally
+    ///         verifies the destination document.
+    ///     </para>
+    ///     <para>
+    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
+    ///         even if directory creation or file writes only partially succeeded.
+    ///     </para>
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try

@@ -27,6 +27,11 @@ namespace DemaConsulting.SpdxTool.Spdx;
 /// <summary>
 ///     SPDX Helpers Class
 /// </summary>
+/// <remarks>
+///     Provides centralized file-system operations for loading and saving SPDX 2.3 JSON
+///     documents. All commands that read or write SPDX files use these helpers to ensure
+///     consistent error handling and document stamping behavior.
+/// </remarks>
 public static class SpdxHelpers
 {
     /// <summary>
@@ -34,6 +39,7 @@ public static class SpdxHelpers
     /// </summary>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <returns>SPDX document</returns>
+    /// <exception cref="Commands.CommandUsageException">Thrown when the specified file does not exist.</exception>
     public static SpdxDocument LoadJsonDocument(string spdxFile)
     {
         // Verify to file exists

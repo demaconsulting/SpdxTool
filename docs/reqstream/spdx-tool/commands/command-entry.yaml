@@ -1,0 +1,15 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: CommandEntry Requirements
+            requirements:
+              - id: SpdxTool-CommandEntry-Record
+                title: The CommandEntry record shall associate a command name, usage metadata, and Command instance.
+                justification: |
+                  Grouping name, usage text, and implementation in a single immutable record
+                  ensures consistent command registration and prevents partial initialization.
+                tests:
+                  - UnknownCommand_UnrecognizedCommand_ReportsError

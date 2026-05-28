@@ -20,19 +20,19 @@
 
 using DemaConsulting.SpdxTool.SelfTest;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 
 /// <summary>
 ///     Tests for the SelfTest subsystem.
 /// </summary>
-[TestClass]
+[Collection("SelfTestValidation")]
 public class SelfTestTests
 {
     /// <summary>
     ///     Test that Validate.Run succeeds with a --validate context
     /// </summary>
-    [TestMethod]
-    public void SelfTest_Validate_Succeeds()
+    [Fact]
+    public void SelfTest_Validate_ValidContext_Succeeds()
     {
         // Arrange: create context with --validate flag
         using var context = Context.Create(["--validate"]);
@@ -41,14 +41,14 @@ public class SelfTestTests
         Validate.Run(context);
 
         // Assert: no errors
-        Assert.AreEqual(0, context.ExitCode);
+        Assert.Equal(0, context.ExitCode);
     }
 
     /// <summary>
     ///     Test that Validate.Run succeeds with depth control
     /// </summary>
-    [TestMethod]
-    public void SelfTest_ValidateWithDepth_Succeeds()
+    [Fact]
+    public void SelfTest_Validate_WithDepth_Succeeds()
     {
         // Arrange: create context with --validate --depth flags
         using var context = Context.Create(["--validate", "--depth", "2"]);
@@ -57,13 +57,13 @@ public class SelfTestTests
         Validate.Run(context);
 
         // Assert: no errors
-        Assert.AreEqual(0, context.ExitCode);
+        Assert.Equal(0, context.ExitCode);
     }
 
     /// <summary>
     ///     Test that Validate.Run generates a TRX result file
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void SelfTest_ValidateWithTrxResult_GeneratesTrxFile()
     {
         var resultFile = Path.Join(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.trx");
@@ -77,8 +77,8 @@ public class SelfTestTests
             Validate.Run(context);
 
             // Assert: file created and contains expected content
-            Assert.AreEqual(0, context.ExitCode);
-            Assert.IsTrue(File.Exists(resultFile));
+            Assert.Equal(0, context.ExitCode);
+            Assert.True(File.Exists(resultFile));
             var results = File.ReadAllText(resultFile).Replace("\r\n", "\n");
             Assert.Contains("DemaConsulting.SpdxTool Validation Results -", results);
         }
@@ -91,7 +91,7 @@ public class SelfTestTests
     /// <summary>
     ///     Test that Validate.Run generates a JUnit XML result file
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile()
     {
         var resultFile = Path.Join(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.xml");
@@ -105,8 +105,8 @@ public class SelfTestTests
             Validate.Run(context);
 
             // Assert: file created and contains expected content
-            Assert.AreEqual(0, context.ExitCode);
-            Assert.IsTrue(File.Exists(resultFile));
+            Assert.Equal(0, context.ExitCode);
+            Assert.True(File.Exists(resultFile));
             var results = File.ReadAllText(resultFile);
             Assert.Contains("DemaConsulting.SpdxTool Validation Results -", results);
         }
@@ -114,5 +114,26 @@ public class SelfTestTests
         {
             File.Delete(resultFile);
         }
+    }
+
+    /// <summary>
+    ///     Test that SpdxTool --validate --result with unsupported extension reports an error
+    /// </summary>
+    [Fact]
+    public void SpdxTool_SelfTest_ValidateFlagWithResults_UnsupportedExtension_ReportsError()
+    {
+        // Arrange: no setup required
+
+        // Act: Run the command with --validate and a .txt result file (unsupported)
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "--validate",
+            "--result", "output-validate.txt");
+
+        // Assert: Verify error reported for unsupported extension
+        Assert.Equal(1, exitCode);
+        Assert.Contains("Unsupported results file format", output);
     }
 }

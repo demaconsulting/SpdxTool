@@ -23,7 +23,6 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'find-package' command
 /// </summary>
-[TestClass]
 public class FindPackageTests
 {
     /// <summary>
@@ -72,9 +71,11 @@ public class FindPackageTests
     /// <summary>
     ///     Test that find-package command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void FindPackage_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -83,16 +84,18 @@ public class FindPackageTests
             "find-package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'find-package' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that find-package command with missing file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void FindPackage_MissingFile_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -103,15 +106,15 @@ public class FindPackageTests
             "name=anything");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
-    ///     Test that find-package command on command line reports workflow-only error
+    ///     Test that find-package command by name on command line finds a package
     /// </summary>
-    [TestMethod]
-    public void FindPackage_OnCommandLine_ReportsWorkflowOnlyError()
+    [Fact]
+    public void FindPackage_ByName_OnCommandLine_FindsPackage()
     {
         try
         {
@@ -128,7 +131,7 @@ public class FindPackageTests
                 "name=Another Test Package");
 
             // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("SPDXRef-Package-2", output);
         }
         finally
@@ -140,7 +143,7 @@ public class FindPackageTests
     /// <summary>
     ///     Test that find-package command by name finds the package
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void FindPackage_ByName_FindsPackage()
     {
         // Workflow contents
@@ -173,7 +176,7 @@ public class FindPackageTests
                 "workflow.yaml");
 
             // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("Found package SPDXRef-Package-1", output);
         }
         finally
@@ -186,7 +189,7 @@ public class FindPackageTests
     /// <summary>
     ///     Test that find-package command by version finds the package
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void FindPackage_ByVersion_FindsPackage()
     {
         // Workflow contents
@@ -219,7 +222,7 @@ public class FindPackageTests
                 "workflow.yaml");
 
             // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("Found package SPDXRef-Package-2", output);
         }
         finally
@@ -232,7 +235,7 @@ public class FindPackageTests
     /// <summary>
     ///     Test that find-package command by file name finds the package
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void FindPackage_ByFileName_FindsPackage()
     {
         // Workflow contents
@@ -265,7 +268,7 @@ public class FindPackageTests
                 "workflow.yaml");
 
             // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("Found package SPDXRef-Package-1", output);
         }
         finally
@@ -278,7 +281,7 @@ public class FindPackageTests
     /// <summary>
     ///     Test that find-package command by download URL finds the package
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void FindPackage_ByDownloadUrl_FindsPackage()
     {
         // Workflow contents
@@ -311,7 +314,7 @@ public class FindPackageTests
                 "workflow.yaml");
 
             // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("Found package SPDXRef-Package-2", output);
         }
         finally

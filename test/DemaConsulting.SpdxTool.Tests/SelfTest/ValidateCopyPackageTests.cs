@@ -21,17 +21,24 @@
 using DemaConsulting.SpdxTool.SelfTest;
 using DemaConsulting.TestResults;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.SelfTest;
+
 /// <summary>
 ///     Unit tests for the ValidateCopyPackage self-validation unit.
 /// </summary>
-[TestClass]
+[Collection("SelfTestValidation")]
 public class ValidateCopyPackageTests
 {
     /// <summary>
     ///     Test that ValidateCopyPackage validation passes.
     /// </summary>
-    [TestMethod]
+    /// <remarks>
+    ///     The test method name <c>SpdxTool_CopyPackage</c> intentionally matches the
+    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateCopyPackage.Run"/> so that
+    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
+    ///     naming convention is appropriate for self-test integration tests.
+    /// </remarks>
+    [Fact]
     public void SpdxTool_CopyPackage()
     {
         // Arrange
@@ -42,7 +49,42 @@ public class ValidateCopyPackageTests
         ValidateCopyPackage.Run(context, results);
 
         // Assert
-        Assert.AreEqual(1, results.Results.Count);
-        Assert.AreEqual(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Single(results.Results);
+        Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+    }
+
+    /// <summary>
+    ///     Test that ValidateCopyPackage.Run propagates an I/O exception when the working
+    ///     directory prevents validate.tmp from being used correctly.
+    ///     This exercises the failure path of Run() as documented in the design: exceptions
+    ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </summary>
+    [Fact]
+    public void ValidateCopyPackage_Run_IoError_PropagatesException()
+    {
+        // Arrange: save original directory and change to a temp directory where validate.tmp
+        // is pre-created as a file, blocking Directory.CreateDirectory("validate.tmp")
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Create validate.tmp as a FILE (not a directory) to block DoValidate
+            File.WriteAllText("validate.tmp", "blocking file");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act + Assert: Run() propagates the IOException — no TestResult is recorded
+            Assert.Throws<IOException>(() => ValidateCopyPackage.Run(context, results));
+            Assert.Empty(results.Results);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 }

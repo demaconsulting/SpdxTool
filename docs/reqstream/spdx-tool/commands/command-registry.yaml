@@ -1,0 +1,16 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: CommandRegistry Requirements
+            requirements:
+              - id: SpdxTool-CommandRegistry-Lookup
+                title: CommandsRegistry shall provide a named lookup of all registered commands.
+                justification: |
+                  Named lookup enables Program and RunWorkflow to dispatch commands by the name
+                  string provided by the user or workflow author.
+                tests:
+                  - UnknownCommand_UnrecognizedCommand_ReportsError
+                  - Command_Expand_NoVariables_ReturnsOriginal

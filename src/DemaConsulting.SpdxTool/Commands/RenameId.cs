@@ -110,6 +110,15 @@ public sealed class RenameId : Command
     /// <param name="spdxFile">SPDX file name</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>
+    /// <exception cref="CommandUsageException">
+    ///     When oldId or newId is empty or equals "SPDXRef-DOCUMENT"
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     When newId is already in use by an existing package, file, or snippet in the document
+    /// </exception>
+    /// <exception cref="System.IO.FileNotFoundException">
+    ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when the SPDX file does not exist
+    /// </exception>
     public static void Rename(string spdxFile, string oldId, string newId)
     {
         // Load the SPDX document
@@ -128,8 +137,12 @@ public sealed class RenameId : Command
     /// <param name="doc">SPDX document</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>
-    /// <exception cref="CommandUsageException">On invalid usage</exception>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <exception cref="CommandUsageException">
+    ///     When oldId or newId is empty or equals "SPDXRef-DOCUMENT"
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     When newId is already used by an existing package, file, or snippet in doc
+    /// </exception>
     public static void Rename(SpdxDocument doc, string oldId, string newId)
     {
         // Skip if no rename
@@ -181,6 +194,7 @@ public sealed class RenameId : Command
         foreach (var snippet in doc.Snippets)
         {
             snippet.Id = UpdateId(snippet.Id, oldId, newId);
+            snippet.SnippetFromFile = UpdateId(snippet.SnippetFromFile, oldId, newId);
         }
 
         // Update relationships

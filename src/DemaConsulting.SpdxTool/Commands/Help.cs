@@ -65,7 +65,12 @@ public sealed class Help : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the help command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">Command-line arguments; must contain exactly one element (the command name).</param>
+    /// <exception cref="CommandUsageException">Thrown when args does not contain exactly one argument.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is not 1
@@ -74,11 +79,17 @@ public sealed class Help : Command
             throw new CommandUsageException("'help' command missing arguments");
         }
 
-        // Generate the markdown
+        // Display the command's extended help text
         ShowUsage(context, args[0]);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the help command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map for input expansion.</param>
+    /// <exception cref="YamlException">Thrown when the about input is absent from the step inputs.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -88,7 +99,7 @@ public sealed class Help : Command
         var about = GetMapString(inputs, "about", variables) ??
                     throw new YamlException(step.Start, step.End, "'help' command missing 'about' input");
 
-        // Generate the markdown
+        // Display the command's extended help text
         ShowUsage(context, about);
     }
 
@@ -97,7 +108,7 @@ public sealed class Help : Command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="command">Command to get help on</param>
-    /// <exception cref="CommandUsageException">On error</exception>
+    /// <exception cref="CommandUsageException">Thrown when the command name is not registered in <c>CommandsRegistry.Commands</c>.</exception>
     public static void ShowUsage(Context context, string command)
     {
         // Get the entry for the command

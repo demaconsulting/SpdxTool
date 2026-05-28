@@ -1,34 +1,48 @@
-# DemaConsulting.SpdxTool run-workflow Command Requirements
-#
-# This file contains requirements for the run-workflow command, covering
-# workflow execution and NuGet-based workflow support.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: run-workflow Command
-    requirements:
-      - id: SpdxTool-Workflow-RunWorkflow
-        title: The tool shall execute workflow files using the run-workflow command.
-        tags:
-          - workflow
-        justification: |
-          Complex SPDX document operations often require multiple steps. Workflows
-          enable users to define and automate multi-step processes in a declarative
-          YAML format.
-        tests:
-          - RunWorkflow_ValidWorkflowFile_ExecutesWorkflow
-          - RunWorkflow_WithDefaultParameters_UsesDefaults
-          - RunWorkflow_WithSpecifiedParameters_UsesSpecified
-          - RunWorkflow_WithOutputs_PopulatesOutputs
-          - RunWorkflow_UrlWorkflow_ExecutesWorkflow
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: RunWorkflow Requirements
+            requirements:
+              - id: SpdxTool-Workflow-RunWorkflow
+                title: The tool shall execute workflow files using the run-workflow command.
+                tags:
+                  - workflow
+                justification: |
+                  Complex SPDX document operations often require multiple steps. Workflows
+                  enable users to define and automate multi-step processes in a declarative
+                  YAML format.
+                tests:
+                  - RunWorkflow_ValidWorkflowFile_ExecutesWorkflow
+                  - RunWorkflow_WithDefaultParameters_UsesDefaults
+                  - RunWorkflow_WithSpecifiedParameters_UsesSpecified
+                  - RunWorkflow_WithOutputs_PopulatesOutputs
+                  - RunWorkflow_UrlWorkflow_ExecutesWorkflow
 
-      - id: SpdxTool-Workflow-NuGetWorkflow
-        title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
-        tags:
-          - workflow
-        justification: |
-          Users need to reference workflow files stored in NuGet packages so that
-          workflows can be versioned, distributed, and cached locally rather than
-          downloaded on every run.
-        tests:
-          - RunWorkflow_NuGetWorkflow_ExecutesWorkflow
+              - id: SpdxTool-Workflow-NuGetWorkflow
+                title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
+                tags:
+                  - workflow
+                justification: |
+                  Users need to reference workflow files stored in NuGet packages so that
+                  workflows can be versioned, distributed, and cached locally rather than
+                  downloaded on every run.
+                tests:
+                  - RunWorkflow_NuGetWorkflow_ExecutesWorkflow
+
+              - id: SpdxTool-Workflow-IntegrityVerification
+                title: >-
+                  The tool shall verify the SHA-256 integrity of a workflow source when an
+                  integrity value is provided, and shall reject the workflow if the hash does
+                  not match.
+                tags:
+                  - workflow
+                  - security
+                justification: |
+                  Integrity verification ensures that workflow content has not been tampered
+                  with between publication and execution, which is especially important for
+                  workflows loaded from external URLs or NuGet packages.
+                tests:
+                  - RunWorkflow_WithBadIntegrity_ReportsError

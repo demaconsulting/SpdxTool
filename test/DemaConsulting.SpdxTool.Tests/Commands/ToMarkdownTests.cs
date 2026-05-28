@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'to-markdown' command.
 /// </summary>
-[TestClass]
 public class ToMarkdownTests
 {
     /// <summary>
     ///     Test that to-markdown command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void ToMarkdown_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the tool
         var exitCode = Runner.Run(
             out var output,
@@ -40,16 +41,18 @@ public class ToMarkdownTests
             "to-markdown");
 
         // Assert: Verify the conversion failed
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'to-markdown' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that to-markdown command with missing SPDX file reports an error
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void ToMarkdown_MissingSpdxFile_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the tool
         var exitCode = Runner.Run(
             out var output,
@@ -60,14 +63,14 @@ public class ToMarkdownTests
             "output.md");
 
         // Assert: Verify the conversion failed
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
     ///     Test that to-markdown command with valid SPDX file generates markdown
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void ToMarkdown_ValidSpdxFile_GeneratesMarkdown()
     {
         const string spdxContents =
@@ -141,8 +144,8 @@ public class ToMarkdownTests
                 "test.md");
 
             // Assert: Verify the conversion succeeded
-            Assert.AreEqual(0, exitCode);
-            Assert.IsTrue(File.Exists("test.md"));
+            Assert.Equal(0, exitCode);
+            Assert.True(File.Exists("test.md"));
 
             // Read the Markdown text
             var markdown = File.ReadAllText("test.md");
@@ -154,32 +157,156 @@ public class ToMarkdownTests
 
             // Assert: Verify the root packages section
             var rootPackagesIndex = markdown.IndexOf("# Root Packages", StringComparison.Ordinal);
-            Assert.IsGreaterThanOrEqualTo(0, rootPackagesIndex);
+            Assert.True(rootPackagesIndex >= 0);
 
             // Assert: Verify the packages section
             var packagesIndex = markdown.IndexOf("# Packages", StringComparison.Ordinal);
-            Assert.IsGreaterThanOrEqualTo(0, packagesIndex);
+            Assert.True(packagesIndex >= 0);
 
             // Assert: Verify the tools section
             var toolsIndex = markdown.IndexOf("# Tools", StringComparison.Ordinal);
-            Assert.IsGreaterThanOrEqualTo(0, toolsIndex);
+            Assert.True(toolsIndex >= 0);
 
             // Assert: Verify "Test Application" is a root package
             var testPackageIndex = markdown.IndexOf("| Test Application | 1.2.3 | MIT |", StringComparison.Ordinal);
-            Assert.IsTrue(testPackageIndex > rootPackagesIndex && testPackageIndex < packagesIndex);
+            Assert.True(testPackageIndex > rootPackagesIndex && testPackageIndex < packagesIndex);
 
             // Assert: Verify "Test Library" is a package
             var testLibraryIndex = markdown.IndexOf("| Test Library | 2.3.4 | MIT |", StringComparison.Ordinal);
-            Assert.IsTrue(testLibraryIndex > packagesIndex && testLibraryIndex < toolsIndex);
+            Assert.True(testLibraryIndex > packagesIndex && testLibraryIndex < toolsIndex);
 
             // Assert: Verify "Test Tool" is a tool
             var testToolPosition = markdown.IndexOf("| Test Tool | 3.4.5 | MIT |", StringComparison.Ordinal);
-            Assert.IsGreaterThan(toolsIndex, testToolPosition);
+            Assert.True(testToolPosition > toolsIndex);
         }
         finally
         {
             File.Delete("test.spdx.json");
             File.Delete("test.md");
         }
+    }
+
+    /// <summary>
+    ///     Test that to-markdown command run in a workflow generates markdown
+    /// </summary>
+    [Fact]
+    public void ToMarkdown_Run_InWorkflow_GeneratesMarkdown()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Application" ]
+            }
+            """;
+
+        const string workflowContents =
+            """
+            steps:
+            - command: to-markdown
+              inputs:
+                spdx: test.spdx.json
+                markdown: test.md
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX and workflow files
+            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+            Assert.True(File.Exists("test.md"));
+
+            // Assert: Verify the markdown contains the expected heading
+            var markdown = File.ReadAllText("test.md");
+            Assert.Contains("## SPDX Document", markdown);
+        }
+        finally
+        {
+            File.Delete("test.spdx.json");
+            File.Delete("test.md");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that to-markdown command with a whitespace title reports an error
+    /// </summary>
+    [Fact]
+    public void ToMarkdown_InvalidTitle_ReportsError()
+    {
+        // Arrange: no setup required
+
+        // Act: Run the tool
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "to-markdown",
+            "test.spdx.json",
+            "test.md",
+            "   ");
+
+        // Assert: Verify the error was reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'to-markdown' command invalid 'title' argument", output);
+    }
+
+    /// <summary>
+    ///     Test that to-markdown command with a non-positive depth reports an error
+    /// </summary>
+    [Fact]
+    public void ToMarkdown_InvalidDepth_ReportsError()
+    {
+        // Arrange: no setup required
+
+        // Act: Run the tool
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "to-markdown",
+            "test.spdx.json",
+            "test.md",
+            "My Title",
+            "0");
+
+        // Assert: Verify the error was reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'to-markdown' command invalid 'depth' argument", output);
     }
 }

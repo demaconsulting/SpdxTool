@@ -26,81 +26,147 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the <see cref="Command" /> class.
 /// </summary>
-[TestClass]
 public class CommandTests
 {
     /// <summary>
-    ///     Test that Command.Expand with missing variable returns missing token
+    ///     Test that Command.Expand with missing variable throws InvalidOperationException
     /// </summary>
-    [TestMethod]
-    public void Command_Expand_MissingVariable_ReturnsMissingToken()
+    [Fact]
+    public void Command_Expand_MissingVariable_ThrowsInvalidOperationException()
     {
-        // Test expanding a missing variable
+        // Arrange: prepare text with an undefined variable
         const string text = "Hello, ${{ name }}!";
         var variables = new Dictionary<string, string>();
-        Assert.ThrowsExactly<InvalidOperationException>(() => Command.Expand(text, variables));
+        // Act/Assert: expanding the undefined variable throws
+        Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
     }
 
     /// <summary>
     ///     Test that Command.Expand with no variables returns the original string
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_Expand_NoVariables_ReturnsOriginal()
     {
-        // Test expanding nothing
+        // Arrange/Act: Expand text with no variable references
         const string text = "Hello, world!";
         var variables = new Dictionary<string, string>();
         var result = Command.Expand(text, variables);
-        Assert.AreEqual(text, result);
+
+        // Assert:
+        Assert.Equal(text, result);
     }
 
     /// <summary>
     ///     Test that Command.Expand with basic variable returns expanded string
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_Expand_BasicVariable_ReturnsExpanded()
     {
-        // Test expanding a basic variable
+        // Arrange:
         const string text = "Hello, ${{ name }}!";
         var variables = new Dictionary<string, string> { { "name", "world" } };
+
+        // Act:
         var result = Command.Expand(text, variables);
-        Assert.AreEqual("Hello, world!", result);
+
+        // Assert:
+        Assert.Equal("Hello, world!", result);
     }
 
     /// <summary>
     ///     Test that Command.Expand with nested variable returns fully expanded string
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_Expand_NestedVariable_ReturnsFullyExpanded()
     {
-        // Test expanding a nested variable
+        // Arrange:
         const string text = "Hello, ${{ variable_${{ test }} }}!";
         var variables = new Dictionary<string, string> { { "variable_foo", "world" }, { "test", "foo" } };
+
+        // Act:
         var result = Command.Expand(text, variables);
-        Assert.AreEqual("Hello, world!", result);
+
+        // Assert:
+        Assert.Equal("Hello, world!", result);
     }
 
     /// <summary>
     ///     Test that Command.GetMapString with missing entry returns null
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_GetMapString_MissingEntry_ReturnsNull()
     {
-        // Test getting a missing parameter
+        // Arrange:
         var map = new YamlMappingNode();
         var variables = new Dictionary<string, string>();
-        Assert.IsNull(Command.GetMapString(map, "parameter", variables));
+
+        // Act/Assert:
+        Assert.Null(Command.GetMapString(map, "parameter", variables));
     }
 
     /// <summary>
     ///     Test that Command.GetMapString with variable expansion returns expanded value
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_GetMapString_WithVariableExpansion_ReturnsExpanded()
     {
-        // Test getting a parameter
+        // Arrange:
         var map = new YamlMappingNode { { "parameter", "Hello, ${{ name }}!" } };
         var variables = new Dictionary<string, string> { { "name", "world" } };
-        Assert.AreEqual("Hello, world!", Command.GetMapString(map, "parameter", variables));
+
+        // Act/Assert:
+        Assert.Equal("Hello, world!", Command.GetMapString(map, "parameter", variables));
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with environment variable returns environment value
+    /// </summary>
+    [Fact]
+    public void Command_Expand_EnvironmentVariable_ReturnsEnvironmentValue()
+    {
+        // Arrange: Set an environment variable
+        const string varName = "SPDXTOOL_TEST_VAR";
+        const string varValue = "test-env-value";
+        Environment.SetEnvironmentVariable(varName, varValue);
+
+        try
+        {
+            // Act: Expand a template referencing the environment variable
+            const string text = "Value: ${{ environment.SPDXTOOL_TEST_VAR }}";
+            var variables = new Dictionary<string, string>();
+            var result = Command.Expand(text, variables);
+
+            // Assert: Verify environment variable was expanded
+            Assert.Equal("Value: test-env-value", result);
+        }
+        finally
+        {
+            // Cleanup: Remove the test environment variable
+            Environment.SetEnvironmentVariable(varName, null);
+        }
+    }
+
+    /// <summary>
+    ///     Test that CommandsRegistry.Commands contains all registered commands
+    /// </summary>
+    [Fact]
+    public void CommandsRegistry_Commands_ContainsAllRegisteredCommands()
+    {
+        // Arrange: Expected command names (from CommandsRegistry)
+        var expectedCommands = new[]
+        {
+            "help", "add-package", "add-relationship", "copy-package", "diagram",
+            "find-package", "get-version", "hash", "print", "query", "rename-id",
+            "run-workflow", "set-variable", "to-markdown", "update-package", "validate"
+        };
+
+        // Act: Get the actual registry
+        var commands = CommandsRegistry.Commands;
+
+        // Assert: All expected commands are present
+        foreach (var name in expectedCommands)
+        {
+            Assert.True(commands.ContainsKey(name), $"Expected command '{name}' not found in registry");
+        }
     }
 }

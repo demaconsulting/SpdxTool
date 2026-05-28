@@ -1,66 +1,88 @@
-# DemaConsulting.SpdxTool SelfTest Orchestrator Design
+﻿### Validate
 
-## Purpose
+#### Purpose
 
-`Validate.cs` is the entry point for the SelfTest subsystem. When the `Program`
-class detects the `--validate` flag, it calls `Validate.Run(Context)` instead of
-dispatching to a normal command. The orchestrator collects pass/fail results from
-each individual validation step and writes a summary report.
+Validate is the orchestrator for the Self-Test subsystem. It is the entry point invoked by Program when
+the --validate flag is detected on the command line. It runs all Validate step classes in sequence,
+collects pass/fail TestResult entries, prints a summary to the console, and optionally serializes the
+results to a TRX or JUnit XML file.
 
-## Architecture
+#### Data Model
 
-`Validate.Run` performs the following work:
+N/A - this unit is a static class with no instance state.
 
-1. Writes a system information header (version, OS, .NET runtime, timestamp).
-2. Creates a `TestResults` object to collect results.
-3. Invokes each `Validate*` step class in order:
-   - `ValidateAddPackage`, `ValidateAddRelationship`, `ValidateBasic`,
+#### Key Methods
 
-     `ValidateCopyPackage`, `ValidateDiagram`, `ValidateFindPackage`,
-     `ValidateGetVersion`, `ValidateHash`, `ValidateNtia`, `ValidateQuery`,
-     `ValidateRenameId`, `ValidateRunNuGetWorkflow`, `ValidateToMarkdown`,
-     `ValidateUpdatePackage`.
+**Run**: executes the complete self-test suite using the supplied Program Context.
 
-4. Computes totals (total, passed, failed) and writes to the console.
-5. If `Context.Errors == 0`, writes "Validation Passed".
-6. If `Context.ValidationFile` is set, calls `WriteResultsFile`.
+- *Parameters*: `context` — the active Program Context providing output and error streams.
+- *Returns*: void.
+- *Preconditions*: Context must be fully initialized; the --validate flag must have been detected by
+  Program before this method is called.
+- *Post-conditions*: All Validate step results are recorded in a TestResults collection; a pass/fail
+  summary has been written to the Context; if Context.ValidationFile is set the results file is written.
 
-## Result File Writing
+Writes a system-information header (tool version, machine name, OS description, .NET runtime version,
+UTC timestamp) before invoking any steps. Computes total, passed, and failed counts after all steps
+complete, writing "Validation Passed" if Context.Errors is zero.
 
-`WriteResultsFile` detects the file extension:
+**WriteResultsFile**: serializes the collected TestResults to the file path in Context.ValidationFile.
 
-- `.trx` → serializes with `TrxSerializer.Serialize`.
-- `.xml` → serializes with `JUnitSerializer.Serialize` (JUnit format).
-- Other → writes an error to the context.
+- *Parameters*: `context` — the active Program Context; `results` — the collected TestResults.
+- *Returns*: void.
+- *Preconditions*: Context.ValidationFile is non-null and non-empty.
+- *Post-conditions*: A .trx or .xml file has been written; for an unsupported extension an error message
+  is written to the Context and no file is produced.
 
-## Helper Methods
+**RunSpdxTool** (args overload): runs Program in-process with the supplied argument array.
 
-- `RunSpdxTool(string[] args)` — creates a `Context`, runs `Program.Run`, returns
+- *Parameters*: `args` — the command-line arguments to pass to SpdxTool.
+- *Returns*: `int` — the exit code returned by Program.Run.
+- *Preconditions*: None.
+- *Post-conditions*: A Context has been created, Program.Run has completed, and the Context has been
+  disposed.
 
-  the exit code. Used by all `Validate*` step classes.
+**RunSpdxTool** (workingFolder overload): changes the current directory then runs Program in-process.
 
-- `RunSpdxTool(string workingFolder, string[] args)` — temporarily changes the
+- *Parameters*: `workingFolder` — directory to set as current before running; `args` — argument array.
+- *Returns*: `int` — the exit code returned by Program.Run.
+- *Preconditions*: workingFolder must exist on disk.
+- *Post-conditions*: The current directory has been restored to its original value regardless of outcome.
+- *Thread safety*: This method mutates global process state via Directory.SetCurrentDirectory.
+  All Self-Test step classes using this overload must execute sequentially to prevent racing on
+  the current working directory.
 
-  current directory before calling `RunSpdxTool(args)`.
+#### Error Handling
 
-## Error Handling
+Individual step failures are captured as TestResult entries with TestOutcome.Failed and do not terminate
+the orchestrator; all remaining steps continue to execute. An unsupported extension in
+Context.ValidationFile causes an error message to be written to the Context and no file is produced.
+Exceptions thrown within a step's DoValidate method are caught within that step and manifest as a false
+return value, which is then recorded as a Failed TestResult.
 
-- Individual step failures are captured in `TestResult` entries with
+#### Dependencies
 
-  `TestOutcome.Failed`; they do not terminate the orchestrator.
+- **Context** — provides output and error streams and the ValidationFile property.
+- **Program** — provides the Version constant and the Run method invoked by RunSpdxTool.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to collect results.
+- **TrxSerializer** — from DemaConsulting.TestResults.IO; serializes results to TRX format.
+- **JUnitSerializer** — from DemaConsulting.TestResults.IO; serializes results to JUnit XML format.
+- **ValidateAddPackage** — step class invoked by Run.
+- **ValidateAddRelationship** — step class invoked by Run.
+- **ValidateBasic** — step class invoked by Run.
+- **ValidateCopyPackage** — step class invoked by Run.
+- **ValidateDiagram** — step class invoked by Run.
+- **ValidateFindPackage** — step class invoked by Run.
+- **ValidateGetVersion** — step class invoked by Run.
+- **ValidateHash** — step class invoked by Run.
+- **ValidateNtia** — step class invoked by Run.
+- **ValidateQuery** — step class invoked by Run.
+- **ValidateRenameId** — step class invoked by Run.
+- **ValidateRunNuGetWorkflow** — step class invoked by Run.
+- **ValidateToMarkdown** — step class invoked by Run.
+- **ValidateUpdatePackage** — step class invoked by Run.
 
-- Unsupported result file extensions result in a context error message.
+#### Callers
 
-## Constraints
-
-- Self-validation is entirely in-process; no external tools or network access are
-
-  required (other than the NuGet workflow test).
-
-- Each step uses a `validate.tmp` temporary directory, created and deleted within
-
-  the step.
-
-- The orchestrator does not throw exceptions on individual step failures; it
-
-  continues executing all steps.
+- **Program** — detects the --validate flag and calls Validate.Run(context) instead of dispatching
+  to a normal command.

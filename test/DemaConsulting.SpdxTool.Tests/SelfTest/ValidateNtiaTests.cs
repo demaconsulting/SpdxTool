@@ -21,17 +21,18 @@
 using DemaConsulting.SpdxTool.SelfTest;
 using DemaConsulting.TestResults;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.SelfTest;
+
 /// <summary>
 ///     Unit tests for the ValidateNtia self-validation unit.
 /// </summary>
-[TestClass]
+[Collection("SelfTestValidation")]
 public class ValidateNtiaTests
 {
     /// <summary>
     ///     Test that ValidateNtia validation passes.
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void SpdxTool_Ntia()
     {
         // Arrange
@@ -42,7 +43,7 @@ public class ValidateNtiaTests
         ValidateNtia.Run(context, results);
 
         // Assert
-        Assert.AreEqual(1, results.Results.Count);
-        Assert.AreEqual(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Single(results.Results);
+        Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }
 }

@@ -1,0 +1,30 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Spdx Requirements
+        sections:
+          - title: RelationshipDirection Requirements
+            requirements:
+              - id: SpdxTool-Spdx-RelationshipDirection-Enumeration
+                title: RelationshipDirection shall enumerate the three traversal directions for SPDX queries.
+                justification: |
+                  Commands that traverse SPDX relationships need to express direction intent
+                  (Parent, Child, Sibling) without enumerating every SpdxRelationshipType case.
+                  The enumeration decouples consumers from raw SpdxModel relationship types.
+                tests:
+                  - RelationshipDirectionExtensions_GetDirection_DescribesRelationship_ReturnsParent
+                  - RelationshipDirectionExtensions_GetDirection_DescribedByRelationship_ReturnsChild
+                  - RelationshipDirectionExtensions_GetDirection_DependencyManifestOfRelationship_ReturnsSibling
+                  - Diagram_ValidSpdxFile_GeneratesDiagram
+
+              - id: SpdxTool-Spdx-RelationshipDirection-DirectionalMapping
+                title: RelationshipDirectionExtensions shall map SPDX relationship types to traversal directions.
+                justification: |
+                  Each SpdxRelationshipType has a defined parent/child/sibling semantic that
+                  determines how the relationship graph is traversed. The mapping is encoded
+                  once in RelationshipDirectionExtensions.GetDirection and shared by all
+                  commands that perform graph traversal.
+                tests:
+                  - RelationshipDirectionExtensions_GetDirection_UnmappedRelationshipType_ReturnsSibling
+                  - Diagram_ValidSpdxFile_GeneratesDiagram

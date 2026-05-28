@@ -25,6 +25,12 @@ namespace DemaConsulting.SpdxTool.Utility;
 /// <summary>
 ///     Wildcard Match Class
 /// </summary>
+/// <remarks>
+///     Converts glob-style wildcard patterns (<c>*</c> matches any sequence of characters,
+///     <c>?</c> matches any single character) to anchored regular expressions, then evaluates
+///     them case-insensitively. Used by commands that filter SPDX packages by name, version,
+///     file name, or download URL.
+/// </remarks>
 public static class Wildcard
 {
     /// <summary>
@@ -45,12 +51,25 @@ public static class Wildcard
     /// <param name="input">Input text</param>
     /// <param name="pattern">Wildcard pattern</param>
     /// <returns>True if input text matches wildcard</returns>
+    /// <remarks>
+    ///     The match is performed case-insensitively with a 100 ms timeout to prevent
+    ///     catastrophic backtracking on pathological patterns. If the timeout expires,
+    ///     <see langword="false"/> is returned rather than propagating a
+    ///     <see cref="System.Text.RegularExpressions.RegexMatchTimeoutException"/>.
+    /// </remarks>
     public static bool IsMatch(string input, string pattern)
     {
-        return Regex.IsMatch(
-            input,
-            WildCardToRegex(pattern),
-            RegexOptions.IgnoreCase,
-            TimeSpan.FromMilliseconds(100));
+        try
+        {
+            return Regex.IsMatch(
+                input,
+                WildCardToRegex(pattern),
+                RegexOptions.IgnoreCase,
+                TimeSpan.FromMilliseconds(100));
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return false;
+        }
     }
 }

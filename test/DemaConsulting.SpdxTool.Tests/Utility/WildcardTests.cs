@@ -20,59 +20,61 @@
 
 using DemaConsulting.SpdxTool.Utility;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Utility;
 
 /// <summary>
 ///     Test for wildcard pattern matching
 /// </summary>
-[TestClass]
 public class WildcardTests
 {
     /// <summary>
     ///     Test that exact pattern matching returns true for matching strings
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Wildcard_ExactMatch_ReturnsTrue()
     {
-        Assert.IsTrue(Wildcard.IsMatch("Hello", "Hello"));
-        Assert.IsTrue(Wildcard.IsMatch("HELLO", "Hello"));
-        Assert.IsTrue(Wildcard.IsMatch("hello.WORLD", "Hello.World"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "42"));
-        Assert.IsFalse(Wildcard.IsMatch("Hello_World", "Hello.World"));
-        Assert.IsFalse(Wildcard.IsMatch("Hello", "....."));
-        Assert.IsFalse(Wildcard.IsMatch("_Test", "Test"));
-        Assert.IsFalse(Wildcard.IsMatch("Test_", "Test"));
+        // Arrange/Act/Assert: Verify exact matching behavior
+        Assert.True(Wildcard.IsMatch("Hello", "Hello"));
+        Assert.True(Wildcard.IsMatch("HELLO", "Hello"));
+        Assert.True(Wildcard.IsMatch("hello.WORLD", "Hello.World"));
+        Assert.False(Wildcard.IsMatch("Test", "42"));
+        Assert.False(Wildcard.IsMatch("Hello_World", "Hello.World"));
+        Assert.False(Wildcard.IsMatch("Hello", "....."));
+        Assert.False(Wildcard.IsMatch("_Test", "Test"));
+        Assert.False(Wildcard.IsMatch("Test_", "Test"));
     }
 
     /// <summary>
     ///     Test that asterisk pattern matching matches multiple characters
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Wildcard_AsteriskPattern_MatchesMultipleChars()
     {
-        Assert.IsTrue(Wildcard.IsMatch("Test.This.String", "Test.*.String"));
-        Assert.IsTrue(Wildcard.IsMatch("Test String", "*Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("This is a test", "*Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("This tests for a string", "*Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("Test", "Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("Testing", "Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("Test", "*Test"));
-        Assert.IsTrue(Wildcard.IsMatch("Some Test", "*Test"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "*i*"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "*s"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "e*"));
+        // Arrange/Act/Assert: Verify asterisk wildcard matching behavior
+        Assert.True(Wildcard.IsMatch("Test.This.String", "Test.*.String"));
+        Assert.True(Wildcard.IsMatch("Test String", "*Test*"));
+        Assert.True(Wildcard.IsMatch("This is a test", "*Test*"));
+        Assert.True(Wildcard.IsMatch("This tests for a string", "*Test*"));
+        Assert.True(Wildcard.IsMatch("Test", "Test*"));
+        Assert.True(Wildcard.IsMatch("Testing", "Test*"));
+        Assert.True(Wildcard.IsMatch("Test", "*Test"));
+        Assert.True(Wildcard.IsMatch("Some Test", "*Test"));
+        Assert.False(Wildcard.IsMatch("Test", "*i*"));
+        Assert.False(Wildcard.IsMatch("Test", "*s"));
+        Assert.False(Wildcard.IsMatch("Test", "e*"));
     }
 
     /// <summary>
     ///     Test that question mark pattern matching matches a single character
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Wildcard_QuestionMarkPattern_MatchesSingleChar()
     {
-        Assert.IsTrue(Wildcard.IsMatch("Test", "Te?t"));
-        Assert.IsTrue(Wildcard.IsMatch("Test", "????"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "?Test"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "Test?"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "?"));
+        // Arrange/Act/Assert: Verify question mark wildcard matching behavior
+        Assert.True(Wildcard.IsMatch("Test", "Te?t"));
+        Assert.True(Wildcard.IsMatch("Test", "????"));
+        Assert.False(Wildcard.IsMatch("Test", "?Test"));
+        Assert.False(Wildcard.IsMatch("Test", "Test?"));
+        Assert.False(Wildcard.IsMatch("Test", "?"));
     }
 }

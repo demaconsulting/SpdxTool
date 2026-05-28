@@ -1,0 +1,17 @@
+---
+# DemaConsulting.NuGet.Caching OTS requirements
+sections:
+  - title: OTS Software Requirements
+    sections:
+      - title: NuGet.Caching Requirements
+        requirements:
+          - id: SpdxTool-OTS-NuGetCaching
+            title: DemaConsulting.NuGet.Caching shall provide NuGet package metadata caching.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.NuGet.Caching provides caching for NuGet package metadata queries.
+              SpdxTool uses this library in the run-workflow NuGet command to retrieve and cache
+              package information without redundant network requests.
+            tests:
+              - SpdxTool_SelfTest_ValidateFlag_Succeeds

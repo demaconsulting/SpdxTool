@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for the 'print' command
 /// </summary>
-[TestClass]
 public class PrintTests
 {
     /// <summary>
     ///     Test that print command on command line prints the text
     /// </summary>
-    [TestMethod]
-    public void Print_OnCommandLine_PrintsText()
+    [Fact]
+    public void Print_Run_OnCommandLine_PrintsText()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -41,15 +42,15 @@ public class PrintTests
             "Hello, World!");
 
         // Assert: Verify output
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
         Assert.Contains("Hello, World!", output);
     }
 
     /// <summary>
     ///     Test that print command in workflow prints the text
     /// </summary>
-    [TestMethod]
-    public void Print_InWorkflow_PrintsText()
+    [Fact]
+    public void Print_Run_InWorkflow_PrintsText()
     {
         // Workflow contents
         const string workflowContents =
@@ -80,9 +81,46 @@ public class PrintTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
             Assert.Contains("The first parameter is Hello.", output);
             Assert.Contains("World is the second parameter.", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that print command in workflow without text input reports an error
+    /// </summary>
+    [Fact]
+    public void Print_Run_MissingTextInput_ThrowsYamlException()
+    {
+        // Workflow contents
+        const string workflowContents =
+            """
+            steps:
+            - command: print
+              inputs: {}
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error is reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'print' command missing 'text' input", output);
         }
         finally
         {

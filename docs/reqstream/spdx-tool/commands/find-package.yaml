@@ -1,21 +1,34 @@
-# DemaConsulting.SpdxTool find-package Command Requirements
-#
-# This file contains requirements for the find-package command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: find-package Command
-    requirements:
-      - id: SpdxTool-Package-FindPackage
-        title: The tool shall find packages in SPDX documents using the find-package command.
-        tags:
-          - spdx
-        justification: |
-          Users need to locate specific packages within SPDX documents based on
-          criteria such as name, version, or other attributes to query or modify them.
-        tests:
-          - FindPackage_OnCommandLine_ReportsWorkflowOnlyError
-          - FindPackage_ByName_FindsPackage
-          - FindPackage_ByVersion_FindsPackage
-          - FindPackage_ByFileName_FindsPackage
-          - FindPackage_ByDownloadUrl_FindsPackage
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: FindPackage Requirements
+            requirements:
+              - id: SpdxTool-Package-FindPackage
+                title: The tool shall find packages in SPDX documents using the find-package command.
+                tags:
+                  - spdx
+                justification: |
+                  Users need to locate specific packages within SPDX documents based on
+                  criteria such as name, version, or other attributes to query or modify them.
+                tests:
+                  - FindPackage_ByName_OnCommandLine_FindsPackage
+                  - FindPackage_ByName_FindsPackage
+                  - FindPackage_ByVersion_FindsPackage
+                  - FindPackage_ByFileName_FindsPackage
+                  - FindPackage_ByDownloadUrl_FindsPackage
+
+              - id: SpdxTool-Package-FindPackage-Validate
+                title: >-
+                  The find-package command shall validate its inputs and report an error for missing
+                  or invalid values.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that users can
+                  diagnose configuration mistakes quickly.
+                tests:
+                  - FindPackage_MissingArguments_ReportsError
+                  - FindPackage_MissingFile_ReportsError

@@ -1,0 +1,20 @@
+---
+# DemaConsulting.SpdxModel OTS requirements
+sections:
+  - title: OTS Software Requirements
+    sections:
+      - title: SpdxModel Requirements
+        requirements:
+          - id: SpdxTool-OTS-SpdxModel
+            title: DemaConsulting.SpdxModel shall provide SPDX document object model and JSON serialization.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SpdxModel provides the SpdxDocument, SpdxPackage, SpdxRelationship,
+              and related model types, together with Spdx2JsonDeserializer and Spdx2JsonSerializer
+              for reading and writing SPDX 2.3 JSON files. SpdxTool depends on this library for
+              all SPDX document operations.
+            tests:
+              - SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument
+              - SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator
+              - Diagram_ValidSpdxFile_GeneratesDiagram

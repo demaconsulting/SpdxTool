@@ -9,6 +9,7 @@ needs-review:
   - "requirements.yaml"          # Root requirements file
   - "docs/reqstream/**/*.yaml"   # Requirements files
   - "docs/design/**/*.md"        # Design documentation
+  - "docs/verification/**/*.md"  # Verification documentation
   - "docs/user_guide/**/*.md"    # User guide documentation
   - "**/*.cs"                    # All C# source and test files
   - "!**/obj/**"                 # Exclude build output
@@ -45,6 +46,8 @@ reviews:
       - "docs/reqstream/spdx-tool/spdx-tool.yaml"
       - "docs/design/introduction.md"
       - "docs/design/spdx-tool/spdx-tool.md"
+      - "docs/verification/introduction.md"
+      - "docs/verification/spdx-tool.md"
       - "src/DemaConsulting.SpdxTool/Program.cs"
       - "test/DemaConsulting.SpdxTool.Tests/IntegrationTests.cs"
       - "test/DemaConsulting.SpdxTool.Tests/ProgramTests.cs"
@@ -64,6 +67,15 @@ reviews:
       - "docs/design/introduction.md"
       - "docs/design/spdx-tool/**/*.md"
 
+  # Verification completeness review for DemaConsulting.SpdxTool
+  - id: SpdxTool-Verification
+    title: Review that SpdxTool Verification is Consistent and Complete
+    paths:
+      - "docs/reqstream/spdx-tool/spdx-tool.yaml"
+      - "docs/verification/introduction.md"
+      - "docs/verification/spdx-tool.md"
+      - "docs/verification/spdx-tool/**/*.md"
+
   # All requirements review for DemaConsulting.SpdxTool
   - id: SpdxTool-AllRequirements
     title: Review that All SpdxTool Requirements are Complete
@@ -80,14 +92,27 @@ reviews:
       - "docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml"
       - "docs/design/introduction.md"
       - "docs/design/spdx-tool-targets/spdx-tool-targets.md"
+      - "docs/verification/introduction.md"
+      - "docs/verification/spdx-tool-targets.md"
+      - "src/DemaConsulting.SpdxTool.Targets/build/*.targets"
+      - "src/DemaConsulting.SpdxTool.Targets/buildMultiTargeting/*.targets"
       - "test/DemaConsulting.SpdxTool.Targets.Tests/**"
+
+  # Verification completeness review for DemaConsulting.SpdxTool.Targets
+  - id: SpdxTargets-Verification
+    title: Review that SpdxTool.Targets Verification is Consistent and Complete
+    paths:
+      - "docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml"
+      - "docs/verification/introduction.md"
+      - "docs/verification/spdx-tool-targets.md"
 
   # Subsystem review for Commands
   - id: SpdxTool-Commands
     title: Review that SpdxTool Commands Subsystem Satisfies Requirements
     paths:
       - "docs/reqstream/spdx-tool/commands/commands.yaml"
-      - "docs/design/spdx-tool/commands/commands.md"
+      - "docs/design/spdx-tool/commands.md"
+      - "docs/verification/spdx-tool/commands.md"
       - "src/DemaConsulting.SpdxTool/Commands/Command.cs"
       - "src/DemaConsulting.SpdxTool/Commands/CommandEntry.cs"
       - "src/DemaConsulting.SpdxTool/Commands/CommandErrorException.cs"
@@ -101,7 +126,8 @@ reviews:
     title: Review that SpdxTool SelfTest Subsystem Satisfies Requirements
     paths:
       - "docs/reqstream/spdx-tool/self-test/self-test.yaml"
-      - "docs/design/spdx-tool/self-test/self-test.md"
+      - "docs/design/spdx-tool/self-test.md"
+      - "docs/verification/spdx-tool/self-test.md"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/SelfTestTests.cs"
 
   # Subsystem review for Utility
@@ -109,10 +135,19 @@ reviews:
     title: Review that SpdxTool Utility Subsystem Satisfies Requirements
     paths:
       - "docs/reqstream/spdx-tool/utility/utility.yaml"
+      - "docs/reqstream/spdx-tool/utility/path-helpers.yaml"
+      - "docs/reqstream/spdx-tool/utility/wildcard.yaml"
+      - "docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml"
+      - "docs/reqstream/spdx-tool/spdx/relationship-direction.yaml"
       - "docs/design/spdx-tool/utility/utility.md"
+      - "docs/verification/spdx-tool/utility.md"
+      - "docs/verification/spdx-tool/spdx/spdx-helpers.md"
+      - "docs/verification/spdx-tool/spdx/relationship-direction.md"
       - "src/DemaConsulting.SpdxTool/Utility/**"
       - "src/DemaConsulting.SpdxTool/Spdx/**"
       - "test/DemaConsulting.SpdxTool.Tests/Utility/**"
+      - "test/DemaConsulting.SpdxTool.Tests/Spdx/SpdxHelpersTests.cs"
+      - "test/DemaConsulting.SpdxTool.Tests/Spdx/RelationshipDirectionTests.cs"
 
   # OTS software review
   - id: SpdxTool-OTS
@@ -124,6 +159,9 @@ reviews:
   - id: SpdxTool-Context
     title: Review that SpdxTool Context Unit Implementation is Correct
     paths:
+      - "docs/reqstream/spdx-tool/context.yaml"
+      - "docs/design/spdx-tool/context.md"
+      - "docs/verification/spdx-tool/context.md"
       - "src/**/Context.cs"
       - "test/**/LogTests.cs"
 
@@ -133,6 +171,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/add-package.yaml"
       - "docs/design/spdx-tool/commands/add-package.md"
+      - "docs/verification/spdx-tool/commands/add-package.md"
       - "src/DemaConsulting.SpdxTool/Commands/AddPackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/AddPackageTests.cs"
 
@@ -141,6 +180,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/add-relationship.yaml"
       - "docs/design/spdx-tool/commands/add-relationship.md"
+      - "docs/verification/spdx-tool/commands/add-relationship.md"
       - "src/DemaConsulting.SpdxTool/Commands/AddRelationship.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/AddRelationshipTests.cs"
 
@@ -149,6 +189,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/copy-package.yaml"
       - "docs/design/spdx-tool/commands/copy-package.md"
+      - "docs/verification/spdx-tool/commands/copy-package.md"
       - "src/DemaConsulting.SpdxTool/Commands/CopyPackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/CopyPackageTests.cs"
 
@@ -157,6 +198,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/diagram.yaml"
       - "docs/design/spdx-tool/commands/diagram.md"
+      - "docs/verification/spdx-tool/commands/diagram.md"
       - "src/DemaConsulting.SpdxTool/Commands/Diagram.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/DiagramTests.cs"
 
@@ -165,6 +207,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/find-package.yaml"
       - "docs/design/spdx-tool/commands/find-package.md"
+      - "docs/verification/spdx-tool/commands/find-package.md"
       - "src/DemaConsulting.SpdxTool/Commands/FindPackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/FindPackageTests.cs"
 
@@ -173,6 +216,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/get-version.yaml"
       - "docs/design/spdx-tool/commands/get-version.md"
+      - "docs/verification/spdx-tool/commands/get-version.md"
       - "src/DemaConsulting.SpdxTool/Commands/GetVersion.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/GetVersionTests.cs"
 
@@ -181,6 +225,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/hash.yaml"
       - "docs/design/spdx-tool/commands/hash.md"
+      - "docs/verification/spdx-tool/commands/hash.md"
       - "src/DemaConsulting.SpdxTool/Commands/Hash.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/HashTests.cs"
 
@@ -189,6 +234,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/help.yaml"
       - "docs/design/spdx-tool/commands/help.md"
+      - "docs/verification/spdx-tool/commands/help.md"
       - "src/DemaConsulting.SpdxTool/Commands/Help.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/HelpTests.cs"
 
@@ -197,6 +243,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/print.yaml"
       - "docs/design/spdx-tool/commands/print.md"
+      - "docs/verification/spdx-tool/commands/print.md"
       - "src/DemaConsulting.SpdxTool/Commands/Print.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/PrintTests.cs"
 
@@ -205,6 +252,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/query.yaml"
       - "docs/design/spdx-tool/commands/query.md"
+      - "docs/verification/spdx-tool/commands/query.md"
       - "src/DemaConsulting.SpdxTool/Commands/Query.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/QueryTests.cs"
 
@@ -213,6 +261,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/rename-id.yaml"
       - "docs/design/spdx-tool/commands/rename-id.md"
+      - "docs/verification/spdx-tool/commands/rename-id.md"
       - "src/DemaConsulting.SpdxTool/Commands/RenameId.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/RenameIdTests.cs"
 
@@ -221,6 +270,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/run-workflow.yaml"
       - "docs/design/spdx-tool/commands/run-workflow.md"
+      - "docs/verification/spdx-tool/commands/run-workflow.md"
       - "src/DemaConsulting.SpdxTool/Commands/RunWorkflow.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/RunWorkflowTests.cs"
 
@@ -229,6 +279,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/set-variable.yaml"
       - "docs/design/spdx-tool/commands/set-variable.md"
+      - "docs/verification/spdx-tool/commands/set-variable.md"
       - "src/DemaConsulting.SpdxTool/Commands/SetVariable.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/SetVariableTests.cs"
 
@@ -237,6 +288,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/to-markdown.yaml"
       - "docs/design/spdx-tool/commands/to-markdown.md"
+      - "docs/verification/spdx-tool/commands/to-markdown.md"
       - "src/DemaConsulting.SpdxTool/Commands/ToMarkdown.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/ToMarkdownTests.cs"
 
@@ -245,6 +297,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/update-package.yaml"
       - "docs/design/spdx-tool/commands/update-package.md"
+      - "docs/verification/spdx-tool/commands/update-package.md"
       - "src/DemaConsulting.SpdxTool/Commands/UpdatePackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/UpdatePackageTests.cs"
 
@@ -253,6 +306,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/commands/validate.yaml"
       - "docs/design/spdx-tool/commands/validate.md"
+      - "docs/verification/spdx-tool/commands/validate.md"
       - "src/DemaConsulting.SpdxTool/Commands/Validate.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/ValidateTests.cs"
 
@@ -262,6 +316,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate.yaml"
       - "docs/design/spdx-tool/self-test/validate.md"
+      - "docs/verification/spdx-tool/self-test/validate.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/Validate.cs"
 
   - id: SpdxTool-SelfTest-ValidateAddPackage
@@ -269,6 +324,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-add-package.yaml"
       - "docs/design/spdx-tool/self-test/validate-add-package.md"
+      - "docs/verification/spdx-tool/self-test/validate-add-package.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateAddPackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateAddPackageTests.cs"
 
@@ -277,6 +333,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-add-relationship.yaml"
       - "docs/design/spdx-tool/self-test/validate-add-relationship.md"
+      - "docs/verification/spdx-tool/self-test/validate-add-relationship.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateAddRelationship.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateAddRelationshipTests.cs"
 
@@ -285,6 +342,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-basic.yaml"
       - "docs/design/spdx-tool/self-test/validate-basic.md"
+      - "docs/verification/spdx-tool/self-test/validate-basic.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateBasic.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateBasicTests.cs"
 
@@ -293,6 +351,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-copy-package.yaml"
       - "docs/design/spdx-tool/self-test/validate-copy-package.md"
+      - "docs/verification/spdx-tool/self-test/validate-copy-package.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateCopyPackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateCopyPackageTests.cs"
 
@@ -301,6 +360,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-diagram.yaml"
       - "docs/design/spdx-tool/self-test/validate-diagram.md"
+      - "docs/verification/spdx-tool/self-test/validate-diagram.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateDiagram.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateDiagramTests.cs"
 
@@ -309,6 +369,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-find-package.yaml"
       - "docs/design/spdx-tool/self-test/validate-find-package.md"
+      - "docs/verification/spdx-tool/self-test/validate-find-package.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateFindPackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateFindPackageTests.cs"
 
@@ -317,6 +378,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-get-version.yaml"
       - "docs/design/spdx-tool/self-test/validate-get-version.md"
+      - "docs/verification/spdx-tool/self-test/validate-get-version.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateGetVersion.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateGetVersionTests.cs"
 
@@ -325,6 +387,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-hash.yaml"
       - "docs/design/spdx-tool/self-test/validate-hash.md"
+      - "docs/verification/spdx-tool/self-test/validate-hash.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateHash.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateHashTests.cs"
 
@@ -333,6 +396,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-ntia.yaml"
       - "docs/design/spdx-tool/self-test/validate-ntia.md"
+      - "docs/verification/spdx-tool/self-test/validate-ntia.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateNtia.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateNtiaTests.cs"
 
@@ -341,6 +405,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-query.yaml"
       - "docs/design/spdx-tool/self-test/validate-query.md"
+      - "docs/verification/spdx-tool/self-test/validate-query.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateQuery.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateQueryTests.cs"
 
@@ -349,6 +414,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-rename-id.yaml"
       - "docs/design/spdx-tool/self-test/validate-rename-id.md"
+      - "docs/verification/spdx-tool/self-test/validate-rename-id.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateRenameId.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRenameIdTests.cs"
 
@@ -357,6 +423,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-run-nuget-workflow.yaml"
       - "docs/design/spdx-tool/self-test/validate-run-nuget-workflow.md"
+      - "docs/verification/spdx-tool/self-test/validate-run-nuget-workflow.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateRunNuGetWorkflow.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRunNuGetWorkflowTests.cs"
 
@@ -365,6 +432,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-to-markdown.yaml"
       - "docs/design/spdx-tool/self-test/validate-to-markdown.md"
+      - "docs/verification/spdx-tool/self-test/validate-to-markdown.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateToMarkdown.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateToMarkdownTests.cs"
 
@@ -373,6 +441,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/self-test/validate-update-package.yaml"
       - "docs/design/spdx-tool/self-test/validate-update-package.md"
+      - "docs/verification/spdx-tool/self-test/validate-update-package.md"
       - "src/DemaConsulting.SpdxTool/SelfTest/ValidateUpdatePackage.cs"
       - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateUpdatePackageTests.cs"
 
@@ -382,6 +451,7 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/utility/utility.yaml"
       - "docs/design/spdx-tool/utility/utility.md"
+      - "docs/verification/spdx-tool/utility.md"
       - "src/DemaConsulting.SpdxTool/Utility/PathHelpers.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Utility/PathHelpersTests.cs"
 
@@ -390,5 +460,6 @@ reviews:
     paths:
       - "docs/reqstream/spdx-tool/utility/utility.yaml"
       - "docs/design/spdx-tool/utility/utility.md"
+      - "docs/verification/spdx-tool/utility.md"
       - "src/DemaConsulting.SpdxTool/Utility/Wildcard.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Utility/WildcardTests.cs"

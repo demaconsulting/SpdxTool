@@ -23,15 +23,30 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of Hash command
+///     Self-test step that exercises the <c>hash</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that a SHA-256 hash file can be generated for a known file and that the generated
+///     hash file can subsequently be verified, confirming both the <c>generate</c> and
+///     <c>verify</c> sub-commands function correctly. Uses a temporary <c>validate.tmp</c>
+///     directory in the current working directory; callers must ensure sequential execution to
+///     avoid races on that directory and on the process-wide current directory set by
+///     <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateHash
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the hash self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_Hash</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         // Perform the validation
@@ -60,9 +75,20 @@ internal static class ValidateHash
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Orchestrates the generate and verify sub-tests in a shared temporary directory, returning
+    ///     true only if both succeed.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if both <see cref="DoValidateGenerate"/> and <see cref="DoValidateVerify"/>
+    ///     return <c>true</c>; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Creates <c>validate.tmp</c>, delegates to <see cref="DoValidateGenerate"/> and
+    ///     <see cref="DoValidateVerify"/> in sequence (using short-circuit evaluation), then
+    ///     deletes the temporary directory unconditionally in a <c>finally</c> block.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try
@@ -81,9 +107,20 @@ internal static class ValidateHash
     }
 
     /// <summary>
-    ///     Validate hash generation
+    ///     Verifies that the <c>hash generate</c> sub-command produces the correct SHA-256 hash for a
+    ///     known input file.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if RunSpdxTool returns exit code zero, the <c>.sha256</c> file is created,
+    ///     and the hash value matches the known expected digest; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Writes a test file containing "The quick brown fox jumps over the lazy dog" to
+    ///     <c>validate.tmp/test-file.txt</c>, calls
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>hash generate sha256</c>
+    ///     arguments, verifies the generated hash file exists, and checks that the file content
+    ///     equals the known SHA-256 digest for that string.
+    /// </remarks>
     private static bool DoValidateGenerate()
     {
         // Write test file with known content
@@ -120,9 +157,20 @@ internal static class ValidateHash
     }
 
     /// <summary>
-    ///     Validate hash verification
+    ///     Verifies that the <c>hash verify</c> sub-command accepts a correct hash and rejects a
+    ///     corrupted one.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if verification with the correct hash returns exit code zero and
+    ///     verification with a corrupted hash returns a non-zero exit code; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Relies on <c>validate.tmp/test-file.txt</c> and <c>validate.tmp/test-file.txt.sha256</c>
+    ///     having been created by <see cref="DoValidateGenerate"/>. Calls
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> twice: first with the correct hash
+    ///     (expects exit code zero), then after overwriting the hash file with all-zero digits
+    ///     (expects a non-zero exit code).
+    /// </remarks>
     private static bool DoValidateVerify()
     {
         // Run hash verify command with correct hash

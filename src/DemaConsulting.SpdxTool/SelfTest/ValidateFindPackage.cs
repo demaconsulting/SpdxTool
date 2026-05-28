@@ -23,15 +23,29 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of FindPackage
+///     Self-test step that exercises the <c>find-package</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that a package can be located in an SPDX document by name and that its SPDX ID
+///     is captured into a workflow variable and printed to the log output. Uses a temporary
+///     <c>validate.tmp</c> directory in the current working directory; callers must ensure
+///     sequential execution to avoid races on that directory and on the process-wide current
+///     directory set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateFindPackage
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the find-package self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_FindPackage</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
@@ -58,9 +72,33 @@ internal static class ValidateFindPackage
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual find-package validation in a temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if the command succeeded, the log file is present, and it contains the
+    ///     expected package identifier; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     <para>
+    ///         Creates <c>validate.tmp</c>, writes an SPDX JSON document containing two packages,
+    ///         and writes a workflow YAML that executes <c>find-package</c> to locate "Test Package"
+    ///         by name, captures its ID into the <c>packageId</c> variable, and prints it via the
+    ///         <c>print</c> command. Invokes <see cref="Validate.RunSpdxTool(string, string[])"/>
+    ///         with <c>--silent</c>, <c>--log</c>, and <c>run-workflow</c> arguments, then reads
+    ///         the log file and verifies it contains "Found package SPDXRef-Package-1".
+    ///     </para>
+    ///     <para>
+    ///         Returns <c>false</c> if the log file is absent after a successful tool exit; this
+    ///         guards against the log file not being written when the tool exits without producing
+    ///         output.
+    ///     </para>
+    ///     <para>
+    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
+    ///         even if directory creation or file writes only partially succeeded.
+    ///     </para>
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try
@@ -136,6 +174,12 @@ internal static class ValidateFindPackage
 
             // Fail if SpdxTool reported an error
             if (exitCode != 0)
+            {
+                return false;
+            }
+
+            // Fail if log file is absent
+            if (!File.Exists("validate.tmp/output.log"))
             {
                 return false;
             }

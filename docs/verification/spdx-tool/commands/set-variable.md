@@ -1,0 +1,26 @@
+### SetVariable
+
+#### Verification Approach
+
+`SetVariable` is verified with direct command tests in
+`test/DemaConsulting.SpdxTool.Tests/Commands/SetVariableTests.cs`. The tests confirm that the
+command is workflow-only and that valid workflow invocations populate the variable map for later
+steps.
+
+#### Test Environment
+
+N/A - the unit is verified in the standard xUnit v3 environment with no special setup beyond the test
+runner because it only mutates workflow context state.
+
+#### Acceptance Criteria
+
+Verification is acceptable when direct CLI invocation is rejected and workflow invocations store the
+requested variable value.
+
+#### Test Scenarios
+
+**WorkflowOnlyGuard**: the unit rejects direct command-line invocation. This scenario is tested by
+`SetVariable_OnCommandLine_ReportsWorkflowOnlyError`.
+
+**VariableAssignment**: the unit stores the requested name-value pair in the workflow variables map.
+This scenario is tested by `SetVariable_InWorkflow_SetsVariable`.

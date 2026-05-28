@@ -1,0 +1,22 @@
+### ValidateRenameId
+
+#### Verification Approach
+
+`ValidateRenameId` is verified by
+`test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRenameIdTests.cs`, which runs the step
+end-to-end against temporary SPDX content.
+
+#### Test Environment
+
+The test uses a temporary working directory with local SPDX fixtures in the standard MSTest
+environment. No external service is required.
+
+#### Acceptance Criteria
+
+Verification is acceptable when the self-test step returns a passing result after renaming the
+target SPDX identifier and its references.
+
+#### Test Scenarios
+
+**EndToEndRenameId**: the self-test step proves that `rename-id` updates the target identifier
+consistently during validation. This scenario is tested by `SpdxTool_RenameId`.

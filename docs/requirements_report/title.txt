@@ -1,16 +1,16 @@
 ---
 title: SpdxTool Trace Matrix
-subtitle: Requirements Traceability Matrix for the DemaConsulting SpdxTool
+subtitle: .NET tool for manipulating SPDX SBOM files
 author: DEMA Consulting
-description: Requirements Traceability Matrix for the DemaConsulting SpdxTool
+description: Trace Matrix for SpdxTool
 lang: en-US
 keywords:
+  - Requirements
+  - Trace Matrix
   - SpdxTool
   - SPDX
   - SBOM
-  - Trace Matrix
   - Traceability
-  - Requirements
   - Testing
   - .NET
 ---

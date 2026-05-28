@@ -1,0 +1,34 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Utility Requirements
+        sections:
+          - title: PathHelpers Requirements
+            requirements:
+              - id: SpdxTool-Utility-SafePath
+                title: The PathHelpers unit shall reject path traversal and absolute path components.
+                tags:
+                  - utility
+                  - security
+                justification: |
+                  Commands that accept user-supplied file paths must prevent directory
+                  traversal attacks. SafePathCombine ensures that combined paths remain
+                  within the intended base directory.
+                tests:
+                  - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
+                  - PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException
+                  - PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException
+
+              - id: SpdxTool-Utility-ValidPath
+                title: The PathHelpers unit shall correctly combine valid relative paths with a base path.
+                tags:
+                  - utility
+                justification: |
+                  Commands that resolve file paths need a reliable utility for combining
+                  base and relative paths in a safe manner.
+                tests:
+                  - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
+                  - PathHelpers_SafePathCombine_CurrentDirectoryReference_CombinesCorrectly
+                  - PathHelpers_SafePathCombine_NestedPaths_CombinesCorrectly
+                  - PathHelpers_SafePathCombine_EmptyRelativePath_ReturnsBasePath
