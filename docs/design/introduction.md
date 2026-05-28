@@ -36,7 +36,7 @@ DemaConsulting.SpdxTool (System)
 │   ├── Command.cs (Unit)
 │   ├── CommandEntry.cs (Unit)
 │   ├── CommandErrorException.cs (Unit)
-│   ├── CommandRegistry.cs (Unit)
+│   ├── CommandsRegistry.cs (Unit)
 │   ├── CommandUsageException.cs (Unit)
 │   ├── CopyPackage.cs (Unit)
 │   ├── Diagram.cs (Unit)
@@ -68,7 +68,7 @@ DemaConsulting.SpdxTool (System)
 │   ├── ValidateRunNuGetWorkflow.cs (Unit)
 │   ├── ValidateToMarkdown.cs (Unit)
 │   └── ValidateUpdatePackage.cs (Unit)
-├── Spdx (Units)
+├── Spdx (Subsystem)
 │   ├── RelationshipDirection.cs (Unit)
 │   └── SpdxHelpers.cs (Unit)
 ├── Utility (Subsystem)
@@ -92,7 +92,7 @@ src/DemaConsulting.SpdxTool/
 │   ├── Command.cs                  — abstract base class for all commands
 │   ├── CommandEntry.cs             — command entry/dispatch logic
 │   ├── CommandErrorException.cs    — exception for command errors
-│   ├── CommandRegistry.cs          — registry of all available commands
+│   ├── CommandsRegistry.cs          — registry of all available commands
 │   ├── CommandUsageException.cs    — exception for command usage errors
 │   ├── CopyPackage.cs              — copy-package command implementation
 │   ├── Diagram.cs                  — diagram command implementation
@@ -148,7 +148,6 @@ Each local software item has corresponding artifacts in parallel directory trees
   `docs/reqstream/{system-name}[/{subsystem-name}...]/{item}.yaml`
 - Design: `docs/design/{system-name}.md`,
   `docs/design/{system-name}[/{subsystem-name}...]/{item}.md`
-  (Unit design files for the Spdx unit group are in `docs/design/spdx-tool/spdx/`.)
 - Verification: `docs/verification/{system-name}.md`,
   `docs/verification/{system-name}[/{subsystem-name}...]/{item}.md`
 - Source: `src/{SystemName}[/{SubsystemName}...]/{Item}.cs`

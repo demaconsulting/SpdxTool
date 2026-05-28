@@ -29,4 +29,10 @@ state after parsing command-line arguments. This scenario is exercised by
 
 **ErrorCount**: Context accumulates errors and translates the error count into an exit code
 of 1 when errors are present. This scenario is exercised by
-`SpdxTool_Program_Run_NoArguments_WritesErrorAndUsage`.
+`SpdxTool_Usage_NoArguments_DisplaysError`.
+
+**LogOutput**: Context writes output to a log file when the `-l`/`--log` flag is supplied,
+and continues writing to the log even when `--silent` suppresses console output. This scenario
+is exercised by `SpdxTool_Log_ShortFlag_WritesOutputToFile`,
+`SpdxTool_Log_LongFlag_WritesOutputToFile`, and
+`SpdxTool_Log_SilentFlag_WritesToLogButNotConsole`.

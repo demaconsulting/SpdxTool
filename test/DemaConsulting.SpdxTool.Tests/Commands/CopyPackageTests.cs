@@ -448,7 +448,7 @@ public class CopyPackageTests
             Assert.Equal("SPDXRef-Compiler", doc.Packages[3].Id);
 
             // Assert: Verify expected relationships
-            Assert.Equal(4, doc.Packages.Count());
+            Assert.Equal(4, doc.Relationships.Count());
             Assert.Equal("SPDXRef-DOCUMENT", doc.Relationships[0].Id);
             Assert.Equal(SpdxRelationshipType.Describes, doc.Relationships[0].RelationshipType);
             Assert.Equal("SPDXRef-MainPackage", doc.Relationships[0].RelatedSpdxElement);

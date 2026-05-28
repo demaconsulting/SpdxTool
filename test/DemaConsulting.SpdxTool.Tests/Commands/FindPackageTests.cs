@@ -323,4 +323,64 @@ public class FindPackageTests
             File.Delete("workflow.yaml");
         }
     }
+
+    /// <summary>
+    ///     Test that find-package command by ID finds the package
+    /// </summary>
+    [Fact]
+    public void FindPackage_ById_FindsPackage()
+    {
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("spdx.json", SpdxContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "find-package",
+                "spdx.json",
+                "id=SPDXRef-Package-2");
+
+            // Assert: Verify package ID
+            Assert.Equal(0, exitCode);
+            Assert.Contains("SPDXRef-Package-2", output);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+        }
+    }
+
+    /// <summary>
+    ///     Test that find-package command with invalid criteria format reports an error
+    /// </summary>
+    [Fact]
+    public void FindPackage_InvalidCriteria_ReportsError()
+    {
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("spdx.json", SpdxContents);
+
+            // Act: Run the command with an invalid criterion that has no '=' separator
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "find-package",
+                "spdx.json",
+                "invalid-criterion");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Invalid criteria", output);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+        }
+    }
 }

@@ -7,14 +7,14 @@ sections:
           - title: Hash Requirements
             requirements:
               - id: SpdxTool-Hash-Generate
-                title: The tool shall compute SHA-256 hashes for files and update the SPDX document.
+                title: The tool shall compute SHA-256 hashes for files and write them to sidecar files.
                 tags:
                   - spdx
                 justification: |
                   Users need to generate SHA-256 hashes for files and record them in sidecar
                   files for later integrity verification.
                 tests:
-                  - Hash_GenerateOperation_UpdatesPackageHash
+                  - Hash_GenerateOperation_WritesSidecarFile
 
               - id: SpdxTool-Hash-Verify
                 title: The tool shall verify file integrity against SHA-256 hashes stored in sidecar files.

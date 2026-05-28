@@ -24,4 +24,4 @@ command (e.g., `Command_Expand_NoVariables_ReturnsOriginal`).
 
 **UnknownCommandRejection**: unrecognized command names cause the tool to report an error and
 print usage information. This scenario is tested by
-`UnknownCommand_UnrecognizedCommand_ReportsError`.
+`Commands_Dispatch_UnknownCommand_ReportsError`.

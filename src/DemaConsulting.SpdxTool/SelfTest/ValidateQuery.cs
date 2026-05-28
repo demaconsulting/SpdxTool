@@ -24,22 +24,40 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of GetVersion
+///     Self-test step that exercises the <c>query</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that an external program can be queried and a version string extracted from its
+///     output using a regular expression pattern, with the result captured into a workflow variable
+///     and subsequently printed to the log output. Uses a temporary <c>validate.tmp</c> directory
+///     in the current working directory; callers must ensure sequential execution to avoid races on
+///     that directory and on the process-wide current directory set by
+///     <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static partial class ValidateQuery
 {
     /// <summary>
     ///     Regular expression to check for version
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    ///     A compiled <see cref="System.Text.RegularExpressions.Regex"/> that matches the string
+    ///     "Dotnet version N.N.N" where N is one or more digits.
+    /// </returns>
     [GeneratedRegex(@"Dotnet version \d+\.\d+\.\d+")]
     private static partial Regex VersionRegex();
 
     /// <summary>
-    ///     Run validation test
+    ///     Executes the query self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_Query</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
@@ -66,9 +84,33 @@ internal static partial class ValidateQuery
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual query validation in a temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if the command succeeded and the log matches the version pattern;
+    ///     otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     <para>
+    ///         Creates <c>validate.tmp</c>, writes a workflow YAML that executes <c>query</c>
+    ///         against <c>dotnet --version</c>, extracts the version using a regex pattern into
+    ///         the <c>version</c> variable, and prints it via the <c>print</c> command. Invokes
+    ///         <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c>,
+    ///         <c>--log</c>, and <c>run-workflow</c> arguments, then reads the log file and
+    ///         verifies it matches the <see cref="VersionRegex"/> pattern.
+    ///     </para>
+    ///     <para>
+    ///         <strong>Thread safety:</strong> <see cref="Validate.RunSpdxTool(string, string[])"/>
+    ///         temporarily mutates the process-wide current working directory; callers must execute
+    ///         serially to avoid races.
+    ///     </para>
+    ///     <para>
+    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
+    ///         even if directory creation or file writes only partially succeeded.
+    ///     </para>
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try

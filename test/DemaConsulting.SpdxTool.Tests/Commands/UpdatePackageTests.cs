@@ -128,7 +128,7 @@ public class UpdatePackageTests
             Assert.True(File.Exists("spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
-            // Assert: Verify both packages present
+            // Assert: Verify the package was updated correctly
             Assert.Single(doc.Packages);
             Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.Equal("New package name", doc.Packages[0].Name);

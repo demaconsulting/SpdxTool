@@ -42,7 +42,29 @@ public class HelpTests
 
         // Assert: Verify an error was detected
         Assert.Equal(1, exitCode);
-        Assert.Contains("'help' command missing arguments", output);
+        Assert.Contains("'help' command requires exactly one argument", output);
+    }
+
+    /// <summary>
+    ///     Test that help command with too many arguments reports an error
+    /// </summary>
+    [Fact]
+    public void Help_Run_TooManyArguments_ReportsError()
+    {
+        // Arrange: no setup required — the tool binary is invoked as a self-contained process
+
+        // Act: Run the help command with two arguments
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "help",
+            "run-workflow",
+            "extra-argument");
+
+        // Assert: Verify an error was detected
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'help' command requires exactly one argument", output);
     }
 
     /// <summary>

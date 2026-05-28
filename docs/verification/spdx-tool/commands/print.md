@@ -18,10 +18,11 @@ execution modes.
 
 #### Test Scenarios
 
-**CommandLineOutput**: the unit writes text when invoked directly from the command line. This
-scenario is tested by `Print_Run_OnCommandLine_PrintsText`.
+**CommandLineOutput**: the unit writes text when invoked directly from the command line. This scenario
+is tested by `Print_Run_OnCommandLine_PrintsText`.
 
 **WorkflowOutput**: the unit writes text when invoked from a workflow step. This scenario is tested
 by `Print_Run_InWorkflow_PrintsText`.
 
-**MissingTextInput**: the unit reports an error when the text input is absent from the workflow step. This scenario is tested by `Print_Run_MissingTextInput_ThrowsYamlException`.
+**MissingTextInput**: the unit reports an error when the text input is absent from the workflow step.
+This scenario is tested by `Print_Run_MissingTextInput_ThrowsYamlException`.

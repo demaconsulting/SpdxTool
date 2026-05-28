@@ -23,15 +23,29 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of RunWorkflow with NuGet package
+///     Self-test step that exercises the <c>run-workflow</c> command with a NuGet package source.
 /// </summary>
+/// <remarks>
+///     Verifies that a workflow file can be resolved from a NuGet package in the local cache and
+///     executed successfully, with outputs captured into workflow variables. Uses a temporary
+///     <c>validate.tmp</c> directory in the current working directory; callers must ensure
+///     sequential execution to avoid races on that directory and on the process-wide current directory
+///     set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateRunNuGetWorkflow
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the NuGet workflow self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_RunNuGetWorkflow</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
@@ -58,9 +72,22 @@ internal static class ValidateRunNuGetWorkflow
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual NuGet workflow validation in a temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns><c>true</c> if the workflow resolved and executed with exit code zero; otherwise <c>false</c>.</returns>
+    /// <remarks>
+    ///     Creates <c>validate.tmp</c>, writes a workflow YAML that references the
+    ///     <c>DemaConsulting.SpdxWorkflows</c> NuGet package and executes the
+    ///     <c>GetDotNetVersion.yaml</c> workflow within it, mapping the version output to the
+    ///     <c>dotnet-version</c> variable and printing it. Invokes
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c> and
+    ///     <c>run-workflow</c> arguments. The <c>validate.tmp</c> directory is deleted
+    ///     unconditionally in a <c>finally</c> block, even if creation or file writes only partially
+    ///     succeeded. Returns <c>false</c> if the NuGet package cannot be resolved because it is
+    ///     absent from the local cache and network access is unavailable.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try

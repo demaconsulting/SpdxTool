@@ -31,50 +31,53 @@ public class WildcardTests
     ///     Test that exact pattern matching returns true for matching strings
     /// </summary>
     [Fact]
-    public void Wildcard_ExactMatch_ReturnsTrue()
+    public void Wildcard_IsMatch_ExactMatch_ReturnsTrue()
     {
         // Arrange/Act/Assert: Verify exact matching behavior
-        Assert.True(Wildcard.IsMatch("Hello", "Hello"));
-        Assert.True(Wildcard.IsMatch("HELLO", "Hello"));
-        Assert.True(Wildcard.IsMatch("hello.WORLD", "Hello.World"));
-        Assert.False(Wildcard.IsMatch("Test", "42"));
-        Assert.False(Wildcard.IsMatch("Hello_World", "Hello.World"));
-        Assert.False(Wildcard.IsMatch("Hello", "....."));
-        Assert.False(Wildcard.IsMatch("_Test", "Test"));
-        Assert.False(Wildcard.IsMatch("Test_", "Test"));
+        Assert.Multiple(
+            () => Assert.True(Wildcard.IsMatch("Hello", "Hello")),
+            () => Assert.True(Wildcard.IsMatch("HELLO", "Hello")),
+            () => Assert.True(Wildcard.IsMatch("hello.WORLD", "Hello.World")),
+            () => Assert.False(Wildcard.IsMatch("Test", "42")),
+            () => Assert.False(Wildcard.IsMatch("Hello_World", "Hello.World")),
+            () => Assert.False(Wildcard.IsMatch("Hello", ".....")),
+            () => Assert.False(Wildcard.IsMatch("_Test", "Test")),
+            () => Assert.False(Wildcard.IsMatch("Test_", "Test")));
     }
 
     /// <summary>
     ///     Test that asterisk pattern matching matches multiple characters
     /// </summary>
     [Fact]
-    public void Wildcard_AsteriskPattern_MatchesMultipleChars()
+    public void Wildcard_IsMatch_AsteriskPattern_MatchesMultipleChars()
     {
         // Arrange/Act/Assert: Verify asterisk wildcard matching behavior
-        Assert.True(Wildcard.IsMatch("Test.This.String", "Test.*.String"));
-        Assert.True(Wildcard.IsMatch("Test String", "*Test*"));
-        Assert.True(Wildcard.IsMatch("This is a test", "*Test*"));
-        Assert.True(Wildcard.IsMatch("This tests for a string", "*Test*"));
-        Assert.True(Wildcard.IsMatch("Test", "Test*"));
-        Assert.True(Wildcard.IsMatch("Testing", "Test*"));
-        Assert.True(Wildcard.IsMatch("Test", "*Test"));
-        Assert.True(Wildcard.IsMatch("Some Test", "*Test"));
-        Assert.False(Wildcard.IsMatch("Test", "*i*"));
-        Assert.False(Wildcard.IsMatch("Test", "*s"));
-        Assert.False(Wildcard.IsMatch("Test", "e*"));
+        Assert.Multiple(
+            () => Assert.True(Wildcard.IsMatch("Test.This.String", "Test.*.String")),
+            () => Assert.True(Wildcard.IsMatch("Test String", "*Test*")),
+            () => Assert.True(Wildcard.IsMatch("This is a test", "*Test*")),
+            () => Assert.True(Wildcard.IsMatch("This tests for a string", "*Test*")),
+            () => Assert.True(Wildcard.IsMatch("Test", "Test*")),
+            () => Assert.True(Wildcard.IsMatch("Testing", "Test*")),
+            () => Assert.True(Wildcard.IsMatch("Test", "*Test")),
+            () => Assert.True(Wildcard.IsMatch("Some Test", "*Test")),
+            () => Assert.False(Wildcard.IsMatch("Test", "*i*")),
+            () => Assert.False(Wildcard.IsMatch("Test", "*s")),
+            () => Assert.False(Wildcard.IsMatch("Test", "e*")));
     }
 
     /// <summary>
     ///     Test that question mark pattern matching matches a single character
     /// </summary>
     [Fact]
-    public void Wildcard_QuestionMarkPattern_MatchesSingleChar()
+    public void Wildcard_IsMatch_QuestionMarkPattern_MatchesSingleChar()
     {
         // Arrange/Act/Assert: Verify question mark wildcard matching behavior
-        Assert.True(Wildcard.IsMatch("Test", "Te?t"));
-        Assert.True(Wildcard.IsMatch("Test", "????"));
-        Assert.False(Wildcard.IsMatch("Test", "?Test"));
-        Assert.False(Wildcard.IsMatch("Test", "Test?"));
-        Assert.False(Wildcard.IsMatch("Test", "?"));
+        Assert.Multiple(
+            () => Assert.True(Wildcard.IsMatch("Test", "Te?t")),
+            () => Assert.True(Wildcard.IsMatch("Test", "????")),
+            () => Assert.False(Wildcard.IsMatch("Test", "?Test")),
+            () => Assert.False(Wildcard.IsMatch("Test", "Test?")),
+            () => Assert.False(Wildcard.IsMatch("Test", "?")));
     }
 }

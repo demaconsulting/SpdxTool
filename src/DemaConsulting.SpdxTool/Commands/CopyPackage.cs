@@ -173,6 +173,14 @@ public sealed class CopyPackage : Command
     /// <param name="relationships">Relationships of package to elements in destination</param>
     /// <param name="recursive">Recursive copy option</param>
     /// <param name="files">Copy files option</param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when <paramref name="packageId"/> is empty or equal to "SPDXRef-DOCUMENT".
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the package identified by <paramref name="packageId"/> is not found in
+    ///     <paramref name="fromFile"/>, or when the <paramref name="files"/> flag is set and a file
+    ///     listed in the package's HasFiles is absent from the source document.
+    /// </exception>
     public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId,
         SpdxRelationship[] relationships, bool recursive, bool files)
     {
@@ -210,7 +218,11 @@ public sealed class CopyPackage : Command
     /// <param name="toDoc">SPDX document to copy to</param>
     /// <param name="packageId">ID of the SPDX package to copy</param>
     /// <param name="files">Copy files option</param>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the package identified by <paramref name="packageId"/> does not exist in
+    ///     <paramref name="fromDoc"/>, or when the <paramref name="files"/> flag is set and a file
+    ///     listed in the package's HasFiles is absent from <paramref name="fromDoc"/>.
+    /// </exception>
     /// <remarks>
     ///     New copies have <see cref="SpdxPackage.FilesAnalyzed"/> reset to <see langword="false"/> because the
     ///     destination document does not carry the source file entries unless the <paramref name="files"/> flag
@@ -290,6 +302,10 @@ public sealed class CopyPackage : Command
     /// <param name="parentId">ID of the parent package</param>
     /// <param name="copied">Packages already copied</param>
     /// <param name="files">Copy files option</param>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when a child package or one of its associated files cannot be found in
+    ///     <paramref name="fromDoc"/>; propagated from <see cref="Copy"/>.
+    /// </exception>
     /// <remarks>
     ///     The <paramref name="copied"/> set guards against infinite recursion in graphs that contain cycles.
     ///     A package ID is added to the set before its children are processed, so any back-edge to an

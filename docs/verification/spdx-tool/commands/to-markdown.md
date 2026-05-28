@@ -13,8 +13,15 @@ external service is required.
 
 #### Acceptance Criteria
 
-Verification is acceptable when invalid invocations are rejected and valid SPDX input produces the
-expected Markdown summary file.
+Verification is acceptable when:
+
+- Missing or insufficient CLI arguments are rejected with a usage error.
+- A whitespace-only title argument is rejected with a usage error.
+- A non-positive depth argument is rejected with a usage error.
+- A missing SPDX input file is rejected with an error.
+- Valid SPDX input produces the expected Markdown summary file with correct headings, metadata,
+  and package classification.
+- Valid SPDX input processed via a workflow YAML step produces the expected Markdown summary file.
 
 #### Test Scenarios
 

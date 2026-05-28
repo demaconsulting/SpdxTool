@@ -118,9 +118,15 @@ public sealed class Diagram : Command
     /// <summary>
     ///     Generate mermaid entity-relationship diagram from SPDX document
     /// </summary>
+    /// <remarks>
+    ///     Loads the SPDX document, filters to package-to-package relationships only, optionally
+    ///     excludes BuildToolOf/DevToolOf/TestToolOf relationships, and writes an erDiagram block to
+    ///     the output file. Each relationship line uses "Name / Version" ||--|| "Name / Version" format.
+    ///     Writes the mermaid file to disk as a side effect; not thread-safe on the same output file.
+    /// </remarks>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="mermaidFile">Mermaid diagram file name</param>
-    /// <param name="tools">True to include tools</param>
+    /// <param name="tools">True to include build/dev/test tool relationships; false (default) to exclude them</param>
     /// <exception cref="System.IO.FileNotFoundException">Thrown when <paramref name="spdxFile"/> does not exist on disk.</exception>
     /// <exception cref="System.IO.IOException">Thrown when <paramref name="spdxFile"/> cannot be read or <paramref name="mermaidFile"/> cannot be written.</exception>
     /// <exception cref="System.Text.Json.JsonException">Thrown when <paramref name="spdxFile"/> is not valid JSON.</exception>

@@ -28,7 +28,7 @@ sections:
                   Workflow users need to generate Mermaid diagrams as part of automated
                   pipelines using structured YAML inputs rather than positional CLI arguments.
                 tests:
-                  - Diagram_ValidSpdxFile_GeneratesDiagram
+                  - Diagram_InWorkflow_GeneratesDiagram
 
               - id: SpdxTool-Transform-Diagram-ToolsFilter
                 title: >-

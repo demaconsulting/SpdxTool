@@ -9,8 +9,6 @@ is available from both the CLI and workflow YAML files.
 
 #### Data Model
 
-N/A — GetVersion is a stateless singleton.
-
 **Instance**: `GetVersion` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for GetVersion.
 

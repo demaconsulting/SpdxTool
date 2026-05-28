@@ -34,6 +34,8 @@ public class AddPackageTests
     [Fact]
     public void AddPackage_OnCommandLine_ReportsWorkflowOnlyError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,

@@ -28,7 +28,7 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Command to run a workflow YAML file
+///     Command to run a workflow YAML file, URL, or NuGet package workflow
 /// </summary>
 public sealed class RunWorkflow : Command
 {

@@ -33,3 +33,7 @@ This scenario is tested by `SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile`
 
 **CliIntegration**: the installed tool exposes the orchestrator through the `--validate`
 command-line flag. This scenario is tested by `SpdxTool_SelfTest_ValidateFlag_Succeeds`.
+
+**UnsupportedResultExtension**: the orchestrator reports an error and produces no file when
+`Context.ValidationFile` has an unsupported extension. This scenario is tested by
+`SpdxTool_SelfTest_ValidateFlagWithResults_UnsupportedExtension_ReportsError`.

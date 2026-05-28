@@ -87,7 +87,7 @@ internal static class ValidateHash
     ///     <see cref="DoValidateVerify"/> in sequence (using short-circuit evaluation), then
     ///     deletes the temporary directory unconditionally in a <c>finally</c> block.
     /// </remarks>
-    /// <exception cref="System.IO.IOException">Thrown if the temporary directory cannot be created or deleted.</exception>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or any test file cannot be created, read, or deleted.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
@@ -121,6 +121,8 @@ internal static class ValidateHash
     ///     arguments, verifies the generated hash file exists, and checks that the file content
     ///     equals the known SHA-256 digest for that string.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test file or hash file cannot be written or read.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidateGenerate()
     {
         // Write test file with known content
@@ -171,6 +173,8 @@ internal static class ValidateHash
     ///     (expects exit code zero), then after overwriting the hash file with all-zero digits
     ///     (expects a non-zero exit code).
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the hash file cannot be overwritten.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidateVerify()
     {
         // Run hash verify command with correct hash

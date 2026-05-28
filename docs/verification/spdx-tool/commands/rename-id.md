@@ -26,3 +26,7 @@ scenario is tested by `RenameId_MissingFile_ReportsError`.
 
 **ReferenceWideRename**: the unit renames the target SPDX identifier across the full document. This
 scenario is tested by `RenameId_ValidSpdxFile_RenamesId`.
+
+**AllCollectionsRename**: the unit renames the target SPDX identifier across all element collections,
+including file IDs, snippet from-file references, package HasFiles entries, and relationship
+from-element IDs. This scenario is tested by `RenameId_ValidSpdxFile_RenamesAllCollections`.

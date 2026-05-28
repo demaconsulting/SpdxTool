@@ -2,15 +2,16 @@
 
 #### Verification Approach
 
-`SpdxHelpers` is verified indirectly through command tests in
-`test/DemaConsulting.SpdxTool.Tests/`. Every command that loads or saves an SPDX JSON file
-exercises SpdxHelpers.LoadJsonDocument and SpdxHelpers.SaveJsonDocument. The Diagram and
-FindPackage tests provide direct evidence of SPDX file loading behavior.
+`SpdxHelpers` is verified by direct unit tests in
+`test/DemaConsulting.SpdxTool.Tests/Spdx/SpdxHelpersTests.cs` and indirectly through command
+tests. Every command that loads or saves an SPDX JSON file exercises
+SpdxHelpers.LoadJsonDocument and SpdxHelpers.SaveJsonDocument, providing additional evidence
+of correct integration behavior.
 
 #### Test Environment
 
-Tests use local SPDX JSON fixtures in the standard xUnit v3 environment. No external service
-is required.
+Tests use in-memory SPDX JSON content and temporary files in the standard xUnit v3
+environment. No external service is required.
 
 #### Acceptance Criteria
 
@@ -21,8 +22,13 @@ document.
 #### Test Scenarios
 
 **DocumentLoading**: SpdxHelpers loads a valid SPDX JSON file and returns a populated
-SpdxDocument. This scenario is exercised by `Diagram_ValidSpdxFile_GeneratesDiagram`.
+SpdxDocument. This scenario is exercised by
+`SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument`.
 
 **MissingFileRejection**: SpdxHelpers throws CommandUsageException when the specified file
 does not exist. This scenario is exercised by
-`FindPackage_OnCommandLine_ReportsWorkflowOnlyError`.
+`SpdxHelpers_LoadJsonDocument_MissingFile_ThrowsCommandUsageException`.
+
+**CreatorStamping**: SpdxHelpers stamps the tool creator entry in the document's creation
+information when saving. This scenario is exercised by
+`SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator`.

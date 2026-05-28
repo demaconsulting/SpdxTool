@@ -8,7 +8,7 @@ end-to-end against temporary SPDX content.
 
 #### Test Environment
 
-The test uses a temporary working directory with local SPDX fixtures in the standard MSTest
+The test uses a temporary working directory with local SPDX fixtures in the standard xUnit v3
 environment. No external service is required.
 
 #### Acceptance Criteria

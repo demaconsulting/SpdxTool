@@ -372,4 +372,94 @@ public class DiagramTests
             File.Delete("test-no-tools.mermaid.txt");
         }
     }
+
+    /// <summary>
+    ///     Test that diagram command in a workflow step generates a diagram from YAML inputs
+    /// </summary>
+    [Fact]
+    public void Diagram_InWorkflow_GeneratesDiagram()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-Library",
+                  "name": "Test Library",
+                  "versionInfo": "2.3.4",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-Application",
+                  "relatedSpdxElement": "SPDXRef-Library",
+                  "relationshipType": "DEPENDS_ON"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """;
+
+        const string workflowContents =
+            """
+            steps:
+            - command: diagram
+              inputs:
+                spdx: test.spdx.json
+                mermaid: test.workflow.mermaid.txt
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file and workflow file
+            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("test.workflow.yaml", workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "test.workflow.yaml");
+
+            // Assert: Verify success and mermaid file was created with expected content
+            Assert.Equal(0, exitCode);
+            Assert.True(File.Exists("test.workflow.mermaid.txt"));
+            var mermaid = File.ReadAllText("test.workflow.mermaid.txt");
+            Assert.Contains("erDiagram", mermaid);
+            Assert.Contains("Test Application / 1.2.3", mermaid);
+            Assert.Contains("Test Library / 2.3.4", mermaid);
+            Assert.Contains("DEPENDS_ON", mermaid);
+        }
+        finally
+        {
+            File.Delete("test.spdx.json");
+            File.Delete("test.workflow.yaml");
+            File.Delete("test.workflow.mermaid.txt");
+        }
+    }
 }

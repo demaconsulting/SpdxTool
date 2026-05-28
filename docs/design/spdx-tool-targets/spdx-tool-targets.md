@@ -1,6 +1,6 @@
-# DemaConsulting.SpdxTool.Targets
+## DemaConsulting.SpdxTool.Targets
 
-## Architecture
+### Architecture
 
 `DemaConsulting.SpdxTool.Targets` consists of two MSBuild targets units and no subsystems. The
 `buildMultiTargeting` variant imports the `build` variant to ensure SBOM decoration runs exactly
@@ -15,7 +15,7 @@ flowchart TD
     MultiTargets -->|imports| BuildTargets
 ```
 
-## External Interfaces
+### External Interfaces
 
 **MSBuild Targets Extension**: Exposes the `DecorateSbomTarget` MSBuild target and configurable
 properties to consuming .NET projects via the NuGet targets package mechanism.
@@ -46,18 +46,18 @@ the SBOM JSON file inside the temporarily unzipped NuGet package directory.
   the workflow file must exist at `SpdxWorkflowFile` or the build fails with an explicit MSBuild
   error before the subprocess is invoked
 
-## Dependencies
+### Dependencies
 
 - **Microsoft.Sbom.Targets**: provides `GenerateSbomTarget` that `DecorateSbomTarget` orders
   against via `AfterTargets="GenerateSbomTarget"` — see *Microsoft.Sbom.Targets Integration Design*
 - **DemaConsulting.SpdxTool**: provides the `spdx-tool` CLI process invoked to perform SBOM
   decoration — companion system in this repository
 
-## Risk Control Measures
+### Risk Control Measures
 
 N/A - not a safety-classified software item.
 
-## Data Flow
+### Data Flow
 
 ```mermaid
 flowchart TD
@@ -73,7 +73,7 @@ flowchart TD
     Rezip --> Cleanup["Remove temp directory"]
 ```
 
-## Design Constraints
+### Design Constraints
 
 - The system invokes `spdx-tool` exclusively as an external process via the MSBuild `Exec` task;
   there is no source-level dependency on the `DemaConsulting.SpdxTool` project.

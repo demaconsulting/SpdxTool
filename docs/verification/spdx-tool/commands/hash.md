@@ -13,8 +13,8 @@ service is required.
 
 #### Acceptance Criteria
 
-Verification is acceptable when the unit reports input errors correctly, writes generated hash
-information to the SPDX package, and reliably distinguishes valid and invalid verification results.
+Verification is acceptable when the unit reports input errors correctly, writes the generated hash
+to a sidecar file, and reliably distinguishes valid and invalid verification results.
 
 #### Test Scenarios
 
@@ -24,8 +24,8 @@ scenario is tested by `Hash_MissingArguments_ReportsError`.
 **MissingInputFile**: the unit reports an error when the file to hash does not exist. This scenario
 is tested by `Hash_MissingFile_ReportsError`.
 
-**GenerateHash**: the unit generates a SHA-256 hash and updates the target package metadata. This
-scenario is tested by `Hash_GenerateOperation_UpdatesPackageHash`.
+**GenerateHash**: the unit generates a SHA-256 hash and writes it to a sidecar file. This scenario
+is tested by `Hash_GenerateOperation_WritesSidecarFile`.
 
 **DetectInvalidHash**: the unit reports failure when a supplied hash does not match the file
 contents. This scenario is tested by `Hash_VerifyOperation_FailsForInvalidHash`.
@@ -33,8 +33,11 @@ contents. This scenario is tested by `Hash_VerifyOperation_FailsForInvalidHash`.
 **VerifyValidHash**: the unit accepts a matching hash during verification. This scenario is tested
 by `Hash_VerifyOperation_SucceedsForValidHash`.
 
-**MissingHashFile**: the unit reports an error when the sidecar hash file does not exist during verification. This scenario is tested by `Hash_VerifyMissingFile_ReportsError`.
+**MissingHashFile**: the unit reports an error when the sidecar hash file does not exist during
+verification. This scenario is tested by `Hash_VerifyMissingFile_ReportsError`.
 
-**UnsupportedAlgorithm**: the unit reports a usage error when an algorithm other than SHA-256 is requested. This scenario is tested by `Hash_UnsupportedAlgorithm_ReportsError`.
+**UnsupportedAlgorithm**: the unit reports a usage error when an algorithm other than SHA-256 is
+requested. This scenario is tested by `Hash_UnsupportedAlgorithm_ReportsError`.
 
-**InvalidOperation**: the unit reports a usage error when an unrecognized operation is requested. This scenario is tested by `Hash_InvalidOperation_ReportsError`.
+**InvalidOperation**: the unit reports a usage error when an unrecognized operation is requested.
+This scenario is tested by `Hash_InvalidOperation_ReportsError`.

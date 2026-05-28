@@ -22,8 +22,8 @@ value, and workflow invocations store the captured value for later steps.
 **MissingArguments**: the unit reports a usage error when the query pattern or program is omitted.
 This scenario is tested by `Query_MissingArguments_ReportsError`.
 
-**PatternMissingValueGroup**: the unit reports an error when the supplied regular expression does not contain a `value` capture group. This
-scenario is tested by `Query_PatternMissingValueGroup_ReportsError`.
+**PatternMissingValueGroup**: the unit reports an error when the supplied regular expression does not contain a `value`
+capture group. This scenario is tested by `Query_PatternMissingValueGroup_ReportsError`.
 
 **InvalidProgram**: the unit reports an error when the external program cannot be started. This
 scenario is tested by `Query_InvalidProgram_ReportsError`.
@@ -34,6 +34,8 @@ This scenario is tested by `Query_DotNetVersion_OnCommandLine_ReturnsVersion`.
 **WorkflowCapture**: the unit stores the captured value for downstream workflow use. This scenario
 is tested by `Query_DotNetVersion_InWorkflow_StoresVersion`.
 
-**InvalidRegexPattern**: the unit reports an error when the supplied regular expression is syntactically invalid. This scenario is tested by `Query_InvalidRegexPattern_ReportsError`.
+**InvalidRegexPattern**: the unit reports an error when the supplied regular expression is syntactically invalid. This
+scenario is tested by `Query_InvalidRegexPattern_ReportsError`.
 
-**PatternNotFound**: the unit reports an error when the pattern is not matched in any line of the program output. This scenario is tested by `Query_PatternNotFound_ReportsError`.
+**PatternNotFound**: the unit reports an error when the pattern is not matched in any line of the
+program output. This scenario is tested by `Query_PatternNotFound_ReportsError`.

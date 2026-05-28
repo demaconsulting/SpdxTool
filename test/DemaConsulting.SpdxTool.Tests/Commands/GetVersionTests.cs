@@ -175,7 +175,7 @@ public class GetVersionTests
                 "run-workflow",
                 "workflow.yaml");
 
-            // Assert: Verify package ID
+            // Assert: Verify package version
             Assert.Equal(0, exitCode);
             Assert.Contains("Found version 2.0.0", output);
         }

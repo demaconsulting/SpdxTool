@@ -126,8 +126,14 @@ public sealed class Query : Command
     /// <param name="program">Program to execute</param>
     /// <param name="arguments">Program arguments</param>
     /// <returns>Captured value</returns>
-    /// <exception cref="CommandUsageException">On bad usage</exception>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when <paramref name="pattern"/> is syntactically invalid or does not contain a
+    ///     named "value" capture group.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when <paramref name="program"/> cannot be started, or when the pattern does not
+    ///     match any line of the combined program output.
+    /// </exception>
     public static string QueryProgramOutput(string pattern, string program, string[] arguments)
     {
         // Construct the regular expression

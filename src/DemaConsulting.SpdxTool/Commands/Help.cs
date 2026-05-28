@@ -73,10 +73,10 @@ public sealed class Help : Command
     /// <exception cref="CommandUsageException">Thrown when args does not contain exactly one argument.</exception>
     public override void Run(Context context, string[] args)
     {
-        // Report an error if the number of arguments is not 1
+        // Report an error if the number of arguments is not exactly 1
         if (args.Length != 1)
         {
-            throw new CommandUsageException("'help' command missing arguments");
+            throw new CommandUsageException("'help' command requires exactly one argument");
         }
 
         // Display the command's extended help text

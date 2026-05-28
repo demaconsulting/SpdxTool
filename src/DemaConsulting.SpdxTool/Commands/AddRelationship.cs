@@ -136,7 +136,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <summary>
-    ///     Add the SPDX relationship to the SPDX document
+    ///     Add the SPDX relationships to the SPDX document
     /// </summary>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="relationships">SPDX relationships</param>

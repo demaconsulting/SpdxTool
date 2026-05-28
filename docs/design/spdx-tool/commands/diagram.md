@@ -65,6 +65,14 @@ on `RelationshipDirection` includes a `_ => throw new InvalidDataException()` ar
 (unmapped relationship types default to `Sibling`), making this arm permanently unreachable.
 The arm is retained as a defensive guard against future changes to the direction enum.
 
+**FileNotFoundException** — propagated from GenerateDiagram when the spdxFile path does not refer to
+an existing file on disk.
+
+**IOException** — propagated from GenerateDiagram when spdxFile cannot be read or mermaidFile cannot
+be written.
+
+**JsonException** — propagated from GenerateDiagram when spdxFile is not valid JSON.
+
 #### Dependencies
 
 - Command (abstract base class)

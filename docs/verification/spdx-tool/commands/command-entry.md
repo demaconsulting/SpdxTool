@@ -25,4 +25,4 @@ that dispatches a registered command (e.g., `Command_Expand_NoVariables_ReturnsO
 
 **RegistryDispatch**: CommandEntry is used by CommandsRegistry to route command-line
 invocations to the correct Command implementation. This scenario is tested by
-`UnknownCommand_UnrecognizedCommand_ReportsError`.
+`Commands_Dispatch_UnknownCommand_ReportsError`.

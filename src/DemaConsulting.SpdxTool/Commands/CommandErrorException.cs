@@ -21,23 +21,32 @@
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Command error exception
+///     Exception thrown when a command encounters a runtime failure.
 /// </summary>
+/// <remarks>
+///     Distinct from <see cref="CommandUsageException"/>, which signals an incorrect
+///     invocation. <see cref="CommandErrorException"/> signals that the invocation was
+///     structurally valid but the operation could not be completed — for example, a
+///     referenced file was not found, or the SPDX document content is invalid.
+///     <c>Program</c> catches this exception, writes the message to standard error, and
+///     exits with a non-zero exit code.
+/// </remarks>
 public class CommandErrorException : Exception
 {
     /// <summary>
-    ///     Initialize a new instance of the CommandErrorException class
+    ///     Initializes a new instance of <see cref="CommandErrorException"/> with the specified message.
     /// </summary>
-    /// <param name="message">Command error message</param>
+    /// <param name="message">Human-readable description of the runtime failure.</param>
     public CommandErrorException(string message) : base(message)
     {
     }
 
     /// <summary>
-    ///     Initialize a new instance of the CommandErrorException class
+    ///     Initializes a new instance of <see cref="CommandErrorException"/> with the specified message
+    ///     and a reference to the underlying exception that caused this failure.
     /// </summary>
-    /// <param name="message">Command error message</param>
-    /// <param name="innerException">Inner exception cause</param>
+    /// <param name="message">Human-readable description of the runtime failure.</param>
+    /// <param name="innerException">The exception that is the direct cause of this failure.</param>
     public CommandErrorException(string message, Exception innerException) : base(message, innerException)
     {
     }

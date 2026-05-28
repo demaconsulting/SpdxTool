@@ -9,10 +9,17 @@ workflow source, and extraction of named output variables after execution. Workf
 
 #### Data Model
 
-N/A — RunWorkflow is a stateless singleton.
+RunWorkflow carries no mutable instance state; all fields are static constants or readonly singletons
+initialised once at class load.
 
-**Instance**: `RunWorkflow` — the singleton instance registered with CommandsRegistry.
-**Entry**: `CommandEntry` — the CommandEntry record for RunWorkflow.
+**Command** (`private const string`): The canonical command name `"run-workflow"` used for registration
+and help text.
+
+**Instance** (`public static readonly RunWorkflow`): The singleton instance registered with
+CommandsRegistry. Created once via the private constructor.
+
+**Entry** (`public static readonly CommandEntry`): The CommandEntry record that pairs the command name,
+usage line, summary text, and extended help lines with the singleton Instance for dispatch.
 
 #### Key Methods
 
@@ -101,15 +108,17 @@ parameter is malformed (missing "="); thrown by Run(Context, YamlMappingNode, Di
 requested workflow output is not produced; thrown by RunBytes when an unknown command is referenced
 in a step.
 
-**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when both file and url are
-specified, when neither is specified, when both nuget and url are specified, when nuget is used
+**YamlException** — thrown by Run(Context, YamlMappingNode, string?, string?, string?, Dictionary)
+when both file and url are specified, or when neither is specified; thrown by
+Run(Context, YamlMappingNode, Dictionary) when both nuget and url are specified, when nuget is used
 without file, or when the nuget value is not in "PackageName:version" format.
 
 **CommandUsageException** — thrown by RunFile when the workflow file does not exist.
 
 **CommandErrorException** — thrown by RunUrl when the HTTP response is not 200; thrown by RunBytes
 when the integrity check fails, when the YAML structure is invalid, when the steps key is missing,
-when a step is not a mapping node, or when a required parameter is undeclared.
+when a step is not a mapping node, or when a caller-supplied parameter name is not declared in the
+workflow's parameters section.
 
 #### Dependencies
 

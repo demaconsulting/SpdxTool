@@ -1,4 +1,4 @@
-﻿### AddRelationship
+### AddRelationship
 
 #### Verification Approach
 

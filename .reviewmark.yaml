@@ -6,6 +6,7 @@
 # Patterns identifying all files that require review.
 # Processed in order; prefix a pattern with '!' to exclude.
 needs-review:
+  - "README.md"                    # Root README
   - "requirements.yaml"          # Root requirements file
   - "docs/reqstream/**/*.yaml"   # Requirements files
   - "docs/design/**/*.md"        # Design documentation
@@ -116,7 +117,7 @@ reviews:
       - "src/DemaConsulting.SpdxTool/Commands/Command.cs"
       - "src/DemaConsulting.SpdxTool/Commands/CommandEntry.cs"
       - "src/DemaConsulting.SpdxTool/Commands/CommandErrorException.cs"
-      - "src/DemaConsulting.SpdxTool/Commands/CommandRegistry.cs"
+      - "src/DemaConsulting.SpdxTool/Commands/CommandsRegistry.cs"
       - "src/DemaConsulting.SpdxTool/Commands/CommandUsageException.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/CommandTests.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Commands/UnknownCommandTests.cs"
@@ -139,9 +140,9 @@ reviews:
       - "docs/reqstream/spdx-tool/utility/wildcard.yaml"
       - "docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml"
       - "docs/reqstream/spdx-tool/spdx/relationship-direction.yaml"
-      - "docs/design/spdx-tool/utility/utility.md"
+      - "docs/design/spdx-tool/utility.md"
+      - "docs/design/spdx-tool/spdx.md"
       - "docs/verification/spdx-tool/utility.md"
-      - "docs/verification/spdx-tool/spdx/spdx-helpers.md"
       - "docs/verification/spdx-tool/spdx/relationship-direction.md"
       - "src/DemaConsulting.SpdxTool/Utility/**"
       - "src/DemaConsulting.SpdxTool/Spdx/**"
@@ -449,17 +450,17 @@ reviews:
   - id: SpdxTool-Utility-PathHelpers
     title: Review that SpdxTool Utility PathHelpers Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/utility/utility.yaml"
-      - "docs/design/spdx-tool/utility/utility.md"
-      - "docs/verification/spdx-tool/utility.md"
+      - "docs/reqstream/spdx-tool/utility/path-helpers.yaml"
+      - "docs/design/spdx-tool/utility/path-helpers.md"
+      - "docs/verification/spdx-tool/utility/path-helpers.md"
       - "src/DemaConsulting.SpdxTool/Utility/PathHelpers.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Utility/PathHelpersTests.cs"
 
   - id: SpdxTool-Utility-Wildcard
     title: Review that SpdxTool Utility Wildcard Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/utility/utility.yaml"
-      - "docs/design/spdx-tool/utility/utility.md"
-      - "docs/verification/spdx-tool/utility.md"
+      - "docs/reqstream/spdx-tool/utility/wildcard.yaml"
+      - "docs/design/spdx-tool/utility/wildcard.md"
+      - "docs/verification/spdx-tool/utility/wildcard.md"
       - "src/DemaConsulting.SpdxTool/Utility/Wildcard.cs"
       - "test/DemaConsulting.SpdxTool.Tests/Utility/WildcardTests.cs"

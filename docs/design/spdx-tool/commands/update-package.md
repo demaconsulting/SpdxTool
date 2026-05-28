@@ -9,7 +9,7 @@ is rejected.
 
 #### Data Model
 
-N/A — UpdatePackage is a stateless singleton.
+N/A — UpdatePackage is a stateless singleton; all state is carried via method parameters.
 
 **Instance**: `UpdatePackage` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for UpdatePackage.

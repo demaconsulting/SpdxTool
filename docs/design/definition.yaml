@@ -11,6 +11,7 @@ input-files:
   - docs/design/title.txt
   - docs/design/introduction.md
   - docs/design/spdx-tool/spdx-tool.md
+  - docs/design/spdx-tool/spdx.md
   - docs/design/spdx-tool/commands/commands.md
   - docs/design/spdx-tool/commands/add-package.md
   - docs/design/spdx-tool/commands/add-relationship.md
@@ -44,7 +45,7 @@ input-files:
   - docs/design/spdx-tool/self-test/validate-run-nuget-workflow.md
   - docs/design/spdx-tool/self-test/validate-to-markdown.md
   - docs/design/spdx-tool/self-test/validate-update-package.md
-  - docs/design/spdx-tool/utility/utility.md
+  - docs/design/spdx-tool/utility.md
   - docs/design/spdx-tool-targets/spdx-tool-targets.md
 # Template configuration
 template: template.html

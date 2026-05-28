@@ -171,7 +171,7 @@ public static class Validate
     /// <summary>
     ///     Runs SpdxTool in the specified folder with the supplied argument array.
     /// </summary>
-    /// <param name="workingFolder">The directory to set as the current working directory before running.</param>
+    /// <param name="workingFolder">The directory to set as the current working directory before running. Must exist on disk.</param>
     /// <param name="args">The command-line arguments to pass to SpdxTool.</param>
     /// <returns>The exit code returned by <see cref="Program.Run"/>.</returns>
     /// <remarks>

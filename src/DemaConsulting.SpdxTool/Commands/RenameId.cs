@@ -134,6 +134,15 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Rename an element ID in an SPDX document
     /// </summary>
+    /// <remarks>
+    ///     SPDXRef-DOCUMENT is the reserved element identifier for the document root and cannot be
+    ///     renamed; rejecting it as oldId or newId preserves document-level invariants. The
+    ///     distinction between <see cref="CommandUsageException"/> (invalid ID argument) and
+    ///     <see cref="CommandErrorException"/> (ID collision within the document) reflects whether
+    ///     the error is a caller contract violation or a document-state conflict. When oldId equals
+    ///     newId the method returns immediately so callers such as AddPackage and CopyPackage can
+    ///     pass the same ID without incurring an unnecessary document scan.
+    /// </remarks>
     /// <param name="doc">SPDX document</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>

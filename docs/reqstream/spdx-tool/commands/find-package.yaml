@@ -6,7 +6,7 @@ sections:
         sections:
           - title: FindPackage Requirements
             requirements:
-              - id: SpdxTool-Package-FindPackage
+              - id: SpdxTool-Commands-FindPackage
                 title: The tool shall find packages in SPDX documents using the find-package command.
                 tags:
                   - spdx
@@ -19,8 +19,9 @@ sections:
                   - FindPackage_ByVersion_FindsPackage
                   - FindPackage_ByFileName_FindsPackage
                   - FindPackage_ByDownloadUrl_FindsPackage
+                  - FindPackage_ById_FindsPackage
 
-              - id: SpdxTool-Package-FindPackage-Validate
+              - id: SpdxTool-Commands-FindPackage-Validate
                 title: >-
                   The find-package command shall validate its inputs and report an error for missing
                   or invalid values.
@@ -32,3 +33,4 @@ sections:
                 tests:
                   - FindPackage_MissingArguments_ReportsError
                   - FindPackage_MissingFile_ReportsError
+                  - FindPackage_InvalidCriteria_ReportsError

@@ -30,7 +30,7 @@ public partial class QueryTests
     /// <summary>
     ///     Regular expression to check for version
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Compiled regular expression matching a three-part version number (e.g. 8.0.1).</returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+")]
     private static partial Regex VersionRegex();
 

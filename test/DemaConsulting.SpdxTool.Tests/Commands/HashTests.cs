@@ -65,10 +65,10 @@ public class HashTests
     }
 
     /// <summary>
-    ///     Test that hash command with generate operation updates package hash
+    ///     Test that hash command with generate operation creates the sidecar .sha256 file
     /// </summary>
     [Fact]
-    public void Hash_GenerateOperation_UpdatesPackageHash()
+    public void Hash_GenerateOperation_WritesSidecarFile()
     {
         var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = testFile + ".sha256";

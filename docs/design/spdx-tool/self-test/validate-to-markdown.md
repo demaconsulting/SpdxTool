@@ -30,7 +30,9 @@ N/A - this unit is a static class with no instance state.
 
 Creates a validate.tmp directory and writes an SPDX JSON document containing two packages (Test
 Application at version 1.0.0 with MIT license, and Test Library at version 2.0.0 with Apache-2.0
-license) connected by a CONTAINS relationship. Calls Validate.RunSpdxTool with --silent, to-markdown,
+license). The document includes a DESCRIBES relationship from SPDXRef-DOCUMENT to SPDXRef-Application
+and a CONTAINS relationship from SPDXRef-Application to SPDXRef-Library. Calls Validate.RunSpdxTool
+with --silent, to-markdown,
 the SPDX file path, an output .md file path, and the title "Test SBOM Summary". Verifies that the
 output Markdown file exists and contains the title, "Root Packages" and "Packages" section headings,
 both package names, and both version strings.

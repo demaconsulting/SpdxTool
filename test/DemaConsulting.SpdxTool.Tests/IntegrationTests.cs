@@ -76,6 +76,8 @@ public class IntegrationTests
     {
         const string resultFile = "results.trx";
 
+        // Arrange: no setup required
+
         try
         {
             // Act: Run the command

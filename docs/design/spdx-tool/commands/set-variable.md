@@ -7,8 +7,6 @@ is available in workflow mode only; direct CLI invocation is rejected.
 
 #### Data Model
 
-N/A — SetVariable is a stateless singleton.
-
 **Instance**: `SetVariable` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for SetVariable.
 

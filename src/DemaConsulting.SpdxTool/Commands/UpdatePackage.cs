@@ -181,9 +181,9 @@ public sealed class UpdatePackage : Command
     /// <summary>
     ///     Read the package update fields from the YAML inputs.
     /// </summary>
-    /// <param name="map">Criteria map</param>
+    /// <param name="map">Package sub-map containing the update field entries</param>
     /// <param name="variables">Currently defined variables</param>
-    /// <param name="updates">Criteria dictionary to populate</param>
+    /// <param name="updates">Updates dictionary to populate</param>
     /// <remarks>
     ///     Only fields present in <paramref name="map"/> are added to <paramref name="updates"/>.
     ///     Fields absent from the map produce a null from <see cref="Command.GetMapString"/> and

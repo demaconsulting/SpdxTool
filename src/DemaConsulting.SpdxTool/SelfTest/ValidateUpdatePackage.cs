@@ -24,15 +24,25 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of UpdatePackage
+///     Self-tests the update-package command by running it against a temporary SPDX document.
 /// </summary>
+/// <remarks>
+///     Exercises every updatable metadata field to confirm that the update-package command
+///     correctly writes all changes to the SPDX document. This class is stateless; callers
+///     must not invoke it concurrently because it mutates the working directory.
+/// </remarks>
 internal static class ValidateUpdatePackage
 {
     /// <summary>
-    ///     Run validation test
+    ///     Runs the update-package self-test and records the outcome in the test results collection.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <remarks>
+    ///     Delegates to <see cref="DoValidate"/> for the actual command invocation and field
+    ///     verification, then writes a pass or fail message to the context and appends a
+    ///     TestResult entry named SpdxTool_UpdatePackage to results.
+    /// </remarks>
+    /// <param name="context">Active program context for output and error reporting. Must not be null.</param>
+    /// <param name="results">Test results collection to append the step outcome to. Must not be null.</param>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
@@ -59,9 +69,18 @@ internal static class ValidateUpdatePackage
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the update-package validation in a temporary working directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <remarks>
+    ///     Creates a validate.tmp directory, writes a minimal SPDX JSON document containing
+    ///     SPDXRef-Package-1 and a workflow YAML that updates all twelve metadata fields, then
+    ///     invokes the SpdxTool run-workflow command with --silent. Deletes the temporary
+    ///     directory in a finally block regardless of outcome.
+    /// </remarks>
+    /// <returns>
+    ///     True if the tool exited with code zero and every updated field in the deserialized
+    ///     SPDX document matches the expected value; false otherwise.
+    /// </returns>
     private static bool DoValidate()
     {
         try

@@ -82,9 +82,11 @@ public class PathHelpersTests
     [Fact]
     public void PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException()
     {
-        // Test Unix absolute path
+        // Arrange: Unix absolute path used as the relative argument
         var unixBasePath = "/home/user/project";
         var unixRelativePath = "/etc/passwd";
+
+        // Act & Assert: Unix absolute path is rejected
         var unixException = Assert.Throws<ArgumentException>(() =>
             PathHelpers.SafePathCombine(unixBasePath, unixRelativePath));
         Assert.Contains("Invalid path component", unixException.Message);
@@ -92,8 +94,11 @@ public class PathHelpersTests
         // Test Windows absolute path (only on Windows since Windows paths may not be rooted on Unix)
         if (OperatingSystem.IsWindows())
         {
+            // Arrange: Windows absolute path used as the relative argument
             var windowsBasePath = "C:\\Users\\project";
             var windowsRelativePath = "C:\\Windows\\System32\\file.txt";
+
+            // Act & Assert: Windows absolute path is rejected
             var windowsException = Assert.Throws<ArgumentException>(() =>
                 PathHelpers.SafePathCombine(windowsBasePath, windowsRelativePath));
             Assert.Contains("Invalid path component", windowsException.Message);

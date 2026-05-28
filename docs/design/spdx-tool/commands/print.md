@@ -8,8 +8,9 @@ applied. It is available from both the CLI and workflow YAML files.
 
 #### Data Model
 
-N/A — Print is a stateless singleton.
+Print holds no mutable instance state; its data model consists of static members only.
 
+**Command**: `string` constant (`"print"`) — command name used for dispatch registration.
 **Instance**: `Print` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for Print.
 

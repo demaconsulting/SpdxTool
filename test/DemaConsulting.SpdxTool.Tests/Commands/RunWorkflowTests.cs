@@ -30,7 +30,7 @@ public partial class RunWorkflowTests
     /// <summary>
     ///     Regular expression to check for dotnet version
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A compiled <see cref="System.Text.RegularExpressions.Regex"/> that matches "DotNet version is x.y.z".</returns>
     [GeneratedRegex(@"DotNet version is \d+\.\d+\.\d+")]
     private static partial Regex DotnetVersionRegex();
 

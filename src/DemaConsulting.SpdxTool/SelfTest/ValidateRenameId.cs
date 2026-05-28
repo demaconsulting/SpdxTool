@@ -24,15 +24,30 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of RenameId
+///     Self-test step that exercises the <c>rename-id</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that an SPDX element ID and all its references (including relationship entries) are
+///     renamed consistently throughout an SPDX document when <c>rename-id</c> is invoked via a
+///     workflow file. Uses a temporary <c>validate.tmp</c> directory in the current working directory;
+///     callers must ensure sequential execution to avoid races on that directory and on the
+///     process-wide current directory set by
+///     <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateRenameId
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the rename-id self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
+    ///     <c>SpdxTool_RenameId</c> with <see cref="TestOutcome.Passed"/> or
+    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
+    /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
@@ -59,9 +74,10 @@ internal static class ValidateRenameId
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Creates a temporary SPDX document and workflow, invokes <c>rename-id</c> via RunSpdxTool,
+    ///     and verifies that the target ID and all relationship references are updated.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>True if the command succeeded and the SPDX document reflects the rename.</returns>
     private static bool DoValidate()
     {
         try

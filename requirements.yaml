@@ -1,6 +1,8 @@
 ---
 includes:
   - docs/reqstream/spdx-tool/spdx-tool.yaml
+  - docs/reqstream/spdx-tool/context.yaml
+  - docs/reqstream/spdx-tool/program.yaml
   - docs/reqstream/spdx-tool/self-test/self-test.yaml
   - docs/reqstream/spdx-tool/self-test/validate.yaml
   - docs/reqstream/spdx-tool/self-test/validate-basic.yaml
@@ -18,6 +20,11 @@ includes:
   - docs/reqstream/spdx-tool/self-test/validate-to-markdown.yaml
   - docs/reqstream/spdx-tool/self-test/validate-update-package.yaml
   - docs/reqstream/spdx-tool/commands/commands.yaml
+  - docs/reqstream/spdx-tool/commands/command.yaml
+  - docs/reqstream/spdx-tool/commands/command-entry.yaml
+  - docs/reqstream/spdx-tool/commands/command-error-exception.yaml
+  - docs/reqstream/spdx-tool/commands/command-registry.yaml
+  - docs/reqstream/spdx-tool/commands/command-usage-exception.yaml
   - docs/reqstream/spdx-tool/commands/add-package.yaml
   - docs/reqstream/spdx-tool/commands/add-relationship.yaml
   - docs/reqstream/spdx-tool/commands/copy-package.yaml
@@ -34,12 +41,22 @@ includes:
   - docs/reqstream/spdx-tool/commands/to-markdown.yaml
   - docs/reqstream/spdx-tool/commands/update-package.yaml
   - docs/reqstream/spdx-tool/commands/validate.yaml
+  - docs/reqstream/spdx-tool/spdx/relationship-direction.yaml
+  - docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml
   - docs/reqstream/spdx-tool/utility/utility.yaml
+  - docs/reqstream/spdx-tool/utility/path-helpers.yaml
+  - docs/reqstream/spdx-tool/utility/wildcard.yaml
   - docs/reqstream/spdx-tool/platform-requirements.yaml
   - docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml
-  - docs/reqstream/ots/mstest.yaml
+  - docs/reqstream/spdx-tool-targets/targets-single.yaml
+  - docs/reqstream/spdx-tool-targets/targets-multi.yaml
+  - docs/reqstream/ots/xunit.yaml
   - docs/reqstream/ots/reqstream.yaml
   - docs/reqstream/ots/buildmark.yaml
   - docs/reqstream/ots/versionmark.yaml
   - docs/reqstream/ots/sarifmark.yaml
   - docs/reqstream/ots/sonarmark.yaml
+  - docs/reqstream/ots/yamldotnet.yaml
+  - docs/reqstream/ots/spdx-model.yaml
+  - docs/reqstream/ots/nuget-caching.yaml
+  - docs/reqstream/ots/test-results.yaml

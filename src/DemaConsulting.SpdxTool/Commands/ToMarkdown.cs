@@ -142,9 +142,9 @@ public sealed class ToMarkdown : Command
     /// <param name="markdownFile">Markdown file</param>
     /// <param name="title">Markdown title</param>
     /// <param name="depth">Depth of the Markdown headers</param>
-    /// <exception cref="System.IO.FileNotFoundException">
+    /// <exception cref="CommandUsageException">
     ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when
-    ///     <paramref name="spdxFile"/> does not exist.
+    ///     <paramref name="spdxFile"/> does not exist on disk.
     /// </exception>
     /// <exception cref="System.IO.IOException">
     ///     Propagated from <see cref="System.IO.File.WriteAllText(string,string)"/> when

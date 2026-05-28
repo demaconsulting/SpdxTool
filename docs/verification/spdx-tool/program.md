@@ -1,22 +1,22 @@
-### Program
+## Program
 
-#### Verification Approach
+### Verification Approach
 
 `Program` is verified with integration tests in
 `test/DemaConsulting.SpdxTool.Tests/ProgramTests.cs`. The tests exercise the program entry
 point for version reporting, help display, and error handling when no command is supplied.
 
-#### Test Environment
+### Test Environment
 
 Tests run the tool as a subprocess in the standard xUnit v3 environment. No external service
 or file system access is required for the core program tests.
 
-#### Acceptance Criteria
+### Acceptance Criteria
 
 Verification is acceptable when version information is reported correctly, help text is
 printed for help requests, and a usage error is reported when no command is supplied.
 
-#### Test Scenarios
+### Test Scenarios
 
 **VersionDisplay**: the program entry point reports the build version when invoked with the
 version flag. This scenario is tested by

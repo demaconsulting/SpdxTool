@@ -9,10 +9,16 @@ output variable. It is available from both the CLI and workflow YAML files.
 
 #### Data Model
 
-N/A — FindPackage is a stateless singleton.
+FindPackage carries no mutable instance state; all fields are static.
 
-**Instance**: `FindPackage` — the singleton instance registered with CommandsRegistry.
-**Entry**: `CommandEntry` — the CommandEntry record for FindPackage.
+**Command** (`private const string`): The command name string `"find-package"` used for registration
+with CommandsRegistry.
+
+**Instance** (`public static readonly FindPackage`): The singleton instance registered with
+CommandsRegistry.
+
+**Entry** (`public static readonly CommandEntry`): The CommandEntry record that exposes the command
+name, usage synopsis, help text, and singleton instance to the command registry.
 
 #### Key Methods
 

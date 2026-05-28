@@ -15,6 +15,6 @@ sections:
                   is consistent across case-sensitive (Linux) and case-insensitive (Windows,
                   macOS) file systems.
                 tests:
-                  - Wildcard_ExactMatch_ReturnsTrue
-                  - Wildcard_AsteriskPattern_MatchesMultipleChars
-                  - Wildcard_QuestionMarkPattern_MatchesSingleChar
+                  - Wildcard_IsMatch_ExactMatch_ReturnsTrue
+                  - Wildcard_IsMatch_AsteriskPattern_MatchesMultipleChars
+                  - Wildcard_IsMatch_QuestionMarkPattern_MatchesSingleChar

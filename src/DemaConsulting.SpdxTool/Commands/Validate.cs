@@ -123,12 +123,21 @@ public sealed class Validate : Command
     }
 
     /// <summary>
-    ///     Validate SPDX document for issues
+    ///     Loads and validates an SPDX document, reporting any issues as warnings.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="spdxFile">SPDX document file name</param>
+    /// <remarks>
+    ///     Extracted as a public static method so that other callers (e.g., self-test) can invoke core
+    ///     validation logic directly without going through the CLI or workflow dispatch paths. Issues are
+    ///     written as warnings before throwing so the user sees them even when the tool exits with an error
+    ///     code.
+    /// </remarks>
+    /// <param name="context">Execution context used to write warning messages for each issue found.</param>
+    /// <param name="spdxFile">Path to the SPDX JSON document to validate. Must exist and be a valid SPDX JSON file.</param>
     /// <param name="ntia">When <c>true</c>, NTIA minimum-elements checks are applied in addition to SPDX specification validation.</param>
-    /// <exception cref="CommandErrorException">on issues</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the document contains one or more validation issues; the message includes the
+    ///     issue count and the file path.
+    /// </exception>
     public static void DoValidate(Context context, string spdxFile, bool ntia)
     {
         // Load the SPDX document

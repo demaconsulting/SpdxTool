@@ -38,7 +38,9 @@ version output to the dotnet-version variable and then printing it. Calls Valida
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. This may occur if the NuGet
 package cannot be resolved because the package is absent from the local cache and network access is
-unavailable. The temporary directory is always deleted in a finally block.
+unavailable. The temporary directory is always deleted in a finally block. Any exception thrown by
+DoValidate propagates uncaught from Run; no TestResult is recorded for this step if an exception is
+thrown — the exception surfaces to the Self-Test orchestrator.
 
 #### Dependencies
 

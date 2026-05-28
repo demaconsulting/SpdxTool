@@ -25,8 +25,16 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Hash command
+///     Generates or verifies a SHA-256 hash for a file using a sidecar file.
 /// </summary>
+/// <remarks>
+///     In generate mode the digest is computed and persisted to a sidecar file
+///     (file + ".sha256") so later runs can verify integrity without re-reading
+///     the original source. In verify mode the sidecar is read and the freshly
+///     computed digest is compared against the stored value. Using a sidecar file
+///     avoids embedding hash data inside SPDX documents and keeps the command
+///     independent of any particular SPDX schema version.
+/// </remarks>
 public sealed class Hash : Command
 {
     /// <summary>
@@ -143,6 +151,9 @@ public sealed class Hash : Command
     ///     Generate a Sha256 hash for a file
     /// </summary>
     /// <param name="file">File to generate hash for</param>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when <paramref name="file"/> does not exist or an I/O error occurs during hashing.
+    /// </exception>
     public static void GenerateSha256(string file)
     {
         // Calculate the digest
@@ -157,7 +168,10 @@ public sealed class Hash : Command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="file">Name of the file to verify</param>
-    /// <exception cref="CommandErrorException">Thrown when the sidecar hash file does not exist, or when the computed digest does not match the stored digest.</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the sidecar hash file does not exist, or when the computed digest does not
+    ///     match the stored digest.
+    /// </exception>
     public static void VerifySha256(Context context, string file)
     {
         // Check the hash file exists
@@ -188,7 +202,10 @@ public sealed class Hash : Command
     /// </summary>
     /// <param name="file">File to hash</param>
     /// <returns>SHA-256 hash as a lowercase hexadecimal string</returns>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when <paramref name="file"/> does not exist or an I/O exception occurs while
+    ///     reading the file stream.
+    /// </exception>
     public static string CalculateSha256(string file)
     {
         // Check the hash file exists

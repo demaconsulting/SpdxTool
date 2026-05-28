@@ -145,6 +145,12 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Add SPDX package to document with optional enhance.
     /// </summary>
+    /// <remarks>
+    ///     When an existing package with the same identity (as determined by <see cref="SpdxPackage.Same"/>
+    ///     equality) is found, it is enhanced in place and its SPDX element ID is renamed to the supplied
+    ///     package ID so that any downstream references remain valid. When no matching package exists, a deep
+    ///     copy of the supplied package is appended to the document.
+    /// </remarks>
     /// <param name="doc">SPDX document</param>
     /// <param name="package">SPDX package to add</param>
     public static void Add(SpdxDocument doc, SpdxPackage package)
@@ -172,7 +178,13 @@ public sealed class AddPackage : Command
     /// <param name="packageMap">Package YAML mapping node</param>
     /// <param name="variables">Variables for expansion</param>
     /// <returns>New SPDX package</returns>
-    /// <exception cref="YamlException">On parse error</exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when a required field (id, name, or download) is absent from <paramref name="packageMap"/>.
+    /// </exception>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when the package ID in <paramref name="packageMap"/> is empty or equals the reserved
+    ///     value "SPDXRef-DOCUMENT".
+    /// </exception>
     public static SpdxPackage ParsePackage(string command, YamlMappingNode packageMap,
         Dictionary<string, string> variables)
     {

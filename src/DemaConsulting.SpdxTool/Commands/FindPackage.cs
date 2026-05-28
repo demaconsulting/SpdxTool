@@ -114,7 +114,7 @@ public sealed class FindPackage : Command
 
         // Get the 'spdx' input
         var spdxFile = GetMapString(inputs, "spdx", variables) ??
-                       throw new YamlException(step.Start, step.End, "'find-package' missing 'spdx' input");
+                       throw new YamlException(step.Start, step.End, "'find-package' command missing 'spdx' input");
 
         // Get the criteria
         var criteria = new Dictionary<string, string>();

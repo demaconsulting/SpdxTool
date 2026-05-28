@@ -71,6 +71,8 @@ public class AddRelationshipTests
     [Fact]
     public void AddRelationship_MissingArguments_ReportsError()
     {
+        // Arrange: No setup required - testing argument validation only
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -89,6 +91,8 @@ public class AddRelationshipTests
     [Fact]
     public void AddRelationship_MissingFile_ReportsError()
     {
+        // Arrange: No setup required - testing missing file error with non-existent path
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,

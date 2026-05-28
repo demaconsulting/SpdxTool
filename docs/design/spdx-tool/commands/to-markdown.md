@@ -9,10 +9,16 @@ workflow YAML files.
 
 #### Data Model
 
-N/A — ToMarkdown is a stateless singleton.
+ToMarkdown carries no per-instance state; all meaningful data members are static.
 
-**Instance**: `ToMarkdown` — the singleton instance registered with CommandsRegistry.
-**Entry**: `CommandEntry` — the CommandEntry record for ToMarkdown.
+**Command** (`string`, `const`): The command name string `"to-markdown"` used for registration and
+error messages.
+
+**Instance** (`ToMarkdown`, `static readonly`): The singleton instance registered with
+CommandsRegistry.
+
+**Entry** (`CommandEntry`, `static readonly`): The CommandEntry record for ToMarkdown, containing
+the command name, usage string, description, and reference to Instance.
 
 #### Key Methods
 
@@ -70,7 +76,7 @@ provided, when the title is whitespace, or when depth is not a positive integer.
 inputs are missing, when the title is whitespace, or when the depth value is not a positive
 integer.
 
-**FileNotFoundException** — propagated from SpdxHelpers.LoadJsonDocument when the specified SPDX
+**CommandUsageException** — propagated from SpdxHelpers.LoadJsonDocument when the specified SPDX
 input file does not exist on disk.
 
 #### Dependencies

@@ -33,15 +33,17 @@ Creates a validate.tmp directory, writes an SPDX JSON document containing two pa
 (SPDXRef-Package-1 and SPDXRef-Package-2), and writes a workflow YAML that executes add-relationship
 to add a CONTAINS relationship from SPDXRef-Package-1 to SPDXRef-Package-2 with a comment. Calls
 Validate.RunSpdxTool with --silent and run-workflow arguments, then reads the modified SPDX document
-and verifies that the expected relationship exists with the correct type, element IDs, and comment.
+and verifies the content using a positional list pattern match — the relationship order in the
+deserialized document is significant. The validate.tmp directory is deleted unconditionally in a
+finally block, even if creation or file writes only partially succeeded.
 
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
-SPDX document does not contain a CONTAINS relationship from SPDXRef-Package-1 to SPDXRef-Package-2
-with the expected comment. Any exception thrown by DoValidate propagates uncaught from Run; no
-TestResult is recorded for this step if an exception is thrown — the exception surfaces to the
-Self-Test orchestrator.
+SPDX document does not contain exactly one CONTAINS relationship from SPDXRef-Package-1 to
+SPDXRef-Package-2 with the expected comment. Any exception thrown by DoValidate propagates uncaught
+from Run; no TestResult is recorded for this step if an exception is thrown — the exception surfaces
+to the Self-Test orchestrator.
 
 #### Dependencies
 

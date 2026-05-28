@@ -1,10 +1,10 @@
-﻿### FindPackage
+### FindPackage
 
 #### Verification Approach
 
 `FindPackage` is verified with direct command tests in
 `test/DemaConsulting.SpdxTool.Tests/Commands/FindPackageTests.cs`. The tests cover command-line
-criteria parsing, workflow output-variable behavior, and package matching by name, version, file
+criteria parsing, workflow output-variable behavior, and package matching by id, name, version, file
 name, and download URL.
 
 #### Test Environment
@@ -32,11 +32,17 @@ command line with a name criterion. This scenario is tested by
 **WorkflowNameLookup**: the unit stores the matching package identifier in a workflow variable when
 searching by name. This scenario is tested by `FindPackage_ByName_FindsPackage`.
 
-**AlternateCriteriaLookup**: the unit finds packages by version.
-This scenario is tested by `FindPackage_ByVersion_FindsPackage`.
+**ByVersionLookup**: the unit finds packages by version criterion. This scenario is tested by
+`FindPackage_ByVersion_FindsPackage`.
 
 **ByFileNameLookup**: the unit finds a package by filename when the filename criterion is supplied.
 This scenario is tested by `FindPackage_ByFileName_FindsPackage`.
 
 **ByDownloadUrlLookup**: the unit finds a package by download URL when the download criterion is
 supplied. This scenario is tested by `FindPackage_ByDownloadUrl_FindsPackage`.
+
+**ByIdLookup**: the unit finds a package by its SPDX element identifier when the id criterion is
+supplied. This scenario is tested by `FindPackage_ById_FindsPackage`.
+
+**InvalidCriteria**: the unit reports a usage error when a criterion string does not contain an '='
+separator. This scenario is tested by `FindPackage_InvalidCriteria_ReportsError`.

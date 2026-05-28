@@ -31,6 +31,8 @@ public class ValidateTests
     [Fact]
     public void Validate_MissingArguments_ReportsError()
     {
+        // Arrange: no file setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -49,6 +51,8 @@ public class ValidateTests
     [Fact]
     public void Validate_MissingSpdxFile_ReportsError()
     {
+        // Arrange: no file setup required — the referenced file intentionally does not exist
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,

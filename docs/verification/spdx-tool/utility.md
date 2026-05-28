@@ -27,7 +27,7 @@ directory. This scenario is tested by `PathHelpers_SafePathCombine_NestedPaths_C
 
 **AsteriskWildcard**: asterisk wildcards match variable-length substrings without losing
 case-insensitive behavior. This scenario is tested by
-`Wildcard_AsteriskPattern_MatchesMultipleChars`.
+`Wildcard_IsMatch_AsteriskPattern_MatchesMultipleChars`.
 
 **QuestionMarkWildcard**: question mark wildcards match exactly one character. This scenario is
-tested by `Wildcard_QuestionMarkPattern_MatchesSingleChar`.
+tested by `Wildcard_IsMatch_QuestionMarkPattern_MatchesSingleChar`.

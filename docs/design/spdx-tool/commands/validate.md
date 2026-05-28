@@ -1,4 +1,4 @@
-﻿### Validate
+### Validate
 
 #### Purpose
 
@@ -9,7 +9,7 @@ from both the CLI and workflow YAML files.
 
 #### Data Model
 
-N/A — Validate is a stateless singleton.
+Validate holds no mutable state; it is a stateless singleton.
 
 **Instance**: `Validate` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for Validate.

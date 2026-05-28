@@ -26,9 +26,9 @@ implementations. This scenario is tested by `Command_Expand_NoVariables_ReturnsO
 execution time. This scenario is tested by `Command_Expand_BasicVariable_ReturnsExpanded`
 and `Command_GetMapString_WithVariableExpansion_ReturnsExpanded`.
 
-**MissingVariableRejection**: undefined variable tokens cause expansion to return a
-missing-token marker rather than silently substituting an empty string. This scenario is
-tested by `Command_Expand_MissingVariable_ReturnsMissingToken`.
+**MissingVariableRejection**: undefined variable tokens cause expansion to throw an
+`InvalidOperationException` rather than silently substituting an empty string. This scenario is
+tested by `Command_Expand_MissingVariable_ThrowsInvalidOperationException`.
 
 **NestedVariableExpansion**: tokens whose values themselves contain token references are
 fully expanded in a single pass. This scenario is tested by

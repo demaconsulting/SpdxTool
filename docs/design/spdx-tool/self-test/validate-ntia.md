@@ -1,4 +1,4 @@
-﻿### ValidateNtia
+### ValidateNtia
 
 #### Purpose
 

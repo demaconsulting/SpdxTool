@@ -40,3 +40,7 @@ requested. This scenario is tested by `Diagram_WithToolsOption_GeneratesDiagramW
 **DefaultToolExclusion**: the unit excludes tool-related relationships from the generated diagram
 when the `tools` option is not specified. This scenario is tested by
 `Diagram_WithoutToolsOption_ExcludesToolRelationships`.
+
+**WorkflowStepInvocation**: the unit accepts spdx, mermaid, and optional tools inputs when invoked
+from a workflow step and produces a Mermaid diagram file. This scenario is tested by
+`Diagram_InWorkflow_GeneratesDiagram`.

@@ -1,6 +1,6 @@
 ## SpdxTool
 
-## Architecture
+### Architecture
 
 DemaConsulting.SpdxTool is a cross-platform .NET tool distributed as a NuGet package that
 exposes a command-line interface for creating, validating, and manipulating SPDX documents.
@@ -35,7 +35,7 @@ Wildcard. The SelfTest subsystem exercises every registered command against embe
 Unit design files for all Commands subsystem units are in the commands subfolder. See also Context
 Design and Program Design for the system-level units.
 
-## External Interfaces
+### External Interfaces
 
 **Command-Line Interface**: The tool is invoked as `spdx-tool [options] <command> [arguments]`.
 Global options (-h/-?/--help, -v/--version, -s/--silent, -l/--log, --validate, -r/--result, --depth) are parsed by
@@ -88,7 +88,7 @@ must be installed as a .NET tool in the build environment for the target to succ
 - *Constraints*: The Targets system is a separate deployment unit; see the SpdxTool.Targets system
   design for full details.
 
-## Dependencies
+### Dependencies
 
 - **DemaConsulting.SpdxModel** - SPDX 2.x document object model, JSON serialization, and
   deserialization via Spdx2JsonSerializer and Spdx2JsonDeserializer.
@@ -98,11 +98,11 @@ must be installed as a .NET tool in the build environment for the target to succ
   and JUnit XML output formats.
 - **YamlDotNet** - YAML parsing for workflow files and per-step command argument nodes.
 
-## Risk Control Measures
+### Risk Control Measures
 
 N/A - not a safety-classified software item.
 
-## Data Flow
+### Data Flow
 
 1. The user invokes `spdx-tool` at the command line; Program parses global flags and constructs a
    Context carrying the flag state, an optional log writer, and an error counter.
@@ -124,7 +124,7 @@ N/A - not a safety-classified software item.
 8. Context.ExitCode returns 1 if any errors were recorded during execution; Program exits with
    that code.
 
-## Design Constraints
+### Design Constraints
 
 - **Cross-platform**: The tool targets .NET 8, 9, and 10 and must run on Windows, Linux, and
   macOS; all file path operations use System.IO.Path APIs to maintain portability.

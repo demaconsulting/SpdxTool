@@ -69,7 +69,7 @@ public class PrintTests
 
         try
         {
-            // Arrange: Write the SPDX files
+            // Arrange: Write the workflow file
             File.WriteAllText("workflow.yaml", workflowContents);
 
             // Act: Run the command

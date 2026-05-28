@@ -36,8 +36,8 @@ public static class Wildcard
     /// <summary>
     ///     Convert a wildcard pattern to a regular expression pattern
     /// </summary>
-    /// <param name="wildPattern">Wildcard pattern</param>
-    /// <returns>Regular expression pattern</returns>
+    /// <param name="wildPattern">Wildcard pattern to convert. Must not be null.</param>
+    /// <returns>Anchored regular expression string (prefixed with <c>^</c> and suffixed with <c>$</c>).</returns>
     private static string WildCardToRegex(string wildPattern)
     {
         return "^" +
@@ -48,9 +48,15 @@ public static class Wildcard
     /// <summary>
     ///     Check for a wildcard match
     /// </summary>
-    /// <param name="input">Input text</param>
-    /// <param name="pattern">Wildcard pattern</param>
-    /// <returns>True if input text matches wildcard</returns>
+    /// <param name="input">Input text to test. Must not be null.</param>
+    /// <param name="pattern">Wildcard pattern to match against. Must not be null.</param>
+    /// <returns>
+    ///     <see langword="true"/> when <paramref name="input"/> matches the entire
+    ///     <paramref name="pattern"/> case-insensitively; <see langword="false"/> otherwise.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     Thrown when <paramref name="input"/> or <paramref name="pattern"/> is null.
+    /// </exception>
     /// <remarks>
     ///     The match is performed case-insensitively with a 100 ms timeout to prevent
     ///     catastrophic backtracking on pathological patterns. If the timeout expires,

@@ -21,5 +21,21 @@ expected package metadata fields in the target SPDX document.
 **WorkflowOnlyGuard**: the unit rejects direct command-line invocation. This scenario is tested by
 `UpdatePackage_OnCommandLine_ReportsWorkflowOnlyError`.
 
-**PackageMetadataUpdate**: the unit updates package metadata fields through a workflow step. This
-scenario is tested by `UpdatePackage_InWorkflow_UpdatesPackage`.
+**PackageMetadataUpdate**: the unit updates all supported package metadata fields through a workflow
+step. This scenario is tested by `UpdatePackage_InWorkflow_UpdatesPackage`.
+
+**MissingSpdxInput**: the unit reports an error when the `spdx` input is missing from the workflow
+step. This scenario is tested by `UpdatePackage_MissingSpdxInput_ReportsError`.
+
+**MissingPackageInput**: the unit reports an error when the `package` input is missing from the
+workflow step. This scenario is tested by `UpdatePackage_MissingPackageInput_ReportsError`.
+
+**PackageNotFound**: the unit reports an error when the specified package ID does not exist in the
+SPDX document. This scenario is tested by `UpdatePackage_PackageNotFound_ReportsError`.
+
+**PartialUpdate**: the unit updates only the fields present in the workflow step, leaving all other
+package fields unchanged. This scenario is tested by
+`UpdatePackage_PartialUpdate_PreservesUnspecifiedFields`.
+
+**UnrecognizedField**: the unit reports an error when an unrecognized field name is supplied in the
+package map. This scenario is tested by `UpdatePackage_UnrecognizedField_ReportsError`.

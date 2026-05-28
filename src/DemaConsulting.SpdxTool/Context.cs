@@ -80,6 +80,11 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Gets the depth of the validation report
     /// </summary>
+    /// <remarks>
+    ///     Set by the <c>--depth</c> command-line flag. Defaults to 1 when <c>--depth</c> is
+    ///     not specified. Must be a positive integer; non-integer values cause
+    ///     <see cref="Create"/> to throw <see cref="InvalidOperationException"/>.
+    /// </remarks>
     public int Depth { get; private init; }
 
     /// <summary>

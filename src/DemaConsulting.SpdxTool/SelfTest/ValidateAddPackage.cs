@@ -59,7 +59,7 @@ internal static class ValidateAddPackage
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_AddPackage - Failed");
+            context.WriteError("✗ SpdxTool_AddPackage - Failed");
         }
 
         results.Results.Add(
