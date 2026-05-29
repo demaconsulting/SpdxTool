@@ -126,7 +126,7 @@ public class HelpTests
 
         try
         {
-            // Arrange: no setup required — the tool binary is invoked as a self-contained process
+            // Arrange: write the workflow file to disk so the tool can load it
             File.WriteAllText("workflow.yaml", workflowContents);
 
             // Act: Run the workflow

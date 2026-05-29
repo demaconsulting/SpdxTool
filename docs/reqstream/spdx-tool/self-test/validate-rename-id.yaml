@@ -16,3 +16,4 @@ sections:
                   installation or deployment.
                 tests:
                   - SpdxTool_RenameId
+                  - ValidateRenameId_Run_IoError_PropagatesException

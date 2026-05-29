@@ -75,6 +75,12 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Gets the name of the validation results file
     /// </summary>
+    /// <remarks>
+    ///     Set by the <c>-r</c>/<c>--result</c> command-line flag. Empty string when
+    ///     <c>--result</c> is not specified. Used by the SelfTest subsystem when
+    ///     <see cref="Validate"/> is <see langword="true"/> to write the TRX-style
+    ///     self-test results to a file.
+    /// </remarks>
     public string ValidationFile { get; private init; } = "";
 
     /// <summary>
@@ -88,8 +94,14 @@ public sealed class Context : IDisposable
     public int Depth { get; private init; }
 
     /// <summary>
-    ///     Gets the arguments
+    ///     Gets the positional command-line arguments
     /// </summary>
+    /// <remarks>
+    ///     Contains the arguments remaining after all global flags have been consumed
+    ///     by <see cref="Create"/>. The first element is typically the command name
+    ///     (e.g., <c>validate</c>, <c>query</c>) followed by command-specific operands.
+    ///     Empty when no positional arguments appear after the global flags.
+    /// </remarks>
     public IReadOnlyCollection<string> Arguments { get; private init; }
 
     /// <summary>
@@ -110,6 +122,15 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Dispose of this context
     /// </summary>
+    /// <remarks>
+    ///     Closes and disposes the log-file writer if one was opened. After disposal,
+    ///     calls to <see cref="WriteLine"/>, <see cref="WriteWarning"/>, and
+    ///     <see cref="WriteError"/> continue to write to the console (if
+    ///     <see cref="Silent"/> is <see langword="false"/>) but no longer write to
+    ///     the log file. <c>Dispose</c> must be the final operation on the
+    ///     <c>Context</c> instance; calling it concurrently with active output
+    ///     calls from another thread is not supported.
+    /// </remarks>
     public void Dispose()
     {
         _log?.Dispose();

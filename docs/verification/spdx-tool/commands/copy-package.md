@@ -1,4 +1,4 @@
-﻿### CopyPackage
+### CopyPackage
 
 #### Verification Approach
 

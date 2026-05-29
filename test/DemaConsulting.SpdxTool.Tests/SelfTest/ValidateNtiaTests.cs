@@ -26,24 +26,76 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateNtia self-validation unit.
 /// </summary>
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateNtiaTests
 {
     /// <summary>
     ///     Test that ValidateNtia validation passes.
     /// </summary>
+    /// <remarks>
+    ///     The test method name <c>SpdxTool_Ntia</c> intentionally matches the
+    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateNtia.Run"/> so that
+    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
+    ///     naming convention is appropriate for self-test integration tests.
+    /// </remarks>
     [Fact]
     public void SpdxTool_Ntia()
     {
-        // Arrange
+        // Arrange: create context and an empty test results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the ValidateNtia self-test step
         ValidateNtia.Run(context, results);
 
-        // Assert
+        // Assert: one result recorded with a passing outcome
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+    }
+
+    /// <summary>
+    ///     Verifies that an I/O error in DoValidate propagates as an uncaught exception from Run.
+    /// </summary>
+    /// <remarks>
+    ///     Pre-creates <c>validate.tmp</c> as a file in a temporary directory and sets that as the
+    ///     working directory before calling <see cref="ValidateNtia.Run"/>. When
+    ///     <see cref="Directory.CreateDirectory(string)"/> encounters the blocking file it throws
+    ///     <see cref="IOException"/>, which propagates uncaught from <c>Run</c>. The test asserts
+    ///     both that the exception propagates and that no <see cref="DemaConsulting.TestResults.TestResult"/>
+    ///     is recorded in the results collection. This exercises the failure path documented in the
+    ///     design: exceptions thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </remarks>
+    [Fact]
+    public void ValidateNtia_Run_IoError_PropagatesException()
+    {
+        // Arrange: save original directory and change to a temp directory where validate.tmp
+        // is pre-created as a file, blocking Directory.CreateDirectory("validate.tmp")
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Create validate.tmp as a FILE (not a directory) to block DoValidate
+            File.WriteAllText("validate.tmp", "blocking file");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act + Assert: Run() propagates the IOException — no TestResult is recorded
+            Assert.Throws<IOException>(() => ValidateNtia.Run(context, results));
+            Assert.Empty(results.Results);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 }

@@ -6,19 +6,40 @@ sections:
         sections:
           - title: PathHelpers Requirements
             requirements:
-              - id: SpdxTool-Utility-SafePath
-                title: The PathHelpers unit shall reject path traversal and absolute path components.
+              - id: SpdxTool-Utility-RejectTraversal
+                title: The PathHelpers unit shall reject path traversal sequences.
                 tags:
                   - utility
                   - security
                 justification: |
                   Commands that accept user-supplied file paths must prevent directory
-                  traversal attacks. SafePathCombine ensures that combined paths remain
-                  within the intended base directory.
+                  traversal attacks using parent-directory segments. SafePathCombine
+                  ensures that relative paths containing ".." are rejected.
                 tests:
                   - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
                   - PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException
+
+              - id: SpdxTool-Utility-RejectAbsolutePath
+                title: The PathHelpers unit shall reject absolute path inputs.
+                tags:
+                  - utility
+                  - security
+                justification: |
+                  Commands that accept user-supplied file paths must prevent absolute path
+                  injection. SafePathCombine ensures that rooted paths are rejected.
+                tests:
                   - PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException
+
+              - id: SpdxTool-Utility-RejectNullArguments
+                title: The PathHelpers unit shall reject null arguments.
+                tags:
+                  - utility
+                justification: |
+                  SafePathCombine documents ArgumentNullException for null basePath or
+                  relativePath. Tests must confirm this contract is enforced.
+                tests:
+                  - PathHelpers_SafePathCombine_NullBasePath_ThrowsArgumentNullException
+                  - PathHelpers_SafePathCombine_NullRelativePath_ThrowsArgumentNullException
 
               - id: SpdxTool-Utility-ValidPath
                 title: The PathHelpers unit shall correctly combine valid relative paths with a base path.

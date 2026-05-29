@@ -4,7 +4,8 @@ sections:
   - title: SpdxToolTargets Requirements
     requirements:
       - id: SpdxToolTargets-DecorateSbomDuringPack
-        title: The system shall decorate SBOMs during dotnet pack when SBOM generation and decoration are enabled.
+        title: The system shall decorate SBOMs during dotnet pack when IsPackable, GenerateSBOM, and DecorateSBOM are all
+          true.
         tags:
           - msbuild
           - sbom

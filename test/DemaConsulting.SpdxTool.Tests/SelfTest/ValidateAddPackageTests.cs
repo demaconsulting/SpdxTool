@@ -41,14 +41,14 @@ public class ValidateAddPackageTests
     [Fact]
     public void SpdxTool_AddPackage()
     {
-        // Arrange
+        // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the add-package self-test step
         ValidateAddPackage.Run(context, results);
 
-        // Assert
+        // Assert: single passing result recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }

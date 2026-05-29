@@ -26,6 +26,11 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateHash self-validation unit.
 /// </summary>
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateHashTests
 {
@@ -41,14 +46,14 @@ public class ValidateHashTests
     [Fact]
     public void SpdxTool_Hash()
     {
-        // Arrange
+        // Arrange: create context and an empty test results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the ValidateHash self-test step
         ValidateHash.Run(context, results);
 
-        // Assert
+        // Assert: one result recorded with a passing outcome
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }
@@ -59,6 +64,14 @@ public class ValidateHashTests
     ///     This exercises the failure path of Run() as documented in the design: exceptions
     ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
     /// </summary>
+    /// <remarks>
+    ///     Pre-creates <c>validate.tmp</c> as a file in a temporary directory and sets that as the
+    ///     working directory before calling <see cref="ValidateHash.Run"/>. When
+    ///     <see cref="Directory.CreateDirectory(string)"/> encounters the blocking file it throws
+    ///     <see cref="IOException"/>, which propagates uncaught from <c>Run</c>. The test asserts
+    ///     both that the exception propagates and that no <see cref="DemaConsulting.TestResults.TestResult"/>
+    ///     is recorded in the results collection.
+    /// </remarks>
     [Fact]
     public void ValidateHash_Run_IoError_PropagatesException()
     {

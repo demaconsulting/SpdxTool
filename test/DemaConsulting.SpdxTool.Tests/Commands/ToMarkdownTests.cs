@@ -29,7 +29,7 @@ public class ToMarkdownTests
     ///     Test that to-markdown command with missing arguments reports an error
     /// </summary>
     [Fact]
-    public void ToMarkdown_MissingArguments_ReportsError()
+    public void ToMarkdown_Run_MissingArguments_ReportsError()
     {
         // Arrange: no setup required
 
@@ -49,7 +49,7 @@ public class ToMarkdownTests
     ///     Test that to-markdown command with missing SPDX file reports an error
     /// </summary>
     [Fact]
-    public void ToMarkdown_MissingSpdxFile_ReportsError()
+    public void ToMarkdown_Run_MissingSpdxFile_ReportsError()
     {
         // Arrange: no setup required
 
@@ -71,7 +71,7 @@ public class ToMarkdownTests
     ///     Test that to-markdown command with valid SPDX file generates markdown
     /// </summary>
     [Fact]
-    public void ToMarkdown_ValidSpdxFile_GeneratesMarkdown()
+    public void ToMarkdown_Run_ValidSpdxFile_GeneratesMarkdown()
     {
         const string spdxContents =
             """
@@ -267,7 +267,7 @@ public class ToMarkdownTests
     ///     Test that to-markdown command with a whitespace title reports an error
     /// </summary>
     [Fact]
-    public void ToMarkdown_InvalidTitle_ReportsError()
+    public void ToMarkdown_Run_InvalidTitle_ReportsError()
     {
         // Arrange: no setup required
 
@@ -290,7 +290,7 @@ public class ToMarkdownTests
     ///     Test that to-markdown command with a non-positive depth reports an error
     /// </summary>
     [Fact]
-    public void ToMarkdown_InvalidDepth_ReportsError()
+    public void ToMarkdown_Run_InvalidDepth_ReportsError()
     {
         // Arrange: no setup required
 

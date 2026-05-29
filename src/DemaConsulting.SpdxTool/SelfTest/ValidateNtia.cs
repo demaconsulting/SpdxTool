@@ -100,8 +100,12 @@ internal static class ValidateNtia
         }
         finally
         {
-            // Delete the temporary validation folder
-            Directory.Delete("validate.tmp", true);
+            // Delete the temporary validation folder if it exists (guards against
+            // Directory.CreateDirectory failing before the directory was created)
+            if (Directory.Exists("validate.tmp"))
+            {
+                Directory.Delete("validate.tmp", true);
+            }
         }
     }
 

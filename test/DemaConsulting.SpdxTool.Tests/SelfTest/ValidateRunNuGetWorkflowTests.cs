@@ -26,6 +26,11 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateRunNuGetWorkflow self-validation unit.
 /// </summary>
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateRunNuGetWorkflowTests
 {
@@ -41,14 +46,14 @@ public class ValidateRunNuGetWorkflowTests
     [Fact]
     public void SpdxTool_RunNuGetWorkflow()
     {
-        // Arrange
+        // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the ValidateRunNuGetWorkflow step
         ValidateRunNuGetWorkflow.Run(context, results);
 
-        // Assert
+        // Assert: one passing result recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }

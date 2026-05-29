@@ -161,5 +161,4 @@ Review-sets: defined in `.reviewmark.yaml`.
 
 ## References
 
-- [SpdxTool releases](https://github.com/demaconsulting/SpdxTool/releases)
-- [SPDX Specification](https://spdx.github.io/spdx-spec/v2.3/)
+- [REF-1] SPDX Specification, Version 2.3, SPDX Workgroup. <https://spdx.github.io/spdx-spec/v2.3/>

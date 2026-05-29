@@ -20,3 +20,7 @@ the expected SPDX relationship entries were created.
 
 **EndToEndAddRelationship**: the self-test step proves that `add-relationship` creates the requested
 relationship entries during validation. This scenario is tested by `SpdxTool_AddRelationship`.
+
+**IoExceptionPropagation**: when the working directory contains `validate.tmp` as a file, `Run`
+propagates the `IOException` thrown by `DoValidate` and records no `TestResult`. This scenario is
+tested by `ValidateAddRelationship_Run_IoError_PropagatesException`.

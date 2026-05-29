@@ -15,11 +15,11 @@ sections:
                   enable users to define and automate multi-step processes in a declarative
                   YAML format.
                 tests:
-                  - RunWorkflow_ValidWorkflowFile_ExecutesWorkflow
-                  - RunWorkflow_WithDefaultParameters_UsesDefaults
-                  - RunWorkflow_WithSpecifiedParameters_UsesSpecified
-                  - RunWorkflow_WithOutputs_PopulatesOutputs
-                  - RunWorkflow_UrlWorkflow_ExecutesWorkflow
+                  - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow
+                  - RunWorkflow_Run_WithDefaultParameters_UsesDefaults
+                  - RunWorkflow_Run_WithSpecifiedParameters_UsesSpecified
+                  - RunWorkflow_Run_WithOutputs_PopulatesOutputs
+                  - RunWorkflow_Run_UrlWorkflow_ExecutesWorkflow
 
               - id: SpdxTool-Workflow-NuGetWorkflow
                 title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
@@ -30,7 +30,7 @@ sections:
                   workflows can be versioned, distributed, and cached locally rather than
                   downloaded on every run.
                 tests:
-                  - RunWorkflow_NuGetWorkflow_ExecutesWorkflow
+                  - RunWorkflow_Run_NuGetWorkflow_ExecutesWorkflow
 
               - id: SpdxTool-Workflow-IntegrityVerification
                 title: >-
@@ -45,4 +45,4 @@ sections:
                   with between publication and execution, which is especially important for
                   workflows loaded from external URLs or NuGet packages.
                 tests:
-                  - RunWorkflow_WithBadIntegrity_ReportsError
+                  - RunWorkflow_Run_WithBadIntegrity_ReportsError

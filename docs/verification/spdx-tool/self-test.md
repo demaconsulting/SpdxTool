@@ -30,14 +30,14 @@ in-process. This scenario is tested by `SelfTest_Validate_ValidContext_Succeeds`
 requested. This scenario is tested by `SelfTest_Validate_WithDepth_Succeeds`.
 
 **TRXReporting**: the subsystem writes TRX output for CI consumers. This scenario is tested by
-`SelfTest_ValidateWithTrxResult_GeneratesTrxFile`.
+`SelfTest_Validate_WithTrxResult_GeneratesTrxFile`.
 
 **JUnitReporting**: the subsystem writes JUnit XML output for CI consumers. This scenario is tested
-by `SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile`.
+by `SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile`.
 
 **UnsupportedResultExtension**: the subsystem reports an error and exits with a non-zero code when
 the result file path uses an extension other than `.trx` or `.xml`. This scenario is tested by
-`SpdxTool_SelfTest_ValidateFlagWithResults_UnsupportedExtension_ReportsError`.
+`SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError`.
 
 **CliValidateFlag**: the installed tool exposes the self-test subsystem through the `--validate`
 command-line flag. This scenario is tested by `SpdxTool_SelfTest_ValidateFlag_Succeeds`.

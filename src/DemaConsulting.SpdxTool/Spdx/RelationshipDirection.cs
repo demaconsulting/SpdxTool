@@ -25,6 +25,12 @@ namespace DemaConsulting.SpdxTool.Spdx;
 /// <summary>
 ///     Relationship direction enumeration
 /// </summary>
+/// <remarks>
+///     Commands that traverse SPDX relationship graphs use this enumeration to express
+///     traversal intent (parent, child, or peer) without coupling to individual
+///     <see cref="SpdxRelationshipType"/> values. The three-value model covers all SPDX 2.x
+///     relationship semantics known at design time.
+/// </remarks>
 public enum RelationshipDirection
 {
     /// <summary>
@@ -57,6 +63,12 @@ public static class RelationshipDirectionExtensions
     /// <summary>
     ///     Dictionary of SPDX relationship types to relationship directions
     /// </summary>
+    /// <remarks>
+    ///     Initialized once at class load and never modified; concurrent reads are thread-safe.
+    ///     Relationship types not present in this map default to
+    ///     <see cref="RelationshipDirection.Sibling"/> via
+    ///     <c>Dictionary.GetValueOrDefault</c>.
+    /// </remarks>
     private static readonly Dictionary<SpdxRelationshipType, RelationshipDirection> DirectionMap = new()
     {
         { SpdxRelationshipType.Describes, RelationshipDirection.Parent },
@@ -92,8 +104,14 @@ public static class RelationshipDirectionExtensions
     /// <summary>
     ///     Get the direction of a relationship
     /// </summary>
-    /// <param name="type">Relationship type</param>
-    /// <returns>Relationship direction</returns>
+    /// <remarks>
+    ///     Returns <see cref="RelationshipDirection.Sibling"/> for any relationship type not
+    ///     present in <see cref="DirectionMap"/>. This conservative default handles SPDX
+    ///     relationship types introduced after this mapping table was last updated without
+    ///     breaking traversal logic. Pure function; no side effects.
+    /// </remarks>
+    /// <param name="type">The SPDX relationship type to look up.</param>
+    /// <returns>The traversal direction corresponding to <paramref name="type"/>.</returns>
     public static RelationshipDirection GetDirection(this SpdxRelationshipType type)
     {
         return DirectionMap.GetValueOrDefault(type, RelationshipDirection.Sibling);

@@ -20,3 +20,7 @@ target SPDX identifier and its references.
 
 **EndToEndRenameId**: the self-test step proves that `rename-id` updates the target identifier
 consistently during validation. This scenario is tested by `SpdxTool_RenameId`.
+
+**IoError**: when `validate.tmp` cannot be created as a directory (e.g., it pre-exists as a file),
+`Run` propagates the `IOException` uncaught and records no `TestResult`. This scenario is tested by
+`ValidateRenameId_Run_IoError_PropagatesException`.

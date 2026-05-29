@@ -76,6 +76,9 @@ also thrown by ParsePackage when the package ID is empty or equals "SPDXRef-DOCU
 inputs are missing; thrown by ParsePackage when the id, name, or download fields are absent from
 the packageMap.
 
+**CommandErrorException** — thrown by AddPackageToSpdxFile when the relationships cannot be applied
+to the document (propagated from AddRelationship.Add).
+
 #### Dependencies
 
 - Command (abstract base class providing YAML helper methods and Expand)

@@ -80,10 +80,20 @@ public abstract class Command
     public abstract void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables);
 
     /// <summary>
-    ///     Expand variables in text
+    ///     Expands all <c>${{ variable }}</c> references in a text string.
     /// </summary>
-    /// <param name="text">Text to expand</param>
-    /// <param name="variables">Variables</param>
+    /// <remarks>
+    ///     Uses a stack to support nested expansions — an inner <c>${{ ... }}</c> token can produce
+    ///     the key used by the outer token, enabling indirect variable references. Environment variables
+    ///     are supported via the <c>environment.</c> prefix: <c>${{ environment.NAME }}</c> resolves
+    ///     to <c>Environment.GetEnvironmentVariable("NAME")</c>. Stateless and thread-safe as long as
+    ///     the caller does not mutate <paramref name="variables"/> concurrently.
+    /// </remarks>
+    /// <param name="text">Input text that may contain <c>${{ variable }}</c> tokens. Must not be null.</param>
+    /// <param name="variables">
+    ///     Variable name-to-value map used for token resolution. Must not be null. Keys are compared
+    ///     case-sensitively. The dictionary is read but never modified.
+    /// </param>
     /// <returns>The input text with all <c>${{ variable }}</c> references replaced by their values.</returns>
     /// <exception cref="InvalidOperationException">
     ///     Thrown when a referenced variable is not present in <paramref name="variables"/>

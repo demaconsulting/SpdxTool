@@ -1,4 +1,4 @@
-﻿### Diagram
+### Diagram
 
 #### Verification Approach
 

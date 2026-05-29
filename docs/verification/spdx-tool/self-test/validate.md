@@ -26,14 +26,14 @@ scenario is tested by `SelfTest_Validate_ValidContext_Succeeds`.
 `SelfTest_Validate_WithDepth_Succeeds`.
 
 **TrxOutput**: the orchestrator writes TRX results when a `.trx` output path is supplied. This
-scenario is tested by `SelfTest_ValidateWithTrxResult_GeneratesTrxFile`.
+scenario is tested by `SelfTest_Validate_WithTrxResult_GeneratesTrxFile`.
 
 **JUnitOutput**: the orchestrator writes JUnit XML results when an `.xml` output path is supplied.
-This scenario is tested by `SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile`.
+This scenario is tested by `SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile`.
 
 **CliIntegration**: the installed tool exposes the orchestrator through the `--validate`
 command-line flag. This scenario is tested by `SpdxTool_SelfTest_ValidateFlag_Succeeds`.
 
 **UnsupportedResultExtension**: the orchestrator reports an error and produces no file when
 `Context.ValidationFile` has an unsupported extension. This scenario is tested by
-`SpdxTool_SelfTest_ValidateFlagWithResults_UnsupportedExtension_ReportsError`.
+`SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError`.

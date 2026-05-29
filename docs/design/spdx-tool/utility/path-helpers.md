@@ -22,6 +22,18 @@ validating that the relative path contains no traversal sequences and is not abs
 - *Post-conditions*: Returns `Path.Combine(basePath, relativePath)` when the relative path is
   safe; the returned path is always within basePath.
 
+*Algorithm*:
+
+1. **Null guard** — `ArgumentNullException.ThrowIfNull` is called on both parameters; a null
+   argument is rejected immediately before any path operation.
+2. **Upfront string check** — `relativePath.Contains("..")` rejects any path whose string
+   representation contains `..` as a substring (a conservative check that also catches filenames
+   like `"file..txt"`); `Path.IsPathRooted` rejects absolute paths. Either condition throws
+   `ArgumentException`.
+3. **Defense-in-depth check** — `Path.GetFullPath` resolves both paths and
+   `Path.GetRelativePath` confirms the combined result stays under basePath. This guards against
+   platform-specific normalization edge cases that could bypass step 2.
+
 #### Error Handling
 
 **ArgumentNullException** — thrown when basePath or relativePath is null.

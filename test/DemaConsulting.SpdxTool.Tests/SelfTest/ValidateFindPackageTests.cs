@@ -26,6 +26,11 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateFindPackage self-validation unit.
 /// </summary>
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateFindPackageTests
 {
@@ -41,14 +46,14 @@ public class ValidateFindPackageTests
     [Fact]
     public void SpdxTool_FindPackage()
     {
-        // Arrange
+        // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the ValidateFindPackage self-test step
         ValidateFindPackage.Run(context, results);
 
-        // Assert
+        // Assert: one passing result recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }
@@ -56,9 +61,16 @@ public class ValidateFindPackageTests
     /// <summary>
     ///     Test that ValidateFindPackage.Run propagates an I/O exception when the working
     ///     directory prevents validate.tmp from being used correctly.
-    ///     This exercises the failure path of Run() as documented in the design: exceptions
-    ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
     /// </summary>
+    /// <remarks>
+    ///     Pre-creates <c>validate.tmp</c> as a file in a temporary directory and sets that as the
+    ///     working directory before calling <see cref="ValidateFindPackage.Run"/>. When
+    ///     <see cref="Directory.CreateDirectory(string)"/> encounters the blocking file it throws
+    ///     <see cref="IOException"/>, which propagates uncaught from <c>Run</c>. The test asserts
+    ///     both that the exception propagates and that no <see cref="DemaConsulting.TestResults.TestResult"/>
+    ///     is recorded in the results collection. This exercises the failure path documented in the
+    ///     design: exceptions thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </remarks>
     [Fact]
     public void ValidateFindPackage_Run_IoError_PropagatesException()
     {

@@ -27,7 +27,8 @@ N/A - this unit is a static class with no instance state.
 - *Returns*: `bool` — true if the command succeeded and the destination SPDX document matches
   expectations.
 - *Preconditions*: A writable working directory is available.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory and writes two SPDX JSON documents: a destination document
 (to.spdx.json) containing SPDXRef-Package-1, and a source document (from.spdx.json) containing
@@ -40,7 +41,9 @@ and verifies that both packages exist and the CONTAINED_BY relationship is prese
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
 destination SPDX document does not contain both packages or does not contain the expected CONTAINED_BY
-relationship. The temporary directory is always deleted in a finally block.
+relationship. The finally block guards the Directory.Delete call with a Directory.Exists check to
+prevent a secondary DirectoryNotFoundException masking the original exception when
+Directory.CreateDirectory fails (e.g., because validate.tmp already exists as a file).
 
 #### Dependencies
 

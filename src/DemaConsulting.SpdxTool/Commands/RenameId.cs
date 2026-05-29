@@ -28,6 +28,14 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Rename an element ID in an SPDX document
 /// </summary>
+/// <remarks>
+///     RenameId is a stateless singleton that implements the rename-id command. It renames an SPDX
+///     element ID throughout an SPDX document, updating all packages, files, snippets, relationships,
+///     HasFiles arrays, and the Describes array. The static <see cref="Rename(SpdxDocument, string,
+///     string)"/> overload is also called directly by AddPackage and CopyPackage to reconcile IDs
+///     during package enhancement. This class is thread-safe for concurrent calls on different files;
+///     concurrent calls on the same file are not recommended.
+/// </remarks>
 public sealed class RenameId : Command
 {
     /// <summary>
@@ -38,11 +46,19 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that both
+    ///     CLI dispatch and workflow YAML dispatch route to the same instance.
+    /// </remarks>
     public static readonly RenameId Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
         Command,
         "rename-id <arguments>",
@@ -107,6 +123,14 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Rename an element ID in an SPDX document
     /// </summary>
+    /// <remarks>
+    ///     Loads the SPDX document from <paramref name="spdxFile"/>, delegates to
+    ///     <see cref="Rename(SpdxDocument, string, string)"/> for the in-memory rename, then saves
+    ///     the updated document back to the same path. If <paramref name="oldId"/> matches no element
+    ///     in the document the inner call returns silently with no changes applied, and the file is
+    ///     still rewritten to disk (no-op round-trip). <see cref="System.IO.FileNotFoundException"/>
+    ///     from the load step is propagated directly to the caller.
+    /// </remarks>
     /// <param name="spdxFile">SPDX file name</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>

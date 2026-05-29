@@ -26,6 +26,11 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateAddRelationship self-validation unit.
 /// </summary>
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateAddRelationshipTests
 {
@@ -41,15 +46,50 @@ public class ValidateAddRelationshipTests
     [Fact]
     public void SpdxTool_AddRelationship()
     {
-        // Arrange
+        // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the add-relationship self-test step
         ValidateAddRelationship.Run(context, results);
 
-        // Assert
+        // Assert: single passing result recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+    }
+
+    /// <summary>
+    ///     Test that ValidateAddRelationship.Run propagates an I/O exception when the working
+    ///     directory prevents validate.tmp from being used correctly.
+    ///     This exercises the failure path of Run() as documented in the design: exceptions
+    ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </summary>
+    [Fact]
+    public void ValidateAddRelationship_Run_IoError_PropagatesException()
+    {
+        // Arrange: save original directory and change to a temp directory where validate.tmp
+        // is pre-created as a file, blocking Directory.CreateDirectory("validate.tmp")
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Create validate.tmp as a FILE (not a directory) to block DoValidate
+            File.WriteAllText("validate.tmp", "blocking file");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act + Assert: Run() propagates the IOException — no TestResult is recorded
+            Assert.Throws<IOException>(() => ValidateAddRelationship.Run(context, results));
+            Assert.Empty(results.Results);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 }

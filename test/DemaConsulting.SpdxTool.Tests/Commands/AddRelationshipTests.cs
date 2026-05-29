@@ -29,7 +29,7 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class AddRelationshipTests
 {
     /// <summary>
-    ///     SPDX file for finding packages
+    ///     SPDX test fixture containing two packages and no relationships
     /// </summary>
     private const string SpdxContents =
         """

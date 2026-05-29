@@ -19,3 +19,7 @@ expected value from external process output.
 
 **EndToEndQuery**: the self-test step proves that `query` can capture a named value from external
 process output during validation. This scenario is tested by `SpdxTool_Query`.
+
+**IoError**: when `validate.tmp` cannot be created as a directory (e.g., it pre-exists as a file),
+`Run` propagates the `IOException` uncaught and records no `TestResult`. This scenario is tested by
+`ValidateQuery_Run_IoError_PropagatesException`.

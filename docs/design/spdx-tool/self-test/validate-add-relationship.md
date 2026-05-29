@@ -27,15 +27,16 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the SPDX document matches expectations.
 - *Preconditions*: A writable working directory is available.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory, writes an SPDX JSON document containing two packages
 (SPDXRef-Package-1 and SPDXRef-Package-2), and writes a workflow YAML that executes add-relationship
 to add a CONTAINS relationship from SPDXRef-Package-1 to SPDXRef-Package-2 with a comment. Calls
 Validate.RunSpdxTool with --silent and run-workflow arguments, then reads the modified SPDX document
 and verifies the content using a positional list pattern match — the relationship order in the
-deserialized document is significant. The validate.tmp directory is deleted unconditionally in a
-finally block, even if creation or file writes only partially succeeded.
+deserialized document is significant. The validate.tmp directory is deleted in a finally block only
+if it exists, guarding against a secondary DirectoryNotFoundException when directory creation fails.
 
 #### Error Handling
 
@@ -43,7 +44,9 @@ Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns fals
 SPDX document does not contain exactly one CONTAINS relationship from SPDXRef-Package-1 to
 SPDXRef-Package-2 with the expected comment. Any exception thrown by DoValidate propagates uncaught
 from Run; no TestResult is recorded for this step if an exception is thrown — the exception surfaces
-to the Self-Test orchestrator.
+to the Self-Test orchestrator. The finally block guards the Directory.Delete call with a
+Directory.Exists check to prevent a secondary DirectoryNotFoundException masking the original
+exception when Directory.CreateDirectory fails (e.g., because validate.tmp already exists as a file).
 
 #### Dependencies
 

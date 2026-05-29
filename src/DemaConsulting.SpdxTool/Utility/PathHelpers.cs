@@ -67,7 +67,7 @@ internal static class PathHelpers
     /// </exception>
     internal static string SafePathCombine(string basePath, string relativePath)
     {
-        // Validate inputs
+        // Validate that neither argument is null before performing any path operations
         ArgumentNullException.ThrowIfNull(basePath);
         ArgumentNullException.ThrowIfNull(relativePath);
 

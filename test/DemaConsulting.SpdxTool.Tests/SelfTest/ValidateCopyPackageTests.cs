@@ -41,14 +41,14 @@ public class ValidateCopyPackageTests
     [Fact]
     public void SpdxTool_CopyPackage()
     {
-        // Arrange
+        // Arrange: create a context in validate mode and an empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the copy-package self-test step
         ValidateCopyPackage.Run(context, results);
 
-        // Assert
+        // Assert: a single passing result is recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }

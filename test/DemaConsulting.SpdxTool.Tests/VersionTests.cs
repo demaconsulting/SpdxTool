@@ -30,7 +30,7 @@ public partial class VersionTests
     /// <summary>
     ///     Regular expression to check for version
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A compiled Regex that matches a semantic version string (e.g., 1.2.3 or 1.2.3-preview).</returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
     private static partial Regex VersionRegex();
 

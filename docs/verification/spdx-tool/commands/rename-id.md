@@ -19,14 +19,14 @@ affected references to the renamed SPDX identifier.
 #### Test Scenarios
 
 **MissingArguments**: the unit reports a usage error when required rename arguments are omitted.
-This scenario is tested by `RenameId_MissingArguments_ReportsError`.
+This scenario is tested by `RenameId_Run_MissingArguments_ReportsError`.
 
 **MissingInputFile**: the unit reports an error when the input SPDX file does not exist. This
-scenario is tested by `RenameId_MissingFile_ReportsError`.
+scenario is tested by `RenameId_Run_MissingFile_ReportsError`.
 
 **ReferenceWideRename**: the unit renames the target SPDX identifier across the full document. This
-scenario is tested by `RenameId_ValidSpdxFile_RenamesId`.
+scenario is tested by `RenameId_Run_ValidSpdxFile_RenamesId`.
 
 **AllCollectionsRename**: the unit renames the target SPDX identifier across all element collections,
 including file IDs, snippet from-file references, package HasFiles entries, and relationship
-from-element IDs. This scenario is tested by `RenameId_ValidSpdxFile_RenamesAllCollections`.
+from-element IDs. This scenario is tested by `RenameId_Run_ValidSpdxFile_RenamesAllCollections`.

@@ -70,13 +70,13 @@ SpdxTool supports the SPDX 2.3 specification. For full details see the
 
 The NTIA minimum elements for SBOM include:
 
-- Author name
-- Timestamp
+- Supplier name
 - Component name
 - Version string
-- Component identifiers (PURL, CPE)
+- Other unique identifiers (PURL, CPE)
 - Dependency relationships
 - Author of SBOM data
+- Timestamp
 
 For more information see the
 [NTIA SBOM Minimum Elements report][ntia-sbom].

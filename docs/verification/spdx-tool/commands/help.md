@@ -31,4 +31,5 @@ tested by `Help_Run_UnknownCommand_ReportsError`.
 **CommandSpecificHelp**: the unit prints extended help for a registered command. This scenario is
 tested by `Help_Run_RunWorkflowCommand_DisplaysHelp`.
 
-**YamlInvocation**: the unit displays help when invoked from a YAML workflow step with the about input. This scenario is tested by `Help_Run_YamlInvocation_DisplaysHelp`.
+**YamlInvocation**: the unit displays help when invoked from a YAML workflow step with the about
+input. This scenario is tested by `Help_Run_YamlInvocation_DisplaysHelp`.

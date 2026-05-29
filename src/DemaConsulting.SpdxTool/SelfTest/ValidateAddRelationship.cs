@@ -86,8 +86,9 @@ internal static class ValidateAddRelationship
     ///         the order of relationships in the deserialized document is significant.
     ///     </para>
     ///     <para>
-    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
-    ///         even if directory creation or file writes only partially succeeded.
+    ///         The <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it
+    ///         exists, guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the
+    ///         original exception when <see cref="Directory.CreateDirectory(string)"/> fails.
     ///     </para>
     /// </remarks>
     private static bool DoValidate()
@@ -180,8 +181,12 @@ internal static class ValidateAddRelationship
         }
         finally
         {
-            // Delete the temporary validation folder
-            Directory.Delete("validate.tmp", true);
+            // Delete the temporary validation folder if it exists (guards against
+            // Directory.CreateDirectory failing before the directory was created)
+            if (Directory.Exists("validate.tmp"))
+            {
+                Directory.Delete("validate.tmp", true);
+            }
         }
     }
 }

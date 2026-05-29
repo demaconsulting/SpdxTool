@@ -39,7 +39,9 @@ internal static class ValidateUpdatePackage
     /// <remarks>
     ///     Delegates to <see cref="DoValidate"/> for the actual command invocation and field
     ///     verification, then writes a pass or fail message to the context and appends a
-    ///     TestResult entry named SpdxTool_UpdatePackage to results.
+    ///     TestResult entry named SpdxTool_UpdatePackage to results. If <see cref="DoValidate"/>
+    ///     throws an exception, the exception propagates uncaught from this method and no
+    ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
     /// <param name="context">Active program context for output and error reporting. Must not be null.</param>
     /// <param name="results">Test results collection to append the step outcome to. Must not be null.</param>
@@ -81,6 +83,8 @@ internal static class ValidateUpdatePackage
     ///     True if the tool exited with code zero and every updated field in the deserialized
     ///     SPDX document matches the expected value; false otherwise.
     /// </returns>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try
@@ -186,7 +190,10 @@ internal static class ValidateUpdatePackage
         finally
         {
             // Delete the temporary validation folder
-            Directory.Delete("validate.tmp", true);
+            if (Directory.Exists("validate.tmp"))
+            {
+                Directory.Delete("validate.tmp", true);
+            }
         }
     }
 }

@@ -9,9 +9,8 @@ both the CLI and workflow YAML files.
 
 #### Data Model
 
-N/A — Hash is a stateless singleton.
-
 **Instance**: `Hash` — the singleton instance registered with CommandsRegistry.
+
 **Entry**: `CommandEntry` — the CommandEntry record for Hash.
 
 #### Key Methods

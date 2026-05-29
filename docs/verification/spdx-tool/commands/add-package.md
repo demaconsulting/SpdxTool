@@ -1,4 +1,4 @@
-﻿### AddPackage
+### AddPackage
 
 #### Verification Approach
 

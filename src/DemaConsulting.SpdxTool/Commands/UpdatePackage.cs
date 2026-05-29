@@ -27,6 +27,13 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Update a package in an SPDX document
 /// </summary>
+/// <remarks>
+///     UpdatePackage is a stateless singleton that implements the update-package workflow-only
+///     command. It reads the spdx and package inputs from a YAML step, parses the update fields,
+///     and writes the updated SPDX document. Direct CLI invocation is always rejected. This class
+///     is thread-safe for concurrent calls on different files; concurrent calls on the same file
+///     are not recommended.
+/// </remarks>
 public sealed class UpdatePackage : Command
 {
     /// <summary>
@@ -37,11 +44,19 @@ public sealed class UpdatePackage : Command
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that
+    ///     workflow YAML dispatch routes to the same instance.
+    /// </remarks>
     public static readonly UpdatePackage Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
         CommandName,
         "update-package",

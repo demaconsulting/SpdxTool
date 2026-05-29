@@ -34,6 +34,8 @@ public class CopyPackageTests
     [Fact]
     public void CopyPackage_MissingArguments_ReportsError()
     {
+        // Arrange: No test data required - error is triggered by invoking the command without arguments
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -52,6 +54,8 @@ public class CopyPackageTests
     [Fact]
     public void CopyPackage_MissingFile_ReportsError()
     {
+        // Arrange: No test data required - error is triggered by referencing a non-existent file
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,

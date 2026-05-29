@@ -19,3 +19,7 @@ elements are enforced correctly.
 
 **EndToEndNtiaValidation**: the self-test step proves that `validate ntia` distinguishes compliant
 and non-compliant SPDX content during validation. This scenario is tested by `SpdxTool_Ntia`.
+
+**IoError**: when `validate.tmp` cannot be created as a directory (e.g., it pre-exists as a file),
+`Run` propagates the `IOException` uncaught and records no `TestResult`. This scenario is tested by
+`ValidateNtia_Run_IoError_PropagatesException`.

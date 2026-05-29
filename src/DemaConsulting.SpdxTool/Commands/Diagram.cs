@@ -157,6 +157,10 @@ public sealed class Diagram : Command
 
             // Get the relationship direction
             var direction = relationship.RelationshipType.GetDirection();
+
+            // Defensive guard: the _ arm is permanently unreachable because GetDirection()
+            // always returns Parent, Child, or Sibling. Retained to guard against future
+            // changes to the RelationshipDirection enum.
             var from = direction switch
             {
                 RelationshipDirection.Parent => a,

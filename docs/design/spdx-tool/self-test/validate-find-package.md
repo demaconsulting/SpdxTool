@@ -26,7 +26,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the log contains the expected package ID.
 - *Preconditions*: A writable working directory is available. Callers must execute serially because Validate.RunSpdxTool mutates the process-wide current working directory.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory, writes an SPDX JSON document containing two packages, and writes
 a workflow YAML that executes find-package to locate "Test Package" by name, captures its ID into
@@ -41,8 +42,10 @@ must execute serially to avoid races.
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the log file
-does not contain the expected "Found package SPDXRef-Package-1" text. The temporary directory is
-always deleted in a finally block.
+does not contain the expected "Found package SPDXRef-Package-1" text. The finally block guards the
+Directory.Delete call with a Directory.Exists check to prevent a secondary DirectoryNotFoundException
+masking the original exception when Directory.CreateDirectory fails (e.g., because validate.tmp
+already exists as a file).
 
 #### Dependencies
 

@@ -16,3 +16,4 @@ sections:
                   or deployment.
                 tests:
                   - SpdxTool_Query
+                  - ValidateQuery_Run_IoError_PropagatesException

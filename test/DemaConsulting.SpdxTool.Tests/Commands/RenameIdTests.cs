@@ -31,8 +31,10 @@ public class RenameIdTests
     ///     Test that rename-id command with missing arguments reports an error
     /// </summary>
     [Fact]
-    public void RenameId_MissingArguments_ReportsError()
+    public void RenameId_Run_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -49,8 +51,10 @@ public class RenameIdTests
     ///     Test that rename-id command with missing file reports an error
     /// </summary>
     [Fact]
-    public void RenameId_MissingFile_ReportsError()
+    public void RenameId_Run_MissingFile_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -70,7 +74,7 @@ public class RenameIdTests
     ///     Test that rename-id command with valid SPDX file renames the ID
     /// </summary>
     [Fact]
-    public void RenameId_ValidSpdxFile_RenamesId()
+    public void RenameId_Run_ValidSpdxFile_RenamesId()
     {
         const string spdxContents =
             """
@@ -140,7 +144,7 @@ public class RenameIdTests
     ///     Test that rename-id command with valid SPDX file renames all collections
     /// </summary>
     [Fact]
-    public void RenameId_ValidSpdxFile_RenamesAllCollections()
+    public void RenameId_Run_ValidSpdxFile_RenamesAllCollections()
     {
         const string spdxContents =
             """

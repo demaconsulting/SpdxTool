@@ -39,7 +39,12 @@ fields match the values specified in the workflow.
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
 SPDX document does not exactly match all twelve updated field values. The temporary directory is
-always deleted in a finally block.
+always deleted in a finally block, guarded with a Directory.Exists check to prevent a secondary
+DirectoryNotFoundException from masking the original exception.
+
+Any exception thrown by DoValidate (such as IOException or UnauthorizedAccessException) propagates
+uncaught from Run; no TestResult is recorded for this step if an exception is thrown — the exception
+surfaces to the Self-Test orchestrator.
 
 #### Dependencies
 

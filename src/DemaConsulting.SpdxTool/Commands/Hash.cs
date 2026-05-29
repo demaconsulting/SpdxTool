@@ -34,6 +34,9 @@ namespace DemaConsulting.SpdxTool.Commands;
 ///     computed digest is compared against the stored value. Using a sidecar file
 ///     avoids embedding hash data inside SPDX documents and keeps the command
 ///     independent of any particular SPDX schema version.
+///     Thread-safe: all public methods are static and operate only on method-local
+///     state; concurrent calls on different files are safe. Concurrent calls on the
+///     same file are not recommended because the sidecar write is non-atomic.
 /// </remarks>
 public sealed class Hash : Command
 {

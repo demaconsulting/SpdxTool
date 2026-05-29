@@ -33,7 +33,8 @@ namespace DemaConsulting.SpdxTool.Commands;
 public static class CommandsRegistry
 {
     /// <summary>
-    ///     Dictionary of known commands
+    ///     Backing dictionary populated once at static initialization with one entry per registered command.
+    ///     Private to enforce the read-only contract exposed by <see cref="Commands"/>.
     /// </summary>
     private static readonly Dictionary<string, CommandEntry> InternalCommands = new()
     {

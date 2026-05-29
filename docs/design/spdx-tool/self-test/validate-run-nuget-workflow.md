@@ -27,7 +27,8 @@ N/A - this unit is a static class with no instance state.
 - *Returns*: `bool` — true if RunSpdxTool returns exit code zero.
 - *Preconditions*: The DemaConsulting.SpdxWorkflows NuGet package must be resolvable from the local
   NuGet cache or from the configured NuGet feeds.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory and writes a workflow YAML that uses the nuget input to reference
 DemaConsulting.SpdxWorkflows and the GetDotNetVersion.yaml workflow file within it, mapping its
@@ -38,9 +39,11 @@ version output to the dotnet-version variable and then printing it. Calls Valida
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. This may occur if the NuGet
 package cannot be resolved because the package is absent from the local cache and network access is
-unavailable. The temporary directory is always deleted in a finally block. Any exception thrown by
-DoValidate propagates uncaught from Run; no TestResult is recorded for this step if an exception is
-thrown — the exception surfaces to the Self-Test orchestrator.
+unavailable. Any exception thrown by DoValidate propagates uncaught from Run; no TestResult is
+recorded for this step if an exception is thrown — the exception surfaces to the Self-Test
+orchestrator. The finally block guards the Directory.Delete call with a Directory.Exists check to
+prevent a secondary DirectoryNotFoundException masking the original exception when
+Directory.CreateDirectory fails (e.g., because validate.tmp already exists as a file).
 
 #### Dependencies
 

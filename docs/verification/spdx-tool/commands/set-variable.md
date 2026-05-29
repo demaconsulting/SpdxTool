@@ -20,7 +20,7 @@ requested variable value.
 #### Test Scenarios
 
 **WorkflowOnlyGuard**: the unit rejects direct command-line invocation. This scenario is tested by
-`SetVariable_OnCommandLine_ReportsWorkflowOnlyError`.
+`SetVariable_Run_OnCommandLine_ReportsWorkflowOnlyError`.
 
 **VariableAssignment**: the unit stores the requested name-value pair in the workflow variables map.
-This scenario is tested by `SetVariable_InWorkflow_SetsVariable`.
+This scenario is tested by `SetVariable_Run_InWorkflow_SetsVariable`.

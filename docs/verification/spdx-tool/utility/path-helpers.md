@@ -26,6 +26,11 @@ rejected. This scenario is tested by
 **AbsolutePathRejection**: absolute paths (Unix and Windows) are rejected. This scenario is
 tested by `PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException`.
 
+**NullArgumentRejection**: null arguments are rejected with ArgumentNullException before any
+path operation. This scenario is tested by
+`PathHelpers_SafePathCombine_NullBasePath_ThrowsArgumentNullException` and
+`PathHelpers_SafePathCombine_NullRelativePath_ThrowsArgumentNullException`.
+
 **ValidRelativePaths**: safe relative paths combine under the intended base directory. This
 scenario is tested by `PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly`,
 `PathHelpers_SafePathCombine_CurrentDirectoryReference_CombinesCorrectly`,

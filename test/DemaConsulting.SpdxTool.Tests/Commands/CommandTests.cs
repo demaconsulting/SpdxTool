@@ -21,7 +21,7 @@
 using DemaConsulting.SpdxTool.Commands;
 using YamlDotNet.RepresentationModel;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the <see cref="Command" /> class.

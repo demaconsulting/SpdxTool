@@ -118,3 +118,61 @@ sections:
               brevity is preferred. The -r alias must be functionally identical to --result.
             tests:
               - SpdxTool_SelfTest_ValidateFlagWithResults_ShortFlag_GeneratesTrxFile
+
+      - title: Command Execution
+        requirements:
+          - id: SpdxTool-CommandExecution-SupportedCommands
+            title: The tool shall support SPDX document manipulation commands including add-package, add-relationship, copy-package,
+              diagram, find-package, get-version, hash, help, print, query, rename-id, run-workflow, set-variable, to-markdown,
+              update-package, and validate.
+            tags:
+              - commands
+            justification: |
+              The tool's core value is the set of SPDX manipulation commands it provides.
+              Each command must be reachable by name from the command-line dispatcher so
+              that users can invoke them in scripts and CI/CD pipelines.
+            children:
+              - SpdxTool-Commands-AddPackage
+              - SpdxTool-Commands-AddRelationship
+              - SpdxTool-Commands-CopyPackage
+              - SpdxTool-Commands-Diagram
+              - SpdxTool-Commands-FindPackage
+              - SpdxTool-Commands-GetVersion
+              - SpdxTool-Hash-ComputeHashes
+              - SpdxTool-Cli-Help
+              - SpdxTool-Commands-PrintSpdxDocument
+              - SpdxTool-Commands-Query
+              - SpdxTool-Commands-RenameId
+              - SpdxTool-Workflow-RunWorkflow
+              - SpdxTool-Commands-SetVariable
+              - SpdxTool-Transform-ToMarkdown
+              - SpdxTool-Commands-UpdatePackage
+              - SpdxTool-Manage-ValidateSpdx
+            tests:
+              - SpdxTool_Usage_NoArguments_DisplaysError
+
+          - id: SpdxTool-CommandExecution-WorkflowExecution
+            title: The tool shall execute SPDX manipulation workflows defined in YAML workflow files.
+            tags:
+              - commands
+              - workflow
+            justification: |
+              Workflows allow users to compose multiple SPDX tool commands into a single
+              repeatable operation. This is the primary integration mechanism for CI/CD
+              pipelines and MSBuild targets.
+            children:
+              - SpdxTool-Workflow-RunWorkflow
+            tests:
+              - RunWorkflow_ValidWorkflow_ExecutesSteps
+
+      - title: Platform Support
+        requirements:
+          - id: SpdxTool-Platform-MultiFramework
+            title: The tool shall run on .NET 8, .NET 9, and .NET 10.
+            tags:
+              - platform
+            justification: |
+              Supporting multiple active .NET LTS and STS releases ensures the tool
+              remains usable as users upgrade their projects and CI/CD environments.
+            tests:
+              - SpdxTool_Version_ShortFlag_DisplaysVersion

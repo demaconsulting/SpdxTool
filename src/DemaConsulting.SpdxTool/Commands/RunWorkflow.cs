@@ -30,6 +30,14 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Command to run a workflow YAML file, URL, or NuGet package workflow
 /// </summary>
+/// <remarks>
+///     RunWorkflow is a stateless singleton that implements the run-workflow command. It supports
+///     three workflow sources: a local file path, an HTTP/HTTPS URL, and a NuGet package. The
+///     optional <c>integrity</c> input performs a SHA-256 hash check before execution. Workflow
+///     parameters flow in via the <c>parameters</c> map and outputs are captured from the returned
+///     variable dictionary. This class is thread-safe for concurrent calls on independent workflow
+///     files or URLs; concurrent calls sharing a mutable <see cref="Context"/> are not recommended.
+/// </remarks>
 public sealed class RunWorkflow : Command
 {
     /// <summary>
@@ -40,11 +48,19 @@ public sealed class RunWorkflow : Command
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that both
+    ///     CLI dispatch and workflow YAML dispatch route to the same instance.
+    /// </remarks>
     public static readonly RunWorkflow Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
         Command,
         "run-workflow <workflow.yaml>",

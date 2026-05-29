@@ -19,3 +19,7 @@ invalid SPDX content fails as expected.
 
 **ValidAndInvalidDocuments**: the self-test step distinguishes valid SPDX input from malformed SPDX
 input using the `validate` command. This scenario is tested by `SpdxTool_Basic`.
+
+**IoExceptionPropagation**: when the working directory prevents `validate.tmp` from being created
+as a directory, the IOException propagates uncaught from Run and no TestResult is recorded. This
+scenario is tested by `ValidateBasic_Run_IoError_PropagatesException`.

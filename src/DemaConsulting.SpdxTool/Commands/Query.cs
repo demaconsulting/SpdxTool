@@ -122,6 +122,13 @@ public sealed class Query : Command
     /// <summary>
     ///     Run a program and query the output for a value
     /// </summary>
+    /// <remarks>
+    ///     Both stdout and stderr are read concurrently before waiting for process exit to prevent the
+    ///     deadlock that occurs when a child process fills its output buffer and blocks waiting for the
+    ///     reader, while the caller blocks in WaitForExit waiting for the process to terminate. The
+    ///     regular expression is compiled with a 100 ms match timeout to guard against catastrophic
+    ///     backtracking on untrusted patterns.
+    /// </remarks>
     /// <param name="pattern">Regular expression pattern to capture 'value'</param>
     /// <param name="program">Program to execute</param>
     /// <param name="arguments">Program arguments</param>

@@ -126,7 +126,7 @@ public sealed class AddPackage : Command
     /// <param name="spdxFile">SPDX file</param>
     /// <param name="package">Package to add</param>
     /// <param name="relationships">Relationships to add</param>
-    /// <exception cref="CommandUsageException">On usage error</exception>
+    /// <exception cref="CommandErrorException">Thrown when the relationships cannot be applied to the document.</exception>
     public static void AddPackageToSpdxFile(string spdxFile, SpdxPackage package, SpdxRelationship[] relationships)
     {
         // Load the SPDX document

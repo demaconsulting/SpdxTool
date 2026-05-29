@@ -31,6 +31,8 @@ public class HashTests
     [Fact]
     public void Hash_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -49,6 +51,8 @@ public class HashTests
     [Fact]
     public void Hash_MissingFile_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -108,6 +112,8 @@ public class HashTests
     [Fact]
     public void Hash_VerifyMissingFile_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -199,6 +205,8 @@ public class HashTests
     [Fact]
     public void Hash_UnsupportedAlgorithm_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -220,6 +228,8 @@ public class HashTests
     [Fact]
     public void Hash_InvalidOperation_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,

@@ -40,8 +40,12 @@ both package names, and both version strings.
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the output
-Markdown file does not exist or does not contain all expected strings. The temporary directory is
-always deleted in a finally block.
+Markdown file does not exist or does not contain all expected strings. Any exception thrown by
+DoValidate propagates uncaught from Run; no TestResult is recorded for this step if an exception is
+thrown — the exception surfaces to the Self-Test orchestrator. The finally block guards the
+Directory.Delete call with a Directory.Exists check to prevent a secondary DirectoryNotFoundException
+masking the original exception when Directory.CreateDirectory fails (e.g., because validate.tmp
+already exists as a file).
 
 #### Dependencies
 

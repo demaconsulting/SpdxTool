@@ -32,5 +32,19 @@ sections:
                 tests:
                   - SelfTest_Validate_ValidContext_Succeeds
                   - SelfTest_Validate_WithDepth_Succeeds
-                  - SelfTest_ValidateWithTrxResult_GeneratesTrxFile
-                  - SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile
+
+              - id: SpdxTool-SelfTest-Orchestrate-SerializeResults
+                title: >-
+                  The SelfTest orchestrator shall serialize results to a TRX or JUnit XML file
+                  when a result file path is provided, and shall report an error for unsupported
+                  file extensions.
+                tags:
+                  - self-test
+                justification: |
+                  Producing machine-readable result files enables CI pipelines and reporting
+                  tools to consume self-test outcomes. Reporting an error for unsupported
+                  extensions prevents silent data loss.
+                tests:
+                  - SelfTest_Validate_WithTrxResult_GeneratesTrxFile
+                  - SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile
+                  - SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError

@@ -35,10 +35,89 @@ public partial class RunWorkflowTests
     private static partial Regex DotnetVersionRegex();
 
     /// <summary>
+    ///     Test that run-workflow command with an undeclared parameter reports an error
+    /// </summary>
+    [Fact]
+    public void RunWorkflow_Run_UndeclaredParameter_ReportsError()
+    {
+        const string fileContents =
+            """
+            parameters:
+              about: help
+
+            steps:
+            - command: help
+              inputs:
+                about: ${{ about }}
+            """;
+
+        try
+        {
+            // Arrange: Write the file
+            File.WriteAllText("help.yaml", fileContents);
+
+            // Act: Run the workflow with an undeclared parameter
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "help.yaml",
+                "undeclared=value");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("parameter undeclared not defined", output);
+        }
+        finally
+        {
+            File.Delete("help.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that run-workflow command with a malformed CLI argument reports an error
+    /// </summary>
+    [Fact]
+    public void RunWorkflow_Run_MalformedCliArgument_ReportsError()
+    {
+        const string fileContents =
+            """
+            steps:
+            - command: help
+              inputs:
+                about: help
+            """;
+
+        try
+        {
+            // Arrange: Write the file
+            File.WriteAllText("help.yaml", fileContents);
+
+            // Act: Run the workflow with a malformed argument (no '=' separator)
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "help.yaml",
+                "malformed-no-equals");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Invalid argument: malformed-no-equals", output);
+        }
+        finally
+        {
+            File.Delete("help.yaml");
+        }
+    }
+
+    /// <summary>
     ///     Test that run-workflow command with missing arguments reports an error
     /// </summary>
     [Fact]
-    public void RunWorkflow_MissingArguments_ReportsError()
+    public void RunWorkflow_Run_MissingArguments_ReportsError()
     {
         // Arrange: no setup required
 
@@ -58,7 +137,7 @@ public partial class RunWorkflowTests
     ///     Test that run-workflow command with missing file reports an error
     /// </summary>
     [Fact]
-    public void RunWorkflow_MissingFile_ReportsError()
+    public void RunWorkflow_Run_MissingFile_ReportsError()
     {
         // Arrange: no setup required
 
@@ -79,7 +158,7 @@ public partial class RunWorkflowTests
     ///     Test that run-workflow command with invalid workflow file reports an error
     /// </summary>
     [Fact]
-    public void RunWorkflow_InvalidWorkflowFile_ReportsError()
+    public void RunWorkflow_Run_InvalidWorkflowFile_ReportsError()
     {
         const string fileContents =
             "missing-steps: 123";
@@ -112,7 +191,7 @@ public partial class RunWorkflowTests
     ///     Test that run-workflow command with missing parameter reports an error
     /// </summary>
     [Fact]
-    public void RunWorkflow_MissingParameter_ReportsError()
+    public void RunWorkflow_Run_MissingParameter_ReportsError()
     {
         const string fileContents =
             """
@@ -148,7 +227,7 @@ public partial class RunWorkflowTests
     ///     Test that run-workflow command with valid workflow file executes the workflow
     /// </summary>
     [Fact]
-    public void RunWorkflow_ValidWorkflowFile_ExecutesWorkflow()
+    public void RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow()
     {
         const string fileContents =
             """
@@ -187,7 +266,7 @@ output);
     ///     Test that run-workflow command with default parameters uses the defaults
     /// </summary>
     [Fact]
-    public void RunWorkflow_WithDefaultParameters_UsesDefaults()
+    public void RunWorkflow_Run_WithDefaultParameters_UsesDefaults()
     {
         const string fileContents =
             """
@@ -229,7 +308,7 @@ output);
     ///     Test that run-workflow command with specified parameters uses the specified values
     /// </summary>
     [Fact]
-    public void RunWorkflow_WithSpecifiedParameters_UsesSpecified()
+    public void RunWorkflow_Run_WithSpecifiedParameters_UsesSpecified()
     {
         const string fileContents =
             """
@@ -271,7 +350,7 @@ output);
     ///     Test that run-workflow command with outputs populates the output variables
     /// </summary>
     [Fact]
-    public void RunWorkflow_WithOutputs_PopulatesOutputs()
+    public void RunWorkflow_Run_WithOutputs_PopulatesOutputs()
     {
         const string workflow1 =
             """
@@ -336,7 +415,7 @@ output);
     ///     Test that run-workflow command with bad integrity reports an error
     /// </summary>
     [Fact]
-    public void RunWorkflow_WithBadIntegrity_ReportsError()
+    public void RunWorkflow_Run_WithBadIntegrity_ReportsError()
     {
         const string workflow1 =
             """
@@ -386,7 +465,7 @@ output);
                 "workflow1.yaml",
                 "arg=Fred");
 
-            // Assert: Verify success
+            // Assert: Verify error reported
             Assert.Equal(1, exitCode);
             Assert.Contains("Error: Integrity check of workflow2.yaml failed", output);
         }
@@ -402,7 +481,7 @@ output);
     ///     Test that run-workflow command with NuGet workflow executes the workflow
     /// </summary>
     [Fact]
-    public void RunWorkflow_NuGetWorkflow_ExecutesWorkflow()
+    public void RunWorkflow_Run_NuGetWorkflow_ExecutesWorkflow()
     {
         const string workflow =
             """
@@ -448,7 +527,7 @@ output);
     ///     Test that run-workflow command with URL workflow executes the workflow
     /// </summary>
     [Fact]
-    public void RunWorkflow_UrlWorkflow_ExecutesWorkflow()
+    public void RunWorkflow_Run_UrlWorkflow_ExecutesWorkflow()
     {
         const string workflow =
             """

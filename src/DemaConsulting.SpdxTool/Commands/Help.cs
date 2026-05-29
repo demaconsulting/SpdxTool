@@ -104,10 +104,10 @@ public sealed class Help : Command
     }
 
     /// <summary>
-    ///     Show the usage for the requested command
+    ///     Shows the usage for the requested command.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="command">Command to get help on</param>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="command">Command to get help on.</param>
     /// <exception cref="CommandUsageException">Thrown when the command name is not registered in <c>CommandsRegistry.Commands</c>.</exception>
     public static void ShowUsage(Context context, string command)
     {

@@ -29,8 +29,10 @@ public class SetVariableTests
     ///     Test that set-variable command on command line reports workflow-only error
     /// </summary>
     [Fact]
-    public void SetVariable_OnCommandLine_ReportsWorkflowOnlyError()
+    public void SetVariable_Run_OnCommandLine_ReportsWorkflowOnlyError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -47,7 +49,7 @@ public class SetVariableTests
     ///     Test that set-variable command in workflow sets the variable
     /// </summary>
     [Fact]
-    public void SetVariable_InWorkflow_SetsVariable()
+    public void SetVariable_Run_InWorkflow_SetsVariable()
     {
         // Workflow contents
         const string workflowContents =

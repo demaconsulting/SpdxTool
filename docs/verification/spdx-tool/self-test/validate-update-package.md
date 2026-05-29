@@ -20,3 +20,7 @@ expected package metadata in the SPDX document.
 
 **EndToEndUpdatePackage**: the self-test step proves that `update-package` updates package metadata
 during validation. This scenario is tested by `SpdxTool_UpdatePackage`.
+
+**ExceptionPropagation**: when an I/O error prevents DoValidate from running, the exception
+propagates uncaught from Run() and no TestResult is recorded. This scenario is tested by
+`ValidateUpdatePackage_Run_IoError_PropagatesException`.

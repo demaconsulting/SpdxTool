@@ -25,8 +25,13 @@ using Validate = DemaConsulting.SpdxTool.SelfTest.Validate;
 namespace DemaConsulting.SpdxTool;
 
 /// <summary>
-///     Program class
+///     Entry point and top-level dispatcher for the SPDX tool command-line application.
 /// </summary>
+/// <remarks>
+///     Constructs a Context from the command-line arguments and dispatches execution to the version
+///     reporter, help printer, self-validation suite, or the matching registered command. All mutable
+///     runtime state is held in Context so Program methods are stateless and independently testable.
+/// </remarks>
 public static class Program
 {
     /// <summary>
@@ -152,6 +157,10 @@ public static class Program
     ///     Print usage information
     /// </summary>
     /// <param name="context">Program context</param>
+    /// <remarks>
+    ///     Shared by multiple error paths (missing arguments, unknown command, usage exception)
+    ///     and the help flag handler so that usage output is consistent regardless of the trigger.
+    /// </remarks>
     public static void PrintUsage(Context context)
     {
         context.WriteLine(

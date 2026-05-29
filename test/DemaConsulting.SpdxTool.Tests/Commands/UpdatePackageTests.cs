@@ -31,7 +31,7 @@ public class UpdatePackageTests
     ///     Test that update-package command on command line reports workflow-only error
     /// </summary>
     [Fact]
-    public void UpdatePackage_OnCommandLine_ReportsWorkflowOnlyError()
+    public void UpdatePackage_Run_OnCommandLine_ReportsWorkflowOnlyError()
     {
         // Arrange: no setup required
 
@@ -51,7 +51,7 @@ public class UpdatePackageTests
     ///     Test that update-package command in workflow updates the package
     /// </summary>
     [Fact]
-    public void UpdatePackage_InWorkflow_UpdatesPackage()
+    public void UpdatePackage_Run_InWorkflow_UpdatesPackage()
     {
         // SPDX contents
         const string spdxContents =
@@ -152,10 +152,50 @@ public class UpdatePackageTests
     }
 
     /// <summary>
+    ///     Test that update-package command with missing package id reports an error
+    /// </summary>
+    [Fact]
+    public void UpdatePackage_Run_MissingPackageIdInput_ReportsError()
+    {
+        // Workflow contents with 'package' present but missing 'id' sub-key
+        const string workflowContents =
+            """
+            steps:
+            - command: update-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  name: Updated Name
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'update-package' missing 'package.id' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
     ///     Test that update-package command with missing spdx input reports an error
     /// </summary>
     [Fact]
-    public void UpdatePackage_MissingSpdxInput_ReportsError()
+    public void UpdatePackage_Run_MissingSpdxInput_ReportsError()
     {
         // Workflow contents with missing 'spdx' input
         const string workflowContents =
@@ -194,7 +234,7 @@ public class UpdatePackageTests
     ///     Test that update-package command with missing package input reports an error
     /// </summary>
     [Fact]
-    public void UpdatePackage_MissingPackageInput_ReportsError()
+    public void UpdatePackage_Run_MissingPackageInput_ReportsError()
     {
         // Workflow contents with missing 'package' input
         const string workflowContents =
@@ -232,7 +272,7 @@ public class UpdatePackageTests
     ///     Test that update-package command with package not found reports an error
     /// </summary>
     [Fact]
-    public void UpdatePackage_PackageNotFound_ReportsError()
+    public void UpdatePackage_Run_PackageNotFound_ReportsError()
     {
         // SPDX contents
         const string spdxContents =
@@ -307,7 +347,7 @@ public class UpdatePackageTests
     ///     Test that update-package command with an unrecognized field reports an error
     /// </summary>
     [Fact]
-    public void UpdatePackage_UnrecognizedField_ReportsError()
+    public void UpdatePackage_Run_UnrecognizedField_ReportsError()
     {
         // SPDX contents
         const string spdxContents =
@@ -382,7 +422,7 @@ public class UpdatePackageTests
     ///     Test that update-package command with a partial update preserves unspecified fields
     /// </summary>
     [Fact]
-    public void UpdatePackage_PartialUpdate_PreservesUnspecifiedFields()
+    public void UpdatePackage_Run_PartialUpdate_PreservesUnspecifiedFields()
     {
         // SPDX contents
         const string spdxContents =

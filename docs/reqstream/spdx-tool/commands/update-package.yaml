@@ -14,8 +14,8 @@ sections:
                   Users need to modify package metadata as software components evolve,
                   such as updating versions, licenses, or other attributes.
                 tests:
-                  - UpdatePackage_OnCommandLine_ReportsWorkflowOnlyError
-                  - UpdatePackage_InWorkflow_UpdatesPackage
+                  - UpdatePackage_Run_OnCommandLine_ReportsWorkflowOnlyError
+                  - UpdatePackage_Run_InWorkflow_UpdatesPackage
 
               - id: SpdxTool-Package-UpdatePackage-CliRejection
                 title: The update-package command shall reject direct CLI invocation with a usage error.
@@ -26,7 +26,7 @@ sections:
                   file and package fields. Rejecting CLI invocation prevents misuse and
                   provides a clear diagnostic.
                 tests:
-                  - UpdatePackage_OnCommandLine_ReportsWorkflowOnlyError
+                  - UpdatePackage_Run_OnCommandLine_ReportsWorkflowOnlyError
 
               - id: SpdxTool-Package-UpdatePackage-MissingSpdxInput
                 title: The update-package command shall report an error when the spdx input is missing.
@@ -36,7 +36,7 @@ sections:
                   The spdx input is required for the command to locate the SPDX document.
                   A clear error prevents silent failures.
                 tests:
-                  - UpdatePackage_MissingSpdxInput_ReportsError
+                  - UpdatePackage_Run_MissingSpdxInput_ReportsError
 
               - id: SpdxTool-Package-UpdatePackage-MissingPackageInput
                 title: The update-package command shall report an error when the package input is missing.
@@ -46,7 +46,7 @@ sections:
                   The package input is required to identify the package to update.
                   A clear error prevents silent failures.
                 tests:
-                  - UpdatePackage_MissingPackageInput_ReportsError
+                  - UpdatePackage_Run_MissingPackageInput_ReportsError
 
               - id: SpdxTool-Package-UpdatePackage-PackageNotFound
                 title: >-
@@ -58,7 +58,7 @@ sections:
                   Attempting to update a non-existent package should fail clearly rather
                   than silently succeed, ensuring SPDX document integrity.
                 tests:
-                  - UpdatePackage_PackageNotFound_ReportsError
+                  - UpdatePackage_Run_PackageNotFound_ReportsError
 
               - id: SpdxTool-Package-UpdatePackage-PartialUpdate
                 title: When only some fields are specified, unspecified fields shall remain unchanged.
@@ -68,4 +68,16 @@ sections:
                   Partial updates allow targeted metadata corrections without overwriting
                   other package attributes, preserving existing document content.
                 tests:
-                  - UpdatePackage_PartialUpdate_PreservesUnspecifiedFields
+                  - UpdatePackage_Run_PartialUpdate_PreservesUnspecifiedFields
+
+              - id: SpdxTool-Package-UpdatePackage-MissingPackageIdInput
+                title: >-
+                  The update-package command shall report an error when the package id input
+                  is absent from the package map.
+                tags:
+                  - spdx
+                justification: |
+                  The package id is required to locate the target package in the SPDX document.
+                  A clear error when it is missing prevents ambiguous or incorrect updates.
+                tests:
+                  - UpdatePackage_Run_MissingPackageIdInput_ReportsError

@@ -23,18 +23,23 @@ using System.Diagnostics;
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
-///     Program runner class
+///     Test helper that launches the SPDX tool as an external process and captures its combined
+///     stdout and stderr output, enabling integration-style tests that verify the full CLI surface.
 /// </summary>
 internal static class Runner
 {
     /// <summary>
-    ///     Run the specified program
+    ///     Run the specified program and capture its combined stdout and stderr output.
     /// </summary>
-    /// <param name="output">Program output</param>
-    /// <param name="program">Program name</param>
-    /// <param name="arguments">Program arguments</param>
-    /// <returns>Program exit code</returns>
-    /// <exception cref="InvalidOperationException">On program start error</exception>
+    /// <param name="output">Combined stdout and stderr output of the process.</param>
+    /// <param name="program">Executable name or path to start.</param>
+    /// <param name="arguments">Command-line arguments passed to the process.</param>
+    /// <returns>The exit code returned by the process.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the process cannot be started.</exception>
+    /// <remarks>
+    ///     Both stdout and stderr are read concurrently before waiting for the process to exit to
+    ///     prevent deadlock when the child process fills either pipe buffer before exiting.
+    /// </remarks>
     public static int Run(out string output, string program, params string[] arguments)
     {
         // Construct the start information

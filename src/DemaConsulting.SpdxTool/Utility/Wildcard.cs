@@ -36,6 +36,12 @@ public static class Wildcard
     /// <summary>
     ///     Convert a wildcard pattern to a regular expression pattern
     /// </summary>
+    /// <remarks>
+    ///     Extracted as a private helper to keep <see cref="IsMatch"/> readable and to isolate the
+    ///     conversion logic for independent review. All regex metacharacters in the wildcard string
+    ///     are escaped before wildcard tokens are substituted, so literal dots, brackets, and
+    ///     parentheses in the pattern match exactly rather than acting as regex operators.
+    /// </remarks>
     /// <param name="wildPattern">Wildcard pattern to convert. Must not be null.</param>
     /// <returns>Anchored regular expression string (prefixed with <c>^</c> and suffixed with <c>$</c>).</returns>
     private static string WildCardToRegex(string wildPattern)
@@ -48,6 +54,12 @@ public static class Wildcard
     /// <summary>
     ///     Check for a wildcard match
     /// </summary>
+    /// <remarks>
+    ///     The match is performed case-insensitively with a 100 ms timeout to prevent
+    ///     catastrophic backtracking on pathological patterns. If the timeout expires,
+    ///     <see langword="false"/> is returned rather than propagating a
+    ///     <see cref="System.Text.RegularExpressions.RegexMatchTimeoutException"/>.
+    /// </remarks>
     /// <param name="input">Input text to test. Must not be null.</param>
     /// <param name="pattern">Wildcard pattern to match against. Must not be null.</param>
     /// <returns>
@@ -57,12 +69,6 @@ public static class Wildcard
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="input"/> or <paramref name="pattern"/> is null.
     /// </exception>
-    /// <remarks>
-    ///     The match is performed case-insensitively with a 100 ms timeout to prevent
-    ///     catastrophic backtracking on pathological patterns. If the timeout expires,
-    ///     <see langword="false"/> is returned rather than propagating a
-    ///     <see cref="System.Text.RegularExpressions.RegexMatchTimeoutException"/>.
-    /// </remarks>
     public static bool IsMatch(string input, string pattern)
     {
         try

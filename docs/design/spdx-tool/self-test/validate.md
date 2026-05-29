@@ -32,7 +32,8 @@ complete, writing "Validation Passed" if Context.Errors is zero.
 - *Returns*: void.
 - *Preconditions*: Context.ValidationFile is non-null and non-empty.
 - *Post-conditions*: A .trx or .xml file has been written; for an unsupported extension an error message
-  is written to the Context and no file is produced.
+  is written to the Context and no file is produced. IO exceptions from the file-write operation
+  (e.g., disk full, invalid path, permission denied) propagate unhandled to the caller as fatal errors.
 
 **RunSpdxTool** (args overload): runs Program in-process with the supplied argument array.
 
@@ -58,7 +59,9 @@ Individual step failures are captured as TestResult entries with TestOutcome.Fai
 the orchestrator; all remaining steps continue to execute. An unsupported extension in
 Context.ValidationFile causes an error message to be written to the Context and no file is produced.
 Exceptions thrown within a step's DoValidate method are caught within that step and manifest as a false
-return value, which is then recorded as a Failed TestResult.
+return value, which is then recorded as a Failed TestResult. IO exceptions from File.WriteAllText in
+WriteResultsFile (e.g., disk full, invalid path, permission denied) propagate unhandled through Run to
+the caller; this is intentional because a file-write failure at this stage is a fatal error.
 
 #### Dependencies
 

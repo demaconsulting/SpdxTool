@@ -9,8 +9,6 @@ internally by AddPackage and CopyPackage.
 
 #### Data Model
 
-N/A — RenameId is a stateless singleton.
-
 **Instance**: `RenameId` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for RenameId.
 
@@ -30,7 +28,7 @@ node and calls Rename(string, string, string).
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
   `Dictionary<string, string> variables` — variable map.
 - *Returns*: `void`
-- *Preconditions*: spdx, old, and new inputs are required.
+- *Preconditions*: spdx, new, and old inputs are required (read in that order).
 - *Post-conditions*: All occurrences of old are replaced with new in the SPDX file.
 
 **Rename(string, string, string)**: Loads the SPDX document, calls
@@ -52,7 +50,8 @@ collections. Skips the operation when oldId == newId. Validates that neither ID 
 - *Preconditions*: oldId and newId must not be empty or equal to "SPDXRef-DOCUMENT". newId must
   not already be used by any package, file, or snippet in doc.
 - *Post-conditions*: All references to oldId in packages, files, snippets, relationships, HasFiles
-  arrays, and Describes are updated to newId.
+  arrays, and Describes are updated to newId. If oldId matches no element in the document, the
+  method returns with no changes applied (silent no-op).
 
 #### Error Handling
 

@@ -143,6 +143,7 @@ reviews:
       - "docs/design/spdx-tool/utility.md"
       - "docs/design/spdx-tool/spdx.md"
       - "docs/verification/spdx-tool/utility.md"
+      - "docs/verification/spdx-tool/spdx/spdx-helpers.md"
       - "docs/verification/spdx-tool/spdx/relationship-direction.md"
       - "src/DemaConsulting.SpdxTool/Utility/**"
       - "src/DemaConsulting.SpdxTool/Spdx/**"

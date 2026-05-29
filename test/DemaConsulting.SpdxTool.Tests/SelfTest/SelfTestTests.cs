@@ -64,7 +64,7 @@ public class SelfTestTests
     ///     Test that Validate.Run generates a TRX result file
     /// </summary>
     [Fact]
-    public void SelfTest_ValidateWithTrxResult_GeneratesTrxFile()
+    public void SelfTest_Validate_WithTrxResult_GeneratesTrxFile()
     {
         var resultFile = Path.Join(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.trx");
 
@@ -92,7 +92,7 @@ public class SelfTestTests
     ///     Test that Validate.Run generates a JUnit XML result file
     /// </summary>
     [Fact]
-    public void SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile()
+    public void SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile()
     {
         var resultFile = Path.Join(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.xml");
 
@@ -120,7 +120,7 @@ public class SelfTestTests
     ///     Test that SpdxTool --validate --result with unsupported extension reports an error
     /// </summary>
     [Fact]
-    public void SpdxTool_SelfTest_ValidateFlagWithResults_UnsupportedExtension_ReportsError()
+    public void SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError()
     {
         // Arrange: no setup required
 

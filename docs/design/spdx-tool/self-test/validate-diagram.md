@@ -26,7 +26,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the output file contains expected content.
 - *Preconditions*: A writable working directory is available.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory and writes an SPDX JSON document containing two packages (Test
 Application and Test Library) connected by a DEPENDS_ON relationship. Calls Validate.RunSpdxTool
@@ -38,7 +39,9 @@ the DEPENDS_ON relationship label.
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the output
 Mermaid file does not exist or does not contain the expected diagram syntax, package names, or
-relationship labels. The temporary directory is always deleted in a finally block.
+relationship labels. The finally block guards the Directory.Delete call with a Directory.Exists check
+to prevent a secondary DirectoryNotFoundException masking the original exception when
+Directory.CreateDirectory fails (e.g., because validate.tmp already exists as a file).
 
 #### Dependencies
 

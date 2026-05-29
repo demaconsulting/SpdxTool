@@ -57,7 +57,11 @@ code zero.
 Returns false if basic validation of the non-compliant document returns a non-zero exit code, if NTIA
 validation of the non-compliant document returns exit code zero, or if the log does not contain the
 expected "Missing Supplier" error text. Returns false if NTIA validation of the compliant document
-returns a non-zero exit code. The temporary directory is always deleted in a finally block.
+returns a non-zero exit code. Any exception thrown by DoValidate propagates uncaught from Run; no
+TestResult is recorded for this step if an exception is thrown — the exception surfaces to the
+Self-Test orchestrator. The finally block guards the Directory.Delete call with a Directory.Exists
+check to prevent a secondary DirectoryNotFoundException masking the original exception when
+Directory.CreateDirectory fails (e.g., because validate.tmp already exists as a file).
 
 #### Dependencies
 

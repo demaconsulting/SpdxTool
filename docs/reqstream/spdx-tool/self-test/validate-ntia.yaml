@@ -16,3 +16,4 @@ sections:
                   documents after installation or deployment.
                 tests:
                   - SpdxTool_Ntia
+                  - ValidateNtia_Run_IoError_PropagatesException

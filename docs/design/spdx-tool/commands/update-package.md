@@ -53,7 +53,9 @@ fields from the YAML map and populates the updates dictionary.
   `Dictionary<string, string> updates` — output updates dictionary.
 - *Returns*: `void`
 - *Preconditions*: None.
-- *Post-conditions*: updates contains only the fields that were present in the map.
+- *Post-conditions*: updates contains recognized fields present in the map; unrecognized keys are
+  also injected with an empty-string value so that `UpdatePackageInSpdxFile` can reject them via
+  its `default` switch branch.
 
 #### Error Handling
 

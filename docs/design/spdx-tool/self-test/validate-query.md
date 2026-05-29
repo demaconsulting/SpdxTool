@@ -26,7 +26,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the log matches the version pattern.
 - *Preconditions*: The dotnet executable must be available on the system PATH.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory and writes a workflow YAML that executes query against dotnet
 --version, extracts the version using a regex pattern into the version variable, and prints it using
@@ -45,8 +46,12 @@ the log file and verifies it matches the VersionRegex pattern (a dotted decimal 
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the log file
 content does not match the VersionRegex pattern. This step requires dotnet to be on the PATH; if
-dotnet is unavailable the RunSpdxTool call will return a non-zero exit code. The temporary directory
-is always deleted in a finally block.
+dotnet is unavailable the RunSpdxTool call will return a non-zero exit code. Any exception thrown by
+DoValidate propagates uncaught from Run; no TestResult is recorded for this step if an exception is
+thrown — the exception surfaces to the Self-Test orchestrator. The finally block guards the
+Directory.Delete call with a Directory.Exists check to prevent a secondary DirectoryNotFoundException
+masking the original exception when Directory.CreateDirectory fails (e.g., because validate.tmp
+already exists as a file).
 
 #### Dependencies
 

@@ -26,7 +26,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: None.
 - *Returns*: `bool` — true if both DoValidateGenerate and DoValidateVerify succeed.
 - *Preconditions*: A writable working directory is available.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 **DoValidateGenerate**: verifies that the hash generate sub-command produces the correct SHA-256 hash.
 
@@ -57,7 +58,9 @@ overwriting the hash file with zeros (expects non-zero exit code).
 Returns false if hash generate returns a non-zero exit code, the hash file is not created, or the
 hash value does not match the expected digest. Returns false if hash verify with the correct hash
 returns a non-zero exit code, or if hash verify with the corrupted hash returns exit code zero. The
-temporary directory is always deleted in a finally block.
+finally block guards the Directory.Delete call with a Directory.Exists check to prevent a secondary
+DirectoryNotFoundException masking the original exception when Directory.CreateDirectory fails
+(e.g., because validate.tmp already exists as a file).
 
 #### Dependencies
 

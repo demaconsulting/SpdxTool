@@ -123,7 +123,14 @@ public static class Validate
     /// <remarks>
     ///     Supports <c>.trx</c> (Visual Studio TRX) and <c>.xml</c> (JUnit XML) output formats.
     ///     For an unsupported extension, an error message is written to the context and no file is produced.
+    ///     IO exceptions from the file-write operation propagate unhandled to the caller as fatal errors.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Thrown when the result file cannot be written (disk full, invalid path, etc.).
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Thrown when the process does not have write permission for the result file path.
+    /// </exception>
     private static void WriteResultsFile(Context context, TestResults.TestResults results)
     {
         var extension = Path.GetExtension(context.ValidationFile).ToLowerInvariant();

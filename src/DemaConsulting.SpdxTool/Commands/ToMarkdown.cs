@@ -29,6 +29,13 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Command to generate a Markdown summary of an SPDX document
 /// </summary>
+/// <remarks>
+///     ToMarkdown is a stateless singleton that implements the to-markdown command. It reads an SPDX
+///     document and writes a Markdown summary grouping packages into Root Packages, Packages, and
+///     Tools sections. Both CLI and workflow YAML invocation paths are supported. This class is
+///     thread-safe for concurrent calls on different files; concurrent calls writing to the same
+///     output file are not recommended.
+/// </remarks>
 public sealed class ToMarkdown : Command
 {
     /// <summary>
@@ -39,11 +46,19 @@ public sealed class ToMarkdown : Command
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that both
+    ///     CLI dispatch and workflow YAML dispatch route to the same instance.
+    /// </remarks>
     public static readonly ToMarkdown Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
         Command,
         "to-markdown <spdx.json> <out.md> [args]",
@@ -138,6 +153,14 @@ public sealed class ToMarkdown : Command
     /// <summary>
     ///     Generate the markdown description for an SPDX document
     /// </summary>
+    /// <remarks>
+    ///     Loads the SPDX document, classifies packages into root packages, dependency packages, and
+    ///     tool packages, then writes a Markdown summary to <paramref name="markdownFile"/>. Root
+    ///     packages are those directly described by the document. Tool packages are identified by
+    ///     BUILD_TOOL_OF, DEV_TOOL_OF, or TEST_TOOL_OF relationships. All remaining packages are
+    ///     rendered in the Packages section. Concluded licence takes priority over declared licence
+    ///     in each row; "NOASSERTION" is used when neither is set.
+    /// </remarks>
     /// <param name="spdxFile">SPDX file</param>
     /// <param name="markdownFile">Markdown file</param>
     /// <param name="title">Markdown title</param>
@@ -255,6 +278,12 @@ public sealed class ToMarkdown : Command
     /// <summary>
     ///     Get a license for a package
     /// </summary>
+    /// <remarks>
+    ///     Concluded licence represents the authoritative determination after analysis; declared
+    ///     licence is the upstream assertion before review. Concluded licence therefore takes
+    ///     priority. "NOASSERTION" is treated as absent for both fields so the fallback chain
+    ///     always produces a meaningful value where one exists.
+    /// </remarks>
     /// <param name="package">SPDX package</param>
     /// <returns>License</returns>
     private static string License(SpdxPackage package)

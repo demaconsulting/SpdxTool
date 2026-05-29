@@ -26,7 +26,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the SPDX document reflects the rename.
 - *Preconditions*: A writable working directory is available.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
+  never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory, writes an SPDX JSON document containing one package with ID
 SPDXRef-Package-1 and a DESCRIBES relationship referencing that ID, and writes a workflow YAML that
@@ -37,8 +38,12 @@ the package ID is now SPDXRef-Package-2 and the relationship's related element h
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
-SPDX document still contains the old ID or if the relationship reference was not updated. The
-temporary directory is always deleted in a finally block.
+SPDX document still contains the old ID or if the relationship reference was not updated. Any
+exception thrown by DoValidate propagates uncaught from Run; no TestResult is recorded for this step
+if an exception is thrown — the exception surfaces to the Self-Test orchestrator. The finally block
+guards the Directory.Delete call with a Directory.Exists check to prevent a secondary
+DirectoryNotFoundException masking the original exception when Directory.CreateDirectory fails
+(e.g., because validate.tmp already exists as a file).
 
 #### Dependencies
 

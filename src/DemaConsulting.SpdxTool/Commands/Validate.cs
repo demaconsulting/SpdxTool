@@ -27,23 +27,37 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Command to validate SPDX documents
 /// </summary>
+/// <remarks>
+///     Stateless sealed singleton registered with <see cref="CommandsRegistry"/> for CLI and YAML
+///     workflow dispatch. Because there is no instance state, the singleton is safe to call from any
+///     thread without synchronization.
+/// </remarks>
 public sealed class Validate : Command
 {
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "validate";
+    private const string CommandName = "validate";
 
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     Consumed by <see cref="CommandsRegistry"/> to dispatch CLI and YAML workflow invocations.
+    ///     Do not create additional instances; use this field exclusively.
+    /// </remarks>
     public static readonly Validate Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     Provides the command name, usage syntax, multi-line help text, and the linked
+    ///     <see cref="Instance"/> to <see cref="CommandsRegistry"/> for both CLI and workflow
+    ///     dispatch and help-text generation.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "validate <spdx.json> [ntia]",
         "Validate SPDX document for issues",
         [

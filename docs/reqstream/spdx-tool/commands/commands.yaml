@@ -16,7 +16,7 @@ sections:
               - SpdxTool-Relationship-AddRelationship
               - SpdxTool-Package-CopyPackage
               - SpdxTool-Transform-Diagram
-              - SpdxTool-Package-FindPackage
+              - SpdxTool-Commands-FindPackage
               - SpdxTool-Commands-GetVersion-RetrievePackageVersion
               - SpdxTool-Hash-Generate
               - SpdxTool-Hash-Verify

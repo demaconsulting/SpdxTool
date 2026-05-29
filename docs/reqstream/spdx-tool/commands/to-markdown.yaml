@@ -15,7 +15,7 @@ sections:
                   documentation, reporting, and review purposes. Markdown is a widely
                   supported format for documentation.
                 tests:
-                  - ToMarkdown_ValidSpdxFile_GeneratesMarkdown
+                  - ToMarkdown_Run_ValidSpdxFile_GeneratesMarkdown
 
               - id: SpdxTool-Transform-ToMarkdown-MissingArguments
                 title: The to-markdown command shall report a usage error when required CLI arguments are missing.
@@ -25,7 +25,7 @@ sections:
                   Missing arguments indicate incorrect invocation. A clear error message
                   guides users to the correct command syntax.
                 tests:
-                  - ToMarkdown_MissingArguments_ReportsError
+                  - ToMarkdown_Run_MissingArguments_ReportsError
 
               - id: SpdxTool-Transform-ToMarkdown-MissingSpdxFile
                 title: The to-markdown command shall report an error when the specified SPDX file does not exist.
@@ -35,7 +35,7 @@ sections:
                   A missing input file cannot be processed. A clear error prevents confusing
                   output or silent failures.
                 tests:
-                  - ToMarkdown_MissingSpdxFile_ReportsError
+                  - ToMarkdown_Run_MissingSpdxFile_ReportsError
 
               - id: SpdxTool-Transform-ToMarkdown-WhitespaceTitle
                 title: The to-markdown command shall reject a title that is empty or contains only whitespace.
@@ -45,7 +45,7 @@ sections:
                   A whitespace-only title produces a meaningless Markdown heading. Rejecting
                   it early provides a clear diagnostic and prevents invalid output.
                 tests:
-                  - ToMarkdown_InvalidTitle_ReportsError
+                  - ToMarkdown_Run_InvalidTitle_ReportsError
 
               - id: SpdxTool-Transform-ToMarkdown-NonPositiveDepth
                 title: The to-markdown command shall reject a depth value that is not a positive integer.
@@ -55,4 +55,4 @@ sections:
                   A non-positive heading depth cannot produce valid Markdown headings.
                   Rejecting it prevents structurally invalid output.
                 tests:
-                  - ToMarkdown_InvalidDepth_ReportsError
+                  - ToMarkdown_Run_InvalidDepth_ReportsError

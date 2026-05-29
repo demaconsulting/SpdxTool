@@ -26,24 +26,72 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateUpdatePackage self-validation unit.
 /// </summary>
+/// <remarks>
+///     These tests exercise the <see cref="ValidateUpdatePackage"/> self-test step.
+///     All tests are part of the <c>SelfTestValidation</c> collection to serialize
+///     self-test execution and prevent working-directory conflicts between steps.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateUpdatePackageTests
 {
     /// <summary>
     ///     Test that ValidateUpdatePackage validation passes.
     /// </summary>
+    /// <remarks>
+    ///     The test method name <c>SpdxTool_UpdatePackage</c> intentionally matches the
+    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateUpdatePackage.Run"/> so that
+    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
+    ///     naming convention is appropriate for self-test integration tests.
+    /// </remarks>
     [Fact]
     public void SpdxTool_UpdatePackage()
     {
-        // Arrange
+        // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the update-package self-test step
         ValidateUpdatePackage.Run(context, results);
 
-        // Assert
+        // Assert: single passing result recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+    }
+
+    /// <summary>
+    ///     Test that ValidateUpdatePackage.Run propagates an I/O exception when the working
+    ///     directory prevents validate.tmp from being used correctly.
+    /// </summary>
+    /// <remarks>
+    ///     This exercises the failure path of Run() as documented in the design: exceptions
+    ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </remarks>
+    [Fact]
+    public void ValidateUpdatePackage_Run_IoError_PropagatesException()
+    {
+        // Arrange: save original directory and change to a temp directory where validate.tmp
+        // is pre-created as a file, blocking Directory.CreateDirectory("validate.tmp")
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Create validate.tmp as a FILE (not a directory) to block DoValidate
+            File.WriteAllText("validate.tmp", "blocking file");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act + Assert: Run() propagates the IOException — no TestResult is recorded
+            Assert.Throws<IOException>(() => ValidateUpdatePackage.Run(context, results));
+            Assert.Empty(results.Results);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 }

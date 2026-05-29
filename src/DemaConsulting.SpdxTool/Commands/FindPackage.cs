@@ -29,6 +29,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Find the ID of a package in an SPDX file
 /// </summary>
+/// <remarks>
+///     Implemented as a singleton — <see cref="Instance"/> and <see cref="Entry"/> are
+///     registered once with <see cref="CommandsRegistry"/> at startup. The class carries no
+///     mutable instance state; all instance methods delegate to static helpers. Stateless
+///     and thread-safe.
+/// </remarks>
 public sealed class FindPackage : Command
 {
     /// <summary>
@@ -130,6 +136,13 @@ public sealed class FindPackage : Command
     /// <summary>
     ///     Parse the package criteria from the arguments
     /// </summary>
+    /// <remarks>
+    ///     Splits each CLI argument on the first '=' character to produce a key/value entry in
+    ///     <paramref name="criteria"/>. Duplicates are silently overwritten (last writer wins).
+    ///     Called by <see cref="Run(Context,string[])"/> before delegating to
+    ///     <see cref="FindPackageByCriteria"/>. Stateless and thread-safe provided callers do
+    ///     not share the same <paramref name="criteria"/> dictionary concurrently.
+    /// </remarks>
     /// <param name="args">Arguments</param>
     /// <param name="criteria">Criteria dictionary to populate</param>
     /// <exception cref="CommandUsageException">on error</exception>
@@ -154,6 +167,13 @@ public sealed class FindPackage : Command
     /// <summary>
     ///     Read the package criteria from the inputs
     /// </summary>
+    /// <remarks>
+    ///     Extracts the optional <c>id</c>, <c>name</c>, <c>version</c>, <c>filename</c>, and
+    ///     <c>download</c> keys from the YAML inputs map, expanding any variable references before
+    ///     storing them. Missing keys are silently skipped so the caller receives only the criteria
+    ///     the workflow author actually specified. Stateless and thread-safe provided callers do not
+    ///     share the same <paramref name="criteria"/> dictionary concurrently.
+    /// </remarks>
     /// <param name="map">Criteria map</param>
     /// <param name="variables">Currently defined variables</param>
     /// <param name="criteria">Criteria dictionary to populate</param>
@@ -201,6 +221,13 @@ public sealed class FindPackage : Command
     /// <summary>
     ///     Find the package in the SPDX document matching the specified criteria
     /// </summary>
+    /// <remarks>
+    ///     Loads the document fresh from disk on every call — no caching — so the result always
+    ///     reflects the file's current state. Exactly one match is required; zero or multiple
+    ///     matches are both treated as errors to prevent ambiguous results from silently
+    ///     succeeding. Delegates per-package evaluation to <see cref="IsPackageMatch"/>.
+    ///     Thread-safe; does not mutate any shared state.
+    /// </remarks>
     /// <param name="spdxFile">SPDX document filename</param>
     /// <param name="criteria">Search criteria</param>
     /// <returns>The unique SPDX package matching all supplied criteria.</returns>
@@ -225,6 +252,12 @@ public sealed class FindPackage : Command
     /// <summary>
     ///     Test if the package matches the given criteria
     /// </summary>
+    /// <remarks>
+    ///     Evaluates each criterion in <paramref name="criteria"/> using
+    ///     <see cref="Wildcard.IsMatch"/> so callers can use glob-style patterns. A criterion
+    ///     for an optional SPDX field (version, filename) that is absent from the package
+    ///     counts as a non-match. Pure function; no side effects. Stateless and thread-safe.
+    /// </remarks>
     /// <param name="package">Package to match</param>
     /// <param name="criteria">Criteria</param>
     /// <returns><see langword="true"/> if the package matches all supplied criteria; <see langword="false"/> otherwise.</returns>

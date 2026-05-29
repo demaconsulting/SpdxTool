@@ -19,7 +19,8 @@ Help maintains two static members and carries no per-invocation state.
 
 - *Parameters*: `Context context` — execution context; `string[] args` — [commandName].
 - *Returns*: `void`
-- *Preconditions*: args must contain exactly one element; zero or more than one argument triggers a CommandUsageException.
+- *Preconditions*: args must contain exactly one element; zero or more than one argument triggers a
+  CommandUsageException.
 - *Post-conditions*: The named command's detailed usage text is written to context.
 
 **Run(Context, YamlMappingNode, Dictionary)**: Reads the about input from the YAML step node and

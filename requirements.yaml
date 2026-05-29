@@ -41,6 +41,7 @@ includes:
   - docs/reqstream/spdx-tool/commands/to-markdown.yaml
   - docs/reqstream/spdx-tool/commands/update-package.yaml
   - docs/reqstream/spdx-tool/commands/validate.yaml
+  - docs/reqstream/spdx-tool/spdx/spdx.yaml
   - docs/reqstream/spdx-tool/spdx/relationship-direction.yaml
   - docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml
   - docs/reqstream/spdx-tool/utility/utility.yaml

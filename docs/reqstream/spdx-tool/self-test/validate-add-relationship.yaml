@@ -15,3 +15,4 @@ sections:
                   relationships between SPDX elements after installation or deployment.
                 tests:
                   - SpdxTool_AddRelationship
+                  - ValidateAddRelationship_Run_IoError_PropagatesException

@@ -79,6 +79,9 @@ integer.
 **CommandUsageException** — propagated from SpdxHelpers.LoadJsonDocument when the specified SPDX
 input file does not exist on disk.
 
+**System.IO.IOException** — propagated from File.WriteAllText in GenerateSummaryMarkdown when the
+output Markdown file cannot be written.
+
 #### Dependencies
 
 - Command (abstract base class)
