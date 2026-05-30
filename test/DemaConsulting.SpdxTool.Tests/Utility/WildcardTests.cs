@@ -111,6 +111,7 @@ public class WildcardTests
     [Fact]
     public void Wildcard_IsMatch_NullInput_ThrowsArgumentNullException()
     {
+        // Arrange: no setup required
         // Act / Assert: null input argument causes ArgumentNullException
         Assert.Throws<ArgumentNullException>(() => Wildcard.IsMatch(null!, "pattern"));
     }
@@ -125,6 +126,7 @@ public class WildcardTests
     [Fact]
     public void Wildcard_IsMatch_NullPattern_ThrowsArgumentNullException()
     {
+        // Arrange: no setup required
         // Act / Assert: null pattern argument causes ArgumentNullException
         Assert.Throws<ArgumentNullException>(() => Wildcard.IsMatch("input", null!));
     }
