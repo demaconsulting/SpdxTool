@@ -31,7 +31,9 @@ calls ShowUsage.
   `Dictionary<string, string> variables` — variable map.
 - *Returns*: `void`
 - *Preconditions*: about input is required.
-- *Post-conditions*: The named command's detailed usage text is written to context.
+- *Post-conditions*: The named command's detailed usage text is written to context. Workflow
+  variable references in the `about` value are expanded using the `variables` dictionary before
+  the resolved name is passed to `ShowUsage`.
 
 **ShowUsage(Context, string)**: Looks up the command entry in CommandsRegistry.Commands and writes
 each line of entry.Details to context.

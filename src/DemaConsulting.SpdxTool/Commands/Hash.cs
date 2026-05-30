@@ -83,6 +83,10 @@ public sealed class Hash : Command
     /// <summary>
     ///     Runs the hash command from the CLI.
     /// </summary>
+    /// <remarks>
+    ///     This overload is the command-line entry point; it validates the argument count before
+    ///     delegating to <see cref="DoHashOperation"/>.
+    /// </remarks>
     /// <param name="context">Program context used for output.</param>
     /// <param name="args">Command-line arguments; must contain exactly three elements: operation, algorithm, and file path.</param>
     /// <exception cref="CommandUsageException">Thrown when the argument count is not exactly three, the algorithm is unsupported, or the operation is unrecognized.</exception>
@@ -105,6 +109,10 @@ public sealed class Hash : Command
     /// <summary>
     ///     Runs the hash command from a YAML workflow step.
     /// </summary>
+    /// <remarks>
+    ///     This overload is the workflow entry point; it extracts <c>operation</c>, <c>algorithm</c>,
+    ///     and <c>file</c> inputs from the YAML node before delegating to <see cref="DoHashOperation"/>.
+    /// </remarks>
     /// <param name="context">Program context used for output.</param>
     /// <param name="step">YAML step node containing the inputs.</param>
     /// <param name="variables">Workflow variable map for input expansion.</param>

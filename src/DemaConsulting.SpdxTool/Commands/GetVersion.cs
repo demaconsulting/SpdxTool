@@ -31,7 +31,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 ///     CLI mode matches a package by caller-supplied criteria and writes the version string to standard output.
 ///     Workflow mode stores the version in a named variable for use in downstream steps. The command delegates
 ///     package lookup to <see cref="FindPackage"/> so all supported criteria are handled uniformly.
-///     Thread-safe: all public methods are static and operate only on method-local state.
+///     Thread-safe: all public methods are stateless and operate only on method-local state.
 /// </remarks>
 public sealed class GetVersion : Command
 {

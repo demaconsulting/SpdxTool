@@ -129,4 +129,124 @@ public class PrintTests
             File.Delete(workflowFile);
         }
     }
+
+    /// <summary>
+    ///     Test that print command in workflow reports an error when a text line references an undefined variable
+    /// </summary>
+    [Fact]
+    public void Print_Run_UndefinedVariable_ReportsError()
+    {
+        // Workflow contents — references a variable that is not defined
+        const string workflowContents =
+            """
+            steps:
+            - command: print
+              inputs:
+                text:
+                - ${{ unknown_var }}
+            """;
+
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: Verify non-zero exit code and error message
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Undefined variable unknown_var", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
+    ///     Test that print command in workflow reports an error when a text line contains an empty variable name
+    /// </summary>
+    [Fact]
+    public void Print_Run_EmptyVariableName_ReportsError()
+    {
+        // Workflow contents — macro delimiter encloses only whitespace
+        const string workflowContents =
+            """
+            steps:
+            - command: print
+              inputs:
+                text:
+                - "${{  }}"
+            """;
+
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: Verify non-zero exit code and error message
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Empty variable name in macro expansion", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
+    ///     Test that print command in workflow reports an error when a text line contains an unmatched macro delimiter
+    /// </summary>
+    [Fact]
+    public void Print_Run_UnmatchedMacroDelimiter_ReportsError()
+    {
+        // Workflow contents — macro start "${{" has no matching "}}"
+        const string workflowContents =
+            """
+            steps:
+            - command: print
+              inputs:
+                text:
+                - "${{ unclosed"
+            """;
+
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: Verify non-zero exit code and error message
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Unmatched '${{' in variable expansion", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
 }

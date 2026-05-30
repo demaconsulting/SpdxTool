@@ -33,6 +33,8 @@ This scenario is tested by `GetVersion_Run_InWorkflow_ReturnsPackageVersion`.
 **PackageNotFound**: the unit reports an error when no package in the SPDX document matches the
 supplied criteria. This scenario is tested by `GetVersion_Run_PackageNotFound_ReportsError`.
 
-**MissingWorkflowInputs**: the unit reports an error when a required workflow input (`spdx` or
-`output`) is absent from the step. This scenario is tested by
-`GetVersion_Run_MissingWorkflowInputs_ReportsError`.
+**MissingWorkflowSpdx**: the unit reports an error when the required workflow input `spdx` is absent
+from the step. This scenario is tested by `GetVersion_Run_MissingWorkflowInputs_ReportsError`.
+
+**MissingWorkflowOutput**: the unit reports an error when the required workflow input `output` is
+absent from the step. This scenario is tested by `GetVersion_Run_MissingWorkflowOutput_ReportsError`.

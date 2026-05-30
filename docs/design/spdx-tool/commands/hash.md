@@ -26,7 +26,7 @@ DoHashOperation.
 - *Preconditions*: args.Length must be exactly 3.
 - *Post-conditions*: The hash operation is performed.
 
-**Run(Context, YamlMappingNode, Dictionary)**: Parses operation, algorithm, and file inputs from
+**Run(Context, YamlMappingNode, Dictionary&lt;string, string&gt;)**: Parses operation, algorithm, and file inputs from
 the YAML step node and calls DoHashOperation.
 
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;

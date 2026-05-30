@@ -190,6 +190,45 @@ public class GetVersionTests
     }
 
     /// <summary>
+    ///     Test that get-version command in a workflow step reports an error when the required 'output' input is absent
+    /// </summary>
+    [Fact]
+    public void GetVersion_Run_MissingWorkflowOutput_ReportsError()
+    {
+        // Arrange: workflow step has 'spdx' but omits the required 'output' input
+        const string workflowContents =
+            """
+            steps:
+            - command: get-version
+              inputs:
+                spdx: some.spdx.json
+            """;
+
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: write the workflow file
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: error reported for the specific missing 'output' input
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'get-version' command missing 'output' input", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
     ///     Test that get-version command in a workflow step reports an error when required inputs are absent
     /// </summary>
     [Fact]

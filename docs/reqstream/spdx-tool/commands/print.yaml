@@ -49,3 +49,30 @@ sections:
                   printed output, enabling dynamic status messages and diagnostic information.
                 tests:
                   - Print_Run_InWorkflow_PrintsText
+
+              - id: SpdxTool-Commands-Print-UndefinedVariable
+                title: >-
+                  The print command shall report an error when a text line contains a reference
+                  to an undefined variable.
+                tags:
+                  - workflow
+                justification: |
+                  Referencing an undefined variable is a workflow authoring error; a clear error
+                  message allows authors to identify and correct the missing variable without
+                  reading internal stack traces.
+                tests:
+                  - Print_Run_UndefinedVariable_ReportsError
+
+              - id: SpdxTool-Commands-Print-MalformedExpansion
+                title: >-
+                  The print command shall report an error when a text line contains an unmatched
+                  macro delimiter or an empty variable name.
+                tags:
+                  - workflow
+                justification: |
+                  Malformed macro syntax is a workflow authoring error; a clear error message
+                  allows authors to identify and correct the problem without reading internal
+                  stack traces.
+                tests:
+                  - Print_Run_EmptyVariableName_ReportsError
+                  - Print_Run_UnmatchedMacroDelimiter_ReportsError

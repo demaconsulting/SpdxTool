@@ -45,6 +45,11 @@ public sealed class Query : Command
     private const string Command = "query";
 
     /// <summary>
+    ///     Timeout in milliseconds for each regular expression match, guarding against catastrophic backtracking
+    /// </summary>
+    private const int RegexMatchTimeoutMs = 100;
+
+    /// <summary>
     ///     Singleton instance of this command
     /// </summary>
     public static readonly Query Instance = new();
@@ -184,7 +189,7 @@ public sealed class Query : Command
         Regex regex;
         try
         {
-            regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+            regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(RegexMatchTimeoutMs));
         }
         catch (RegexParseException ex)
         {
