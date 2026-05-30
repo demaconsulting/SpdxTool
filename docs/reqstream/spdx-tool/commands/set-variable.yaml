@@ -49,3 +49,29 @@ sections:
                   absence early prevents silent no-ops or corrupted variable state.
                 tests:
                   - SetVariable_Run_MissingOutput_ThrowsException
+
+              - id: SpdxTool-Commands-SetVariable-ValueExpansion
+                title: >-
+                  The set-variable command shall apply workflow variable expansion to the
+                  value input before assigning it to the output variable.
+                tags:
+                  - workflow
+                justification: |
+                  Variable expansion in the value input allows steps to compose dynamic
+                  strings from previously computed workflow values, which is essential for
+                  parameterized workflows.
+                tests:
+                  - SetVariable_Run_InWorkflow_SetsVariable
+
+              - id: SpdxTool-Commands-SetVariable-LiteralOutput
+                title: >-
+                  The set-variable command shall treat the output input as a literal variable
+                  name without applying workflow variable expansion.
+                tags:
+                  - workflow
+                justification: |
+                  Storing the output key literally ensures that the target variable name is
+                  always predictable and unambiguous, preventing accidental double-expansion
+                  when the output name itself contains template syntax.
+                tests:
+                  - SetVariable_Run_OutputWithVariableSyntax_StoredLiterally

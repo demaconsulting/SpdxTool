@@ -30,3 +30,7 @@ workflow step. This scenario is tested by `SetVariable_Run_MissingValue_ThrowsEx
 
 **MissingOutputInput**: the unit throws a YAML exception when the output input is absent from the
 workflow step. This scenario is tested by `SetVariable_Run_MissingOutput_ThrowsException`.
+
+**LiteralOutput**: the unit stores the expanded value under the literal output key string without
+applying workflow variable expansion to the output key itself. This scenario is tested by
+`SetVariable_Run_OutputWithVariableSyntax_StoredLiterally`.

@@ -19,6 +19,7 @@ sections:
                   - RunWorkflow_Run_WithDefaultParameters_UsesDefaults
                   - RunWorkflow_Run_WithSpecifiedParameters_UsesSpecified
                   - RunWorkflow_Run_WithOutputs_PopulatesOutputs
+                  - RunWorkflow_Run_WithMissingOutput_ReportsError
                   - RunWorkflow_Run_UrlWorkflow_ExecutesWorkflow
 
               - id: SpdxTool-Commands-RunWorkflow-NuGetWorkflow

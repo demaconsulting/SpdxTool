@@ -239,6 +239,13 @@ public sealed class RunWorkflow : Command
     /// <summary>
     ///     Execute the workflow
     /// </summary>
+    /// <remarks>
+    ///     Throws <see cref="YamlDotNet.Core.YamlException"/> (rather than
+    ///     <see cref="CommandErrorException"/>) for source-specification validation errors (both
+    ///     <c>file</c> and <c>url</c> specified, or neither) because these represent structural
+    ///     workflow configuration errors rather than runtime command failures. This is consistent
+    ///     with how other YAML-dispatch methods signal misconfigured step inputs.
+    /// </remarks>
     /// <param name="context">Program context</param>
     /// <param name="step">Step for reporting errors</param>
     /// <param name="file">
@@ -492,6 +499,12 @@ public sealed class RunWorkflow : Command
     /// <summary>
     ///     Resolve a workflow file path from a NuGet package
     /// </summary>
+    /// <remarks>
+    ///     Uses <see cref="Utility.PathHelpers.SafePathCombine"/> deliberately to prevent
+    ///     path-traversal attacks; the resolved path is always constrained to a subdirectory of
+    ///     the base directory. This mirrors the security rationale documented in the design
+    ///     documentation.
+    /// </remarks>
     /// <param name="step">Step for reporting errors</param>
     /// <param name="nuget">NuGet package specification (PackageName:version)</param>
     /// <param name="file">File path within the NuGet package</param>

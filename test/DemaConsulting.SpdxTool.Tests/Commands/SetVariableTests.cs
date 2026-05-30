@@ -101,4 +101,28 @@ public class SetVariableTests
         // Act / Assert: absent output input must produce a YamlException
         Assert.Throws<YamlException>(() => SetVariable.Instance.Run(context, step, variables));
     }
+
+    /// <summary>
+    ///     Test that set-variable command stores the output key as the literal YAML string
+    ///     without applying workflow variable expansion to it
+    /// </summary>
+    [Fact]
+    public void SetVariable_Run_OutputWithVariableSyntax_StoredLiterally()
+    {
+        // Arrange: context, variable map with some_var defined, and a step whose output key
+        //          contains ${{ }} syntax that would resolve if expansion were applied
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string> { ["some_var"] = "expanded_key" };
+        var inputs = new YamlMappingNode();
+        inputs.Add("output", "${{ some_var }}");
+        inputs.Add("value", "test_value");
+        var step = new YamlMappingNode();
+        step.Add("inputs", inputs);
+
+        // Act: run the command directly
+        SetVariable.Instance.Run(context, step, variables);
+
+        // Assert: the literal key "${{ some_var }}" was used, not the expanded "expanded_key"
+        Assert.Equal("test_value", variables["${{ some_var }}"]);
+    }
 }

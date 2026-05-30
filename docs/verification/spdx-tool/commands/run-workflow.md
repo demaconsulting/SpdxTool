@@ -48,6 +48,10 @@ not provided. This scenario is tested by `RunWorkflow_Run_WithDefaultParameters_
 **OutputExtraction**: the unit exposes requested workflow outputs after execution. This scenario is
 tested by `RunWorkflow_Run_WithOutputs_PopulatesOutputs`.
 
+**MissingOutputError**: the unit reports an error when the outputs mapping requests a variable key
+that the sub-workflow did not produce. This scenario is tested by
+`RunWorkflow_Run_WithMissingOutput_ReportsError`.
+
 **IntegrityAccepted**: the unit executes a workflow whose SHA-256 hash matches the expected integrity
 value. This scenario is tested by `RunWorkflow_Run_WithValidIntegrity_ExecutesWorkflow`.
 

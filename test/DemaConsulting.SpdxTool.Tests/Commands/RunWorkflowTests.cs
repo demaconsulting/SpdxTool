@@ -667,6 +667,54 @@ output);
     }
 
     /// <summary>
+    ///     Test that run-workflow command with an outputs mapping referencing a missing
+    ///     sub-workflow variable reports an error
+    /// </summary>
+    [Fact]
+    public void RunWorkflow_Run_WithMissingOutput_ReportsError()
+    {
+        const string workflow2 =
+            "steps:\n" +
+            "- command: set-variable\n" +
+            "  inputs:\n" +
+            "    value: some-value\n" +
+            "    output: out\n";
+
+        const string workflow1 =
+            "steps:\n" +
+            "- command: run-workflow\n" +
+            "  inputs:\n" +
+            "    file: workflow2.yaml\n" +
+            "    outputs:\n" +
+            "      missing-output: out-var\n";
+
+        try
+        {
+            // Arrange: Write the workflow files
+            File.WriteAllText("workflow1.yaml", workflow1);
+            File.WriteAllText("workflow2.yaml", workflow2);
+
+            // Act: Run the outer workflow requesting an output the sub-workflow never produces
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow1.yaml");
+
+            // Assert: Verify error reported for missing output
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Workflow did not produce missing-output output", output);
+        }
+        finally
+        {
+            // Delete the files
+            File.Delete("workflow1.yaml");
+            File.Delete("workflow2.yaml");
+        }
+    }
+
+    /// <summary>
     ///     Test that run-workflow command prints the displayName label before a step executes
     /// </summary>
     [Fact]
