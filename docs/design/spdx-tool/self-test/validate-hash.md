@@ -52,7 +52,9 @@ corrupted one.
 - *Returns*: `bool` — true if verification with the correct hash returns exit code zero and
   verification with a corrupted hash returns a non-zero exit code.
 - *Preconditions*: validate.tmp and test-file.txt.sha256 exist from DoValidateGenerate.
-- *Post-conditions*: The hash file has been overwritten with an invalid value.
+- *Post-conditions*: If the first verification call succeeds (exit code zero), the hash file is
+  subsequently overwritten with all-zero digits to test rejection. If the first call fails, the hash
+  file is not overwritten and the method returns false immediately.
 
 Calls Validate.RunSpdxTool twice: first with the correct hash (expects exit code zero), then after
 overwriting the hash file with zeros (expects non-zero exit code).
