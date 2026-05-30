@@ -17,15 +17,16 @@ Validate holds no mutable state; it is a stateless singleton.
 #### Key Methods
 
 **Run(Context, string[])**: Parses spdxFile from CLI arguments. Detects the "ntia" flag (case-sensitive
-exact match of the literal string "ntia") in any subsequent argument. Calls DoValidate.
+exact match of the literal string "ntia") by scanning all arguments after args[0] — the flag may
+appear at any position after the SPDX file path. Calls DoValidate.
 
-- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, optional
-  "ntia"].
+- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, ...optional
+  flags including "ntia" at any position].
 - *Returns*: `void`
 - *Preconditions*: args.Length must be at least 1.
 - *Post-conditions*: The document is validated; issues are reported via context.WriteWarning.
 
-**Run(Context, YamlMappingNode, Dictionary)**: Reads spdx and ntia inputs from the YAML step node
+**Run(Context, YamlMappingNode, Dictionary<string, string>)**: Reads spdx and ntia inputs from the YAML step node
 and calls DoValidate. The ntia input is evaluated case-insensitively via ToLowerInvariant(), so
 "true", "True", and "TRUE" all enable NTIA checking.
 
@@ -37,7 +38,8 @@ and calls DoValidate. The ntia input is evaluated case-insensitively via ToLower
 
 **DoValidate(Context, string, bool)**: Loads the SPDX document, calls doc.Validate to collect
 issues, writes each issue as a warning to context, writes a blank line to separate the warning list
-from the error summary, and throws CommandErrorException if any issues were found.
+from the error summary, and throws CommandErrorException if any issues were found. Callable directly
+by external callers (e.g., self-test) without going through the CLI or workflow dispatch paths.
 
 - *Parameters*: `Context context` — execution context; `string spdxFile` — SPDX JSON file path;
   `bool ntia` — whether to apply NTIA minimum-elements checking.

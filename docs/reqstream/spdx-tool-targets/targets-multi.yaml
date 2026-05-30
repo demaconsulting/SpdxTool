@@ -3,7 +3,7 @@
 sections:
   - title: SpdxToolTargets Requirements
     sections:
-      - title: Multi-TFM Target Requirements
+      - title: TargetsMulti Requirements
         requirements:
           - id: SpdxToolTargets-MultiTfm-DecorateWhenEnabled
             title: The targets shall decorate the SBOM for a multi-TFM project when DecorateSBOM is true.

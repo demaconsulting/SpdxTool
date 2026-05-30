@@ -6,7 +6,7 @@ sections:
         sections:
           - title: RenameId Requirements
             requirements:
-              - id: SpdxTool-Manage-RenameId
+              - id: SpdxTool-Commands-RenameId
                 title: The tool shall rename SPDX element IDs using the rename-id command.
                 tags:
                   - spdx
@@ -16,3 +16,51 @@ sections:
                   integrity.
                 tests:
                   - RenameId_Run_ValidSpdxFile_RenamesId
+
+              - id: SpdxTool-Commands-RenameId-MissingArguments
+                title: The rename-id command shall report a usage error when required CLI arguments are missing.
+                tags:
+                  - spdx
+                justification: |
+                  Missing arguments indicate incorrect invocation. A clear error message
+                  guides users to the correct command syntax.
+                tests:
+                  - RenameId_Run_MissingArguments_ReportsError
+
+              - id: SpdxTool-Commands-RenameId-MissingFile
+                title: The rename-id command shall report an error when the specified SPDX file does not exist.
+                tags:
+                  - spdx
+                justification: |
+                  A missing input file cannot be processed. A clear error prevents confusing
+                  output or silent failures.
+                tests:
+                  - RenameId_Run_MissingFile_ReportsError
+
+              - id: SpdxTool-Commands-RenameId-WorkflowInvocation
+                title: >-
+                  The rename-id command shall be invocable from a workflow YAML step
+                  using the spdx, old, and new inputs.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow YAML invocation is required so that users can embed rename-id as
+                  part of multi-step automated workflows, which is the primary use-case for
+                  scripted SPDX document manipulation.
+                tests:
+                  - RenameId_Run_WorkflowInvocation_RenamesId
+
+              - id: SpdxTool-Commands-RenameId-AllCollectionsRename
+                title: >-
+                  The rename-id command shall update all element collections when renaming an ID,
+                  including file IDs, snippet SnippetFromFile references, package HasFiles arrays,
+                  relationship from-element IDs, relationship to-element IDs
+                  (RelatedSpdxElement), and the document Describes array.
+                tags:
+                  - spdx
+                justification: |
+                  SPDX element IDs are referenced across multiple collections in a document.
+                  Renaming only some of those references would produce an inconsistent document
+                  that fails validation and causes downstream tooling errors.
+                tests:
+                  - RenameId_Run_ValidSpdxFile_RenamesAllCollections

@@ -1,4 +1,4 @@
-﻿### ValidateBasic
+### ValidateBasic
 
 #### Purpose
 
@@ -53,7 +53,8 @@ verifies that the log file references the validation issue.
 
 #### Error Handling
 
-Returns false if DoValidateValid returns a non-zero exit code. Returns false if DoValidateInvalid
+Returns false if `DoValidateValid` returns false (i.e., when the underlying `RunSpdxTool` call returns
+a non-zero exit code). Returns false if DoValidateInvalid
 returns exit code zero (validation unexpectedly passed) or if the log file does not contain expected
 error text. The temporary directory is always deleted in a finally block.
 

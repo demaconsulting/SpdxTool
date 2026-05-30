@@ -14,32 +14,31 @@ sections:
             children:
               - SpdxTool-Package-AddPackage
               - SpdxTool-Relationship-AddRelationship
-              - SpdxTool-Package-CopyPackage
+              - SpdxTool-Commands-CopyPackage
               - SpdxTool-Transform-Diagram
               - SpdxTool-Commands-FindPackage
               - SpdxTool-Commands-GetVersion-RetrievePackageVersion
-              - SpdxTool-Hash-Generate
-              - SpdxTool-Hash-Verify
-              - SpdxTool-Hash-MissingArguments
-              - SpdxTool-Hash-MissingFile
-              - SpdxTool-Hash-UnsupportedAlgorithm
-              - SpdxTool-Hash-InvalidOperation
-              - SpdxTool-Hash-MissingSidecarFile
-              - SpdxTool-Command-HelpCommand
-              - SpdxTool-Workflow-Print
-              - SpdxTool-Workflow-Query
-              - SpdxTool-Manage-RenameId
-              - SpdxTool-Workflow-RunWorkflow
-              - SpdxTool-Workflow-NuGetWorkflow
-              - SpdxTool-Workflow-SetVariable
-              - SpdxTool-Transform-ToMarkdown
-              - SpdxTool-Package-UpdatePackage
-              - SpdxTool-Validate-Validate
-              - SpdxTool-Validate-NtiaMinimum
+              - SpdxTool-Commands-Hash-Generate
+              - SpdxTool-Commands-Hash-Verify
+              - SpdxTool-Commands-Hash-MissingArguments
+              - SpdxTool-Commands-Hash-MissingFile
+              - SpdxTool-Commands-Hash-UnsupportedAlgorithm
+              - SpdxTool-Commands-Hash-InvalidOperation
+              - SpdxTool-Commands-Hash-MissingSidecarFile
+              - SpdxTool-Commands-Help-DisplayHelp
+              - SpdxTool-Commands-Print-WorkflowOutput
+              - SpdxTool-Commands-Query-ExternalProgramQuery
+              - SpdxTool-Commands-RenameId
+              - SpdxTool-Commands-RunWorkflow
+              - SpdxTool-Commands-RunWorkflow-NuGetWorkflow
+              - SpdxTool-Commands-SetVariable
+              - SpdxTool-Commands-ToMarkdown
+              - SpdxTool-Commands-UpdatePackage
+              - SpdxTool-Commands-Validate-Validate
+              - SpdxTool-Commands-Validate-NtiaMinimum
             tests:
-              - Command_Expand_NoVariables_ReturnsOriginal
               - Commands_Dispatch_UnknownCommand_ReportsError
-              - CommandsRegistry_Commands_ContainsAllRegisteredCommands
+              - CommandsRegistry_Commands_AllExpectedNames_ArePresent
 
           - id: SpdxTool-Commands-Dispatch
             title: The Commands subsystem shall dispatch commands by name to their implementations.
@@ -50,6 +49,7 @@ sections:
               command is not found.
             tests:
               - Commands_Dispatch_UnknownCommand_ReportsError
+              - CommandsRegistry_Commands_KnownCommandName_ResolvesEntry
 
           - id: SpdxTool-Commands-VariableExpansion
             title: The Commands subsystem shall expand variables in command arguments using ${{ variable }} syntax.

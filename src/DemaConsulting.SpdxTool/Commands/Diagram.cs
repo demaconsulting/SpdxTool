@@ -34,7 +34,7 @@ public sealed class Diagram : Command
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "diagram";
+    private const string CommandName = "diagram";
 
     /// <summary>
     ///     Singleton instance of this command
@@ -45,7 +45,7 @@ public sealed class Diagram : Command
     ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "diagram <spdx.json> <mermaid.txt> [tools]",
         "Generate mermaid diagram.",
         [
@@ -67,6 +67,7 @@ public sealed class Diagram : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are provided, or when an unrecognized option token is encountered.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 2
@@ -91,6 +92,7 @@ public sealed class Diagram : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="YamlException">Thrown when the spdx or mermaid inputs are absent from the workflow step, or when the tools input cannot be parsed as a boolean.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -178,7 +180,9 @@ public sealed class Diagram : Command
 
             // Write the relationship to the diagram
             var type = relationship.RelationshipType.ToText();
-            diagram.AppendLine($"  \"{from.Name} / {from.Version}\" ||--|| \"{to.Name} / {to.Version}\" : \"{type}\"");
+            var fromVersion = from.Version ?? "unspecified";
+            var toVersion = to.Version ?? "unspecified";
+            diagram.AppendLine($"  \"{from.Name} / {fromVersion}\" ||--|| \"{to.Name} / {toVersion}\" : \"{type}\"");
         }
 
         // Write the diagram to the file

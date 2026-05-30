@@ -26,6 +26,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Command to display extended help about a command
 /// </summary>
+/// <remarks>
+///     Delegates to <see cref="ShowUsage"/> for both CLI and workflow invocations. The CLI overload requires
+///     exactly one argument (the target command name); the workflow overload reads the command name from the
+///     <c>about</c> input. Both paths throw on an unknown command so callers receive a clear error message.
+///     Thread-safe: all public methods are static and operate only on method-local state.
+/// </remarks>
 public sealed class Help : Command
 {
     /// <summary>

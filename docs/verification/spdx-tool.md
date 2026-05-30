@@ -27,13 +27,18 @@ requested format.
 ## Test Scenarios
 
 **VersionReporting**: the tool reports its build version through the program entry point. This
-scenario is tested by `SpdxTool_Program_Run_VersionContext_WritesVersion`.
+scenario is tested by `SpdxTool_Program_Run_VersionContext_WritesVersion` (unit test that calls
+Program.Run directly with a version context) and by `SpdxTool_Version_ShortFlag_DisplaysVersion`
+and `SpdxTool_Version_LongFlag_DisplaysVersion` (integration tests that invoke the full tool).
 
 **HelpAndUsage**: the tool prints command-line usage for help requests. This scenario is tested by
-`SpdxTool_Program_Run_HelpContext_WritesUsage`.
+`SpdxTool_Program_Run_HelpContext_WritesUsage` (unit test) and by
+`SpdxTool_Usage_ShortHelpFlag_DisplaysUsage`, `SpdxTool_Usage_LongHelpFlag_DisplaysUsage`, and
+`SpdxTool_Usage_QuestionMarkHelpFlag_DisplaysUsage` (integration tests).
 
 **MissingArgumentHandling**: the tool reports a usage error when invoked without a command or
-option. This scenario is tested by `SpdxTool_Program_Run_NoArguments_WritesErrorAndUsage`.
+option. This scenario is tested by `SpdxTool_Program_Run_NoArguments_WritesErrorAndUsage` (unit
+test) and by `SpdxTool_Usage_NoArguments_DisplaysError` (integration test).
 
 **SelfValidationExecution**: the installed tool executes the full self-validation suite through the
 `--validate` flag. This scenario is tested by `SpdxTool_SelfTest_ValidateFlag_Succeeds`.
@@ -59,3 +64,20 @@ scenario covers `SpdxTool-Command-Depth` and is tested by
 **ShortResultFlagAlias**: the tool accepts -r as a short alias for the --result flag. This scenario
 covers `SpdxTool-Command-ResultShortFlag` and is tested by
 `SpdxTool_SelfTest_ValidateFlagWithResults_ShortFlag_GeneratesTrxFile`.
+
+**SupportedCommands**: the tool registers and dispatches all supported SPDX manipulation commands.
+This scenario covers `SpdxTool-CommandExecution-SupportedCommands` and is tested by
+`SpdxTool_Usage_NoArguments_DisplaysError`.
+
+**WorkflowExecution**: the tool executes SPDX manipulation workflows defined in YAML files. This
+scenario covers `SpdxTool-CommandExecution-WorkflowExecution` and is tested by
+`RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow`.
+
+**CrossPlatformSupport**: the tool runs successfully on Windows, Linux, and macOS. This scenario
+covers `SpdxTool-Platform-CrossPlatform` and is tested by `SpdxTool_Basic` on each supported
+platform in the CI matrix (`windows@SpdxTool_Basic`, `ubuntu@SpdxTool_Basic`,
+`macos@SpdxTool_Basic`).
+
+**MultiFrameworkSupport**: the tool runs on .NET 8, .NET 9, and .NET 10. This scenario covers
+`SpdxTool-Platform-MultiFramework` and is tested by `SpdxTool_Version_ShortFlag_DisplaysVersion`
+on each supported target framework.

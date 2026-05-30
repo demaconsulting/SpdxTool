@@ -48,7 +48,10 @@ not provided. This scenario is tested by `RunWorkflow_Run_WithDefaultParameters_
 **OutputExtraction**: the unit exposes requested workflow outputs after execution. This scenario is
 tested by `RunWorkflow_Run_WithOutputs_PopulatesOutputs`.
 
-**IntegrityChecking**: the unit rejects workflow content whose integrity hash does not match the
+**IntegrityAccepted**: the unit executes a workflow whose SHA-256 hash matches the expected integrity
+value. This scenario is tested by `RunWorkflow_Run_WithValidIntegrity_ExecutesWorkflow`.
+
+**IntegrityRejected**: the unit rejects workflow content whose integrity hash does not match the
 expected value. This scenario is tested by `RunWorkflow_Run_WithBadIntegrity_ReportsError`.
 
 **ExternalWorkflowSources**: the unit executes workflows retrieved from NuGet packages or URLs. This

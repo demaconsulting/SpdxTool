@@ -38,13 +38,14 @@ public class ValidateQueryTests
     ///     Test that ValidateQuery validation passes.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_Query</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateQuery.Run"/> so that
-    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
-    ///     naming convention is appropriate for self-test integration tests.
+    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateQuery.Run"/> is
+    ///     <c>SpdxTool_Query</c>; the assertion in this test guards against regressions
+    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
+    ///     convention; <c>SpdxTool_Query</c> is the <c>TestResult.Name</c> identifier recorded by
+    ///     the self-test step, not the test method name.
     /// </remarks>
     [Fact]
-    public void SpdxTool_Query()
+    public void ValidateQuery_Run_ValidQueryWorkflow_Passes()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -56,6 +57,7 @@ public class ValidateQueryTests
         // Assert: one result recorded with a passing outcome
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_Query", results.Results[0].Name);
     }
 
     /// <summary>

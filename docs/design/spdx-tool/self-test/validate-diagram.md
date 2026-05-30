@@ -1,4 +1,4 @@
-﻿### ValidateDiagram
+### ValidateDiagram
 
 #### Purpose
 
@@ -17,15 +17,21 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
-- *Post-conditions*: A TestResult entry named SpdxTool_Diagram has been appended to results; a pass
-  or fail message has been written to the Context.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
+- *Post-conditions*: A TestResult entry named SpdxTool_Diagram has been appended to results (when no
+  exception is thrown); the entry has `Name` set to `SpdxTool_Diagram`, `Outcome` set to Passed or
+  Failed, `ClassName` set to `DemaConsulting.SpdxTool.SelfTest.ValidateDiagram`, `ComputerName` set
+  to the current machine name, and `StartTime` set to the time of execution; a pass or fail message
+  has been written to the Context.
 
 **DoValidate**: performs the actual diagram validation in a temporary directory.
 
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the output file contains expected content.
-- *Preconditions*: A writable working directory is available.
+- *Preconditions*: A writable working directory is available. Note: `Validate.RunSpdxTool` temporarily
+  mutates the process-wide current working directory; callers must ensure serial execution to avoid
+  races on that shared state.
 - *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
   never succeeded, the delete is skipped rather than raising a secondary exception.
 

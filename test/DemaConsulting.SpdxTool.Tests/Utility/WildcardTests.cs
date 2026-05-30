@@ -42,6 +42,7 @@ public class WildcardTests
     [Fact]
     public void Wildcard_IsMatch_ExactMatch_ReturnsTrue()
     {
+        // Arrange: no setup required
         // Act / Assert: verify exact matching behavior across multiple inputs
         Assert.Multiple(
             () => Assert.True(Wildcard.IsMatch("Hello", "Hello")),
@@ -64,6 +65,7 @@ public class WildcardTests
     [Fact]
     public void Wildcard_IsMatch_AsteriskPattern_MatchesMultipleChars()
     {
+        // Arrange: no setup required
         // Act / Assert: verify asterisk wildcard matching behavior across multiple inputs
         Assert.Multiple(
             () => Assert.True(Wildcard.IsMatch("Test.This.String", "Test.*.String")),
@@ -89,6 +91,7 @@ public class WildcardTests
     [Fact]
     public void Wildcard_IsMatch_QuestionMarkPattern_MatchesSingleChar()
     {
+        // Arrange: no setup required
         // Act / Assert: verify question mark wildcard matching behavior across multiple inputs
         Assert.Multiple(
             () => Assert.True(Wildcard.IsMatch("Test", "Te?t")),

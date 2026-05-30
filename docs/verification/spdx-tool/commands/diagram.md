@@ -44,3 +44,17 @@ when the `tools` option is not specified. This scenario is tested by
 **WorkflowStepInvocation**: the unit accepts spdx, mermaid, and optional tools inputs when invoked
 from a workflow step and produces a Mermaid diagram file. This scenario is tested by
 `Diagram_InWorkflow_GeneratesDiagram`.
+
+**WorkflowMissingSpdxInput**: the unit reports an error when the `spdx` input is absent from the
+workflow step. This scenario is tested by `Diagram_Run_MissingSpdxInput_ReportsError`.
+
+**WorkflowMissingMermaidInput**: the unit reports an error when the `mermaid` input is absent from
+the workflow step. This scenario is tested by `Diagram_Run_MissingMermaidInput_ReportsError`.
+
+**WorkflowInvalidToolsInput**: the unit reports an error when the `tools` input cannot be parsed as
+a boolean. This scenario is tested by `Diagram_Run_InvalidToolsInput_ReportsError`.
+
+**UnspecifiedVersionFallback**: the unit uses `"unspecified"` as the version label in the generated
+diagram when a package has no `versionInfo`. This scenario covers
+`SpdxTool-Transform-Diagram-UnspecifiedVersion` and is tested by
+`Diagram_PackageWithoutVersion_UsesUnspecifiedFallback`.

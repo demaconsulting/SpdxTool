@@ -1,4 +1,4 @@
-﻿### ToMarkdown
+### ToMarkdown
 
 #### Purpose
 
@@ -18,7 +18,7 @@ error messages.
 CommandsRegistry.
 
 **Entry** (`CommandEntry`, `static readonly`): The CommandEntry record for ToMarkdown, containing
-the command name, usage string, description, and reference to Instance.
+the command name, usage string, description, help lines string array, and reference to Instance.
 
 #### Key Methods
 
@@ -40,6 +40,7 @@ the YAML step node and calls GenerateSummaryMarkdown.
   `Dictionary<string, string> variables` — variable map.
 - *Returns*: `void`
 - *Preconditions*: spdx and markdown inputs are required. depth must parse to a positive integer.
+  title must not be whitespace or empty.
 - *Post-conditions*: The markdown file is written.
 
 **GenerateSummaryMarkdown(string, string, string, int)**: Loads the SPDX document, builds a
@@ -49,6 +50,11 @@ SpdxDocument.GetRootPackages), tool packages (having BuildToolOf, DevToolOf, or 
 relationships), and remaining packages. The title heading is rendered at `depth` hash marks.
 Each group (Root Packages, Packages, Tools) is rendered as a three-column table under a
 sub-section heading at `depth+1` hash marks.
+
+Root packages are identified by `SpdxDocument.GetRootPackages()`, which resolves the document's
+`DESCRIBES` relationships to find the top-level described elements. The `documentDescribes` field
+in the SPDX JSON is a legacy shorthand that some serializers emit alongside the `DESCRIBES`
+relationships; the model normalizes both into the same set of root packages.
 
 - *Parameters*: `string spdxFile` — SPDX JSON file path; `string markdownFile` — output file path;
   `string title` — heading title (default "SPDX Document"); `int depth` — heading level (default 2).
@@ -70,14 +76,12 @@ while declared license is the upstream assertion before review.
 #### Error Handling
 
 **CommandUsageException** — thrown by Run(Context, string[]) when fewer than two arguments are
-provided, when the title is whitespace, or when depth is not a positive integer.
+provided, when the title is whitespace, or when depth is not a positive integer; also propagated
+from SpdxHelpers.LoadJsonDocument when the specified SPDX input file does not exist on disk.
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when spdx or markdown
 inputs are missing, when the title is whitespace, or when the depth value is not a positive
 integer.
-
-**CommandUsageException** — propagated from SpdxHelpers.LoadJsonDocument when the specified SPDX
-input file does not exist on disk.
 
 **System.IO.IOException** — propagated from File.WriteAllText in GenerateSummaryMarkdown when the
 output Markdown file cannot be written.

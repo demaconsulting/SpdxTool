@@ -3,7 +3,7 @@
 sections:
   - title: SpdxToolTargets Requirements
     sections:
-      - title: Single-TFM Target Requirements
+      - title: TargetsSingle Requirements
         requirements:
           - id: SpdxToolTargets-SingleTfm-DecorateWhenEnabled
             title: The targets shall decorate the SBOM for a single-TFM project when DecorateSBOM is true.

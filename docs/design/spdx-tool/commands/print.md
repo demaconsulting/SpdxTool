@@ -1,4 +1,4 @@
-﻿### Print
+### Print
 
 #### Purpose
 
@@ -36,6 +36,10 @@ inputs, applies variable expansion to each entry via GetSequenceString, and writ
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary\<string, string\>) when the text
 sequence input is absent from the step inputs.
+
+**InvalidOperationException** — propagated from GetSequenceString/Expand when a text line contains
+an undefined variable reference, an empty variable name, or an unmatched macro delimiter (`${{` or
+`}}`).
 
 #### Dependencies
 

@@ -55,11 +55,11 @@ internal static class ValidateBasic
         // Report validation result to console
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_Basic - Passed");
+            context.WriteLine("✓ SpdxTool_Basic - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_Basic - Failed");
+            context.WriteError("✗ SpdxTool_Basic - Failed");
         }
 
         // Add validation result to test results collection
@@ -84,11 +84,14 @@ internal static class ValidateBasic
     /// </returns>
     /// <remarks>
     ///     Creates <c>validate.tmp</c> once and runs both sub-tests within it. The
-    ///     <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
-    ///     even if directory creation only partially succeeded. Uses short-circuit evaluation:
-    ///     <see cref="DoValidateInvalid"/> is not called if <see cref="DoValidateValid"/> returns
-    ///     <c>false</c>.
+    ///     <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it
+    ///     exists, guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the
+    ///     original exception when <see cref="Directory.CreateDirectory(string)"/> fails. Uses
+    ///     short-circuit evaluation: <see cref="DoValidateInvalid"/> is not called if
+    ///     <see cref="DoValidateValid"/> returns <c>false</c>.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try
@@ -101,8 +104,12 @@ internal static class ValidateBasic
         }
         finally
         {
-            // Delete the temporary validation folder
-            Directory.Delete("validate.tmp", true);
+            // Delete the temporary validation folder if it exists (guards against
+            // Directory.CreateDirectory failing before the directory was created)
+            if (Directory.Exists("validate.tmp"))
+            {
+                Directory.Delete("validate.tmp", true);
+            }
         }
     }
 
@@ -117,6 +124,8 @@ internal static class ValidateBasic
     ///     Depends on <c>validate.tmp</c> already existing; must be called after
     ///     <see cref="DoValidate"/> creates the directory.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test file cannot be written.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to <c>validate.tmp</c>.</exception>
     private static bool DoValidateValid()
     {
         // Write test SPDX file that is valid
@@ -169,7 +178,7 @@ internal static class ValidateBasic
     /// </summary>
     /// <returns>
     ///     <c>true</c> if RunSpdxTool returns a non-zero exit code and the log contains the expected
-    ///     error text; otherwise <c>false</c>.
+    ///     error text referencing the filename; otherwise <c>false</c>.
     /// </returns>
     /// <remarks>
     ///     Writes an SPDX document with a package missing the required SPDXID field to
@@ -179,6 +188,8 @@ internal static class ValidateBasic
     ///     contains error text referencing the validation issue. Depends on <c>validate.tmp</c> already
     ///     existing; must be called after <see cref="DoValidate"/> creates the directory.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test file cannot be written or the log file cannot be read.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to <c>validate.tmp</c>.</exception>
     private static bool DoValidateInvalid()
     {
         // Write test SPDX file that is invalid (missing required SPDXID)
@@ -227,6 +238,6 @@ internal static class ValidateBasic
         var log = File.ReadAllText("validate.tmp/output.log");
 
         // Verify log contains error about missing SPDXID
-        return log.Contains("Issues in test-invalid.spdx.json") || log.Contains("SPDXID");
+        return log.Contains("Issues in test-invalid.spdx.json");
     }
 }

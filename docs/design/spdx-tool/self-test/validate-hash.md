@@ -1,4 +1,4 @@
-﻿### ValidateHash
+### ValidateHash
 
 #### Purpose
 
@@ -17,15 +17,17 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
-- *Post-conditions*: A TestResult entry named SpdxTool_Hash has been appended to results; a pass or
-  fail message has been written to the Context.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
+- *Post-conditions*: When no exception is thrown, a TestResult entry named SpdxTool_Hash has been
+  appended to results and a pass or fail message has been written to the Context.
 
 **DoValidate**: orchestrates both sub-tests in a shared temporary directory.
 
 - *Parameters*: None.
 - *Returns*: `bool` — true if both DoValidateGenerate and DoValidateVerify succeed.
-- *Preconditions*: A writable working directory is available.
+- *Preconditions*: A writable working directory is available. Callers must execute serially because
+  Validate.RunSpdxTool temporarily mutates the process-wide current working directory.
 - *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
   never succeeded, the delete is skipped rather than raising a secondary exception.
 
@@ -60,7 +62,9 @@ hash value does not match the expected digest. Returns false if hash verify with
 returns a non-zero exit code, or if hash verify with the corrupted hash returns exit code zero. The
 finally block guards the Directory.Delete call with a Directory.Exists check to prevent a secondary
 DirectoryNotFoundException masking the original exception when Directory.CreateDirectory fails
-(e.g., because validate.tmp already exists as a file).
+(e.g., because validate.tmp already exists as a file). If `DoValidate` throws an exception, the
+exception propagates uncaught out of `Run()` and no `TestResult` is appended to results for this
+step.
 
 #### Dependencies
 

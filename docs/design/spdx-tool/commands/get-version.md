@@ -1,4 +1,4 @@
-﻿### GetVersion
+### GetVersion
 
 #### Purpose
 

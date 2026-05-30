@@ -38,13 +38,13 @@ public class ValidateHashTests
     ///     Test that ValidateHash validation passes.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_Hash</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateHash.Run"/> so that
-    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
-    ///     naming convention is appropriate for self-test integration tests.
+    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateHash.Run"/> is
+    ///     <c>SpdxTool_Hash</c>; the assertion in this test guards against regressions
+    ///     where the wrong name is recorded. This system-level naming convention is appropriate
+    ///     for self-test integration tests.
     /// </remarks>
     [Fact]
-    public void SpdxTool_Hash()
+    public void ValidateHash_Run_ValidHashWorkflow_Passes()
     {
         // Arrange: create context and an empty test results collection
         using var context = Context.Create(["--validate"]);
@@ -53,9 +53,10 @@ public class ValidateHashTests
         // Act: run the ValidateHash self-test step
         ValidateHash.Run(context, results);
 
-        // Assert: one result recorded with a passing outcome
+        // Assert: one result recorded with a passing outcome and the correct name
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_Hash", results.Results[0].Name);
     }
 
     /// <summary>

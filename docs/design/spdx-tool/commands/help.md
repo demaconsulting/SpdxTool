@@ -1,4 +1,4 @@
-﻿### Help
+### Help
 
 #### Purpose
 
@@ -8,8 +8,9 @@ workflow YAML files.
 
 #### Data Model
 
-Help maintains two static members and carries no per-invocation state.
+Help maintains three static members and carries no per-invocation state.
 
+**Command**: `string` constant (`"help"`) — command name used for dispatch registration.
 **Instance**: `Help` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for Help.
 
@@ -60,4 +61,3 @@ missing.
 
 - CommandsRegistry — routes CLI and workflow steps
 - RunWorkflow — dispatches this command when a workflow step specifies command: help
-- Program — may invoke Help to display usage guidance when displaying per-command details

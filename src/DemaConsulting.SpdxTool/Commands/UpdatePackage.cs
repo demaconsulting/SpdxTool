@@ -90,13 +90,29 @@ public sealed class UpdatePackage : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Rejects CLI invocation of the update-package command.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="args">Command-line arguments (unused).</param>
+    /// <exception cref="CommandUsageException">
+    ///     Always thrown, because update-package is only valid within a workflow context.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         throw new CommandUsageException("'update-package' command is only valid in a workflow");
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the update-package command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map used to expand input values.</param>
+    /// <exception cref="YamlException">
+    ///     Thrown when the <c>spdx</c>, <c>package</c>, or <c>package.id</c> input is absent
+    ///     from the step.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -126,9 +142,19 @@ public sealed class UpdatePackage : Command
     ///     Update a package in an SPDX document file
     /// </summary>
     /// <param name="spdxFile">SPDX document filename</param>
-    /// <param name="packageId">Package ID</param>
-    /// <param name="updates">Update information</param>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <param name="packageId">Package ID to locate within the document.</param>
+    /// <param name="updates">
+    ///     Map of field names to new values. Supported keys: <c>name</c>, <c>download</c>,
+    ///     <c>version</c>, <c>filename</c>, <c>supplier</c>, <c>originator</c>,
+    ///     <c>homepage</c>, <c>copyright</c>, <c>summary</c>, <c>description</c>,
+    ///     <c>license</c>. Any key not in this set causes a
+    ///     <see cref="CommandErrorException"/> to be thrown.
+    /// </param>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when no package with <paramref name="packageId"/> exists in the document;
+    ///     also thrown when <paramref name="updates"/> contains a key that is not one of the
+    ///     recognized field names listed above.
+    /// </exception>
     /// <remarks>
     ///     When the <c>license</c> field is specified, both
     ///     <see cref="DemaConsulting.SpdxModel.SpdxLicenseElement.ConcludedLicense"/> and
@@ -196,13 +222,17 @@ public sealed class UpdatePackage : Command
     /// <summary>
     ///     Read the package update fields from the YAML inputs.
     /// </summary>
-    /// <param name="map">Package sub-map containing the update field entries</param>
+    /// <param name="map">Package sub-map containing the update field entries. May be <see langword="null"/>; if null the method returns immediately with no updates.</param>
     /// <param name="variables">Currently defined variables</param>
     /// <param name="updates">Updates dictionary to populate</param>
     /// <remarks>
     ///     Only fields present in <paramref name="map"/> are added to <paramref name="updates"/>.
     ///     Fields absent from the map produce a null from <see cref="Command.GetMapString"/> and
     ///     are silently omitted, so unspecified fields are never updated on the target package.
+    ///     Unrecognized keys found in <paramref name="map"/> are also added to
+    ///     <paramref name="updates"/> with an empty-string value; <see cref="UpdatePackageInSpdxFile"/>
+    ///     will throw a <see cref="CommandErrorException"/> for each such key via the
+    ///     <c>default</c> branch of its switch statement.
     /// </remarks>
     public static void ParseUpdates(
         YamlMappingNode? map,

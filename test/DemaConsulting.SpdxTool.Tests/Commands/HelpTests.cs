@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'help' command
@@ -124,10 +124,11 @@ public class HelpTests
                 about: run-workflow
             """;
 
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: write the workflow file to disk so the tool can load it
-            File.WriteAllText("workflow.yaml", workflowContents);
+            File.WriteAllText(workflowFile, workflowContents);
 
             // Act: Run the workflow
             var exitCode = Runner.Run(
@@ -135,7 +136,7 @@ public class HelpTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "run-workflow",
-                "workflow.yaml");
+                workflowFile);
 
             // Assert: Verify help text is displayed
             Assert.Equal(0, exitCode);
@@ -143,7 +144,7 @@ public class HelpTests
         }
         finally
         {
-            File.Delete("workflow.yaml");
+            File.Delete(workflowFile);
         }
     }
 }

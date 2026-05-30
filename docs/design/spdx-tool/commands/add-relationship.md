@@ -87,7 +87,7 @@ relationships inputs are missing or the replace value is not a valid boolean; th
 methods when a relationship node is not a mapping or is missing type or element keys.
 
 **System.IO.IOException** — propagated by Add(string, SpdxRelationship[], bool) when the SPDX file
-cannot be read or written (for example, file not found or access denied).
+cannot be read or written (for example, access denied or other I/O failure).
 
 **CommandErrorException** — thrown by Add(SpdxDocument, SpdxRelationship[], bool) when
 SpdxRelationships.Add raises an exception (for example duplicate relationships when replace is false).

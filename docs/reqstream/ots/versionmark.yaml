@@ -6,12 +6,16 @@ sections:
       - title: VersionMark Requirements
         requirements:
           - id: SpdxTool-OTS-VersionMark
-            title: VersionMark shall publish captured tool-version information.
+            title: VersionMark shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.VersionMark reads version metadata for each dotnet tool used in the
-              pipeline and writes a versions markdown document included in the release artifacts.
+              DemaConsulting.VersionMark is a CI pipeline tool that captures and publishes tool-version
+              information as a markdown document. The linked tests verify installation only: they invoke
+              versionmark to confirm the tool is present and responds correctly. Full functional
+              verification of version capture and markdown report generation occurs through CI pipeline
+              execution, where the presence of the versions document in release artifacts provides
+              observable evidence of correct operation.
             tests:
-              - VersionMark_CapturesVersions
-              - VersionMark_GeneratesMarkdownReport
+              - VersionMark_Tool_IsInstalled
+              - VersionMark_Tool_ReportsVersion

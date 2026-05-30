@@ -42,3 +42,15 @@ whitespace. This scenario is tested by `ToMarkdown_Run_InvalidTitle_ReportsError
 
 **InvalidDepth**: the unit reports a usage error when the depth argument is not a positive integer.
 This scenario is tested by `ToMarkdown_Run_InvalidDepth_ReportsError`.
+
+**YamlMissingSpdx**: the unit throws a YAML exception when the spdx input is absent from the
+workflow step. This scenario is tested by `ToMarkdown_Run_YamlMissingSpdxInput_ThrowsException`.
+
+**YamlMissingMarkdown**: the unit throws a YAML exception when the markdown input is absent from
+the workflow step. This scenario is tested by `ToMarkdown_Run_YamlMissingMarkdownInput_ThrowsException`.
+
+**YamlWhitespaceTitle**: the unit throws a YAML exception when the title input is whitespace or
+empty in a workflow step. This scenario is tested by `ToMarkdown_Run_YamlWhitespaceTitle_ThrowsException`.
+
+**YamlNonPositiveDepth**: the unit throws a YAML exception when the depth input is non-positive in
+a workflow step. This scenario is tested by `ToMarkdown_Run_YamlNonPositiveDepth_ThrowsException`.

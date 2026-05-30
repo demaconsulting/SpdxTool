@@ -23,8 +23,8 @@ sections:
 
               - id: SpdxTool-Commands-FindPackage-Validate
                 title: >-
-                  The find-package command shall validate its inputs and report an error for missing
-                  or invalid values.
+                  The find-package command shall report a usage error when any required input is absent
+                  or any criterion argument is malformed.
                 tags:
                   - spdx
                 justification: |
@@ -34,3 +34,8 @@ sections:
                   - FindPackage_MissingArguments_ReportsError
                   - FindPackage_MissingFile_ReportsError
                   - FindPackage_InvalidCriteria_ReportsError
+                  - FindPackage_Run_MissingOutputInput_ReportsError
+                  - FindPackage_Run_MissingSpdxInput_ReportsError
+                  - FindPackage_Run_NoPackageFound_ReportsError
+                  - FindPackage_Run_MultiplePackagesFound_ReportsError
+                  - FindPackage_ParseCriteria_EmptyKey_ThrowsCommandUsageException

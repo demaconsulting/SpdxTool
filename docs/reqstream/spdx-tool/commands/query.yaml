@@ -6,7 +6,7 @@ sections:
         sections:
           - title: Query Requirements
             requirements:
-              - id: SpdxTool-Workflow-Query
+              - id: SpdxTool-Commands-Query-ExternalProgramQuery
                 title: The tool shall support querying external program output using the query command.
                 tags:
                   - workflow
@@ -17,7 +17,7 @@ sections:
                   - Query_DotNetVersion_OnCommandLine_ReturnsVersion
                   - Query_DotNetVersion_InWorkflow_StoresVersion
 
-              - id: SpdxTool-Query-ValueCaptureGroup
+              - id: SpdxTool-Commands-Query-ValueCaptureGroup
                 title: The tool shall require the regex pattern to contain a named value capture group.
                 tags:
                   - workflow
@@ -25,9 +25,9 @@ sections:
                   The named capture group is the mechanism by which the tool extracts the
                   desired value from program output; patterns without it must be rejected.
                 tests:
-                  - Query_PatternMissingValueGroup_ReportsError
+                  - Query_Run_PatternMissingValueGroup_ReportsError
 
-              - id: SpdxTool-Query-CliOutput
+              - id: SpdxTool-Commands-Query-CliOutput
                 title: The tool shall write the captured value to the console when invoked from the CLI.
                 tags:
                   - cli
@@ -37,8 +37,10 @@ sections:
                 tests:
                   - Query_DotNetVersion_OnCommandLine_ReturnsVersion
 
-              - id: SpdxTool-Query-WorkflowOutput
-                title: The tool shall store the captured value in a named workflow variable when invoked from a YAML step.
+              - id: SpdxTool-Commands-Query-WorkflowOutput
+                title: >-
+                  The tool shall store the captured value in a named workflow variable
+                  when invoked from a YAML step.
                 tags:
                   - workflow
                 justification: |
@@ -47,7 +49,7 @@ sections:
                 tests:
                   - Query_DotNetVersion_InWorkflow_StoresVersion
 
-              - id: SpdxTool-Query-PatternNotFound
+              - id: SpdxTool-Commands-Query-PatternNotFound
                 title: The tool shall report an error when the pattern is not matched in any line of the program output.
                 tags:
                   - workflow
@@ -55,14 +57,38 @@ sections:
                   When no line matches the pattern the requested value cannot be extracted;
                   the error must be reported clearly.
                 tests:
-                  - Query_PatternNotFound_ReportsError
+                  - Query_Run_PatternNotFound_ReportsError
 
-              - id: SpdxTool-Query-InvalidRegexPattern
-                title: The tool shall report an error when the supplied regular expression pattern is syntactically invalid.
+              - id: SpdxTool-Commands-Query-MissingArguments
+                title: The tool shall report a usage error when the query command is invoked with fewer than two CLI arguments.
+                tags:
+                  - cli
+                justification: |
+                  The query command requires at least a program argument and a pattern argument
+                  to function. Missing arguments must be reported as a usage error with a clear
+                  diagnostic message.
+                tests:
+                  - Query_Run_MissingArguments_ReportsError
+
+              - id: SpdxTool-Commands-Query-InvalidProgram
+                title: The tool shall report an error when the external program specified in the query command cannot be started.
+                tags:
+                  - cli
+                  - workflow
+                justification: |
+                  When the specified external program is not found or cannot be launched, the
+                  error must be reported clearly so users can diagnose configuration problems.
+                tests:
+                  - Query_Run_InvalidProgram_ReportsError
+
+              - id: SpdxTool-Commands-Query-InvalidRegexPattern
+                title: >-
+                  The tool shall report an error when the supplied regular expression
+                  pattern is syntactically invalid.
                 tags:
                   - workflow
                 justification: |
                   A syntactically invalid pattern cannot be compiled and must be reported
                   as a usage error with a clear diagnostic message.
                 tests:
-                  - Query_InvalidRegexPattern_ReportsError
+                  - Query_Run_InvalidRegexPattern_ReportsError

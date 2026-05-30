@@ -43,6 +43,20 @@ sections:
                 tests:
                   - Diagram_WithoutToolsOption_ExcludesToolRelationships
 
+              - id: SpdxTool-Transform-Diagram-UnspecifiedVersion
+                title: >-
+                  When a package has no version information, the diagram command shall use
+                  "unspecified" as the version label in the generated diagram.
+                tags:
+                  - spdx
+                justification: |
+                  SPDX packages are not required to declare a version. The diagram command
+                  must handle this gracefully to avoid crashes or empty labels, and
+                  "unspecified" communicates clearly to the diagram reader that no version
+                  was declared.
+                tests:
+                  - Diagram_PackageWithoutVersion_UsesUnspecifiedFallback
+
               - id: SpdxTool-Transform-Diagram-Validate
                 title: >-
                   The diagram command shall validate its inputs and report an error for missing or
@@ -57,3 +71,6 @@ sections:
                   - Diagram_InsufficientArguments_ReportsError
                   - Diagram_MissingSpdxFile_ReportsError
                   - Diagram_InvalidOption_ReportsError
+                  - Diagram_Run_MissingSpdxInput_ReportsError
+                  - Diagram_Run_MissingMermaidInput_ReportsError
+                  - Diagram_Run_InvalidToolsInput_ReportsError

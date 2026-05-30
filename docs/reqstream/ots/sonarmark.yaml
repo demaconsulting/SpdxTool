@@ -6,11 +6,14 @@ sections:
       - title: SonarMark Requirements
         requirements:
           - id: SpdxTool-OTS-SonarMark
-            title: SonarMark shall generate a SonarCloud quality report.
+            title: SonarMark shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.SonarMark retrieves quality-gate and metrics data from SonarCloud and
-              renders it as a markdown document included in the release artifacts.
+              DemaConsulting.SonarMark is a CI pipeline tool that generates a SonarCloud quality report.
+              The linked test verifies installation only: it invokes sonarmark to confirm the tool is
+              present and responds correctly. Full functional verification of SonarCloud metric retrieval
+              and markdown report generation occurs through CI pipeline execution, where the presence of
+              the quality report artifact in each release provides observable evidence of correct operation.
             tests:
-              - SonarMark_MarkdownReportGeneration
+              - SonarMark_Tool_IsInstalled

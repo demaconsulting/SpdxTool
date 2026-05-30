@@ -23,7 +23,8 @@ using System.Text.RegularExpressions;
 namespace DemaConsulting.SpdxTool.Utility;
 
 /// <summary>
-///     Wildcard Match Class
+///     Provides glob-style wildcard pattern matching for filtering SPDX package fields
+///     by name, version, file name, or download URL.
 /// </summary>
 /// <remarks>
 ///     Converts glob-style wildcard patterns (<c>*</c> matches any sequence of characters,
@@ -31,10 +32,10 @@ namespace DemaConsulting.SpdxTool.Utility;
 ///     them case-insensitively. Used by commands that filter SPDX packages by name, version,
 ///     file name, or download URL.
 /// </remarks>
-public static class Wildcard
+internal static class Wildcard
 {
     /// <summary>
-    ///     Convert a wildcard pattern to a regular expression pattern
+    ///     Converts a wildcard pattern to an anchored regular expression pattern.
     /// </summary>
     /// <remarks>
     ///     Extracted as a private helper to keep <see cref="IsMatch"/> readable and to isolate the
@@ -44,7 +45,7 @@ public static class Wildcard
     /// </remarks>
     /// <param name="wildPattern">Wildcard pattern to convert. Must not be null.</param>
     /// <returns>Anchored regular expression string (prefixed with <c>^</c> and suffixed with <c>$</c>).</returns>
-    private static string WildCardToRegex(string wildPattern)
+    private static string WildcardToRegex(string wildPattern)
     {
         return "^" +
                Regex.Escape(wildPattern).Replace("\\*", ".*").Replace("\\?", ".") +
@@ -52,13 +53,14 @@ public static class Wildcard
     }
 
     /// <summary>
-    ///     Check for a wildcard match
+    ///     Returns true if <paramref name="input"/> matches the entire wildcard pattern case-insensitively.
     /// </summary>
     /// <remarks>
     ///     The match is performed case-insensitively with a 100 ms timeout to prevent
     ///     catastrophic backtracking on pathological patterns. If the timeout expires,
     ///     <see langword="false"/> is returned rather than propagating a
     ///     <see cref="System.Text.RegularExpressions.RegexMatchTimeoutException"/>.
+    ///     Stateless and thread-safe.
     /// </remarks>
     /// <param name="input">Input text to test. Must not be null.</param>
     /// <param name="pattern">Wildcard pattern to match against. Must not be null.</param>
@@ -71,11 +73,14 @@ public static class Wildcard
     /// </exception>
     public static bool IsMatch(string input, string pattern)
     {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(pattern);
+
         try
         {
             return Regex.IsMatch(
                 input,
-                WildCardToRegex(pattern),
+                WildcardToRegex(pattern),
                 RegexOptions.IgnoreCase,
                 TimeSpan.FromMilliseconds(100));
         }

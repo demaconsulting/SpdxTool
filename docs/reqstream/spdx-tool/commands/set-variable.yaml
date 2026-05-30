@@ -6,7 +6,7 @@ sections:
         sections:
           - title: SetVariable Requirements
             requirements:
-              - id: SpdxTool-Workflow-SetVariable
+              - id: SpdxTool-Commands-SetVariable
                 title: The tool shall support setting variables within workflows using the set-variable command.
                 tags:
                   - workflow
@@ -16,7 +16,7 @@ sections:
                 tests:
                   - SetVariable_Run_InWorkflow_SetsVariable
 
-              - id: SpdxTool-Workflow-SetVariable-CliRejection
+              - id: SpdxTool-Commands-SetVariable-CliRejection
                 title: The set-variable command shall reject direct command-line invocation with a usage error.
                 tags:
                   - workflow
@@ -25,3 +25,27 @@ sections:
                   Rejecting CLI invocation prevents misuse and provides a clear error message.
                 tests:
                   - SetVariable_Run_OnCommandLine_ReportsWorkflowOnlyError
+
+              - id: SpdxTool-Commands-SetVariable-MissingValue
+                title: >-
+                  The set-variable command shall report an error when the value input
+                  is absent from the workflow step.
+                tags:
+                  - workflow
+                justification: |
+                  The value input is required to determine what to assign. Detecting and
+                  reporting its absence early prevents silent no-ops or corrupted variable state.
+                tests:
+                  - SetVariable_Run_MissingValue_ThrowsException
+
+              - id: SpdxTool-Commands-SetVariable-MissingOutput
+                title: >-
+                  The set-variable command shall report an error when the output input
+                  is absent from the workflow step.
+                tags:
+                  - workflow
+                justification: |
+                  The output input names the variable to set. Detecting and reporting its
+                  absence early prevents silent no-ops or corrupted variable state.
+                tests:
+                  - SetVariable_Run_MissingOutput_ThrowsException

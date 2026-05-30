@@ -20,13 +20,13 @@ invalid inputs report usage or file errors without corrupting the source documen
 #### Test Scenarios
 
 **MissingArguments**: the unit reports a usage error when the required arguments are omitted. This
-scenario is tested by `AddRelationship_MissingArguments_ReportsError`.
+scenario is tested by `AddRelationship_Run_MissingArguments_ReportsError`.
 
 **MissingInputFile**: the unit reports an error when the target SPDX file does not exist. This
-scenario is tested by `AddRelationship_MissingFile_ReportsError`.
+scenario is tested by `AddRelationship_Run_MissingFile_ReportsError`.
 
 **CommandLineRelationshipAddition**: the unit adds a relationship when invoked from the command line
-with valid arguments. This scenario is tested by `AddRelationship_OnCommandLine_AddsRelationship`.
+with valid arguments. This scenario is tested by `AddRelationship_Run_OnCommandLine_AddsRelationship`.
 
 **WorkflowRelationshipAddition**: the unit adds a relationship when invoked from a workflow step.
 This scenario is tested by `AddRelationship_InWorkflow_AddsRelationship`.

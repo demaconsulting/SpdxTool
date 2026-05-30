@@ -6,7 +6,7 @@ sections:
         sections:
           - title: Validate Requirements
             requirements:
-              - id: SpdxTool-Validate-Validate
+              - id: SpdxTool-Commands-Validate-Validate
                 title: The tool shall validate SPDX documents using the validate command.
                 tags:
                   - spdx
@@ -14,10 +14,13 @@ sections:
                   Users need to verify that SPDX documents conform to the SPDX specification
                   before using them in downstream processes or sharing them with others.
                 tests:
-                  - Validate_ValidSpdxDocument_Succeeds
-                  - Validate_ValidDocumentNoFilesAnalyzed_Succeeds
+                  - Validate_DoValidate_ValidSpdxFile_ReturnsNoErrors
+                  - Validate_Run_ValidSpdxDocument_Succeeds
+                  - Validate_Run_ValidDocumentNoFilesAnalyzed_Succeeds
+                  - Validate_Run_ValidYamlWorkflow_Succeeds
+                  - Validate_Run_MissingSpdxInput_ThrowsYamlException
 
-              - id: SpdxTool-Validate-NtiaMinimum
+              - id: SpdxTool-Commands-Validate-NtiaMinimum
                 title: The tool shall validate SPDX documents against NTIA minimum elements requirements.
                 tags:
                   - spdx
@@ -26,5 +29,7 @@ sections:
                   defined minimum elements for SBOM. Users need to verify compliance with
                   these requirements for regulatory and industry standards.
                 tests:
-                  - Validate_NtiaValidDocument_Succeeds
-                  - Validate_NtiaInvalidDocument_ReportsNtiaErrors
+                  - Validate_DoValidate_NtiaMinimumValid_ReturnsNoErrors
+                  - Validate_Run_NtiaValidDocument_Succeeds
+                  - Validate_Run_NtiaInvalidDocument_ReportsNtiaErrors
+                  - Validate_Run_NtiaYamlInputCaseInsensitive_Succeeds

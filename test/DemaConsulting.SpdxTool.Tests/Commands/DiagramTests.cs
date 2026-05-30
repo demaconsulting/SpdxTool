@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'diagram' command
@@ -374,6 +374,122 @@ public class DiagramTests
     }
 
     /// <summary>
+    ///     Test that diagram command in workflow with missing 'spdx' input reports error
+    /// </summary>
+    [Fact]
+    public void Diagram_Run_MissingSpdxInput_ReportsError()
+    {
+        // Workflow contents - missing 'spdx' input
+        const string workflowContents =
+            """
+            steps:
+            - command: diagram
+              inputs:
+                mermaid: output.mermaid.txt
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("test.workflow.yaml", workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "test.workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'diagram' command missing 'spdx' input", output);
+        }
+        finally
+        {
+            File.Delete("test.workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command in workflow with missing 'mermaid' input reports error
+    /// </summary>
+    [Fact]
+    public void Diagram_Run_MissingMermaidInput_ReportsError()
+    {
+        // Workflow contents - missing 'mermaid' input
+        const string workflowContents =
+            """
+            steps:
+            - command: diagram
+              inputs:
+                spdx: test.spdx.json
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("test.workflow.yaml", workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "test.workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'diagram' command missing 'mermaid' input", output);
+        }
+        finally
+        {
+            File.Delete("test.workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command in workflow with invalid 'tools' value reports error
+    /// </summary>
+    [Fact]
+    public void Diagram_Run_InvalidToolsInput_ReportsError()
+    {
+        // Workflow contents - non-boolean value for 'tools'
+        const string workflowContents =
+            """
+            steps:
+            - command: diagram
+              inputs:
+                spdx: test.spdx.json
+                mermaid: output.mermaid.txt
+                tools: not-a-boolean
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("test.workflow.yaml", workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "test.workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'diagram' invalid 'tools' input", output);
+        }
+        finally
+        {
+            File.Delete("test.workflow.yaml");
+        }
+    }
+
+    /// <summary>
     ///     Test that diagram command in a workflow step generates a diagram from YAML inputs
     /// </summary>
     [Fact]
@@ -460,6 +576,84 @@ public class DiagramTests
             File.Delete("test.spdx.json");
             File.Delete("test.workflow.yaml");
             File.Delete("test.workflow.mermaid.txt");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command with a package missing versionInfo uses "unspecified" as the fallback
+    /// </summary>
+    [Fact]
+    public void Diagram_PackageWithoutVersion_UsesUnspecifiedFallback()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-Library",
+                  "name": "Test Library",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-Application",
+                  "relatedSpdxElement": "SPDXRef-Library",
+                  "relationshipType": "DEPENDS_ON"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file with packages that have no versionInfo
+            File.WriteAllText("test.spdx.json", spdxContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "diagram",
+                "test.spdx.json",
+                "test-no-version.mermaid.txt");
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+
+            // Assert: Verify the fallback "unspecified" text is used in the output
+            Assert.True(File.Exists("test-no-version.mermaid.txt"));
+            var mermaid = File.ReadAllText("test-no-version.mermaid.txt");
+            Assert.Contains("Test Application / unspecified", mermaid);
+            Assert.Contains("Test Library / unspecified", mermaid);
+        }
+        finally
+        {
+            File.Delete("test.spdx.json");
+            File.Delete("test-no-version.mermaid.txt");
         }
     }
 }

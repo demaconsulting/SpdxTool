@@ -5,8 +5,9 @@ sections:
       - title: Spdx Requirements
         requirements:
           - id: SpdxTool-Spdx-SharedUtilities
-            title: The Spdx subsystem shall provide shared SPDX document I/O and relationship traversal utilities for all
-              commands.
+            title: >-
+              The Spdx subsystem shall provide shared SPDX document I/O and
+              relationship traversal utilities for all commands.
             justification: |
               Commands that operate on SPDX documents require a centralized subsystem for
               loading and saving documents and for traversing relationship graphs. Centralizing

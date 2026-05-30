@@ -219,4 +219,25 @@ public class IntegrationTests
             File.Delete(resultFile);
         }
     }
+
+    /// <summary>
+    ///     Test that SpdxTool --validate --result with unsupported extension reports an error
+    /// </summary>
+    [Fact]
+    public void SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError()
+    {
+        // Arrange: no setup required
+
+        // Act: Run the command with --validate and a .txt result file (unsupported)
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "--validate",
+            "--result", "output-validate.txt");
+
+        // Assert: Verify error reported for unsupported extension
+        Assert.Equal(1, exitCode);
+        Assert.Contains("Unsupported results file format", output);
+    }
 }

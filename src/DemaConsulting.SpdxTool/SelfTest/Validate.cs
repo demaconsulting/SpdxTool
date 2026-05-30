@@ -48,6 +48,14 @@ public static class Validate
     ///     <see cref="Context.ValidationFile"/> is set, the results file is written via
     ///     <see cref="WriteResultsFile"/>.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from individual step classes or <see cref="WriteResultsFile"/> when file I/O
+    ///     operations fail.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Propagated from individual step classes or <see cref="WriteResultsFile"/> when the process
+    ///     lacks write permission for the working or results directory.
+    /// </exception>
     public static void Run(Context context)
     {
         // Write validation header
@@ -163,6 +171,12 @@ public static class Validate
     ///     Creates a new <see cref="Context"/>, invokes <see cref="Program.Run"/>, then disposes
     ///     the context and returns its exit code. This overload does not change the current directory.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from any command executed by <see cref="Program.Run"/> that performs file I/O.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Propagated from any command that requires write access to the file system.
+    /// </exception>
     internal static int RunSpdxTool(string[] args)
     {
         // Create the context
@@ -192,6 +206,12 @@ public static class Validate
     ///         directory) will race. All callers within the Self-Test subsystem must execute serially.
     ///     </para>
     /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from any command executed by <see cref="Program.Run"/> that performs file I/O.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Propagated from any command that requires write access to the file system.
+    /// </exception>
     internal static int RunSpdxTool(string workingFolder, string[] args)
     {
         var cwd = Directory.GetCurrentDirectory();

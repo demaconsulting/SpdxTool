@@ -157,7 +157,7 @@ The `diagram` command generates a Mermaid diagram visualizing SPDX relationships
 **Syntax:**
 
 ```bash
-spdx-tool diagram <spdx.json> <mermaid.txt>
+spdx-tool diagram <spdx.json> <mermaid.txt> [tools]
 ```
 
 **Example:**

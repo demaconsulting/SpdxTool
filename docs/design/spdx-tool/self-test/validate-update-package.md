@@ -1,4 +1,4 @@
-﻿### ValidateUpdatePackage
+### ValidateUpdatePackage
 
 #### Purpose
 
@@ -17,7 +17,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
 - *Post-conditions*: A TestResult entry named SpdxTool_UpdatePackage has been appended to results; a
   pass or fail message has been written to the Context.
 
@@ -25,22 +26,32 @@ N/A - this unit is a static class with no instance state.
 
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and every updated field matches the new value.
-- *Preconditions*: A writable working directory is available.
-- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
+- *Preconditions*: A writable working directory is available. Callers must execute serially because
+  Validate.RunSpdxTool temporarily mutates the process-wide current working directory.
+- *Post-conditions*: The validate.tmp directory has been deleted in a finally block only if it exists,
+  guarding against a secondary `DirectoryNotFoundException` masking the original exception.
 
 Creates a validate.tmp directory, writes an SPDX JSON document containing a single package
 (SPDXRef-Package-1) with initial metadata, and writes a workflow YAML that executes update-package
-to change the name, download location, version, filename, supplier, originator, homepage, copyright
-text, summary, description, and license fields. Calls Validate.RunSpdxTool with --silent and
-run-workflow arguments, then reads the modified SPDX document and verifies that all twelve updated
-fields match the values specified in the workflow.
+to change eleven fields: name, download location, version, filename, supplier, originator, homepage,
+copyright text, summary, description, and license. Calls Validate.RunSpdxTool with --silent and
+run-workflow arguments, then reads the modified SPDX document and uses LINQ to locate the package
+by SPDX Id (`SPDXRef-Package-1`) — confirming correct package identity — then individually verifies
+all twelve updated SPDX fields match the values specified in the workflow. The `license` workflow
+input maps to two SPDX fields — `ConcludedLicense` and `DeclaredLicense` — which is why eleven
+workflow inputs result in twelve SPDX field verifications; the Id check is a thirteenth assertion
+that guards against verifying the wrong package.
 
 #### Error Handling
 
-Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
-SPDX document does not exactly match all twelve updated field values. The temporary directory is
-always deleted in a finally block, guarded with a Directory.Exists check to prevent a secondary
-DirectoryNotFoundException from masking the original exception.
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the output SPDX
+file (`validate.tmp/test.spdx.json`) is absent after the update-package tool exits successfully.
+Returns false if the deserialized SPDX document does not contain a package with Id `SPDXRef-Package-1`
+or does not exactly match all twelve updated SPDX field values (name, download location, version,
+filename, supplier, originator, homepage, copyright text, summary, description, ConcludedLicense, and
+DeclaredLicense — the last two both set by the single `license` workflow input). The temporary
+directory is always deleted in a finally block, guarded with a Directory.Exists check to prevent a
+secondary DirectoryNotFoundException from masking the original exception.
 
 Any exception thrown by DoValidate (such as IOException or UnauthorizedAccessException) propagates
 uncaught from Run; no TestResult is recorded for this step if an exception is thrown — the exception

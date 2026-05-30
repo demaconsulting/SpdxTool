@@ -58,3 +58,6 @@ sections:
                   - AddPackage_InWorkflowMissingPackageInput_ReportsError
                   - AddPackage_InWorkflowWithEmptyPackageId_ReportsError
                   - AddPackage_InWorkflowWithDocumentPackageId_ReportsError
+                  - AddPackage_ParsePackage_MissingPackageId_ReportsError
+                  - AddPackage_ParsePackage_MissingPackageName_ReportsError
+                  - AddPackage_ParsePackage_MissingPackageDownload_ReportsError

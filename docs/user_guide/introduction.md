@@ -34,6 +34,6 @@ Prerequisites: .NET SDK 8.0 or later. The guide includes:
   by the `validate ntia` command.
 - [SpdxTool releases][spdx-releases] — compiled documentation and release artifacts.
 
-[spdx-spec]: https://spdx.github.io/spdx-spec/
+[spdx-spec]: https://spdx.github.io/spdx-spec/v2.3/
 [ntia-sbom]: https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf
 [spdx-releases]: https://github.com/demaconsulting/SpdxTool/releases

@@ -23,12 +23,14 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of the ToMarkdown command.
+///     Self-test step that exercises the <c>to-markdown</c> command end-to-end.
 /// </summary>
 /// <remarks>
 ///     Exercises the to-markdown command end-to-end to confirm it is correctly installed and
 ///     operational. Called by the SelfTest orchestrator as part of the deployment validation
-///     sequence.
+///     sequence. Uses a temporary <c>validate.tmp</c> directory in the current working directory;
+///     callers must ensure sequential execution to avoid races on that directory and on the
+///     process-wide current directory set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
 /// </remarks>
 internal static class ValidateToMarkdown
 {
@@ -43,19 +45,21 @@ internal static class ValidateToMarkdown
     /// </remarks>
     /// <param name="context">Active program context used for console output. Must not be null.</param>
     /// <param name="results">Test results collection to append the outcome to. Must not be null.</param>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
         // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result to console
+        // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_ToMarkdown - Passed");
+            context.WriteLine("✓ SpdxTool_ToMarkdown - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_ToMarkdown - Failed");
+            context.WriteError("✗ SpdxTool_ToMarkdown - Failed");
         }
 
         // Add validation result to test results collection
@@ -78,13 +82,17 @@ internal static class ValidateToMarkdown
     ///     2.0.0/Apache-2.0) with DESCRIBES and CONTAINS relationships, invokes the to-markdown
     ///     command via Validate.RunSpdxTool, then verifies that the output Markdown file contains
     ///     the expected title, section headings, package names, and version strings. The temporary
-    ///     directory is always deleted in a finally block regardless of outcome.
+    ///     directory is deleted in a <c>finally</c> block only if it exists, guarding against a
+    ///     secondary <see cref="DirectoryNotFoundException"/> masking the original exception when
+    ///     <see cref="Directory.CreateDirectory(string)"/> fails.
     /// </remarks>
     /// <returns>
     ///     True if the to-markdown command exits with code zero and the output Markdown file
     ///     contains all expected strings; false if the exit code is non-zero or any expected
     ///     string is absent.
     /// </returns>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try
@@ -164,7 +172,7 @@ internal static class ValidateToMarkdown
             // Verify markdown contains expected structure and package information
             return markdown.Contains("Test SBOM Summary") &&
                    markdown.Contains("Root Packages") &&
-                   markdown.Contains("Packages") &&
+                   markdown.Contains("### Packages") &&
                    markdown.Contains("Test Application") &&
                    markdown.Contains("1.0.0") &&
                    markdown.Contains("Test Library") &&

@@ -32,7 +32,29 @@ scenario is tested by `Command_Expand_NestedVariable_ReturnsFullyExpanded`.
 semantics. This scenario is tested by `Command_GetMapString_WithVariableExpansion_ReturnsExpanded`.
 
 **WorkflowExecution**: the subsystem executes a valid workflow and dispatches its steps in order.
-This scenario is tested by `RunWorkflow_ValidWorkflowFile_ExecutesWorkflow`.
+This scenario is tested by `RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow`.
 
 **ValidationCommand**: the subsystem validates a conformant SPDX document without reporting issues.
-This scenario is tested by `Validate_ValidSpdxDocument_Succeeds`.
+This scenario is tested by `Validate_Run_ValidSpdxDocument_Succeeds`.
+
+**VariableExpansionErrorPaths**: variable expansion throws InvalidOperationException for
+unmatched `}}`, unmatched `${{`, and empty variable names. These scenarios are tested by
+`Command_Expand_UnmatchedClose_ThrowsInvalidOperationException`,
+`Command_Expand_UnmatchedOpen_ThrowsInvalidOperationException`, and
+`Command_Expand_EmptyVariableName_ThrowsInvalidOperationException`.
+
+**BasicVariableSubstitution**: a single `${{ name }}` token is replaced with its mapped
+value. This scenario is tested by `Command_Expand_BasicVariable_ReturnsExpanded`.
+
+**EnvironmentVariableExpansion**: a `${{ environment.NAME }}` token is replaced with the
+corresponding process environment variable value. This scenario is tested by
+`Command_Expand_EnvironmentVariable_ReturnsEnvironmentValue`.
+
+**RegistryCompleteness**: all sixteen expected command names are present as keys in the
+registry dictionary. This scenario is tested by
+`CommandsRegistry_Commands_AllExpectedNames_ArePresent`.
+
+**NullInputBehavior**: helper methods `GetMapMap`, `GetMapSequence`, and `GetSequenceString`
+return null when their primary input parameter is null. These scenarios are tested by
+`Command_GetMapMap_NullMap_ReturnsNull`, `Command_GetMapSequence_NullMap_ReturnsNull`, and
+`Command_GetSequenceString_NullSequence_ReturnsNull`.

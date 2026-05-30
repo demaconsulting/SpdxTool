@@ -4,8 +4,9 @@ sections:
   - title: SpdxToolTargets Requirements
     requirements:
       - id: SpdxToolTargets-DecorateSbomDuringPack
-        title: The system shall decorate SBOMs during dotnet pack when IsPackable, GenerateSBOM, and DecorateSBOM are all
-          true.
+        title: >-
+          The system shall decorate SBOMs during dotnet pack when IsPackable,
+          GenerateSBOM, and DecorateSBOM are all true.
         tags:
           - msbuild
           - sbom
@@ -13,6 +14,9 @@ sections:
           Users need SBOM decoration integrated into their standard build process
           without manual intervention. Automatic decoration during pack ensures
           SBOMs are consistently enhanced for both single-TFM and multi-TFM projects.
+        children:
+          - SpdxToolTargets-SingleTfm-DecorateWhenEnabled
+          - SpdxToolTargets-MultiTfm-DecorateWhenEnabled
         tests:
           - SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom
           - SpdxToolTargets_DecorateSbom_MultiTfm_True_DecoratesSbom
@@ -26,6 +30,8 @@ sections:
           Users must be able to opt out of SBOM decoration for projects where it is
           not needed or desired. The default behavior respects user choice by not
           decorating unless explicitly enabled.
+        children:
+          - SpdxToolTargets-SingleTfm-SkipWhenDecorationDisabled
         tests:
           - SpdxToolTargets_DecorateSbom_SingleTfm_False_SkipsDecoration
 
@@ -38,6 +44,8 @@ sections:
           SBOM decoration depends on SBOM generation being enabled. When no SBOM
           is generated, decoration should be skipped entirely to avoid errors and
           unnecessary processing.
+        children:
+          - SpdxToolTargets-SingleTfm-SkipWhenGenerationDisabled
         tests:
           - SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely
 
@@ -50,5 +58,7 @@ sections:
           When users enable SBOM decoration but the required workflow file is not
           present, they need a clear error message to understand the problem and
           take corrective action.
+        children:
+          - SpdxToolTargets-SingleTfm-ReportMissingWorkflow
         tests:
           - SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError

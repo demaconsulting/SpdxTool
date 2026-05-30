@@ -21,11 +21,12 @@
 using DemaConsulting.SpdxModel;
 using DemaConsulting.SpdxModel.IO;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'add-package' command.
 /// </summary>
+[Collection("CommandSequential")]
 public class AddPackageTests
 {
     /// <summary>
@@ -358,7 +359,7 @@ public class AddPackageTests
             }
             """;
 
-        // Workflow contents - add package with same name/version but different ID
+        // Workflow contents - add package with same name/version but different ID and with a supplier
         const string workflowContents =
             """
             steps:
@@ -370,6 +371,7 @@ public class AddPackageTests
                   name: Test Package
                   version: 1.0.0
                   download: https://dotnet.microsoft.com/download
+                  supplier: "Organization: TestOrg"
             """;
 
         try
@@ -396,6 +398,9 @@ public class AddPackageTests
             // Assert: Verify only one package (enhanced, not duplicated)
             Assert.Single(doc.Packages);
             Assert.Equal("SPDXRef-Package-New", doc.Packages[0].Id);
+
+            // Assert: Verify a field from the incoming package was merged into the existing package
+            Assert.Equal("Organization: TestOrg", doc.Packages[0].Supplier);
         }
         finally
         {
@@ -563,6 +568,129 @@ public class AddPackageTests
             // Assert: Verify error reported
             Assert.Equal(1, exitCode);
             Assert.Contains("Invalid package ID", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-package command in workflow with missing package ID reports error
+    /// </summary>
+    [Fact]
+    public void AddPackage_ParsePackage_MissingPackageId_ReportsError()
+    {
+        // Workflow contents - package entry missing the 'id' field entirely
+        const string workflowContents =
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  name: Test Package
+                  download: https://dotnet.microsoft.com/download
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-package' missing package 'id' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-package command in workflow with missing package name reports error
+    /// </summary>
+    [Fact]
+    public void AddPackage_ParsePackage_MissingPackageName_ReportsError()
+    {
+        // Workflow contents - package entry missing the 'name' field
+        const string workflowContents =
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-Package-1
+                  download: https://dotnet.microsoft.com/download
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-package' missing package 'name' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-package command in workflow with missing package download reports error
+    /// </summary>
+    [Fact]
+    public void AddPackage_ParsePackage_MissingPackageDownload_ReportsError()
+    {
+        // Workflow contents - package entry missing the 'download' field
+        const string workflowContents =
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-Package-1
+                  name: Test Package
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'add-package' missing package 'download' input", output);
         }
         finally
         {

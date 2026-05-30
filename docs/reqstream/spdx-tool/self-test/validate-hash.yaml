@@ -14,4 +14,4 @@ sections:
                   Self-validation of the hash command ensures it correctly generates and
                   verifies SHA-256 file hashes after installation or deployment.
                 tests:
-                  - SpdxTool_Hash
+                  - ValidateHash_Run_ValidHashWorkflow_Passes

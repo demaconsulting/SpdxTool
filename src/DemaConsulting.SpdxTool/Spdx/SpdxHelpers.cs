@@ -25,17 +25,17 @@ using DemaConsulting.SpdxTool.Commands;
 namespace DemaConsulting.SpdxTool.Spdx;
 
 /// <summary>
-///     SPDX Helpers Class
+///     Provides centralized file I/O operations for loading and saving SPDX 2.x JSON documents.
 /// </summary>
 /// <remarks>
-///     Provides centralized file-system operations for loading and saving SPDX 2.3 JSON
+///     Provides centralized file-system operations for loading and saving SPDX 2.x JSON
 ///     documents. All commands that read or write SPDX files use these helpers to ensure
 ///     consistent error handling and document stamping behavior.
 /// </remarks>
 public static class SpdxHelpers
 {
     /// <summary>
-    ///     Load an SPDX document
+    ///     Loads an SPDX 2.x JSON document from disk, throwing <see cref="Commands.CommandUsageException"/> when the file does not exist.
     /// </summary>
     /// <remarks>
     ///     Centralizing the file-existence check here ensures that every command that loads an
@@ -49,7 +49,10 @@ public static class SpdxHelpers
     /// <exception cref="Commands.CommandUsageException">Thrown when the specified file does not exist.</exception>
     public static SpdxDocument LoadJsonDocument(string spdxFile)
     {
-        // Verify to file exists
+        // Validate arguments
+        ArgumentNullException.ThrowIfNull(spdxFile);
+
+        // Verify the file exists
         if (!File.Exists(spdxFile))
         {
             throw new CommandUsageException($"File not found: {spdxFile}");
@@ -61,7 +64,7 @@ public static class SpdxHelpers
     }
 
     /// <summary>
-    ///     Save an SPDX document
+    ///     Stamps the tool creator entry and serializes an SPDX document to a JSON file, overwriting any existing file.
     /// </summary>
     /// <remarks>
     ///     Every command that writes an SPDX file calls this method to ensure the tool creator
@@ -78,6 +81,10 @@ public static class SpdxHelpers
     /// </param>
     public static void SaveJsonDocument(SpdxDocument doc, string spdxFile)
     {
+        // Validate arguments
+        ArgumentNullException.ThrowIfNull(doc);
+        ArgumentNullException.ThrowIfNull(spdxFile);
+
         // Construct the tool name
         var toolName = $"Tool: DemaConsulting.SpdxTool-{Program.Version}";
 

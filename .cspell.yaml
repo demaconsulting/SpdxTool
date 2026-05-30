@@ -51,6 +51,7 @@ words:
   - LINQ
   - maintainer
   - markdownlint
+  - metacharacters
   - mermaid
   - MSBUILD
   - MSBUILDDISABLENODEREUSE
@@ -109,6 +110,8 @@ words:
   - vbproj
   - vcxproj
   - versionmark
+  - xunit
+  - Xunit
   - VersionMark
   - Weasyprint
   - wildcards

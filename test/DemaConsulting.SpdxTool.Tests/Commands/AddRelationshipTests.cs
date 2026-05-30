@@ -21,11 +21,12 @@
 using DemaConsulting.SpdxModel;
 using DemaConsulting.SpdxModel.IO;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'add-relationship' command
 /// </summary>
+[Collection("CommandSequential")]
 public class AddRelationshipTests
 {
     /// <summary>
@@ -69,7 +70,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command with missing arguments reports an error
     /// </summary>
     [Fact]
-    public void AddRelationship_MissingArguments_ReportsError()
+    public void AddRelationship_Run_MissingArguments_ReportsError()
     {
         // Arrange: No setup required - testing argument validation only
 
@@ -89,7 +90,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command with missing file reports an error
     /// </summary>
     [Fact]
-    public void AddRelationship_MissingFile_ReportsError()
+    public void AddRelationship_Run_MissingFile_ReportsError()
     {
         // Arrange: No setup required - testing missing file error with non-existent path
 
@@ -113,7 +114,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command on command line adds a relationship
     /// </summary>
     [Fact]
-    public void AddRelationship_OnCommandLine_AddsRelationship()
+    public void AddRelationship_Run_OnCommandLine_AddsRelationship()
     {
         try
         {

@@ -6,7 +6,7 @@ sections:
         sections:
           - title: UpdatePackage Requirements
             requirements:
-              - id: SpdxTool-Package-UpdatePackage
+              - id: SpdxTool-Commands-UpdatePackage
                 title: The tool shall update existing packages in SPDX documents using the update-package command.
                 tags:
                   - spdx
@@ -14,10 +14,9 @@ sections:
                   Users need to modify package metadata as software components evolve,
                   such as updating versions, licenses, or other attributes.
                 tests:
-                  - UpdatePackage_Run_OnCommandLine_ReportsWorkflowOnlyError
                   - UpdatePackage_Run_InWorkflow_UpdatesPackage
 
-              - id: SpdxTool-Package-UpdatePackage-CliRejection
+              - id: SpdxTool-Commands-UpdatePackage-CliRejection
                 title: The update-package command shall reject direct CLI invocation with a usage error.
                 tags:
                   - spdx
@@ -28,7 +27,7 @@ sections:
                 tests:
                   - UpdatePackage_Run_OnCommandLine_ReportsWorkflowOnlyError
 
-              - id: SpdxTool-Package-UpdatePackage-MissingSpdxInput
+              - id: SpdxTool-Commands-UpdatePackage-MissingSpdxInput
                 title: The update-package command shall report an error when the spdx input is missing.
                 tags:
                   - spdx
@@ -38,7 +37,7 @@ sections:
                 tests:
                   - UpdatePackage_Run_MissingSpdxInput_ReportsError
 
-              - id: SpdxTool-Package-UpdatePackage-MissingPackageInput
+              - id: SpdxTool-Commands-UpdatePackage-MissingPackageInput
                 title: The update-package command shall report an error when the package input is missing.
                 tags:
                   - spdx
@@ -48,7 +47,7 @@ sections:
                 tests:
                   - UpdatePackage_Run_MissingPackageInput_ReportsError
 
-              - id: SpdxTool-Package-UpdatePackage-PackageNotFound
+              - id: SpdxTool-Commands-UpdatePackage-PackageNotFound
                 title: >-
                   The update-package command shall report an error when the specified package
                   ID is not found in the SPDX document.
@@ -60,7 +59,7 @@ sections:
                 tests:
                   - UpdatePackage_Run_PackageNotFound_ReportsError
 
-              - id: SpdxTool-Package-UpdatePackage-PartialUpdate
+              - id: SpdxTool-Commands-UpdatePackage-PartialUpdate
                 title: When only some fields are specified, unspecified fields shall remain unchanged.
                 tags:
                   - spdx
@@ -70,7 +69,7 @@ sections:
                 tests:
                   - UpdatePackage_Run_PartialUpdate_PreservesUnspecifiedFields
 
-              - id: SpdxTool-Package-UpdatePackage-MissingPackageIdInput
+              - id: SpdxTool-Commands-UpdatePackage-MissingPackageIdInput
                 title: >-
                   The update-package command shall report an error when the package id input
                   is absent from the package map.

@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'print' command
@@ -67,10 +67,11 @@ public class PrintTests
                 - ${{ p2 }} is the second parameter.
             """;
 
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the workflow file
-            File.WriteAllText("workflow.yaml", workflowContents);
+            File.WriteAllText(workflowFile, workflowContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -78,7 +79,7 @@ public class PrintTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "run-workflow",
-                "workflow.yaml");
+                workflowFile);
 
             // Assert: Verify success
             Assert.Equal(0, exitCode);
@@ -87,7 +88,7 @@ public class PrintTests
         }
         finally
         {
-            File.Delete("workflow.yaml");
+            File.Delete(workflowFile);
         }
     }
 
@@ -95,7 +96,7 @@ public class PrintTests
     ///     Test that print command in workflow without text input reports an error
     /// </summary>
     [Fact]
-    public void Print_Run_MissingTextInput_ThrowsYamlException()
+    public void Print_Run_MissingTextInput_ReportsError()
     {
         // Workflow contents
         const string workflowContents =
@@ -105,10 +106,11 @@ public class PrintTests
               inputs: {}
             """;
 
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the workflow file
-            File.WriteAllText("workflow.yaml", workflowContents);
+            File.WriteAllText(workflowFile, workflowContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -116,7 +118,7 @@ public class PrintTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "run-workflow",
-                "workflow.yaml");
+                workflowFile);
 
             // Assert: Verify error is reported
             Assert.Equal(1, exitCode);
@@ -124,7 +126,7 @@ public class PrintTests
         }
         finally
         {
-            File.Delete("workflow.yaml");
+            File.Delete(workflowFile);
         }
     }
 }

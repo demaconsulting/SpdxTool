@@ -46,3 +46,20 @@ supplied. This scenario is tested by `FindPackage_ById_FindsPackage`.
 
 **InvalidCriteria**: the unit reports a usage error when a criterion string does not contain an '='
 separator. This scenario is tested by `FindPackage_InvalidCriteria_ReportsError`.
+
+**WorkflowMissingOutput**: the unit reports an error when the `output` input is absent from the
+workflow step. This scenario is tested by `FindPackage_Run_MissingOutputInput_ReportsError`.
+
+**WorkflowMissingSpdx**: the unit reports an error when the `spdx` input is absent from the
+workflow step. This scenario is tested by `FindPackage_Run_MissingSpdxInput_ReportsError`.
+
+**NoPackageFound**: the unit reports an error when no package in the SPDX document matches the
+supplied search criteria. This scenario is tested by `FindPackage_Run_NoPackageFound_ReportsError`.
+
+**MultiplePackagesFound**: the unit reports an error when more than one package in the SPDX document
+matches the supplied search criteria. This scenario is tested by
+`FindPackage_Run_MultiplePackagesFound_ReportsError`.
+
+**ParseCriteriaEmptyKey**: the unit throws a usage exception when a criterion argument has an empty
+key (e.g. `=value`). This scenario is tested by
+`FindPackage_ParseCriteria_EmptyKey_ThrowsCommandUsageException`.

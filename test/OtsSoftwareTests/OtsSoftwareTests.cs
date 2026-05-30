@@ -28,10 +28,10 @@ namespace DemaConsulting.SpdxTool.OtsSoftwareTests;
 public class OtsSoftwareTests
 {
     /// <summary>
-    ///     Test that BuildMark can generate markdown build-notes documentation
+    ///     Test that BuildMark is installed and responds to --help
     /// </summary>
     [Fact]
-    public void BuildMark_MarkdownReportGeneration()
+    public void BuildMark_Tool_IsInstalled()
     {
         // Arrange: no setup required
 
@@ -44,10 +44,10 @@ public class OtsSoftwareTests
     }
 
     /// <summary>
-    ///     Test that ReqStream can run in enforcement mode
+    ///     Test that ReqStream is installed and responds to --help
     /// </summary>
     [Fact]
-    public void ReqStream_EnforcementMode()
+    public void ReqStream_Tool_IsInstalled()
     {
         // Arrange: no setup required
 
@@ -60,10 +60,10 @@ public class OtsSoftwareTests
     }
 
     /// <summary>
-    ///     Test that SarifMark can read SARIF files
+    ///     Test that SarifMark is installed and responds to --help
     /// </summary>
     [Fact]
-    public void SarifMark_SarifReading()
+    public void SarifMark_Tool_IsInstalled()
     {
         // Arrange: no setup required
 
@@ -76,10 +76,10 @@ public class OtsSoftwareTests
     }
 
     /// <summary>
-    ///     Test that SarifMark can generate markdown reports
+    ///     Test that SarifMark is installed and reports its version
     /// </summary>
     [Fact]
-    public void SarifMark_MarkdownReportGeneration()
+    public void SarifMark_Tool_ReportsVersion()
     {
         // Arrange: no setup required
 
@@ -92,10 +92,10 @@ public class OtsSoftwareTests
     }
 
     /// <summary>
-    ///     Test that SonarMark can generate a SonarCloud quality report
+    ///     Test that SonarMark is installed and responds to --help
     /// </summary>
     [Fact]
-    public void SonarMark_MarkdownReportGeneration()
+    public void SonarMark_Tool_IsInstalled()
     {
         // Arrange: no setup required
 
@@ -135,10 +135,10 @@ public class OtsSoftwareTests
     }
 
     /// <summary>
-    ///     Test that VersionMark can capture tool version information
+    ///     Test that VersionMark is installed and responds to --help
     /// </summary>
     [Fact]
-    public void VersionMark_CapturesVersions()
+    public void VersionMark_Tool_IsInstalled()
     {
         // Arrange: no setup required
 
@@ -151,10 +151,10 @@ public class OtsSoftwareTests
     }
 
     /// <summary>
-    ///     Test that VersionMark can generate a markdown report
+    ///     Test that VersionMark is installed and reports its version
     /// </summary>
     [Fact]
-    public void VersionMark_GeneratesMarkdownReport()
+    public void VersionMark_Tool_ReportsVersion()
     {
         // Arrange: no setup required
 

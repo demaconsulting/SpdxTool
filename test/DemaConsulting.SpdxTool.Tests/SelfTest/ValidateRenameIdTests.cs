@@ -38,13 +38,14 @@ public class ValidateRenameIdTests
     ///     Test that ValidateRenameId validation passes.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_RenameId</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateRenameId.Run"/> so that
-    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
-    ///     naming convention is appropriate for self-test integration tests.
+    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateRenameId.Run"/> is
+    ///     <c>SpdxTool_RenameId</c>; the assertion in this test guards against regressions
+    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
+    ///     convention; <c>SpdxTool_RenameId</c> is the <c>TestResult.Name</c> identifier recorded
+    ///     by the self-test step, not the test method name.
     /// </remarks>
     [Fact]
-    public void SpdxTool_RenameId()
+    public void ValidateRenameId_Run_ValidRenameIdWorkflow_Passes()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -56,6 +57,7 @@ public class ValidateRenameIdTests
         // Assert: single passing result recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_RenameId", results.Results[0].Name);
     }
 
     /// <summary>

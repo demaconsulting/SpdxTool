@@ -14,5 +14,5 @@ sections:
                   Self-validation of the to-markdown command ensures it correctly generates
                   Markdown summaries of SPDX documents after installation or deployment.
                 tests:
-                  - SpdxTool_ToMarkdown
+                  - ValidateToMarkdown_Run_ValidToMarkdownWorkflow_Passes
                   - ValidateToMarkdown_Run_IoError_PropagatesException

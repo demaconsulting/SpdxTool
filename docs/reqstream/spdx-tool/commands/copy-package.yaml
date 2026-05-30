@@ -6,7 +6,7 @@ sections:
         sections:
           - title: CopyPackage Requirements
             requirements:
-              - id: SpdxTool-Package-CopyPackage
+              - id: SpdxTool-Commands-CopyPackage
                 title: The tool shall copy packages between SPDX documents using the copy-package command.
                 tags:
                   - spdx
@@ -14,12 +14,12 @@ sections:
                   Users need to reuse package information across multiple SPDX documents
                   to avoid duplication and ensure consistency of package metadata.
                 tests:
-                  - CopyPackage_OnCommandLine_CopiesPackage
-                  - CopyPackage_InWorkflow_CopiesPackage
-                  - CopyPackage_InWorkflowRecursive_CopiesPackageRecursively
-                  - CopyPackage_InWorkflowWithFiles_CopiesPackageAndFiles
+                  - CopyPackage_Run_OnCommandLine_CopiesPackage
+                  - CopyPackage_Run_InWorkflow_CopiesPackage
+                  - CopyPackage_Run_InWorkflowRecursive_CopiesPackageRecursively
+                  - CopyPackage_Run_InWorkflowWithFiles_CopiesPackageAndFiles
 
-              - id: SpdxTool-Package-CopyPackage-Enhance
+              - id: SpdxTool-Commands-CopyPackage-Enhance
                 title: >-
                   When a package with the same identity already exists in the destination SPDX document,
                   the copy-package command shall enhance the existing package rather than adding a duplicate.
@@ -29,17 +29,48 @@ sections:
                   Users may copy packages that already exist in the destination document.
                   Enhancing rather than duplicating ensures SPDX document consistency.
                 tests:
-                  - CopyPackage_InWorkflowWithExistingPackage_EnhancesPackage
+                  - CopyPackage_Run_InWorkflowWithExistingPackage_EnhancesPackage
 
-              - id: SpdxTool-Package-CopyPackage-Validate
+              - id: SpdxTool-Commands-CopyPackage-Validate
                 title: >-
-                  The copy-package command shall validate its inputs and report an error for missing
-                  or invalid values.
+                  The copy-package command shall validate its inputs and report an error for missing,
+                  invalid, or reserved values including an empty or SPDXRef-DOCUMENT package argument.
                 tags:
                   - spdx
                 justification: |
                   Invalid inputs must be detected early and reported clearly so that users can
                   diagnose configuration mistakes quickly.
                 tests:
-                  - CopyPackage_MissingArguments_ReportsError
-                  - CopyPackage_MissingFile_ReportsError
+                  - CopyPackage_Run_MissingArguments_ReportsError
+                  - CopyPackage_Run_MissingFile_ReportsError
+                  - CopyPackage_Run_InvalidPackageId_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-ValidateWorkflow
+                title: >-
+                  The copy-package command shall validate all workflow inputs and report an error for
+                  each missing or invalid field including from, to, package, recursive, and files.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow authors must receive actionable error messages for every missing or
+                  invalid input so that configuration mistakes can be diagnosed without
+                  inspecting source code.
+                tests:
+                  - CopyPackage_Run_MissingFromInput_ReportsError
+                  - CopyPackage_Run_MissingToInput_ReportsError
+                  - CopyPackage_Run_MissingPackageInput_ReportsError
+                  - CopyPackage_Run_InvalidRecursiveInput_ReportsError
+                  - CopyPackage_Run_InvalidFilesInput_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-PackageNotFound
+                title: >-
+                  The copy-package command shall report an error when the specified package identifier
+                  does not exist in the source SPDX document.
+                tags:
+                  - spdx
+                justification: |
+                  Users may specify an incorrect or non-existent package identifier. The command
+                  must detect this condition and report a clear error rather than silently
+                  producing an incomplete destination document.
+                tests:
+                  - CopyPackage_Run_PackageNotFound_ReportsError

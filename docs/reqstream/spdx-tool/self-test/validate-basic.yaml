@@ -7,7 +7,9 @@ sections:
           - title: ValidateBasic Requirements
             requirements:
               - id: SpdxTool-SelfTest-Basic
-                title: The SelfTest shall exercise the validate command with basic CLI flags (silent, log).
+                title: >-
+                  The SelfTest shall verify that the validate command correctly accepts valid SPDX
+                  documents and rejects invalid ones.
                 tags:
                   - self-test
                 justification: |

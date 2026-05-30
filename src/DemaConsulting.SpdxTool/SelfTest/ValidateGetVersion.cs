@@ -46,20 +46,24 @@ internal static class ValidateGetVersion
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
         // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_GetVersion - Passed");
+            context.WriteLine("✓ SpdxTool_GetVersion - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_GetVersion - Failed");
+            context.WriteError("✗ SpdxTool_GetVersion - Failed");
         }
 
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -89,13 +93,9 @@ internal static class ValidateGetVersion
     ///         verifies it contains "Found version 2.0.0".
     ///     </para>
     ///     <para>
-    ///         <strong>Thread safety:</strong> <see cref="Validate.RunSpdxTool(string, string[])"/>
-    ///         temporarily mutates the process-wide current working directory; callers must execute
-    ///         serially to avoid races.
-    ///     </para>
-    ///     <para>
-    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
-    ///         even if directory creation or file writes only partially succeeded.
+    ///         The <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it exists,
+    ///         guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the original
+    ///         exception when <see cref="Directory.CreateDirectory(string)"/> fails.
     ///     </para>
     /// </remarks>
     /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
@@ -175,6 +175,12 @@ internal static class ValidateGetVersion
 
             // Fail if SpdxTool reported an error
             if (exitCode != 0)
+            {
+                return false;
+            }
+
+            // Fail if log file is absent
+            if (!File.Exists("validate.tmp/output.log"))
             {
                 return false;
             }

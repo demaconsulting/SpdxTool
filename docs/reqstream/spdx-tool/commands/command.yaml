@@ -7,19 +7,23 @@ sections:
           - title: Command Requirements
             requirements:
               - id: SpdxTool-Command-AbstractContract
-                title: The Command base class shall define the abstract execution contract for all commands.
+                title: Every command shall expose a consistent execution interface for both CLI and workflow invocation.
                 justification: |
-                  All commands must expose a consistent interface for both CLI and workflow
-                  invocation. The abstract base class enforces this contract at compile time.
+                  All commands must be callable in the same way regardless of invocation context
+                  (CLI or workflow). A uniform interface ensures commands are interchangeable
+                  and independently testable without knowledge of how they are dispatched.
                 tests:
-                  - Command_Expand_NoVariables_ReturnsOriginal
+                  - CommandsRegistry_Commands_AllExpectedNames_ArePresent
+                  - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow
               - id: SpdxTool-Command-VariableExpansion
-                title: The Command base class shall expand ${{ variable }} tokens using the provided variable map.
+                title: >-
+                  The command shall expand ${{ name }} tokens in argument values by
+                  substituting workflow variables.
                 justification: |
                   Variable expansion enables workflow authors to parameterize command arguments.
-                  Centralizing this in the base class ensures consistent behavior across all commands.
+                  Centralizing this behavior ensures consistent token resolution across all commands.
                 tests:
-                  - Command_Expand_MissingVariable_ReturnsMissingToken
+                  - Command_Expand_MissingVariable_ThrowsInvalidOperationException
                   - Command_Expand_NoVariables_ReturnsOriginal
                   - Command_Expand_BasicVariable_ReturnsExpanded
                   - Command_Expand_NestedVariable_ReturnsFullyExpanded

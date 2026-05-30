@@ -1,4 +1,4 @@
-﻿### ValidateAddRelationship
+### ValidateAddRelationship
 
 #### Purpose
 
@@ -20,7 +20,8 @@ N/A - this unit is a static class with no instance state.
 - *Returns*: void.
 - *Preconditions*: None.
 - *Post-conditions*: A TestResult entry named SpdxTool_AddRelationship has been appended to results;
-  a pass or fail message has been written to the Context.
+  a pass message has been written to the Context's standard output stream, or a fail message to the
+  Context's error output stream.
 
 **DoValidate**: performs the actual add-relationship validation in a temporary directory.
 

@@ -4,7 +4,9 @@
 
 `ValidateUpdatePackage` is verified by
 `test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateUpdatePackageTests.cs`, which runs the step
-end-to-end against temporary SPDX content.
+end-to-end against temporary SPDX content. No mocking is used; all dependencies are exercised
+with real implementations because this is an end-to-end integration test of the complete command
+execution path.
 
 #### Test Environment
 
@@ -19,7 +21,7 @@ expected package metadata in the SPDX document.
 #### Test Scenarios
 
 **EndToEndUpdatePackage**: the self-test step proves that `update-package` updates package metadata
-during validation. This scenario is tested by `SpdxTool_UpdatePackage`.
+during validation. This scenario is tested by `ValidateUpdatePackage_Run_ValidWorkflow_RecordsPassResult`.
 
 **ExceptionPropagation**: when an I/O error prevents DoValidate from running, the exception
 propagates uncaught from Run() and no TestResult is recorded. This scenario is tested by

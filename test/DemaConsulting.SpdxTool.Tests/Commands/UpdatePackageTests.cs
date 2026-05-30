@@ -20,11 +20,12 @@
 
 using DemaConsulting.SpdxModel.IO;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'update-package' command.
 /// </summary>
+[Collection("CommandSequential")]
 public class UpdatePackageTests
 {
     /// <summary>

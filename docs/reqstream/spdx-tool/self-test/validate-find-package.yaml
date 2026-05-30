@@ -7,11 +7,13 @@ sections:
           - title: ValidateFindPackage Requirements
             requirements:
               - id: SpdxTool-SelfTest-FindPackage
-                title: The SelfTest shall exercise the find-package command.
+                title: >-
+                  The SelfTest shall verify that the find-package command correctly
+                  locates a package by name in an SPDX document.
                 tags:
                   - self-test
                 justification: |
                   Self-validation of the find-package command ensures it correctly locates
                   packages in SPDX documents by criteria after installation or deployment.
                 tests:
-                  - SpdxTool_FindPackage
+                  - ValidateFindPackage_Run_ValidPackageWorkflow_Passes

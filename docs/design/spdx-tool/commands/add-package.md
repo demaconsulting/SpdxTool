@@ -24,7 +24,7 @@ N/A — AddPackage is a stateless singleton; all state is carried via method par
 - *Preconditions*: None.
 - *Post-conditions*: Throws CommandUsageException unconditionally.
 
-**Run(Context, YamlMappingNode, Dictionary)**: Parses workflow inputs, builds the package and
+**Run(Context, YamlMappingNode, Dictionary<string, string>)**: Parses workflow inputs, builds the package and
 relationships, and delegates to AddPackageToSpdxFile.
 
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
@@ -34,7 +34,7 @@ relationships, and delegates to AddPackageToSpdxFile.
 - *Post-conditions*: The named SPDX file is updated with the new or enhanced package and any
   specified relationships.
 
-**ParsePackage(string, YamlMappingNode, Dictionary)**: Constructs an SpdxPackage from a YAML
+**ParsePackage(string, YamlMappingNode, Dictionary<string, string>)**: Constructs an SpdxPackage from a YAML
 mapping node, appending optional purl and cpe23 entries as SpdxExternalReference instances.
 
 - *Parameters*: `string command` — command name for error messages; `YamlMappingNode packageMap`
@@ -65,7 +65,8 @@ otherwise a deep copy of the package is appended.
 - *Returns*: `void`
 - *Preconditions*: doc must not be null.
 - *Post-conditions*: doc.Packages contains the package; if an existing same-identity package was found
-  its ID is updated to match the supplied package ID via RenameId.Rename.
+  its ID is updated to match the supplied package ID via RenameId.Rename. If the existing package's
+  ID already matches `package.Id`, the rename is a no-op; the enhance still runs.
 
 #### Error Handling
 
@@ -74,7 +75,9 @@ also thrown by ParsePackage when the package ID is empty or equals "SPDXRef-DOCU
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the spdx or package
 inputs are missing; thrown by ParsePackage when the id, name, or download fields are absent from
-the packageMap.
+the packageMap. When the `inputs:` block is entirely absent from a workflow step, `GetMapMap`
+returns null; the subsequent `GetMapString` call on that null map also returns null, causing the
+`?? throw` guard to throw a YamlException with the expected message.
 
 **CommandErrorException** — thrown by AddPackageToSpdxFile when the relationships cannot be applied
 to the document (propagated from AddRelationship.Add).

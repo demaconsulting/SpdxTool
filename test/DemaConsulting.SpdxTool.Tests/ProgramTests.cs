@@ -30,6 +30,7 @@ public partial class ProgramTests
     /// <summary>
     ///     Regular expression to match a semantic version string.
     /// </summary>
+    /// <returns>A compiled Regex that matches a semantic version string (e.g., 1.2.3 or 1.2.3-preview).</returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
     private static partial Regex VersionRegex();
 
@@ -39,6 +40,8 @@ public partial class ProgramTests
     [Fact]
     public void SpdxTool_Program_Version_IsValidVersionString()
     {
+        // Arrange: no setup required
+
         // Act
         var version = Program.Version;
 
@@ -129,5 +132,21 @@ public partial class ProgramTests
         var output = writer.ToString();
         Assert.Contains("Error: Missing arguments", output);
         Assert.Contains("Usage: spdx-tool", output);
+    }
+
+    /// <summary>
+    ///     Test that Context.Create with a negative depth value throws InvalidOperationException.
+    /// </summary>
+    [Fact]
+    public void Context_Create_NegativeDepth_ThrowsInvalidOperationException()
+    {
+        // Arrange: N/A — no fixture required
+
+        // Act / Assert: negative depth must be rejected with a controlled error, not a crash
+        var ex = Assert.Throws<InvalidOperationException>(
+            () => Context.Create(["--validate", "--depth", "-1"]));
+
+        // Assert: error message is user-friendly and mentions depth
+        Assert.Contains("depth", ex.Message);
     }
 }

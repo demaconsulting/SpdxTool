@@ -40,7 +40,8 @@ YAML step node, finds the matching package, and stores its ID in variables[outpu
 - *Post-conditions*: variables[output] is set to the matching package ID.
 
 **ParseCriteria(IEnumerable, Dictionary)**: Splits each "key=value" string from args into a
-criteria dictionary entry. Throws CommandUsageException if any entry does not contain "=".
+criteria dictionary entry. Throws CommandUsageException if any entry does not contain "=", or if
+the key part (the substring before "=") is empty.
 
 - *Parameters*: `IEnumerable<string> args` — criterion strings;
   `Dictionary<string, string> criteria` — dictionary to populate.
@@ -80,7 +81,7 @@ criteria using Wildcard.IsMatch for each field.
 
 **CommandUsageException** — thrown by Run(Context, string[]) when fewer than two arguments are
 provided; thrown by ParseCriteria(IEnumerable, Dictionary) when a criterion string does not
-contain "=".
+contain "=", or when the key part (the substring before "=") is empty.
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the output or spdx
 inputs are missing.

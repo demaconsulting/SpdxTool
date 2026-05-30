@@ -20,11 +20,12 @@
 
 using System.Text.RegularExpressions;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'query' command
 /// </summary>
+[Collection("CommandSequential")]
 public partial class QueryTests
 {
     /// <summary>
@@ -38,8 +39,10 @@ public partial class QueryTests
     ///     Test that query command with missing arguments reports an error
     /// </summary>
     [Fact]
-    public void Query_MissingArguments_ReportsError()
+    public void Query_Run_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -56,8 +59,10 @@ public partial class QueryTests
     ///     Test that query command with bad regex pattern reports an error
     /// </summary>
     [Fact]
-    public void Query_PatternMissingValueGroup_ReportsError()
+    public void Query_Run_PatternMissingValueGroup_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -77,8 +82,10 @@ public partial class QueryTests
     ///     Test that query command with invalid program reports an error
     /// </summary>
     [Fact]
-    public void Query_InvalidProgram_ReportsError()
+    public void Query_Run_InvalidProgram_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -99,6 +106,8 @@ public partial class QueryTests
     [Fact]
     public void Query_DotNetVersion_OnCommandLine_ReturnsVersion()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -141,10 +150,11 @@ public partial class QueryTests
                 - ${{ version }}
             """;
 
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
-            // Arrange: Write the workflow file
-            File.WriteAllText("workflow.yaml", workflowContents);
+            // Arrange: Write the workflow file to a temp location
+            File.WriteAllText(workflowFile, workflowContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -152,7 +162,7 @@ public partial class QueryTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "run-workflow",
-                "workflow.yaml");
+                workflowFile);
 
             // Assert: Verify success
             Assert.Equal(0, exitCode);
@@ -160,7 +170,7 @@ public partial class QueryTests
         }
         finally
         {
-            File.Delete("workflow.yaml");
+            File.Delete(workflowFile);
         }
     }
 
@@ -168,8 +178,10 @@ public partial class QueryTests
     ///     Test that query command with an invalid regex pattern reports an error
     /// </summary>
     [Fact]
-    public void Query_InvalidRegexPattern_ReportsError()
+    public void Query_Run_InvalidRegexPattern_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -189,8 +201,10 @@ public partial class QueryTests
     ///     Test that query command with a pattern not found in output reports an error
     /// </summary>
     [Fact]
-    public void Query_PatternNotFound_ReportsError()
+    public void Query_Run_PatternNotFound_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,

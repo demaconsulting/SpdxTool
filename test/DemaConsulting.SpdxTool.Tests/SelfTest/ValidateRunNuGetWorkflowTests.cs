@@ -38,13 +38,14 @@ public class ValidateRunNuGetWorkflowTests
     ///     Test that ValidateRunNuGetWorkflow validation passes.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_RunNuGetWorkflow</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateRunNuGetWorkflow.Run"/> so
-    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This
-    ///     system-level naming convention is appropriate for self-test integration tests.
+    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateRunNuGetWorkflow.Run"/> is
+    ///     <c>SpdxTool_RunNuGetWorkflow</c>; the assertion in this test guards against regressions
+    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
+    ///     convention; <c>SpdxTool_RunNuGetWorkflow</c> is the <c>TestResult.Name</c> identifier
+    ///     recorded by the self-test step, not the test method name.
     /// </remarks>
     [Fact]
-    public void SpdxTool_RunNuGetWorkflow()
+    public void ValidateRunNuGetWorkflow_Run_ValidNuGetWorkflow_Passes()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -56,14 +57,21 @@ public class ValidateRunNuGetWorkflowTests
         // Assert: one passing result recorded
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_RunNuGetWorkflow", results.Results[0].Name);
     }
 
     /// <summary>
-    ///     Test that ValidateRunNuGetWorkflow.Run propagates an I/O exception when the working
-    ///     directory prevents validate.tmp from being used correctly.
-    ///     This exercises the failure path of Run() as documented in the design: exceptions
-    ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    ///     Verifies that an I/O error in DoValidate propagates as an uncaught exception from Run.
     /// </summary>
+    /// <remarks>
+    ///     Pre-creates <c>validate.tmp</c> as a file in a temporary directory and sets that as the
+    ///     working directory before calling <see cref="ValidateRunNuGetWorkflow.Run"/>. When
+    ///     <see cref="Directory.CreateDirectory(string)"/> encounters the blocking file it throws
+    ///     <see cref="IOException"/>, which propagates uncaught from <c>Run</c>. The test asserts
+    ///     both that the exception propagates and that no <see cref="DemaConsulting.TestResults.TestResult"/>
+    ///     is recorded in the results collection. This exercises the failure path documented in the
+    ///     design: exceptions thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </remarks>
     [Fact]
     public void ValidateRunNuGetWorkflow_Run_IoError_PropagatesException()
     {

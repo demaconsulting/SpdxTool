@@ -16,7 +16,9 @@ projects and the built-in self-test suite.
 
 This collection covers the checked-in verification design for the DemaConsulting.SpdxTool and
 DemaConsulting.SpdxTool.Targets systems, including the Commands, SelfTest, and Utility
-subsystems and the listed command and self-test units. It excludes generated outputs under any
+subsystems and the listed command and self-test units. OTS verification evidence for all
+third-party components consumed by the program is covered in `docs/verification/ots.md` and
+`docs/verification/ots/`. It excludes generated outputs under any
 generated folder and excludes the internal design of the test projects themselves except where
 their test methods provide verification evidence.
 
@@ -32,9 +34,13 @@ their test methods provide verification evidence.
   `docs/reqstream/spdx-tool/context.yaml`,
   `docs/reqstream/spdx-tool/program.yaml`, and
   `docs/reqstream/spdx-tool/platform-requirements.yaml`.
-- System and unit design descriptions are maintained in `docs/design/spdx-tool/` and
-  `docs/design/spdx-tool-targets/`.
-- This verification collection is maintained in `docs/verification/`.
+- OTS requirements are maintained in `docs/reqstream/ots/`.
+- System and unit design descriptions are maintained in `docs/design/spdx-tool.md`,
+  `docs/design/spdx-tool-targets.md`, `docs/design/spdx-tool/`, and
+  `docs/design/spdx-tool-targets/`. OTS integration and usage design is in `docs/design/ots.md`
+  and `docs/design/ots/`.
+- This verification collection is maintained in `docs/verification/`. OTS verification evidence
+  is in `docs/verification/ots.md` and `docs/verification/ots/`.
 - Implementation source is maintained in `src/DemaConsulting.SpdxTool/` and
   `src/DemaConsulting.SpdxTool.Targets/`.
 - Verification evidence is produced by `test/DemaConsulting.SpdxTool.Tests/` and

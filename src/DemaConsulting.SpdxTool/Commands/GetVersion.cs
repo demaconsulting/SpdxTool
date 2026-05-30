@@ -27,6 +27,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 ///     Retrieves the version string of a named package from an SPDX document; available from both the CLI and workflow
 ///     YAML steps.
 /// </summary>
+/// <remarks>
+///     CLI mode matches a package by caller-supplied criteria and writes the version string to standard output.
+///     Workflow mode stores the version in a named variable for use in downstream steps. The command delegates
+///     package lookup to <see cref="FindPackage"/> so all supported criteria are handled uniformly.
+///     Thread-safe: all public methods are static and operate only on method-local state.
+/// </remarks>
 public sealed class GetVersion : Command
 {
     /// <summary>
@@ -79,7 +85,18 @@ public sealed class GetVersion : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the get-version command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain at least two elements: the SPDX file path followed by one or
+    ///     more package criteria in <c>key=value</c> form.
+    /// </param>
+    /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are supplied.</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when no package matches the supplied criteria, or when multiple packages match.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if insufficient arguments
@@ -100,7 +117,16 @@ public sealed class GetVersion : Command
         context.WriteLine(packageVersion ?? "");
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the get-version command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map; the retrieved version is stored under the key given by the <c>output</c> input.</param>
+    /// <exception cref="YamlException">Thrown when the <c>spdx</c> or <c>output</c> input is absent from the step.</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when no package matches the supplied criteria, or when multiple packages match.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs

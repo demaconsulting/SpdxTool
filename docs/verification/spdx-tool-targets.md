@@ -23,16 +23,16 @@ workflow file produces a clear build error.
 ## Test Scenarios
 
 **SingleTargetDecoration**: a single-target package is decorated when SBOM decoration is enabled.
-This scenario is tested by `SingleTfmProject_DecorateSbomTrue_DecoratesSbom`.
+This scenario is tested by `SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom`.
 
 **MultiTargetDecoration**: a multi-target package is decorated through the outer-build targets path.
-This scenario is tested by `MultiTfmProject_DecorateSbomTrue_DecoratesSbom`.
+This scenario is tested by `SpdxToolTargets_DecorateSbom_MultiTfm_True_DecoratesSbom`.
 
 **DecorationOptOut**: the targets skip decoration when `DecorateSBOM` is false. This scenario is
-tested by `SingleTfmProject_DecorateSbomFalse_SkipsDecoration`.
+tested by `SpdxToolTargets_DecorateSbom_SingleTfm_False_SkipsDecoration`.
 
 **SbomGenerationOptOut**: the targets skip decoration when `GenerateSBOM` is false. This scenario is
-tested by `SingleTfmProject_GenerateSbomFalse_SkipsEntirely`.
+tested by `SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely`.
 
 **MissingWorkflowError**: the targets stop with a clear error when the configured workflow file is
-missing. This scenario is tested by `SingleTfmProject_MissingWorkflow_ReportsError`.
+missing. This scenario is tested by `SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError`.

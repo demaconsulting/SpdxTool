@@ -1,4 +1,4 @@
-﻿### Query
+### Query
 
 #### Purpose
 
@@ -37,7 +37,8 @@ from the YAML step node, calls QueryProgramOutput, and stores the result in vari
 **QueryProgramOutput(string, string, string[])**: Compiles the regular expression (requiring a
 "value" capture group), launches the program with the supplied arguments using
 System.Diagnostics.Process, reads stdout and stderr concurrently to avoid deadlock, and scans the
-output lines for the first non-empty "value" match.
+output lines for the first non-empty "value" match. The regex pattern is compiled with a 100 ms
+match timeout to prevent catastrophic backtracking (ReDoS protection).
 
 - *Parameters*: `string pattern` — regular expression pattern with a "value" capture group;
   `string program` — program path or name; `string[] arguments` — program arguments.

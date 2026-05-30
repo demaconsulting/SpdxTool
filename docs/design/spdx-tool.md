@@ -1,6 +1,6 @@
-## SpdxTool
+# SpdxTool
 
-### Architecture
+## Architecture
 
 DemaConsulting.SpdxTool is a cross-platform .NET tool distributed as a NuGet package that
 exposes a command-line interface for creating, validating, and manipulating SPDX documents.
@@ -35,7 +35,7 @@ Wildcard. The SelfTest subsystem exercises every registered command against embe
 Unit design files for all Commands subsystem units are in the commands subfolder. See also Context
 Design and Program Design for the system-level units.
 
-### External Interfaces
+## External Interfaces
 
 **Command-Line Interface**: The tool is invoked as `spdx-tool [options] <command> [arguments]`.
 Global options (-h/-?/--help, -v/--version, -s/--silent, -l/--log, --validate, -r/--result, --depth) are parsed by
@@ -47,6 +47,16 @@ command.
 - *Contract*: Each registered command name maps to exactly one Command implementation; unrecognized
   command names are reported as errors and usage information is printed.
 - *Constraints*: Global options must precede the command name on the command line.
+
+**Program.Version**: A public static `string` field on Program that exposes the assembly's
+informational version, read from the `AssemblyInformationalVersionAttribute` at startup.
+
+- *Type*: Programmatic identifier.
+- *Role*: Provider.
+- *Contract*: Returns a non-null semantic version string (e.g., `1.2.3` or `1.2.3-preview`);
+  falls back to `"Unknown"` when no attribute is present.
+- *Constraints*: Read-only; the value is determined at startup and does not change during
+  execution.
 
 **File System**: Commands read SPDX JSON documents and YAML workflow files from caller-supplied paths
 and write modified SPDX JSON documents back to specified output paths.
@@ -78,7 +88,7 @@ url field is specified in a workflow step.
   command error.
 
 **MSBuild Integration**: The companion DemaConsulting.SpdxTool.Targets system injects a
-DecorateNuGetSbom MSBuild target that invokes spdx-tool run-workflow after dotnet pack. The tool
+DecorateSbomTarget MSBuild target that invokes spdx-tool run-workflow after dotnet pack. The tool
 must be installed as a .NET tool in the build environment for the target to succeed.
 
 - *Type*: Build-system integration.
@@ -88,21 +98,22 @@ must be installed as a .NET tool in the build environment for the target to succ
 - *Constraints*: The Targets system is a separate deployment unit; see the SpdxTool.Targets system
   design for full details.
 
-### Dependencies
+## Dependencies
 
 - **DemaConsulting.SpdxModel** - SPDX 2.x document object model, JSON serialization, and
-  deserialization via Spdx2JsonSerializer and Spdx2JsonDeserializer.
+  deserialization via Spdx2JsonSerializer and Spdx2JsonDeserializer. See `docs/design/ots/spdx-model.md`.
 - **DemaConsulting.NuGet.Caching** - local NuGet cache resolution used by the run-workflow command
-  to locate NuGet-embedded workflow files.
+  to locate NuGet-embedded workflow files. See `docs/design/ots/nuget-caching.md`.
 - **DemaConsulting.TestResults** - test result writing for the self-validation suite; supports TRX
-  and JUnit XML output formats.
+  and JUnit XML output formats. See `docs/design/ots/test-results.md`.
 - **YamlDotNet** - YAML parsing for workflow files and per-step command argument nodes.
+  See `docs/design/ots/yamldotnet.md`.
 
-### Risk Control Measures
+## Risk Control Measures
 
 N/A - not a safety-classified software item.
 
-### Data Flow
+## Data Flow
 
 1. The user invokes `spdx-tool` at the command line; Program parses global flags and constructs a
    Context carrying the flag state, an optional log writer, and an error counter.
@@ -124,7 +135,7 @@ N/A - not a safety-classified software item.
 8. Context.ExitCode returns 1 if any errors were recorded during execution; Program exits with
    that code.
 
-### Design Constraints
+## Design Constraints
 
 - **Cross-platform**: The tool targets .NET 8, 9, and 10 and must run on Windows, Linux, and
   macOS; all file path operations use System.IO.Path APIs to maintain portability.
@@ -137,8 +148,9 @@ N/A - not a safety-classified software item.
   ValidateRunNuGetWorkflow step (may restore a NuGet package) require resources outside the
   process.
 - **Variable substitution**: `${{ name }}` tokens in YAML values are resolved by Command.Expand
-  at step-execution time using the current workflow variable map; undefined variable references
-  throw InvalidOperationException.
+  at step-execution time using the current workflow variable map. Tokens using the
+  `${{ environment.NAME }}` prefix are resolved against the current process environment instead.
+  Variable names that cannot be resolved from either source throw InvalidOperationException.
 - **Path safety**: NuGet-embedded workflow paths are validated by PathHelpers.SafePathCombine
   before use; paths containing ".." components or absolute roots are rejected with
   ArgumentException.

@@ -1,4 +1,4 @@
-﻿### ValidateRenameId
+### ValidateRenameId
 
 #### Purpose
 
@@ -17,7 +17,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
 - *Post-conditions*: A TestResult entry named SpdxTool_RenameId has been appended to results; a pass
   or fail message has been written to the Context.
 
@@ -32,13 +33,16 @@ N/A - this unit is a static class with no instance state.
 Creates a validate.tmp directory, writes an SPDX JSON document containing one package with ID
 SPDXRef-Package-1 and a DESCRIBES relationship referencing that ID, and writes a workflow YAML that
 executes rename-id to rename SPDXRef-Package-1 to SPDXRef-Package-2. Calls Validate.RunSpdxTool
-with --silent and run-workflow arguments, then reads the modified SPDX document and verifies that
-the package ID is now SPDXRef-Package-2 and the relationship's related element has also been updated.
+with --silent and run-workflow arguments. Returns `false` immediately if the output SPDX file is
+absent after tool invocation, without attempting deserialization. Otherwise reads the modified SPDX
+document and verifies that the package ID is now SPDXRef-Package-2 and the relationship's related
+element has also been updated.
 
 #### Error Handling
 
-Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
-SPDX document still contains the old ID or if the relationship reference was not updated. Any
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the output SPDX
+file is absent after the rename-id tool invocation. Returns false if the deserialized SPDX document
+still contains the old ID or if the relationship reference was not updated. Any
 exception thrown by DoValidate propagates uncaught from Run; no TestResult is recorded for this step
 if an exception is thrown — the exception surfaces to the Self-Test orchestrator. The finally block
 guards the Directory.Delete call with a Directory.Exists check to prevent a secondary

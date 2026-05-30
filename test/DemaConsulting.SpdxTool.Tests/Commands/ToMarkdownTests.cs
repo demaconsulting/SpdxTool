@@ -18,11 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+using DemaConsulting.SpdxTool;
+using DemaConsulting.SpdxTool.Commands;
+using YamlDotNet.Core;
+using YamlDotNet.RepresentationModel;
+
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'to-markdown' command.
 /// </summary>
+[Collection("CommandSequential")]
 public class ToMarkdownTests
 {
     /// <summary>
@@ -125,7 +131,7 @@ public class ToMarkdownTests
                 "created": "2021-10-01T00:00:00Z",
                 "creators": [ "Person: Malcolm Nixon" ]
               },
-              "documentDescribes": [ "SPDXRef-Package-1" ]
+              "documentDescribes": [ "SPDXRef-Application" ]
             }
             """;
 
@@ -308,5 +314,81 @@ public class ToMarkdownTests
         // Assert: Verify the error was reported
         Assert.Equal(1, exitCode);
         Assert.Contains("'to-markdown' command invalid 'depth' argument", output);
+    }
+
+    /// <summary>
+    ///     Test that to-markdown YAML run throws when the spdx input is missing
+    /// </summary>
+    [Fact]
+    public void ToMarkdown_Run_YamlMissingSpdxInput_ThrowsException()
+    {
+        // Arrange: step node with markdown but no spdx input
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string>();
+        var inputs = new YamlMappingNode();
+        inputs.Add("markdown", "out.md");
+        var step = new YamlMappingNode();
+        step.Add("inputs", inputs);
+
+        // Act / Assert: absent spdx input must produce a YamlException
+        Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));
+    }
+
+    /// <summary>
+    ///     Test that to-markdown YAML run throws when the markdown input is missing
+    /// </summary>
+    [Fact]
+    public void ToMarkdown_Run_YamlMissingMarkdownInput_ThrowsException()
+    {
+        // Arrange: step node with spdx but no markdown input
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string>();
+        var inputs = new YamlMappingNode();
+        inputs.Add("spdx", "test.spdx.json");
+        var step = new YamlMappingNode();
+        step.Add("inputs", inputs);
+
+        // Act / Assert: absent markdown input must produce a YamlException
+        Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));
+    }
+
+    /// <summary>
+    ///     Test that to-markdown YAML run throws when the title is whitespace
+    /// </summary>
+    [Fact]
+    public void ToMarkdown_Run_YamlWhitespaceTitle_ThrowsException()
+    {
+        // Arrange: step node with required inputs plus a whitespace-only title
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string>();
+        var inputs = new YamlMappingNode();
+        inputs.Add("spdx", "test.spdx.json");
+        inputs.Add("markdown", "out.md");
+        inputs.Add("title", "   ");
+        var step = new YamlMappingNode();
+        step.Add("inputs", inputs);
+
+        // Act / Assert: whitespace title is invalid and must produce a YamlException
+        Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));
+    }
+
+    /// <summary>
+    ///     Test that to-markdown YAML run throws when the depth is non-positive
+    /// </summary>
+    [Fact]
+    public void ToMarkdown_Run_YamlNonPositiveDepth_ThrowsException()
+    {
+        // Arrange: step node with required inputs plus a zero depth value
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string>();
+        var inputs = new YamlMappingNode();
+        inputs.Add("spdx", "test.spdx.json");
+        inputs.Add("markdown", "out.md");
+        inputs.Add("depth", "0");
+        var step = new YamlMappingNode();
+        step.Add("inputs", inputs);
+
+        // Act / Assert: depth of zero is not a positive integer and must produce a YamlException
+        Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));
     }
 }

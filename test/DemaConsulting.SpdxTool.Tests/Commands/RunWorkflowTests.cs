@@ -18,13 +18,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'run-workflow' command.
 /// </summary>
+[Collection("CommandSequential")]
 public partial class RunWorkflowTests
 {
     /// <summary>
@@ -352,27 +354,6 @@ output);
     [Fact]
     public void RunWorkflow_Run_WithOutputs_PopulatesOutputs()
     {
-        const string workflow1 =
-            """
-            parameters:
-              arg: unknown
-
-            steps:
-            - command: run-workflow
-              inputs:
-                file: workflow2.yaml
-                integrity: 7c8cbebe55ab1094e513bd50e05823820c4b0229c19d4e8edfbfa3a3765b2be2
-                parameters:
-                  in: ${{ arg }}
-                outputs:
-                  out: out-var
-
-            - command: print
-              inputs:
-                text:
-                - Output is ${{ out-var }}
-            """;
-
         // Workflow2 file with exact string representation
         const string workflow2 =
             "parameters:\n" +
@@ -386,9 +367,31 @@ output);
 
         try
         {
-            // Arrange: Write the files
-            File.WriteAllText("workflow1.yaml", workflow1);
+            // Arrange: Write workflow2 and compute its SHA-256 hash
             File.WriteAllText("workflow2.yaml", workflow2);
+            var hashBytes = SHA256.HashData(File.ReadAllBytes("workflow2.yaml"));
+            var integrity = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+
+            // Arrange: Build workflow1 with the computed integrity hash
+            var workflow1 =
+                "parameters:\n" +
+                "  arg: unknown\n" +
+                "\n" +
+                "steps:\n" +
+                "- command: run-workflow\n" +
+                "  inputs:\n" +
+                "    file: workflow2.yaml\n" +
+                $"    integrity: {integrity}\n" +
+                "    parameters:\n" +
+                "      in: ${{ arg }}\n" +
+                "    outputs:\n" +
+                "      out: out-var\n" +
+                "\n" +
+                "- command: print\n" +
+                "  inputs:\n" +
+                "    text:\n" +
+                "    - Output is ${{ out-var }}\n";
+            File.WriteAllText("workflow1.yaml", workflow1);
 
             // Act: Run the workflow
             var exitCode = Runner.Run(
@@ -565,6 +568,59 @@ output);
         {
             // Delete the files
             File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that run-workflow command with valid integrity executes the workflow
+    /// </summary>
+    [Fact]
+    public void RunWorkflow_Run_WithValidIntegrity_ExecutesWorkflow()
+    {
+        // Exact byte content for workflow2 so the SHA-256 hash is deterministic
+        const string workflow2 =
+            "steps:\n" +
+            "- command: help\n" +
+            "  inputs:\n" +
+            "    about: help\n";
+
+        try
+        {
+            // Arrange: Write the sub-workflow file and compute its exact SHA-256 hash
+            File.WriteAllText("workflow2.yaml", workflow2);
+            var bytes = File.ReadAllBytes("workflow2.yaml");
+            var hashBytes = SHA256.HashData(bytes);
+            var integrity = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+
+            // Arrange: Write the outer workflow referencing the sub-workflow with its correct hash
+            var workflow1 = $"""
+                steps:
+                - command: run-workflow
+                  inputs:
+                    file: workflow2.yaml
+                    integrity: {integrity}
+                """;
+            File.WriteAllText("workflow1.yaml", workflow1);
+
+            // Act: Run the outer workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow1.yaml");
+
+            // Assert: Verify success — the inner help step ran
+            Assert.Equal(0, exitCode);
+            Assert.Contains(
+                "This command displays extended help information about the specified command",
+                output);
+        }
+        finally
+        {
+            // Delete the files
+            File.Delete("workflow1.yaml");
+            File.Delete("workflow2.yaml");
         }
     }
 }

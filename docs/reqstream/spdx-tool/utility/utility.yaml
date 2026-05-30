@@ -5,14 +5,18 @@ sections:
       - title: Utility Requirements
         requirements:
           - id: SpdxTool-Utility-SharedHelpers
-            title: The Utility subsystem shall provide safe path operations and wildcard matching for use by all commands.
+            title: >-
+              The Utility subsystem shall provide shared cross-cutting utilities for
+              safe path operations and wildcard matching consumed by all commands.
             justification: |
               Command implementations that handle user-supplied file paths and filter SPDX content
               by name need shared utility functions. Centralizing these in the Utility subsystem
               ensures consistent path-traversal protection and pattern-matching behavior across all
               commands.
             children:
-              - SpdxTool-Utility-SafePath
+              - SpdxTool-Utility-RejectTraversal
+              - SpdxTool-Utility-RejectAbsolutePath
+              - SpdxTool-Utility-RejectNullArguments
               - SpdxTool-Utility-ValidPath
               - SpdxTool-Utility-Wildcard
             tests:

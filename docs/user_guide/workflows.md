@@ -89,12 +89,12 @@ steps:
 - command: print
   inputs:
     text:
-    - Build version is ${{ BUILD_VERSION }}
+    - Build version is ${{ environment.BUILD_VERSION }}
 ```
 
-Token expansion resolves `${{ name }}` against the current workflow variable map first. If
-the variable is not found as a workflow variable, it is resolved against the current process
-environment. Undefined tokens cause the step to fail with an error.
+Token expansion resolves `${{ name }}` against the current workflow variable map.
+To reference a process environment variable, use the `${{ environment.NAME }}` syntax.
+Undefined tokens cause the step to fail with an error.
 
 ## Workflow Commands
 

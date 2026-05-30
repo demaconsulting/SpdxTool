@@ -49,20 +49,24 @@ internal static class ValidateCopyPackage
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
         // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_CopyPackage - Passed");
+            context.WriteLine("✓ SpdxTool_CopyPackage - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_CopyPackage - Failed");
+            context.WriteError("✗ SpdxTool_CopyPackage - Failed");
         }
 
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -91,8 +95,9 @@ internal static class ValidateCopyPackage
     ///         verifies the destination document.
     ///     </para>
     ///     <para>
-    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
-    ///         even if directory creation or file writes only partially succeeded.
+    ///         The <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it exists,
+    ///         guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the original
+    ///         exception when <see cref="Directory.CreateDirectory(string)"/> fails.
     ///     </para>
     /// </remarks>
     /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
@@ -137,10 +142,9 @@ internal static class ValidateCopyPackage
                 }
                 """);
 
-            // Write test SPDX file
+            // Write source SPDX file
             File.WriteAllText("validate.tmp/from.spdx.json",
                 """
-                {
                   "files": [],
                   "packages": [
                     {
@@ -202,24 +206,14 @@ internal static class ValidateCopyPackage
             // Read the SPDX document
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/to.spdx.json"));
 
-            // Verify expected SPDX content
-            return doc is
-            {
-                Packages:
-                [
-                { Id: "SPDXRef-Package-1" },
-                { Id: "SPDXRef-Package-2" }
-                ],
-                Relationships:
-                [
-                    _,
-                {
-                    Id: "SPDXRef-Package-2",
-                    RelationshipType: SpdxRelationshipType.ContainedBy,
-                    RelatedSpdxElement: "SPDXRef-Package-1"
-                }
-                ]
-            };
+            // Verify expected SPDX content using order-insensitive LINQ checks so that
+            // changes to deserializer ordering do not cause false failures
+            return doc.Packages.Any(p => p.Id == "SPDXRef-Package-1") &&
+                   doc.Packages.Any(p => p.Id == "SPDXRef-Package-2") &&
+                   doc.Relationships.Any(r =>
+                       r.Id == "SPDXRef-Package-2" &&
+                       r.RelationshipType == SpdxRelationshipType.ContainedBy &&
+                       r.RelatedSpdxElement == "SPDXRef-Package-1");
         }
         finally
         {

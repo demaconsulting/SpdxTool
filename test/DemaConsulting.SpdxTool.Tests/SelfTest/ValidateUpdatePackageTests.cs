@@ -35,16 +35,17 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 public class ValidateUpdatePackageTests
 {
     /// <summary>
-    ///     Test that ValidateUpdatePackage validation passes.
+    ///     Test that ValidateUpdatePackage validation passes and records the expected result.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_UpdatePackage</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateUpdatePackage.Run"/> so that
-    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
-    ///     naming convention is appropriate for self-test integration tests.
+    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateUpdatePackage.Run"/> is
+    ///     <c>SpdxTool_UpdatePackage</c>; the assertion in this test guards against regressions
+    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
+    ///     convention; <c>SpdxTool_UpdatePackage</c> is the <c>TestResult.Name</c> identifier
+    ///     recorded by the self-test step, not the test method name.
     /// </remarks>
     [Fact]
-    public void SpdxTool_UpdatePackage()
+    public void ValidateUpdatePackage_Run_ValidWorkflow_RecordsPassResult()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -53,8 +54,9 @@ public class ValidateUpdatePackageTests
         // Act: run the update-package self-test step
         ValidateUpdatePackage.Run(context, results);
 
-        // Assert: single passing result recorded
+        // Assert: single passing result recorded with the expected name
         Assert.Single(results.Results);
+        Assert.Equal("SpdxTool_UpdatePackage", results.Results[0].Name);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
     }
 

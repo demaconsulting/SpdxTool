@@ -4,8 +4,8 @@ This repository contains two independent software systems: **DemaConsulting.Spdx
 command-line tool for creating, validating, and manipulating SPDX (Software Package Data Exchange)
 documents, and **DemaConsulting.SpdxTool.Targets**, an MSBuild targets extension that integrates
 SPDX document decoration into the standard `dotnet pack` workflow. Both systems are local items
-with full architectural and detailed design documentation; no OTS items or shared packages have
-dedicated design documentation in this repository.
+with full architectural and detailed design documentation. OTS integration and usage designs are
+also included in this document for all third-party components consumed by the program.
 
 ## Purpose
 
@@ -23,8 +23,11 @@ Local items:
 - **DemaConsulting.SpdxTool.Targets**: system and unit design covering all source under
   `src/DemaConsulting.SpdxTool.Targets/`.
 
-Out of scope: test projects (`test/`), the build pipeline, and the internal design of any
-third-party NuGet packages consumed as dependencies.
+OTS items: integration and usage design for all third-party components consumed by the program;
+see `docs/design/ots.md` and `docs/design/ots/`.
+
+Out of scope: test projects (`test/`), the internal design of third-party NuGet packages, and
+the internal design of CI pipeline tools.
 
 ## Software Structure
 
@@ -80,6 +83,22 @@ DemaConsulting.SpdxTool (System)
 DemaConsulting.SpdxTool.Targets (System)
 ├── build/DemaConsulting.SpdxTool.Targets.targets (Unit)
 └── buildMultiTargeting/DemaConsulting.SpdxTool.Targets.targets (Unit)
+
+OTS Software Items (runtime NuGet package dependencies)
+├── YamlDotNet (OTS)
+├── DemaConsulting.SpdxModel (OTS)
+├── DemaConsulting.NuGet.Caching (OTS)
+└── DemaConsulting.TestResults (OTS)
+
+OTS Software Items (test framework)
+└── xUnit (OTS)
+
+OTS Software Items (CI pipeline tools)
+├── DemaConsulting.BuildMark (OTS)
+├── DemaConsulting.ReqStream (OTS)
+├── DemaConsulting.VersionMark (OTS)
+├── DemaConsulting.SarifMark (OTS)
+└── DemaConsulting.SonarMark (OTS)
 ```
 
 ## Folder Layout
@@ -153,7 +172,9 @@ Each local software item has corresponding artifacts in parallel directory trees
 - Source: `src/{SystemName}[/{SubsystemName}...]/{Item}.cs`
 - Tests: `test/{SystemName}.Tests[/{SubsystemName}...]/{Item}Tests.cs`
 
-OTS items: N/A — no OTS items have dedicated design documentation in this repository.
+OTS items: `docs/design/ots.md` and `docs/design/ots/{ots-name}.md` — integration and usage
+design; `docs/verification/ots.md` and `docs/verification/ots/{ots-name}.md` — verification
+evidence; `docs/reqstream/ots/{ots-name}.yaml` — requirements.
 
 Shared packages: N/A — no shared packages are consumed from other repositories in this program.
 

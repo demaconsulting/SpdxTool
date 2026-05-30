@@ -36,8 +36,9 @@ requested. This scenario is tested by `SelfTest_Validate_WithDepth_Succeeds`.
 by `SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile`.
 
 **UnsupportedResultExtension**: the subsystem reports an error and exits with a non-zero code when
-the result file path uses an extension other than `.trx` or `.xml`. This scenario is tested by
-`SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError`.
+the result file path uses an extension other than `.trx` or `.xml`. This scenario is primarily
+tested at the subsystem level by `SelfTest_Validate_UnsupportedResultExtension_ReportsError`, with
+supplementary system-level coverage by `SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError`.
 
 **CliValidateFlag**: the installed tool exposes the self-test subsystem through the `--validate`
 command-line flag. This scenario is tested by `SpdxTool_SelfTest_ValidateFlag_Succeeds`.

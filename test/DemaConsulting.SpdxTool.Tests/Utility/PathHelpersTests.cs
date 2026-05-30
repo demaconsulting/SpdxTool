@@ -95,19 +95,33 @@ public class PathHelpersTests
         var unixException = Assert.Throws<ArgumentException>(() =>
             PathHelpers.SafePathCombine(unixBasePath, unixRelativePath));
         Assert.Contains("Invalid path component", unixException.Message);
+    }
 
-        // Test Windows absolute path (only on Windows since Windows paths may not be rooted on Unix)
-        if (OperatingSystem.IsWindows())
+    /// <summary>
+    ///     Test that SafePathCombine throws ArgumentException for Windows absolute paths.
+    /// </summary>
+    /// <remarks>
+    ///     Windows drive-letter paths are only rooted on the Windows platform. This test is skipped
+    ///     on non-Windows platforms where <c>Path.IsPathRooted</c> returns false for
+    ///     <c>C:\...</c> strings, making the guard unreachable.
+    /// </remarks>
+    [Fact]
+    public void PathHelpers_SafePathCombine_WindowsAbsolutePath_ThrowsArgumentException()
+    {
+        // Skip on non-Windows platforms where Windows drive-letter paths are not recognized as rooted
+        if (!OperatingSystem.IsWindows())
         {
-            // Arrange: Windows absolute path used as the relative argument
-            var windowsBasePath = "C:\\Users\\project";
-            var windowsRelativePath = "C:\\Windows\\System32\\file.txt";
-
-            // Act & Assert: Windows absolute path is rejected
-            var windowsException = Assert.Throws<ArgumentException>(() =>
-                PathHelpers.SafePathCombine(windowsBasePath, windowsRelativePath));
-            Assert.Contains("Invalid path component", windowsException.Message);
+            throw Xunit.Sdk.SkipException.ForSkip("Windows absolute-path guard only applies on Windows");
         }
+
+        // Arrange: Windows absolute path used as the relative argument
+        var windowsBasePath = "C:\\Users\\project";
+        var windowsRelativePath = "C:\\Windows\\System32\\file.txt";
+
+        // Act & Assert: Windows absolute path is rejected
+        var windowsException = Assert.Throws<ArgumentException>(() =>
+            PathHelpers.SafePathCombine(windowsBasePath, windowsRelativePath));
+        Assert.Contains("Invalid path component", windowsException.Message);
     }
 
     /// <summary>

@@ -278,13 +278,10 @@ error : SBOM decoration workflow failed with exit code 1
 
 ### SpdxTool Not Found
 
-If the `spdx-tool` command is not available:
-
-```text
-error : Command 'dotnet spdx-tool' not found
-```
-
-**Solution**: Install SpdxTool as a local or global tool (see the Prerequisites section).
+If the `spdx-tool` command is not available, the build will report an error indicating that
+the `dotnet spdx-tool` command failed or was not found. The exact message depends on the
+operating system and shell environment. Install SpdxTool as a local or global tool to resolve
+this (see the Prerequisites section).
 
 ## Troubleshooting
 

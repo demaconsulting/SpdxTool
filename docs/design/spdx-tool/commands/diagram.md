@@ -9,7 +9,7 @@ YAML files.
 
 #### Data Model
 
-N/A — Diagram is a stateless singleton.
+Diagram is a stateless singleton; all state is carried via method parameters.
 
 **Instance**: `Diagram` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record advertising name, summary, usage details, and the
@@ -42,7 +42,9 @@ step node and calls GenerateDiagram.
 **GenerateDiagram(string, string, bool)**: Loads the SPDX document, filters relationships to those
 between two packages, optionally excludes BuildToolOf/DevToolOf/TestToolOf relationships, resolves
 RelationshipDirection to determine parent/child orientation, and writes an erDiagram block to the
-output file. Each line uses the format "Name / Version" ||--|| "Name / Version" : "TYPE".
+output file. Each line uses the format "Name / Version" ||--|| "Name / Version" : "TYPE". When a
+package's `versionInfo` is absent (null), the string `"unspecified"` is used as the version
+placeholder to avoid null-reference exceptions and to produce valid Mermaid output.
 
 - *Parameters*: `string spdxFile` — SPDX JSON file path; `string mermaidFile` — output file path;
   `bool tools` — include build/dev/test tool relationships (default false).

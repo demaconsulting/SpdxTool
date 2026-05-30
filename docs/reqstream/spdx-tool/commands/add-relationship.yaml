@@ -15,7 +15,7 @@ sections:
                   elements. Users need to define these relationships to accurately represent
                   dependency graphs and component hierarchies.
                 tests:
-                  - AddRelationship_OnCommandLine_AddsRelationship
+                  - AddRelationship_Run_OnCommandLine_AddsRelationship
                   - AddRelationship_InWorkflow_AddsRelationship
                   - AddRelationship_ReplaceMode_ReplacesExistingRelationship
 
@@ -47,5 +47,5 @@ sections:
                   Invalid command-line inputs must be detected early and reported clearly so that
                   users can diagnose configuration mistakes quickly.
                 tests:
-                  - AddRelationship_MissingArguments_ReportsError
-                  - AddRelationship_MissingFile_ReportsError
+                  - AddRelationship_Run_MissingArguments_ReportsError
+                  - AddRelationship_Run_MissingFile_ReportsError

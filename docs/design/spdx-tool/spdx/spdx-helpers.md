@@ -1,4 +1,4 @@
-﻿### SpdxHelpers
+### SpdxHelpers
 
 #### Purpose
 
@@ -34,6 +34,9 @@ to the specified file path.
 
 #### Error Handling
 
+**ArgumentNullException** — thrown by LoadJsonDocument when spdxFile is null, and by
+SaveJsonDocument when doc or spdxFile is null.
+
 **CommandUsageException** — thrown by LoadJsonDocument when the specified file does not exist.
 
 **IOException / UnauthorizedAccessException** — may be propagated by SaveJsonDocument if the
@@ -41,10 +44,10 @@ output file cannot be written.
 
 #### Dependencies
 
-- SpdxDocument, SpdxPackage (DemaConsulting.SpdxModel)
+- SpdxDocument (DemaConsulting.SpdxModel)
 - Spdx2JsonDeserializer, Spdx2JsonSerializer (DemaConsulting.SpdxModel.IO)
 - CommandUsageException (Commands — thrown on missing file)
-- Program.Version (Commands — used to build the creator tool name)
+- Program.Version (DemaConsulting.SpdxTool system unit — used to build the creator tool name)
 - System.IO.File (ReadAllText, WriteAllText, Exists)
 
 #### Callers

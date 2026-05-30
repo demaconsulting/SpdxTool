@@ -4,12 +4,32 @@ sections:
     sections:
       - title: Program Requirements
         requirements:
-          - id: SpdxTool-Program-EntryPoint
-            title: Program shall parse command-line flags, dispatch commands, and set the process exit code.
+          - id: SpdxTool-Program-CLIFlagAcceptance
+            title: >-
+              The tool shall accept and parse global command-line flags including
+              -h, -v, -s, -l, --validate, -r, and --depth.
             justification: |
-              Program is the application entry point and must correctly route every invocation
-              to the right handler based on the supplied global flags and command name.
+              Global flags control tool behavior before any command runs. Each flag must be
+              recognized and processed so that all invocation modes (help, version, silent,
+              logging, self-validation) are accessible to users.
             tests:
-              - SpdxTool_Usage_NoArguments_DisplaysError
               - SpdxTool_Version_ShortFlag_DisplaysVersion
               - SpdxTool_Usage_ShortHelpFlag_DisplaysUsage
+              - SpdxTool_Silent_ShortFlag_SuppressesOutput
+          - id: SpdxTool-Program-CommandDispatch
+            title: >-
+              The tool shall dispatch to the command matching the first positional
+              argument and report an error for unrecognized commands.
+            justification: |
+              Program is the application entry point and must correctly route every invocation
+              to the right handler based on the command name that follows the global flags.
+            tests:
+              - SpdxTool_Usage_NoArguments_DisplaysError
+              - UnknownCommand_UnrecognizedCommand_ReportsError
+          - id: SpdxTool-Program-NonZeroExitOnFailure
+            title: The tool shall exit with a non-zero exit code when any error is recorded during execution.
+            justification: |
+              A non-zero exit code on failure is the standard contract for CLI tools and is
+              essential for CI/CD pipelines and scripts to detect and react to failures.
+            tests:
+              - SpdxTool_Usage_NoArguments_DisplaysError

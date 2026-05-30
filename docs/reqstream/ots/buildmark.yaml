@@ -6,11 +6,15 @@ sections:
       - title: BuildMark Requirements
         requirements:
           - id: SpdxTool-OTS-BuildMark
-            title: BuildMark shall generate build-notes documentation from GitHub Actions metadata.
+            title: BuildMark shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.BuildMark queries the GitHub API to capture workflow run details and
-              renders them as a markdown build-notes document included in the release artifacts.
+              DemaConsulting.BuildMark is a CI pipeline tool that generates build-notes documentation
+              from GitHub Actions metadata. The linked test verifies installation only: it invokes
+              buildmark with the --help flag to confirm the tool is present and responds correctly.
+              Full functional verification of markdown report generation occurs through CI pipeline
+              execution, where the presence of the build-notes artifact in each release provides
+              observable evidence of correct operation.
             tests:
-              - BuildMark_MarkdownReportGeneration
+              - BuildMark_Tool_IsInstalled

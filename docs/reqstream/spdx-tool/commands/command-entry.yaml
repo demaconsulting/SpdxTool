@@ -7,9 +7,12 @@ sections:
           - title: CommandEntry Requirements
             requirements:
               - id: SpdxTool-CommandEntry-Record
-                title: The CommandEntry record shall associate a command name, usage metadata, and Command instance.
+                title: >-
+                  A command entry shall associate a command name, usage metadata, and
+                  command implementation as an immutable unit.
                 justification: |
-                  Grouping name, usage text, and implementation in a single immutable record
-                  ensures consistent command registration and prevents partial initialization.
+                  Grouping name, usage text, and implementation in a single immutable data
+                  structure ensures consistent command registration and prevents partial
+                  initialization, making every registered command fully usable at dispatch time.
                 tests:
                   - UnknownCommand_UnrecognizedCommand_ReportsError

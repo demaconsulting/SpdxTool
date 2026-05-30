@@ -6,7 +6,7 @@ sections:
         sections:
           - title: Help Requirements
             requirements:
-              - id: SpdxTool-Command-HelpCommand
+              - id: SpdxTool-Commands-Help-DisplayHelp
                 title: The help command shall display extended usage information for a specified command.
                 tags:
                   - cli
@@ -19,9 +19,10 @@ sections:
                   - Help_Run_UnknownCommand_ReportsError
                   - Help_Run_RunWorkflowCommand_DisplaysHelp
 
-              - id: SpdxTool-Command-HelpCommand-YamlInvocation
-                title: The help command shall be invocable from a YAML workflow step using the about input to specify the
-                  target command.
+              - id: SpdxTool-Commands-Help-YamlInvocation
+                title: >-
+                  The help command shall be invocable from a YAML workflow step using
+                  the about input to specify the target command.
                 tags:
                   - cli
                 justification: |

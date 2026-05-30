@@ -16,7 +16,6 @@ sections:
                   - RelationshipDirectionExtensions_GetDirection_DescribesRelationship_ReturnsParent
                   - RelationshipDirectionExtensions_GetDirection_DescribedByRelationship_ReturnsChild
                   - RelationshipDirectionExtensions_GetDirection_DependencyManifestOfRelationship_ReturnsSibling
-                  - Diagram_ValidSpdxFile_GeneratesDiagram
 
               - id: SpdxTool-Spdx-RelationshipDirection-DirectionalMapping
                 title: RelationshipDirectionExtensions shall map SPDX relationship types to traversal directions.
@@ -27,4 +26,3 @@ sections:
                   commands that perform graph traversal.
                 tests:
                   - RelationshipDirectionExtensions_GetDirection_UnmappedRelationshipType_ReturnsSibling
-                  - Diagram_ValidSpdxFile_GeneratesDiagram

@@ -49,3 +49,11 @@ This scenario is tested by `AddPackage_InWorkflowWithEmptyPackageId_ReportsError
 **DocumentPackageId**: the unit reports an error when the package `id` is set to the reserved value
 `SPDXRef-DOCUMENT`. This scenario is tested by
 `AddPackage_InWorkflowWithDocumentPackageId_ReportsError`.
+
+**MissingPackageName**: the unit reports an error when the package `name` field is absent from the
+workflow step package definition. This scenario is tested by
+`AddPackage_ParsePackage_MissingPackageName_ReportsError`.
+
+**MissingPackageDownload**: the unit reports an error when the package `download` field is absent
+from the workflow step package definition. This scenario is tested by
+`AddPackage_ParsePackage_MissingPackageDownload_ReportsError`.

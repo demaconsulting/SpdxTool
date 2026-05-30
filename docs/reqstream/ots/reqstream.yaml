@@ -6,12 +6,16 @@ sections:
       - title: ReqStream Requirements
         requirements:
           - id: SpdxTool-OTS-ReqStream
-            title: ReqStream shall enforce that every requirement is linked to passing test evidence.
+            title: ReqStream shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.ReqStream processes requirements.yaml and the TRX test-result files to
-              produce a requirements report, justifications document, and traceability matrix. When
-              run with --enforce, it exits with a non-zero code if any requirement lacks test evidence.
+              DemaConsulting.ReqStream is a CI pipeline tool that enforces requirements traceability by
+              processing requirements.yaml and TRX test-result files. The linked test verifies installation
+              only: it invokes reqstream with the --help flag to confirm the tool is present and responds
+              correctly. Full functional verification — including requirements YAML processing, TRX result
+              parsing, report generation, and enforcement mode — occurs on every pipeline run, where a
+              successful pipeline completion with all requirements covered is direct evidence that
+              enforcement mode worked correctly.
             tests:
-              - ReqStream_EnforcementMode
+              - ReqStream_Tool_IsInstalled

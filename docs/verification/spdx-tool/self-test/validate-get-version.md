@@ -19,7 +19,7 @@ expected package version.
 #### Test Scenarios
 
 **EndToEndGetVersion**: the self-test step proves that `get-version` retrieves the expected version
-during validation. This scenario is tested by `SpdxTool_GetVersion`.
+during validation. This scenario is tested by `ValidateGetVersion_Run_ValidVersionWorkflow_Passes`.
 
 **ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by

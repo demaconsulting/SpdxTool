@@ -148,6 +148,10 @@ public sealed class Validate : Command
     /// <param name="context">Execution context used to write warning messages for each issue found.</param>
     /// <param name="spdxFile">Path to the SPDX JSON document to validate. Must exist and be a valid SPDX JSON file.</param>
     /// <param name="ntia">When <c>true</c>, NTIA minimum-elements checks are applied in addition to SPDX specification validation.</param>
+    /// <exception cref="CommandUsageException">
+    ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when
+    ///     <paramref name="spdxFile"/> does not exist on disk.
+    /// </exception>
     /// <exception cref="CommandErrorException">
     ///     Thrown when the document contains one or more validation issues; the message includes the
     ///     issue count and the file path.

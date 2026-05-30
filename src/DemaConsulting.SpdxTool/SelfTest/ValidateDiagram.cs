@@ -46,19 +46,21 @@ internal static class ValidateDiagram
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
         // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result to console
+        // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_Diagram - Passed");
+            context.WriteLine("✓ SpdxTool_Diagram - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_Diagram - Failed");
+            context.WriteError("✗ SpdxTool_Diagram - Failed");
         }
 
         // Add validation result to test results collection
@@ -89,8 +91,9 @@ internal static class ValidateDiagram
     ///         both package names and versions, and the DEPENDS_ON relationship label.
     ///     </para>
     ///     <para>
-    ///         The <c>validate.tmp</c> directory is deleted unconditionally in a <c>finally</c> block,
-    ///         even if directory creation or file writes only partially succeeded.
+    ///         The <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it exists,
+    ///         guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the original
+    ///         exception when <see cref="Directory.CreateDirectory(string)"/> fails.
     ///     </para>
     /// </remarks>
     /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>

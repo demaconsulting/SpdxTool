@@ -6,7 +6,7 @@ sections:
         sections:
           - title: Hash Requirements
             requirements:
-              - id: SpdxTool-Hash-Generate
+              - id: SpdxTool-Commands-Hash-Generate
                 title: The tool shall compute SHA-256 hashes for files and write them to sidecar files.
                 tags:
                   - spdx
@@ -14,9 +14,9 @@ sections:
                   Users need to generate SHA-256 hashes for files and record them in sidecar
                   files for later integrity verification.
                 tests:
-                  - Hash_GenerateOperation_WritesSidecarFile
+                  - Hash_Run_GenerateOperation_WritesSidecarFile
 
-              - id: SpdxTool-Hash-Verify
+              - id: SpdxTool-Commands-Hash-Verify
                 title: The tool shall verify file integrity against SHA-256 hashes stored in sidecar files.
                 tags:
                   - spdx
@@ -24,20 +24,24 @@ sections:
                   Users need to verify that files match their recorded SHA-256 digests to
                   detect corruption or tampering.
                 tests:
-                  - Hash_VerifyOperation_SucceedsForValidHash
-                  - Hash_VerifyOperation_FailsForInvalidHash
+                  - Hash_Run_VerifyOperation_SucceedsForValidHash
+                  - Hash_Run_VerifyOperation_FailsForInvalidHash
+                  - Hash_Run_VerifySha256_UppercaseDigest_Succeeds
 
-              - id: SpdxTool-Hash-MissingArguments
-                title: The tool shall report a usage error when the hash command is invoked with insufficient arguments.
+              - id: SpdxTool-Commands-Hash-MissingArguments
+                title: >-
+                  The tool shall report a usage error when the hash command is invoked
+                  with any argument count other than exactly three (operation, algorithm, file).
                 tags:
                   - spdx
                 justification: |
-                  Users must provide the operation, algorithm, and file arguments; missing
-                  arguments must be reported clearly.
+                  Users must provide exactly the operation, algorithm, and file arguments; both
+                  too few and too many arguments must be reported clearly.
                 tests:
-                  - Hash_MissingArguments_ReportsError
+                  - Hash_Run_MissingArguments_ReportsError
+                  - Hash_Run_ExcessArguments_ReportsError
 
-              - id: SpdxTool-Hash-MissingFile
+              - id: SpdxTool-Commands-Hash-MissingFile
                 title: The tool shall report an error when the target file does not exist.
                 tags:
                   - spdx
@@ -45,9 +49,9 @@ sections:
                   The hash command cannot operate on a non-existent file; an actionable error
                   message must be returned.
                 tests:
-                  - Hash_MissingFile_ReportsError
+                  - Hash_Run_MissingFile_ReportsError
 
-              - id: SpdxTool-Hash-UnsupportedAlgorithm
+              - id: SpdxTool-Commands-Hash-UnsupportedAlgorithm
                 title: The tool shall reject hash requests that specify an unsupported algorithm.
                 tags:
                   - spdx
@@ -55,9 +59,9 @@ sections:
                   Only SHA-256 is currently supported; requests for other algorithms must
                   be rejected with a clear error.
                 tests:
-                  - Hash_UnsupportedAlgorithm_ReportsError
+                  - Hash_Run_UnsupportedAlgorithm_ReportsError
 
-              - id: SpdxTool-Hash-InvalidOperation
+              - id: SpdxTool-Commands-Hash-InvalidOperation
                 title: The tool shall reject hash requests that specify an unrecognized operation.
                 tags:
                   - spdx
@@ -65,9 +69,9 @@ sections:
                   Only "generate" and "verify" are valid operations; unrecognized operations
                   must be rejected with a clear error.
                 tests:
-                  - Hash_InvalidOperation_ReportsError
+                  - Hash_Run_InvalidOperation_ReportsError
 
-              - id: SpdxTool-Hash-MissingSidecarFile
+              - id: SpdxTool-Commands-Hash-MissingSidecarFile
                 title: The tool shall report an error when the sidecar hash file does not exist during verification.
                 tags:
                   - spdx
@@ -75,4 +79,30 @@ sections:
                   Verification requires the sidecar .sha256 file to be present; its absence
                   must be reported clearly.
                 tests:
-                  - Hash_VerifyMissingFile_ReportsError
+                  - Hash_Run_VerifyMissingSidecarFile_ReportsError
+
+              - id: SpdxTool-Commands-Hash-MissingTargetFile
+                title: The tool shall report an error when the target file does not exist during verification.
+                tags:
+                  - spdx
+                justification: |
+                  Verification cannot proceed if the target file is absent even when the
+                  sidecar is present; a clear error must be reported.
+                tests:
+                  - Hash_Run_VerifyTargetMissing_ReportsError
+
+              - id: SpdxTool-Commands-Hash-WorkflowInvocation
+                title: >-
+                  The tool shall support hash command invocation from a workflow YAML step,
+                  reporting errors for missing operation, algorithm, or file inputs.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow users must be able to generate and verify hashes via YAML step
+                  configuration; missing required inputs must be reported clearly to prevent
+                  silent workflow failures.
+                tests:
+                  - Hash_Run_InWorkflow_GeneratesHash
+                  - Hash_Run_InWorkflow_MissingOperation_ReportsError
+                  - Hash_Run_InWorkflow_MissingAlgorithm_ReportsError
+                  - Hash_Run_InWorkflow_MissingFile_ReportsError

@@ -1,11 +1,11 @@
-﻿### RenameId
+### RenameId
 
 #### Purpose
 
 RenameId renames an SPDX element ID throughout an SPDX document, updating all package IDs, file
-IDs, snippet IDs, relationship references, HasFiles arrays, and the Describes array. It is
-available from both the CLI and workflow YAML files, and exposes a static Rename method used
-internally by AddPackage and CopyPackage.
+IDs, snippet IDs, snippet `SnippetFromFile` references, relationship references, HasFiles arrays,
+and the Describes array. It is available from both the CLI and workflow YAML files, and exposes a
+static Rename method used internally by AddPackage and CopyPackage.
 
 #### Data Model
 
@@ -22,7 +22,7 @@ Rename(string, string, string).
 - *Preconditions*: args.Length must be exactly 3.
 - *Post-conditions*: All occurrences of oldId in the SPDX file are replaced with newId.
 
-**Run(Context, YamlMappingNode, Dictionary)**: Reads spdx, old, and new inputs from the YAML step
+**Run(Context, YamlMappingNode, Dictionary)**: Reads spdx, new, and old inputs from the YAML step
 node and calls Rename(string, string, string).
 
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
@@ -49,9 +49,20 @@ collections. Skips the operation when oldId == newId. Validates that neither ID 
 - *Returns*: `void`
 - *Preconditions*: oldId and newId must not be empty or equal to "SPDXRef-DOCUMENT". newId must
   not already be used by any package, file, or snippet in doc.
-- *Post-conditions*: All references to oldId in packages, files, snippets, relationships, HasFiles
-  arrays, and Describes are updated to newId. If oldId matches no element in the document, the
-  method returns with no changes applied (silent no-op).
+- *Post-conditions*: All references to oldId in packages, files, snippets (including the
+  SnippetFromFile field of each snippet and, by extension, the `reference` fields inside
+  the snippet's start and end range pointers — which the serializer derives from SnippetFromFile),
+  relationships, HasFiles arrays, and Describes are
+  updated to newId. If oldId matches no element in the document, the method returns with no
+  changes applied (silent no-op).
+
+**UpdateId(string, string, string)**: Returns the new ID if `id == oldId`, otherwise returns `id`
+unchanged. Used as the single consistent replacement primitive called by all collection-update
+loops in Rename(SpdxDocument, string, string).
+
+- *Parameters*: `string id` — current ID; `string oldId` — ID to match; `string newId` — replacement.
+- *Returns*: `string` — newId when id matches oldId, otherwise id.
+- *Visibility*: private static.
 
 #### Error Handling
 

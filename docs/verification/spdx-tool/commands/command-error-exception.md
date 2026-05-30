@@ -20,4 +20,4 @@ result in an error message being reported without usage information.
 
 **RuntimeFailureSignaling**: CommandErrorException is thrown for runtime failures distinct
 from incorrect usage and causes the tool to report the error message without printing full
-usage information. This scenario is tested by `GetVersion_MissingFile_ReportsError`.
+usage information. This scenario is tested by `GetVersion_Run_MissingFile_ReportsError`.

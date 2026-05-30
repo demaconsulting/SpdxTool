@@ -17,7 +17,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
 - *Post-conditions*: A TestResult entry named SpdxTool_Ntia has been appended to results; a pass or
   fail message has been written to the Context.
 
@@ -55,8 +56,9 @@ code zero.
 #### Error Handling
 
 Returns false if basic validation of the non-compliant document returns a non-zero exit code, if NTIA
-validation of the non-compliant document returns exit code zero, or if the log does not contain the
-expected "Missing Supplier" error text. Returns false if NTIA validation of the compliant document
+validation of the non-compliant document returns exit code zero, if the log file is absent after the
+NTIA validation run, or if the log does not contain the expected "Missing Supplier" error text.
+Returns false if NTIA validation of the compliant document
 returns a non-zero exit code. Any exception thrown by DoValidate propagates uncaught from Run; no
 TestResult is recorded for this step if an exception is thrown — the exception surfaces to the
 Self-Test orchestrator. The finally block guards the Directory.Delete call with a Directory.Exists

@@ -28,7 +28,7 @@ Path.GetFullPath confirms the resolved path remains under the base directory.
 
 **Wildcard.IsMatch**: Determines whether an input string matches a wildcard pattern that may
 contain * (any sequence of characters) and ? (any single character). Matching is case-insensitive
-and uses a compiled regular expression derived from the wildcard pattern, with a 100-millisecond
+and uses a regular expression derived from the wildcard pattern, with a 100-millisecond
 evaluation timeout to guard against catastrophic backtracking.
 
 - *Type*: Static method (public).

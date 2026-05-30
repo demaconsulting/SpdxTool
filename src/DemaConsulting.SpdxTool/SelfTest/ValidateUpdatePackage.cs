@@ -45,20 +45,24 @@ internal static class ValidateUpdatePackage
     /// </remarks>
     /// <param name="context">Active program context for output and error reporting. Must not be null.</param>
     /// <param name="results">Test results collection to append the step outcome to. Must not be null.</param>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
         // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_UpdatePackage - Passed");
+            context.WriteLine("✓ SpdxTool_UpdatePackage - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_UpdatePackage - Failed");
+            context.WriteError("✗ SpdxTool_UpdatePackage - Failed");
         }
 
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -76,8 +80,13 @@ internal static class ValidateUpdatePackage
     /// <remarks>
     ///     Creates a validate.tmp directory, writes a minimal SPDX JSON document containing
     ///     SPDXRef-Package-1 and a workflow YAML that updates all twelve metadata fields, then
-    ///     invokes the SpdxTool run-workflow command with --silent. Deletes the temporary
-    ///     directory in a finally block regardless of outcome.
+    ///     invokes the SpdxTool run-workflow command with --silent. After the tool exits, checks
+    ///     that the output SPDX file exists, then uses LINQ to locate SPDXRef-Package-1 by Id and
+    ///     verifies each of the twelve updated field values individually so that deserializer
+    ///     ordering changes do not cause false failures. Deletes the temporary directory in a
+    ///     <c>finally</c> block only if it exists, guarding against a secondary
+    ///     <see cref="DirectoryNotFoundException"/> masking the original exception when
+    ///     <see cref="Directory.CreateDirectory(string)"/> fails.
     /// </remarks>
     /// <returns>
     ///     True if the tool exited with code zero and every updated field in the deserialized
@@ -161,31 +170,37 @@ internal static class ValidateUpdatePackage
                 return false;
             }
 
+            // Fail if the output SPDX file was not written
+            if (!File.Exists("validate.tmp/test.spdx.json"))
+            {
+                return false;
+            }
+
             // Read the SPDX document
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/test.spdx.json"));
 
-            // Verify expected SPDX content
-            return doc is
+            // Find the updated package by SPDX ID to confirm correct package identity;
+            // using FirstOrDefault rather than a list pattern makes the check order-insensitive
+            // so that changes to deserializer ordering do not cause false failures
+            var package = doc.Packages.FirstOrDefault(p => p.Id == "SPDXRef-Package-1");
+            if (package == null)
             {
-                Packages:
-                [
-                    {
-                        Id: "SPDXRef-Package-1",
-                        Name: "New package name",
-                        DownloadLocation: "https://new.package.download",
-                        Version: "2.0.0",
-                        FileName: "new.zip",
-                        Supplier: "New Supplier",
-                        Originator: "New Originator",
-                        HomePage: "https://new.package.org",
-                        CopyrightText: "Copyright New Package Maker",
-                        Summary: "New Package",
-                        Description: "A new package description",
-                        ConcludedLicense: "MIT v2",
-                        DeclaredLicense: "MIT v2"
-                    }
-                ]
-            };
+                return false;
+            }
+
+            // Verify all twelve updated SPDX field values individually
+            return package.Name == "New package name" &&
+                   package.DownloadLocation == "https://new.package.download" &&
+                   package.Version == "2.0.0" &&
+                   package.FileName == "new.zip" &&
+                   package.Supplier == "New Supplier" &&
+                   package.Originator == "New Originator" &&
+                   package.HomePage == "https://new.package.org" &&
+                   package.CopyrightText == "Copyright New Package Maker" &&
+                   package.Summary == "New Package" &&
+                   package.Description == "A new package description" &&
+                   package.ConcludedLicense == "MIT v2" &&
+                   package.DeclaredLicense == "MIT v2";
         }
         finally
         {

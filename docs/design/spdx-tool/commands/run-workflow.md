@@ -1,4 +1,4 @@
-﻿### RunWorkflow
+### RunWorkflow
 
 #### Purpose
 
@@ -10,7 +10,7 @@ workflow source, and extraction of named output variables after execution. Workf
 #### Data Model
 
 RunWorkflow carries no mutable instance state; all fields are static constants or readonly singletons
-initialised once at class load.
+initialized once at class load.
 
 **Command** (`private const string`): The canonical command name `"run-workflow"` used for registration
 and help text.
@@ -41,7 +41,7 @@ variables back into the caller's variable dictionary.
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
   `Dictionary<string, string> variables` — caller's variable map.
 - *Returns*: `void`
-- *Preconditions*: One of file or url must be specified (unless nuget + file is used).
+- *Preconditions*: Exactly one of file or url must be non-null.
 - *Post-conditions*: All steps are executed; requested outputs are stored in variables.
 
 **Run(Context, YamlMappingNode, string?, string?, string?, Dictionary)**: Validates that file and
@@ -106,19 +106,13 @@ SafePathCombine, which rejects any file argument that escapes the package root d
 **CommandUsageException** — thrown by Run(Context, string[]) when no arguments are provided or a
 parameter is malformed (missing "="); thrown by Run(Context, YamlMappingNode, Dictionary) when a
 requested workflow output is not produced; thrown by RunBytes when an unknown command is referenced
-in a step.
-
-**YamlException** — thrown by Run(Context, YamlMappingNode, string?, string?, string?, Dictionary)
-when both file and url are specified, or when neither is specified; thrown by
-Run(Context, YamlMappingNode, Dictionary) when both nuget and url are specified, when nuget is used
-without file, or when the nuget value is not in "PackageName:version" format.
-
-**CommandUsageException** — thrown by RunFile when the workflow file does not exist.
+in a step; thrown by RunFile when the workflow file does not exist.
 
 **CommandErrorException** — thrown by RunUrl when the HTTP response is not 200; thrown by RunBytes
 when the integrity check fails, when the YAML structure is invalid, when the steps key is missing,
-when a step is not a mapping node, or when a caller-supplied parameter name is not declared in the
-workflow's parameters section.
+when a step is not a mapping node, when a step mapping node lacks the `command` key (message:
+"Workflow {source} step missing command"), or when a caller-supplied parameter name is not declared
+in the workflow's parameters section.
 
 #### Dependencies
 

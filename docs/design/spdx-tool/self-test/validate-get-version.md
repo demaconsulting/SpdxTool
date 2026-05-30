@@ -1,4 +1,4 @@
-﻿### ValidateGetVersion
+### ValidateGetVersion
 
 #### Purpose
 
@@ -17,7 +17,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
 - *Post-conditions*: A TestResult entry named SpdxTool_GetVersion has been appended to results; a
   pass or fail message has been written to the Context.
 
@@ -25,20 +26,22 @@ N/A - this unit is a static class with no instance state.
 
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the log contains the expected version string.
-- *Preconditions*: A writable working directory is available. Callers must execute serially because Validate.RunSpdxTool temporarily mutates the process-wide current working directory.
+- *Preconditions*: A writable working directory is available. Callers must execute serially because
+  Validate.RunSpdxTool temporarily mutates the process-wide current working directory.
 - *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
   never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory, writes an SPDX JSON document containing two packages where
 SPDXRef-Package-2 has version "2.0.0", and writes a workflow YAML that executes get-version to
 retrieve the version of SPDXRef-Package-2 into the version variable and then prints it using the
-print command. Calls Validate.RunSpdxTool with --silent, --log, and run-workflow arguments. Reads
-the log file and verifies it contains the text "Found version 2.0.0".
+print command. Calls Validate.RunSpdxTool with --silent, --log, and run-workflow arguments.
+Reads the log file and verifies it contains the text "Found version 2.0.0".
 
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the log file
-does not contain the expected "Found version 2.0.0" text. The finally block guards the
+is absent after a successful tool exit, guarding against output.log not being written. Returns false
+if the log file does not contain the expected "Found version 2.0.0" text. The finally block guards the
 Directory.Delete call with a Directory.Exists check to prevent a secondary DirectoryNotFoundException
 masking the original exception when Directory.CreateDirectory fails (e.g., because validate.tmp
 already exists as a file).

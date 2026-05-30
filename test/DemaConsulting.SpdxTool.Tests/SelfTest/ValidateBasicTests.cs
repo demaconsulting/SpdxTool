@@ -38,10 +38,11 @@ public class ValidateBasicTests
     ///     Test that ValidateBasic validation passes.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_Basic</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateBasic.Run"/> so that
-    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
-    ///     naming convention is appropriate for self-test integration tests.
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_Basic</c>
+    ///     matches the <c>TestResult.Name</c> identifier recorded by
+    ///     <see cref="ValidateBasic.Run"/> so that ReqStream can trace this xUnit test to the
+    ///     self-test result it exercises. This method name is therefore exempt from the
+    ///     4-segment naming rule per the csharp-testing.md standard.
     /// </remarks>
     [Fact]
     public void SpdxTool_Basic()

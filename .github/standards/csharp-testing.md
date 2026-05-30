@@ -38,6 +38,17 @@ naming pattern, and follow AAA with labeled comments:
 - **Subsystem tests**: `{SubsystemName}_{Functionality}_{Scenario}_{ExpectedBehavior}`
 - **Unit tests**: `{ClassName}_{MethodUnderTest}_{Scenario}_{ExpectedBehavior}`
 
+## Exception: Self-Test Integration Tests
+
+Self-test integration tests whose method names must match a `TestResult.Name` identifier for
+ReqStream traceability are exempt from the 4-segment naming rule above. The `TestResult.Name`
+value is the canonical identifier recorded in result files and consumed by ReqStream to link
+xUnit tests to self-test step outcomes; the xUnit method name must match it exactly.
+
+Such tests should document this deviation with an inline `<remarks>` block that reads:
+"This is a deliberate formal deviation: the method name matches the `TestResult.Name` identifier
+required for ReqStream traceability and is therefore exempt from the 4-segment naming rule."
+
 ```csharp
 /// <summary>
 ///     Validates that an invalid email format throws an ArgumentException.

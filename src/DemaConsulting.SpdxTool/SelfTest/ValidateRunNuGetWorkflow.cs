@@ -37,8 +37,6 @@ internal static class ValidateRunNuGetWorkflow
     /// <summary>
     ///     Executes the NuGet workflow self-test and records the result.
     /// </summary>
-    /// <param name="context">The active Program context providing output and error streams.</param>
-    /// <param name="results">The TestResults collection to append the step outcome to.</param>
     /// <remarks>
     ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
     ///     <c>SpdxTool_RunNuGetWorkflow</c> with <see cref="TestOutcome.Passed"/> or
@@ -46,20 +44,26 @@ internal static class ValidateRunNuGetWorkflow
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Perform the validation
         var passed = DoValidate();
 
         // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_RunNuGetWorkflow - Passed");
+            context.WriteLine("✓ SpdxTool_RunNuGetWorkflow - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_RunNuGetWorkflow - Failed");
+            context.WriteError("✗ SpdxTool_RunNuGetWorkflow - Failed");
         }
 
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -81,9 +85,10 @@ internal static class ValidateRunNuGetWorkflow
     ///     <c>GetDotNetVersion.yaml</c> workflow within it, mapping the version output to the
     ///     <c>dotnet-version</c> variable and printing it. Invokes
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c> and
-    ///     <c>run-workflow</c> arguments. The <c>validate.tmp</c> directory is deleted
-    ///     unconditionally in a <c>finally</c> block, even if creation or file writes only partially
-    ///     succeeded. Returns <c>false</c> if the NuGet package cannot be resolved because it is
+    ///     <c>run-workflow</c> arguments. The <c>validate.tmp</c> directory is deleted in a
+    ///     <c>finally</c> block only if it exists, guarding against a secondary
+    ///     <see cref="DirectoryNotFoundException"/> masking the original exception when
+    ///     <see cref="Directory.CreateDirectory(string)"/> fails. Returns <c>false</c> if the NuGet package cannot be resolved because it is
     ///     absent from the local cache and network access is unavailable.
     /// </remarks>
     /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>

@@ -19,7 +19,8 @@ executing the packaged workflow.
 #### Test Scenarios
 
 **EndToEndNuGetWorkflow**: the self-test step proves that `run-workflow` can resolve and execute a
-NuGet-packaged workflow during validation. This scenario is tested by `SpdxTool_RunNuGetWorkflow`.
+NuGet-packaged workflow during validation. This scenario is tested by
+`ValidateRunNuGetWorkflow_Run_ValidNuGetWorkflow_Passes`.
 
 **ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by

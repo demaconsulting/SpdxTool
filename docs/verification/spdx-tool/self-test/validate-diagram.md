@@ -19,7 +19,7 @@ expected diagram output file.
 #### Test Scenarios
 
 **EndToEndDiagramGeneration**: the self-test step proves that `diagram` produces Mermaid output
-during validation. This scenario is tested by `SpdxTool_Diagram`.
+during validation. This scenario is tested by `ValidateDiagram_Run_ValidDiagramWorkflow_Passes`.
 
 **ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by

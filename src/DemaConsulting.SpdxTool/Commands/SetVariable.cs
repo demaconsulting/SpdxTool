@@ -52,11 +52,19 @@ public sealed class SetVariable : Command
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that
+    ///     workflow YAML dispatch routes to the same instance.
+    /// </remarks>
     public static readonly SetVariable Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
         Command,
         "set-variable",
@@ -78,13 +86,31 @@ public sealed class SetVariable : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Rejects CLI invocation of the set-variable command.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="args">Command-line arguments (unused).</param>
+    /// <exception cref="CommandUsageException">
+    ///     Always thrown, because set-variable is only valid within a workflow context.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         throw new CommandUsageException("'set-variable' command is only valid in a workflow");
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the set-variable command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">
+    ///     Workflow variable map; the value specified by the <c>value</c> input is stored under
+    ///     the key given by the <c>output</c> input.
+    /// </param>
+    /// <exception cref="YamlException">
+    ///     Thrown when the <c>value</c> or <c>output</c> input is absent from the step.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs

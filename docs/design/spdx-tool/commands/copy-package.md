@@ -1,4 +1,4 @@
-﻿### CopyPackage
+### CopyPackage
 
 #### Purpose
 
@@ -47,8 +47,12 @@ optionally calls CopyChildren for recursive copy, and saves the destination docu
 - *Post-conditions*: toFile is updated in place.
 
 **Copy(SpdxDocument, SpdxDocument, string, bool)**: Copies or enhances a single package in memory.
-Sets FilesAnalyzed to false on a new copy unless files is true. Copies SpdxFile entries when files
-is true and the source package has analyzed files.
+For a new copy (no same-identity package in toDoc), `FilesAnalyzed` is reset to false and `HasFiles`
+is cleared because the destination does not carry the source file entries unless the files flag is
+set. For an enhancement (same-identity package found), the existing package is enhanced and renamed
+but `FilesAnalyzed` is not automatically reset — it remains as enhanced. In both paths, `FilesAnalyzed`
+is set to true and files are copied only when all three conditions hold: (1) the `files` flag is
+true, (2) `fromPackage.FilesAnalyzed == true`, and (3) `fromPackage.HasFiles.Length > 0`.
 
 - *Parameters*: `SpdxDocument fromDoc` — source document; `SpdxDocument toDoc` — destination
   document; `string packageId` — package to copy; `bool files` — include analyzed files.
@@ -56,7 +60,7 @@ is true and the source package has analyzed files.
 - *Preconditions*: The package identified by packageId must exist in fromDoc.
 - *Post-conditions*: toDoc contains the package; any required SpdxFile entries are added.
 
-**CopyChildren(SpdxDocument, SpdxDocument, string, HashSet, bool)**: Recursively copies child
+**CopyChildren(SpdxDocument, SpdxDocument, string, HashSet<string>, bool)**: Recursively copies child
 packages (identified via RelationshipDirection on fromDoc relationships) and their relationships to
 toDoc, guarding against infinite recursion with a visited set.
 
@@ -66,6 +70,10 @@ toDoc, guarding against infinite recursion with a visited set.
 - *Returns*: `void`
 - *Preconditions*: None beyond document validity.
 - *Post-conditions*: All reachable child packages and their relationships are present in toDoc.
+- *Note*: The child ID is added to `copied` after the `Copy` and `SpdxRelationships.Add` calls,
+  immediately before recursing into the child's own children. `Copy` and `SpdxRelationships.Add`
+  are both idempotent, so repeated calls for the same child in a diamond-shaped graph are safe and
+  produce the same result.
 
 **GetChild(SpdxRelationship, string)**: Returns the child package ID for a given relationship and
 parent ID, using RelationshipDirection to determine the parent/child orientation, or null if the

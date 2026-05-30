@@ -88,6 +88,7 @@ public sealed class FindPackage : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are provided, or when a criterion string does not contain '=' or has an empty key.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if insufficient arguments
@@ -109,6 +110,7 @@ public sealed class FindPackage : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="YamlException">Thrown when the output or spdx inputs are absent from the workflow step.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -145,7 +147,7 @@ public sealed class FindPackage : Command
     /// </remarks>
     /// <param name="args">Arguments</param>
     /// <param name="criteria">Criteria dictionary to populate</param>
-    /// <exception cref="CommandUsageException">on error</exception>
+    /// <exception cref="CommandUsageException">Thrown when a criterion string does not contain '=', or when the key portion before '=' is empty.</exception>
     public static void ParseCriteria(
         IEnumerable<string> args,
         Dictionary<string, string> criteria)
@@ -155,6 +157,12 @@ public sealed class FindPackage : Command
             // Split the argument into key and value
             var parts = arg.Split('=', 2);
             if (parts.Length != 2)
+            {
+                throw new CommandUsageException($"Invalid criteria '{arg}'");
+            }
+
+            // Reject empty key (e.g. argument "=value")
+            if (string.IsNullOrEmpty(parts[0]))
             {
                 throw new CommandUsageException($"Invalid criteria '{arg}'");
             }

@@ -122,9 +122,11 @@ sections:
       - title: Command Execution
         requirements:
           - id: SpdxTool-CommandExecution-SupportedCommands
-            title: The tool shall support SPDX document manipulation commands including add-package, add-relationship, copy-package,
-              diagram, find-package, get-version, hash, help, print, query, rename-id, run-workflow, set-variable, to-markdown,
-              update-package, and validate.
+            title: >-
+              The tool shall support SPDX document manipulation commands including
+              add-package, add-relationship, copy-package, diagram, find-package,
+              get-version, hash, help, print, query, rename-id, run-workflow,
+              set-variable, to-markdown, update-package, and validate.
             tags:
               - commands
             justification: |
@@ -132,22 +134,22 @@ sections:
               Each command must be reachable by name from the command-line dispatcher so
               that users can invoke them in scripts and CI/CD pipelines.
             children:
-              - SpdxTool-Commands-AddPackage
-              - SpdxTool-Commands-AddRelationship
+              - SpdxTool-Package-AddPackage
+              - SpdxTool-Relationship-AddRelationship
               - SpdxTool-Commands-CopyPackage
-              - SpdxTool-Commands-Diagram
+              - SpdxTool-Transform-Diagram
               - SpdxTool-Commands-FindPackage
-              - SpdxTool-Commands-GetVersion
-              - SpdxTool-Hash-ComputeHashes
-              - SpdxTool-Cli-Help
-              - SpdxTool-Commands-PrintSpdxDocument
-              - SpdxTool-Commands-Query
+              - SpdxTool-Commands-GetVersion-RetrievePackageVersion
+              - SpdxTool-Commands-Hash-Generate
+              - SpdxTool-Commands-Help-DisplayHelp
+              - SpdxTool-Commands-Print-WorkflowOutput
+              - SpdxTool-Commands-Query-ExternalProgramQuery
               - SpdxTool-Commands-RenameId
-              - SpdxTool-Workflow-RunWorkflow
+              - SpdxTool-Commands-RunWorkflow
               - SpdxTool-Commands-SetVariable
-              - SpdxTool-Transform-ToMarkdown
+              - SpdxTool-Commands-ToMarkdown
               - SpdxTool-Commands-UpdatePackage
-              - SpdxTool-Manage-ValidateSpdx
+              - SpdxTool-Commands-Validate-Validate
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError
 
@@ -161,12 +163,29 @@ sections:
               repeatable operation. This is the primary integration mechanism for CI/CD
               pipelines and MSBuild targets.
             children:
-              - SpdxTool-Workflow-RunWorkflow
+              - SpdxTool-Commands-RunWorkflow
             tests:
-              - RunWorkflow_ValidWorkflow_ExecutesSteps
+              - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow
 
       - title: Platform Support
         requirements:
+          - id: SpdxTool-Platform-CrossPlatform
+            title: The tool shall run successfully on Windows, Linux, and macOS platforms.
+            tags:
+              - platform
+            justification: |
+              Supporting multiple operating systems ensures the tool is usable across the
+              full range of developer and CI/CD environments. Both the dotnet-tool and the
+              MSBuild targets package must function correctly on all three platforms.
+            children:
+              - SpdxTool-Platform-Windows
+              - SpdxTool-Platform-Linux
+              - SpdxTool-Platform-MacOS
+            tests:
+              - windows@SpdxTool_Basic
+              - ubuntu@SpdxTool_Basic
+              - macos@SpdxTool_Basic
+
           - id: SpdxTool-Platform-MultiFramework
             title: The tool shall run on .NET 8, .NET 9, and .NET 10.
             tags:
@@ -174,5 +193,13 @@ sections:
             justification: |
               Supporting multiple active .NET LTS and STS releases ensures the tool
               remains usable as users upgrade their projects and CI/CD environments.
+            children:
+              - SpdxTool-Platform-Net8
+              - SpdxTool-Platform-Net9
+              - SpdxTool-Platform-Net10
+            # net8.0@/net9.0@/net10.0@ prefixes are TFM (target framework moniker) CI dimensions
+            # reflecting the compiled TFM of the test assembly. The dotnet8.x@/dotnet9.x@/dotnet10.x@
+            # prefixes used in child requirements are installed SDK version CI dimensions.
             tests:
-              - SpdxTool_Version_ShortFlag_DisplaysVersion
+              - net9.0@SpdxTool_Version_ShortFlag_DisplaysVersion
+              - net10.0@SpdxTool_Version_ShortFlag_DisplaysVersion

@@ -23,7 +23,7 @@ includes:
   - docs/reqstream/spdx-tool/commands/command.yaml
   - docs/reqstream/spdx-tool/commands/command-entry.yaml
   - docs/reqstream/spdx-tool/commands/command-error-exception.yaml
-  - docs/reqstream/spdx-tool/commands/command-registry.yaml
+  - docs/reqstream/spdx-tool/commands/commands-registry.yaml
   - docs/reqstream/spdx-tool/commands/command-usage-exception.yaml
   - docs/reqstream/spdx-tool/commands/add-package.yaml
   - docs/reqstream/spdx-tool/commands/add-relationship.yaml

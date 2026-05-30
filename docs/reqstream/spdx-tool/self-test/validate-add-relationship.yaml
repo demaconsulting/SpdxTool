@@ -7,7 +7,9 @@ sections:
           - title: ValidateAddRelationship Requirements
             requirements:
               - id: SpdxTool-SelfTest-AddRelationship
-                title: The SelfTest shall exercise the add-relationship command.
+                title: >-
+                  The SelfTest shall verify that the add-relationship command creates
+                  the expected relationship in an SPDX document.
                 tags:
                   - self-test
                 justification: |
@@ -15,4 +17,3 @@ sections:
                   relationships between SPDX elements after installation or deployment.
                 tests:
                   - SpdxTool_AddRelationship
-                  - ValidateAddRelationship_Run_IoError_PropagatesException

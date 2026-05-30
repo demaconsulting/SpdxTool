@@ -51,6 +51,29 @@ public class SpdxHelpersTests
         """;
 
     /// <summary>
+    ///     Test that SpdxHelpers.LoadJsonDocument with a null path throws ArgumentNullException
+    /// </summary>
+    [Fact]
+    public void SpdxHelpers_LoadJsonDocument_NullPath_ThrowsArgumentNullException()
+    {
+        // Act/Assert: null path throws ArgumentNullException
+        Assert.Throws<ArgumentNullException>(() => SpdxHelpers.LoadJsonDocument(null!));
+    }
+
+    /// <summary>
+    ///     Test that SpdxHelpers.SaveJsonDocument with a null path throws ArgumentNullException
+    /// </summary>
+    [Fact]
+    public void SpdxHelpers_SaveJsonDocument_NullPath_ThrowsArgumentNullException()
+    {
+        // Arrange: a minimal document is needed to reach the null path check
+        var doc = Spdx2JsonDeserializer.Deserialize(MinimalSpdxJson);
+
+        // Act/Assert: null path throws ArgumentNullException
+        Assert.Throws<ArgumentNullException>(() => SpdxHelpers.SaveJsonDocument(doc, null!));
+    }
+
+    /// <summary>
     ///     Test that SpdxHelpers.LoadJsonDocument with a missing file throws CommandUsageException
     /// </summary>
     [Fact]

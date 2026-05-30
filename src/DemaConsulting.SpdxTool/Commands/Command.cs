@@ -148,7 +148,7 @@ public abstract class Command
                 string? value;
                 if (name.StartsWith("environment."))
                 {
-                    value = Environment.GetEnvironmentVariable(name[12..]);
+                    value = Environment.GetEnvironmentVariable(name["environment.".Length..]); // Skip "environment." prefix
                 }
                 else
                 {

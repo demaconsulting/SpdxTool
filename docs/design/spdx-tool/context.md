@@ -15,7 +15,7 @@ accumulated error count into a process exit code.
 **Help**: `bool` — true when `-h`, `-?`, or `--help` was specified.
 **Silent**: `bool` — true when `-s` or `--silent` was specified.
 **Validate**: `bool` — true when `--validate` was specified.
-**ValidationFile**: `string` — path supplied to `--result`; empty string when not specified.
+**ValidationFile**: `string` — path supplied to `-r`/`--result`; empty string when not specified.
 **Depth**: `int` — depth value supplied to `--depth`; defaults to 1 when not specified.
 **Arguments**: `IReadOnlyCollection<string>` — positional arguments following global flags.
 **Errors**: `int` — count of errors recorded via WriteError.
@@ -24,13 +24,15 @@ accumulated error count into a process exit code.
 ### Key Methods
 
 **Create(string[])**: Parses the program argument array and constructs a Context. Opens the
-log file if `--log` was specified.
+log file if `--log` was specified. Calls the private `ParseArgument` helper for each
+recognized flag to consume its required value from the argument sequence.
 
-- *Parameters*: `string[] args` — raw command-line arguments.
+- *Parameters*: `string[] args` — raw command-line arguments. Must not be null.
 - *Returns*: `Context`
-- *Preconditions*: None.
-- *Post-conditions*: Returns a fully initialized Context. Throws InvalidOperationException if a
-  flag is missing its required value argument or if the depth value is not a valid integer.
+- *Preconditions*: args must not be null.
+- *Post-conditions*: Returns a fully initialized Context. Throws ArgumentNullException when args
+  is null. Throws InvalidOperationException if a flag is missing its required value argument or
+  if the depth value is not a valid integer.
 
 **WriteLine(string)**: Writes a line to the console (unless Silent) and to the log (if open).
 
@@ -38,6 +40,7 @@ log file if `--log` was specified.
 - *Returns*: `void`
 - *Preconditions*: None.
 - *Post-conditions*: Text written to console and/or log.
+- *Thread-safety*: Not thread-safe; do not call concurrently from multiple threads.
 
 **WriteWarning(string)**: Writes a warning line in dark yellow to the console (unless Silent)
 and to the log.
@@ -46,6 +49,7 @@ and to the log.
 - *Returns*: `void`
 - *Preconditions*: None.
 - *Post-conditions*: Message written; console color restored to default.
+- *Thread-safety*: Not thread-safe; do not call concurrently from multiple threads.
 
 **WriteError(string)**: Writes an error line in red to the console (unless Silent), to the
 log, and increments the Errors counter.
@@ -54,6 +58,7 @@ log, and increments the Errors counter.
 - *Returns*: `void`
 - *Preconditions*: None.
 - *Post-conditions*: Errors counter incremented; message written to console and/or log.
+- *Thread-safety*: Not thread-safe; do not call concurrently from multiple threads.
 
 **Dispose()**: Closes and disposes the log-file writer if one was opened.
 
@@ -65,6 +70,8 @@ log, and increments the Errors counter.
 
 ### Error Handling
 
+**ArgumentNullException** — thrown by Create when args is null.
+
 **InvalidOperationException** — thrown by Create when a flag argument is missing (e.g.,
 `--log` without a filename) or when `--depth` is followed by a non-integer value. Also
 thrown by Create when the log file cannot be created (wraps UnauthorizedAccessException,
@@ -74,7 +81,6 @@ ArgumentException, NotSupportedException, IOException).
 
 - System.IO.StreamWriter (log file output)
 - System.Console (console output with color support)
-- System.Environment (ExitCode, for documentation purposes only — ExitCode is set by caller)
 
 ### Callers
 

@@ -38,13 +38,13 @@ public class ValidateGetVersionTests
     ///     Test that ValidateGetVersion validation passes.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_GetVersion</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateGetVersion.Run"/> so that
-    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
-    ///     naming convention is appropriate for self-test integration tests.
+    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateGetVersion.Run"/> is
+    ///     <c>SpdxTool_GetVersion</c>; the assertion in this test guards against regressions
+    ///     where the wrong name is recorded. This system-level naming convention is appropriate
+    ///     for self-test integration tests.
     /// </remarks>
     [Fact]
-    public void SpdxTool_GetVersion()
+    public void ValidateGetVersion_Run_ValidVersionWorkflow_Passes()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -53,9 +53,10 @@ public class ValidateGetVersionTests
         // Act: run the ValidateGetVersion step
         ValidateGetVersion.Run(context, results);
 
-        // Assert: one passing result recorded
+        // Assert: one passing result recorded with the correct name
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_GetVersion", results.Results[0].Name);
     }
 
     /// <summary>

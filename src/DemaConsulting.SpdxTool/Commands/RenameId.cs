@@ -73,8 +73,8 @@ public sealed class RenameId : Command
             "  - command: rename-id",
             "    inputs:",
             "      spdx: <spdx.json>             # SPDX file name",
-            "      old: <old-id>                 # Old element ID",
-            "      new: <new-id>                 # New element ID"
+            "      new: <new-id>                 # New element ID",
+            "      old: <old-id>                 # Old element ID"
         ],
         Instance);
 
@@ -85,7 +85,17 @@ public sealed class RenameId : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the rename-id command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain exactly three elements: the SPDX file path,
+    ///     the old element ID, and the new element ID.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when the argument count is not exactly 3.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is not 3
@@ -98,7 +108,15 @@ public sealed class RenameId : Command
         Rename(args[0], args[1], args[2]);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the rename-id command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map used to expand input values.</param>
+    /// <exception cref="YamlException">
+    ///     Thrown when the <c>spdx</c>, <c>new</c>, or <c>old</c> input is absent from the step.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs

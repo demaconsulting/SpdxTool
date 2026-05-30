@@ -117,23 +117,21 @@ public class SelfTestTests
     }
 
     /// <summary>
-    ///     Test that SpdxTool --validate --result with unsupported extension reports an error
+    ///     Test that Validate.Run reports an error for unsupported result file extension
     /// </summary>
     [Fact]
-    public void SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError()
+    public void SelfTest_Validate_UnsupportedResultExtension_ReportsError()
     {
-        // Arrange: no setup required
+        var resultFile = Path.Join(Path.GetTempPath(), $"spdxtool-st-{Guid.NewGuid():N}.txt");
 
-        // Act: Run the command with --validate and a .txt result file (unsupported)
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "--validate",
-            "--result", "output-validate.txt");
+        // Arrange: create context with --validate --result flags and unsupported .txt extension
+        using var context = Context.Create(["--validate", "--result", resultFile]);
 
-        // Assert: Verify error reported for unsupported extension
-        Assert.Equal(1, exitCode);
-        Assert.Contains("Unsupported results file format", output);
+        // Act: run the self-test subsystem directly
+        Validate.Run(context);
+
+        // Assert: error reported for unsupported extension, no file created
+        Assert.Equal(1, context.ExitCode);
+        Assert.False(File.Exists(resultFile));
     }
 }

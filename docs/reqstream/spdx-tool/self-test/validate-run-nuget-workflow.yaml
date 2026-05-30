@@ -15,4 +15,5 @@ sections:
                   correctly resolves workflow files from NuGet packages and executes them
                   after installation or deployment.
                 tests:
-                  - SpdxTool_RunNuGetWorkflow
+                  - ValidateRunNuGetWorkflow_Run_ValidNuGetWorkflow_Passes
+                  - ValidateRunNuGetWorkflow_Run_IoError_PropagatesException

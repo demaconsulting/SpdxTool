@@ -147,10 +147,10 @@ public class CommandTests
     }
 
     /// <summary>
-    ///     Test that CommandsRegistry.Commands contains all registered commands
+    ///     Test that CommandsRegistry.Commands all expected command names are present in the registry
     /// </summary>
     [Fact]
-    public void CommandsRegistry_Commands_ContainsAllRegisteredCommands()
+    public void CommandsRegistry_Commands_AllExpectedNames_ArePresent()
     {
         // Arrange: Expected command names (from CommandsRegistry)
         var expectedCommands = new[]
@@ -168,5 +168,103 @@ public class CommandTests
         {
             Assert.True(commands.ContainsKey(name), $"Expected command '{name}' not found in registry");
         }
+    }
+
+    /// <summary>
+    ///     Test that CommandsRegistry.Commands with a known command name resolves to a valid entry
+    /// </summary>
+    [Fact]
+    public void CommandsRegistry_Commands_KnownCommandName_ResolvesEntry()
+    {
+        // Arrange:
+        const string commandName = "validate";
+
+        // Act:
+        var found = CommandsRegistry.Commands.TryGetValue(commandName, out var entry);
+
+        // Assert:
+        Assert.True(found);
+        Assert.NotNull(entry);
+        Assert.NotNull(entry.Instance);
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with unmatched '}}' throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_UnmatchedClose_ThrowsInvalidOperationException()
+    {
+        // Arrange:
+        const string text = "Hello, }} world!";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        var ex = Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
+        Assert.Contains("Unmatched '}}'", ex.Message);
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with unmatched '${{' throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_UnmatchedOpen_ThrowsInvalidOperationException()
+    {
+        // Arrange:
+        const string text = "Hello, ${{ world!";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        var ex = Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
+        Assert.Contains("Unmatched '${{", ex.Message);
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with an empty variable name throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_EmptyVariableName_ThrowsInvalidOperationException()
+    {
+        // Arrange:
+        const string text = "Hello, ${{  }} world!";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        var ex = Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
+        Assert.Contains("Empty variable name", ex.Message);
+    }
+
+    /// <summary>
+    ///     Test that Command.GetMapMap with null map returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetMapMap_NullMap_ReturnsNull()
+    {
+        // Arrange: no setup required — null map is passed directly
+        // Act/Assert:
+        Assert.Null(Command.GetMapMap(null, "any-key"));
+    }
+
+    /// <summary>
+    ///     Test that Command.GetMapSequence with null map returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetMapSequence_NullMap_ReturnsNull()
+    {
+        // Arrange: no setup required — null map is passed directly
+        // Act/Assert:
+        Assert.Null(Command.GetMapSequence(null, "any-key"));
+    }
+
+    /// <summary>
+    ///     Test that Command.GetSequenceString with null sequence returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetSequenceString_NullSequence_ReturnsNull()
+    {
+        // Arrange:
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        Assert.Null(Command.GetSequenceString(null, 0, variables));
     }
 }

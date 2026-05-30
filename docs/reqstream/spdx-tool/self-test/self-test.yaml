@@ -54,4 +54,5 @@ sections:
               an immediate error rather than silently generating no output file, ensuring they
               detect configuration mistakes in their CI pipeline.
             tests:
+              - SelfTest_Validate_UnsupportedResultExtension_ReportsError
               - SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError

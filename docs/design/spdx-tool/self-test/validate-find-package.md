@@ -1,4 +1,4 @@
-﻿### ValidateFindPackage
+### ValidateFindPackage
 
 #### Purpose
 
@@ -17,7 +17,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
 - *Post-conditions*: A TestResult entry named SpdxTool_FindPackage has been appended to results; a
   pass or fail message has been written to the Context.
 
@@ -25,7 +26,8 @@ N/A - this unit is a static class with no instance state.
 
 - *Parameters*: None.
 - *Returns*: `bool` — true if the command succeeded and the log contains the expected package ID.
-- *Preconditions*: A writable working directory is available. Callers must execute serially because Validate.RunSpdxTool mutates the process-wide current working directory.
+- *Preconditions*: A writable working directory is available. Callers must execute serially because
+  Validate.RunSpdxTool mutates the process-wide current working directory.
 - *Post-conditions*: The validate.tmp directory has been deleted if it exists; if Directory.CreateDirectory
   never succeeded, the delete is skipped rather than raising a secondary exception.
 

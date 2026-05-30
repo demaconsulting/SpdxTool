@@ -92,12 +92,14 @@ public sealed class AddPackage : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="CommandUsageException">Always thrown — the add-package command is only valid in a workflow.</exception>
     public override void Run(Context context, string[] args)
     {
         throw new CommandUsageException("'add-package' command is only valid in a workflow");
     }
 
     /// <inheritdoc />
+    /// <exception cref="YamlException">Thrown when the spdx or package inputs are absent from the workflow step.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -123,7 +125,9 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Add a package to the SPDX document
     /// </summary>
-    /// <param name="spdxFile">SPDX file</param>
+    /// <param name="spdxFile">
+    ///     Path to an existing, valid SPDX JSON file. Must not be null or empty.
+    /// </param>
     /// <param name="package">Package to add</param>
     /// <param name="relationships">Relationships to add</param>
     /// <exception cref="CommandErrorException">Thrown when the relationships cannot be applied to the document.</exception>
@@ -151,7 +155,9 @@ public sealed class AddPackage : Command
     ///     package ID so that any downstream references remain valid. When no matching package exists, a deep
     ///     copy of the supplied package is appended to the document.
     /// </remarks>
-    /// <param name="doc">SPDX document</param>
+    /// <param name="doc">
+    ///     The SPDX document to modify. Must not be null.
+    /// </param>
     /// <param name="package">SPDX package to add</param>
     public static void Add(SpdxDocument doc, SpdxPackage package)
     {
@@ -239,10 +245,10 @@ public sealed class AddPackage : Command
             // Get the package description (optional)
             Description = GetMapString(packageMap, "description", variables),
 
-            // Get the package license
-            ConcludedLicense = GetMapString(packageMap, "license", variables) ?? "NOASSERTION",
-            DeclaredLicense = GetMapString(packageMap, "license", variables) ?? "NOASSERTION"
+            // Get the package license (read once, assign to both fields)
+            ConcludedLicense = GetMapString(packageMap, "license", variables) ?? "NOASSERTION"
         };
+        package.DeclaredLicense = package.ConcludedLicense;
 
         // Append the PURL if specified
         var purl = GetMapString(packageMap, "purl", variables);

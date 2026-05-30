@@ -88,7 +88,7 @@ public sealed class Context : IDisposable
     /// </summary>
     /// <remarks>
     ///     Set by the <c>--depth</c> command-line flag. Defaults to 1 when <c>--depth</c> is
-    ///     not specified. Must be a positive integer; non-integer values cause
+    ///     not specified. Must be a non-negative integer; non-integer or negative values cause
     ///     <see cref="Create"/> to throw <see cref="InvalidOperationException"/>.
     /// </remarks>
     public int Depth { get; private init; }
@@ -137,9 +137,12 @@ public sealed class Context : IDisposable
     }
 
     /// <summary>
-    ///     Write text to output
+    ///     Writes a line of text to the console (when not silent) and to the log file (when configured).
     /// </summary>
     /// <param name="text">Text to write</param>
+    /// <remarks>
+    ///     Not thread-safe; do not call concurrently from multiple threads.
+    /// </remarks>
     public void WriteLine(string text)
     {
         // Write to the console unless silent
@@ -153,9 +156,12 @@ public sealed class Context : IDisposable
     }
 
     /// <summary>
-    ///     Write warning message to output
+    ///     Writes a warning message in yellow to the console (when not silent) and to the log file (when configured).
     /// </summary>
     /// <param name="message">Warning message to write</param>
+    /// <remarks>
+    ///     Not thread-safe; do not call concurrently from multiple threads.
+    /// </remarks>
     public void WriteWarning(string message)
     {
         // Write to the console unless silent
@@ -171,7 +177,7 @@ public sealed class Context : IDisposable
     }
 
     /// <summary>
-    ///     Write an error message to output
+    ///     Writes an error message in red to the console (when not silent) and to the log file (when configured), and increments <see cref="Errors"/>, causing <see cref="ExitCode"/> to return 1.
     /// </summary>
     /// <param name="message">Error message to write</param>
     /// <remarks>
@@ -200,11 +206,19 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Create a program context
     /// </summary>
-    /// <param name="args">Program arguments</param>
+    /// <param name="args">Program arguments. Must not be null.</param>
     /// <returns>Program context</returns>
+    /// <exception cref="ArgumentNullException">Thrown when args is null.</exception>
     /// <exception cref="InvalidOperationException">Thrown on invalid arguments</exception>
+    /// <remarks>
+    ///     Creates or opens a log file (I/O side effect) when the <c>--log</c> flag is present.
+    ///     Not thread-safe; do not call concurrently from multiple threads.
+    /// </remarks>
     public static Context Create(string[] args)
     {
+        // Validate arguments
+        ArgumentNullException.ThrowIfNull(args);
+
         // Process arguments
         var version = false;
         var help = false;
@@ -255,6 +269,11 @@ public sealed class Context : IDisposable
                     if (!int.TryParse(depthStr, out depth))
                     {
                         throw new InvalidOperationException($"Invalid depth value '{depthStr}': must be an integer");
+                    }
+
+                    if (depth < 0)
+                    {
+                        throw new InvalidOperationException($"Invalid depth value '{depth}': must be a non-negative integer");
                     }
 
                     break;

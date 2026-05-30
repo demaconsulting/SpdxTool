@@ -1,4 +1,4 @@
-﻿### ValidateAddPackage
+### ValidateAddPackage
 
 #### Purpose
 
@@ -33,8 +33,7 @@ Creates a validate.tmp directory, writes a minimal SPDX JSON document containing
 with a BUILD_TOOL_OF relationship to SPDXRef-Package-1 and a purl external reference. Calls
 Validate.RunSpdxTool with --silent and run-workflow arguments, then reads the modified SPDX document
 and verifies the content using a positional list pattern match — package and relationship order in
-the deserialized document is significant. The validate.tmp directory is deleted unconditionally in a
-finally block, even if creation or file writes only partially succeeded.
+the deserialized document is significant.
 
 #### Error Handling
 
@@ -42,7 +41,9 @@ Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns fals
 SPDX document does not contain exactly two packages with the expected IDs or does not contain the
 expected BUILD_TOOL_OF relationship. Any exception thrown by DoValidate propagates uncaught from Run;
 no TestResult is recorded for this step if an exception is thrown — the exception surfaces to the
-Self-Test orchestrator.
+Self-Test orchestrator. The validate.tmp directory is deleted in a finally block only if it exists,
+guarding against a secondary DirectoryNotFoundException masking the original exception when
+Directory.CreateDirectory fails.
 
 #### Dependencies
 

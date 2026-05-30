@@ -18,7 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -28,6 +30,13 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Query a program output for a value
 /// </summary>
+/// <remarks>
+///     Executes an external program, captures its combined stdout and stderr, and matches each output line
+///     against a caller-supplied regular expression containing a named <c>value</c> capture group. In CLI mode
+///     the captured value is written to stdout; in workflow mode it is stored in a named variable. The regex
+///     is compiled with a 100 ms match timeout to prevent catastrophic backtracking on untrusted patterns.
+///     Thread-safe: all public methods on this singleton operate only on method-local state and the shared <see cref="Context"/>.
+/// </remarks>
 public sealed class Query : Command
 {
     /// <summary>
@@ -73,7 +82,16 @@ public sealed class Query : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the query command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain at least two elements: the regex pattern (with a <c>value</c>
+    ///     capture group) followed by the program name; any additional elements are forwarded as program arguments.
+    /// </param>
+    /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are supplied, the pattern is syntactically invalid, or it lacks a <c>value</c> capture group.</exception>
+    /// <exception cref="CommandErrorException">Thrown when the external program cannot be started or the pattern is not matched in any output line.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if fewer than 2 arguments are provided
@@ -89,7 +107,15 @@ public sealed class Query : Command
         context.WriteLine(found);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the query command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map; the captured value is stored under the key given by the <c>output</c> input.</param>
+    /// <exception cref="YamlException">Thrown when the <c>output</c>, <c>pattern</c>, or <c>program</c> input is absent from the step.</exception>
+    /// <exception cref="CommandUsageException">Thrown when the pattern is syntactically invalid or lacks a <c>value</c> capture group.</exception>
+    /// <exception cref="CommandErrorException">Thrown when the external program cannot be started or the pattern is not matched in any output line.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -180,7 +206,7 @@ public sealed class Query : Command
         {
             process.Start();
         }
-        catch
+        catch (Exception ex) when (ex is Win32Exception or IOException)
         {
             throw new CommandErrorException($"Unable to start program '{program}'");
         }

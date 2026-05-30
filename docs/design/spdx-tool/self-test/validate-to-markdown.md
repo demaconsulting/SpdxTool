@@ -1,4 +1,4 @@
-﻿### ValidateToMarkdown
+### ValidateToMarkdown
 
 #### Purpose
 
@@ -17,7 +17,8 @@ N/A - this unit is a static class with no instance state.
 - *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
   append to.
 - *Returns*: void.
-- *Preconditions*: None.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
 - *Post-conditions*: A TestResult entry named SpdxTool_ToMarkdown has been appended to results; a
   pass or fail message has been written to the Context.
 

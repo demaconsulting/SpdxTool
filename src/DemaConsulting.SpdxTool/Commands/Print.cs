@@ -30,6 +30,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 ///     In CLI mode each argument is printed as a separate line. In workflow mode the
 ///     <c>text</c> YAML sequence provides the lines, with variable expansion applied.
 ///     This command is available from both the CLI and workflow YAML steps.
+///     Thread-safe: all public methods on this singleton operate only on method-local state and the shared <see cref="Context"/>.
 /// </remarks>
 public sealed class Print : Command
 {
@@ -72,7 +73,11 @@ public sealed class Print : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the print command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">Command-line arguments; each element is printed as a separate line. May be empty.</param>
     public override void Run(Context context, string[] args)
     {
         foreach (var arg in args)
@@ -81,7 +86,13 @@ public sealed class Print : Command
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the print command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map; variable references in each text line are expanded before printing.</param>
+    /// <exception cref="YamlException">Thrown when the <c>text</c> sequence input is absent from the step.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs

@@ -1,4 +1,4 @@
-﻿### Validate
+### Validate
 
 #### Purpose
 
@@ -38,7 +38,7 @@ complete, writing "Validation Passed" if Context.Errors is zero.
 **RunSpdxTool** (args overload): runs Program in-process with the supplied argument array.
 
 - *Parameters*: `args` — the command-line arguments to pass to SpdxTool.
-- *Returns*: `int` — the exit code returned by Program.Run.
+- *Returns*: `int` — the exit code from `context.ExitCode` after `Program.Run` completes.
 - *Preconditions*: None.
 - *Post-conditions*: A Context has been created, Program.Run has completed, and the Context has been
   disposed.
@@ -58,8 +58,9 @@ complete, writing "Validation Passed" if Context.Errors is zero.
 Individual step failures are captured as TestResult entries with TestOutcome.Failed and do not terminate
 the orchestrator; all remaining steps continue to execute. An unsupported extension in
 Context.ValidationFile causes an error message to be written to the Context and no file is produced.
-Exceptions thrown within a step's DoValidate method are caught within that step and manifest as a false
-return value, which is then recorded as a Failed TestResult. IO exceptions from File.WriteAllText in
+Exceptions thrown within a step's DoValidate method propagate uncaught through the step's Run method
+into Validate.Run, aborting the validation loop. No TestResult is recorded for the failing step; the
+exception then propagates through Validate.Run to the caller. IO exceptions from File.WriteAllText in
 WriteResultsFile (e.g., disk full, invalid path, permission denied) propagate unhandled through Run to
 the caller; this is intentional because a file-write failure at this stage is a fatal error.
 

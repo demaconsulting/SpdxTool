@@ -26,6 +26,11 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateCopyPackage self-validation unit.
 /// </summary>
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateCopyPackageTests
 {
@@ -33,13 +38,13 @@ public class ValidateCopyPackageTests
     ///     Test that ValidateCopyPackage validation passes.
     /// </summary>
     /// <remarks>
-    ///     The test method name <c>SpdxTool_CopyPackage</c> intentionally matches the
-    ///     <c>TestResult.Name</c> value recorded by <see cref="ValidateCopyPackage.Run"/> so that
-    ///     ReqStream can trace this xUnit test to the self-test result it exercises. This system-level
-    ///     naming convention is appropriate for self-test integration tests.
+    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateCopyPackage.Run"/> is
+    ///     <c>SpdxTool_CopyPackage</c>; the assertion in this test guards against regressions
+    ///     where the wrong name is recorded. This system-level naming convention is appropriate
+    ///     for self-test integration tests.
     /// </remarks>
     [Fact]
-    public void SpdxTool_CopyPackage()
+    public void ValidateCopyPackage_Run_ValidPackageWorkflow_Passes()
     {
         // Arrange: create a context in validate mode and an empty results collection
         using var context = Context.Create(["--validate"]);
@@ -48,17 +53,20 @@ public class ValidateCopyPackageTests
         // Act: run the copy-package self-test step
         ValidateCopyPackage.Run(context, results);
 
-        // Assert: a single passing result is recorded
+        // Assert: a single passing result is recorded with the correct name
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_CopyPackage", results.Results[0].Name);
     }
 
     /// <summary>
     ///     Test that ValidateCopyPackage.Run propagates an I/O exception when the working
     ///     directory prevents validate.tmp from being used correctly.
+    /// </summary>
+    /// <remarks>
     ///     This exercises the failure path of Run() as documented in the design: exceptions
     ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
-    /// </summary>
+    /// </remarks>
     [Fact]
     public void ValidateCopyPackage_Run_IoError_PropagatesException()
     {

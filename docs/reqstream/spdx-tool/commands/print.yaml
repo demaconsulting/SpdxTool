@@ -6,7 +6,7 @@ sections:
         sections:
           - title: Print Requirements
             requirements:
-              - id: SpdxTool-Workflow-Print
+              - id: SpdxTool-Commands-Print-WorkflowOutput
                 title: The tool shall support printing text within workflows using the print command.
                 tags:
                   - workflow
@@ -16,7 +16,7 @@ sections:
                 tests:
                   - Print_Run_InWorkflow_PrintsText
 
-              - id: SpdxTool-Cli-Print
+              - id: SpdxTool-Commands-Print-CliOutput
                 title: The tool shall support printing text from the command line using the print command.
                 tags:
                   - cli
@@ -26,8 +26,10 @@ sections:
                 tests:
                   - Print_Run_OnCommandLine_PrintsText
 
-              - id: SpdxTool-Print-MissingTextInput
-                title: The tool shall report an error when the print command is invoked without the text input.
+              - id: SpdxTool-Commands-Print-MissingTextInput
+                title: >-
+                  The tool shall report an error when the print command workflow step
+                  is invoked without the text input.
                 tags:
                   - workflow
                 justification: |
@@ -35,3 +37,15 @@ sections:
                   absence must be reported clearly.
                 tests:
                   - Print_Run_MissingTextInput_ThrowsYamlException
+
+              - id: SpdxTool-Commands-Print-WorkflowVariableExpansion
+                title: >-
+                  The tool shall expand variable references in text lines of the print
+                  command workflow step before writing them to output.
+                tags:
+                  - workflow
+                justification: |
+                  Variable expansion allows workflow authors to embed runtime values into
+                  printed output, enabling dynamic status messages and diagnostic information.
+                tests:
+                  - Print_Run_InWorkflow_PrintsText

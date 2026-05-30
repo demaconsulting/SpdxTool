@@ -56,13 +56,14 @@ internal static class ValidateAddRelationship
         // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_AddRelationship - Passed");
+            context.WriteLine("✓ SpdxTool_AddRelationship - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_AddRelationship - Failed");
+            context.WriteError("✗ SpdxTool_AddRelationship - Failed");
         }
 
+        // Add validation result to test results collection
         results.Results.Add(
             new TestResult
             {
@@ -91,6 +92,8 @@ internal static class ValidateAddRelationship
     ///         original exception when <see cref="Directory.CreateDirectory(string)"/> fails.
     ///     </para>
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
         try

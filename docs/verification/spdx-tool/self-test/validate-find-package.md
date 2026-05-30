@@ -19,7 +19,7 @@ expected package identifier.
 #### Test Scenarios
 
 **EndToEndFindPackage**: the self-test step proves that `find-package` returns the expected package
-identifier during validation. This scenario is tested by `SpdxTool_FindPackage`.
+identifier during validation. This scenario is tested by `ValidateFindPackage_Run_ValidPackageWorkflow_Passes`.
 
 **ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by

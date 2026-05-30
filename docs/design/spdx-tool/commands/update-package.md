@@ -1,4 +1,4 @@
-﻿### UpdatePackage
+### UpdatePackage
 
 #### Purpose
 
@@ -9,10 +9,14 @@ is rejected.
 
 #### Data Model
 
-N/A — UpdatePackage is a stateless singleton; all state is carried via method parameters.
+UpdatePackage carries no mutable instance state; all fields are static constants or readonly
+singletons initialized once at class load.
 
-**Instance**: `UpdatePackage` — the singleton instance registered with CommandsRegistry.
-**Entry**: `CommandEntry` — the CommandEntry record for UpdatePackage.
+**Instance** (`public static readonly UpdatePackage`): The singleton instance registered with
+CommandsRegistry. Created once via the private constructor.
+
+**Entry** (`public static readonly CommandEntry`): The CommandEntry record that pairs the command
+name, usage line, summary text, and extended help lines with the singleton Instance for dispatch.
 
 #### Key Methods
 

@@ -86,7 +86,19 @@ public sealed class ToMarkdown : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the to-markdown command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain at least two elements: the SPDX file path and the
+    ///     output Markdown file path. An optional third element is the document title and an
+    ///     optional fourth element is the heading depth.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when fewer than two arguments are supplied, when the title argument is empty or
+    ///     contains only whitespace, or when the depth argument is not a positive integer.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 2
@@ -117,7 +129,17 @@ public sealed class ToMarkdown : Command
         GenerateSummaryMarkdown(spdxFile, markdownFile, title, depth);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the to-markdown command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map used to expand input values.</param>
+    /// <exception cref="YamlException">
+    ///     Thrown when the <c>spdx</c> or <c>markdown</c> input is absent from the step, when
+    ///     the <c>title</c> input is empty or contains only whitespace, or when the <c>depth</c>
+    ///     input is not a positive integer.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -158,13 +180,13 @@ public sealed class ToMarkdown : Command
     ///     tool packages, then writes a Markdown summary to <paramref name="markdownFile"/>. Root
     ///     packages are those directly described by the document. Tool packages are identified by
     ///     BUILD_TOOL_OF, DEV_TOOL_OF, or TEST_TOOL_OF relationships. All remaining packages are
-    ///     rendered in the Packages section. Concluded licence takes priority over declared licence
+    ///     rendered in the Packages section. Concluded license takes priority over declared license
     ///     in each row; "NOASSERTION" is used when neither is set.
     /// </remarks>
-    /// <param name="spdxFile">SPDX file</param>
-    /// <param name="markdownFile">Markdown file</param>
-    /// <param name="title">Markdown title</param>
-    /// <param name="depth">Depth of the Markdown headers</param>
+    /// <param name="spdxFile">Path to the SPDX JSON file to load. Must not be null; the file must exist on disk.</param>
+    /// <param name="markdownFile">Path to the output Markdown file. Must not be null; any existing file is overwritten.</param>
+    /// <param name="title">Title text for the top-level Markdown heading. Must not be null. Defaults to <c>"SPDX Document"</c>.</param>
+    /// <param name="depth">Heading depth for the Markdown output (number of <c>#</c> characters). Must be a positive integer. Defaults to <c>2</c>.</param>
     /// <exception cref="CommandUsageException">
     ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when
     ///     <paramref name="spdxFile"/> does not exist on disk.
@@ -279,8 +301,8 @@ public sealed class ToMarkdown : Command
     ///     Get a license for a package
     /// </summary>
     /// <remarks>
-    ///     Concluded licence represents the authoritative determination after analysis; declared
-    ///     licence is the upstream assertion before review. Concluded licence therefore takes
+    ///     Concluded license represents the authoritative determination after analysis; declared
+    ///     license is the upstream assertion before review. Concluded license therefore takes
     ///     priority. "NOASSERTION" is treated as absent for both fields so the fallback chain
     ///     always produces a meaningful value where one exists.
     /// </remarks>

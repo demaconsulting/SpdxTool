@@ -37,6 +37,12 @@ public static class Program
     /// <summary>
     ///     Gets the version of this assembly.
     /// </summary>
+    /// <remarks>
+    ///     Reads <see cref="AssemblyInformationalVersionAttribute"/> from the entry assembly at
+    ///     startup. Falls back to <c>"Unknown"</c> when the attribute is absent (e.g., in unit-test
+    ///     host processes). The value is determined once at class initialization and is read-only
+    ///     thereafter.
+    /// </remarks>
     public static readonly string Version =
         typeof(Program)
             .Assembly
@@ -46,12 +52,12 @@ public static class Program
     /// <summary>
     ///     Application entry point
     /// </summary>
-    /// <param name="args">Program arguments</param>
+    /// <param name="args">Command-line arguments. May be empty (triggers error and usage output); must not be null.</param>
     /// <remarks>
-    ///     InvalidOperationException from Context.Create (e.g., missing argument, invalid depth)
-    ///     is caught and reported as 'Error: {message}' with exit code 1. All other unhandled
-    ///     exceptions are reported and re-thrown. Environment.ExitCode is set from context.ExitCode
-    ///     (1 if any errors were recorded, 0 otherwise).
+    ///     InvalidOperationException from Context.Create (e.g., missing argument, invalid depth,
+    ///     negative depth) is caught and reported as 'Error: {message}' with exit code 1. All other
+    ///     unhandled exceptions are reported (message only, no stack trace) and re-thrown.
+    ///     Environment.ExitCode is set from context.ExitCode (1 if any errors were recorded, 0 otherwise).
     /// </remarks>
     public static void Main(string[] args)
     {
@@ -72,7 +78,7 @@ public static class Program
         catch (Exception e)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Error: {e}");
+            Console.WriteLine($"Error: {e.Message}");
             Console.ResetColor();
             throw;
         }

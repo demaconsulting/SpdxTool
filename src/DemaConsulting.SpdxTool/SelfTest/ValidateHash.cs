@@ -47,19 +47,21 @@ internal static class ValidateHash
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
         // Perform the validation
         var passed = DoValidate();
 
-        // Report validation result to console
+        // Report validation result
         if (passed)
         {
-            context.WriteLine($"✓ SpdxTool_Hash - Passed");
+            context.WriteLine("✓ SpdxTool_Hash - Passed");
         }
         else
         {
-            context.WriteError($"✗ SpdxTool_Hash - Failed");
+            context.WriteError("✗ SpdxTool_Hash - Failed");
         }
 
         // Add validation result to test results collection
@@ -85,7 +87,8 @@ internal static class ValidateHash
     /// <remarks>
     ///     Creates <c>validate.tmp</c>, delegates to <see cref="DoValidateGenerate"/> and
     ///     <see cref="DoValidateVerify"/> in sequence (using short-circuit evaluation), then
-    ///     deletes the temporary directory unconditionally in a <c>finally</c> block.
+    ///     deletes the temporary directory in a <c>finally</c> block only if it exists, guarding against
+    ///     a secondary <see cref="DirectoryNotFoundException"/> when <see cref="Directory.CreateDirectory(string)"/> fails.
     /// </remarks>
     /// <exception cref="System.IO.IOException">Thrown if the temporary directory or any test file cannot be created, read, or deleted.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>

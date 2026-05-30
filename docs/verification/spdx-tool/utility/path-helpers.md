@@ -24,7 +24,9 @@ rejected. This scenario is tested by
 `PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException`.
 
 **AbsolutePathRejection**: absolute paths (Unix and Windows) are rejected. This scenario is
-tested by `PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException`.
+tested by `PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException` and
+`PathHelpers_SafePathCombine_WindowsAbsolutePath_ThrowsArgumentException` (Windows-only,
+platform-guarded).
 
 **NullArgumentRejection**: null arguments are rejected with ArgumentNullException before any
 path operation. This scenario is tested by

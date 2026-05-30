@@ -14,4 +14,4 @@ sections:
                   Self-validation of the copy-package command ensures it correctly copies
                   packages between SPDX documents after installation or deployment.
                 tests:
-                  - SpdxTool_CopyPackage
+                  - ValidateCopyPackage_Run_ValidPackageWorkflow_Passes

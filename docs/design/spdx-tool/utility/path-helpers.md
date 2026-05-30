@@ -1,4 +1,4 @@
-﻿### PathHelpers
+### PathHelpers
 
 #### Purpose
 

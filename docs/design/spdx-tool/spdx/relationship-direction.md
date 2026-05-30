@@ -1,4 +1,4 @@
-﻿### RelationshipDirection
+### RelationshipDirection
 
 #### Purpose
 

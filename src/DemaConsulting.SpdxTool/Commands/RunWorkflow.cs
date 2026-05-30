@@ -94,7 +94,19 @@ public sealed class RunWorkflow : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the run-workflow command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain at least one element: the workflow file path or
+    ///     URL. Remaining elements may be <c>key=value</c> parameter pairs or the <c>--verbose</c>
+    ///     flag.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when no arguments are supplied, or when a parameter argument does not contain
+    ///     the <c>=</c> separator.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 1
@@ -149,7 +161,25 @@ public sealed class RunWorkflow : Command
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the run-workflow command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">
+    ///     Caller's workflow variable map; any declared output variables are written back into
+    ///     this dictionary after execution.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when a declared output variable is not present in the workflow's output map
+    ///     after execution.
+    /// </exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when both <c>file</c> and <c>url</c> inputs are specified, when neither is
+    ///     specified, when both <c>nuget</c> and <c>url</c> are specified, when <c>nuget</c> is
+    ///     used without a <c>file</c> input, or when the <c>nuget</c> value is not in
+    ///     <c>PackageName:version</c> format.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -216,7 +246,10 @@ public sealed class RunWorkflow : Command
     /// <param name="integrity">Optional integrity</param>
     /// <param name="parameters">Workflow parameters</param>
     /// <returns>Workflow outputs</returns>
-    /// <exception cref="YamlException">on error</exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when both <paramref name="file"/> and <paramref name="url"/> are non-null
+    ///     (ambiguous source), or when both are null (no source provided).
+    /// </exception>
     public static Dictionary<string, string> Run(Context context, YamlMappingNode step, string? file, string? url,
         string? integrity, Dictionary<string, string> parameters)
     {
@@ -252,8 +285,13 @@ public sealed class RunWorkflow : Command
     /// <param name="integrity">Optional integrity hash</param>
     /// <param name="parameters">Workflow parameters</param>
     /// <returns>Workflow outputs</returns>
-    /// <exception cref="CommandUsageException">On usage error</exception>
-    /// <exception cref="YamlException">On workflow error</exception>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when the file specified by <paramref name="workflowFile"/> does not exist on disk.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Propagated from <see cref="RunBytes"/> when the integrity check fails, the YAML
+    ///     structure is invalid, or a workflow step references an unknown command.
+    /// </exception>
     public static Dictionary<string, string> RunFile(Context context, string workflowFile, string? integrity,
         Dictionary<string, string> parameters)
     {
@@ -274,12 +312,21 @@ public sealed class RunWorkflow : Command
     /// <summary>
     ///     Run workflow from URL
     /// </summary>
+    /// <remarks>
+    ///     Blocks on the async HTTP operations using <c>.Result</c>. This is safe because
+    ///     SpdxTool runs as a console application without a synchronization context that could
+    ///     cause a deadlock.
+    /// </remarks>
     /// <param name="context">Program context</param>
     /// <param name="url">Workflow URL</param>
     /// <param name="integrity">Optional integrity hash</param>
     /// <param name="parameters">Workflow parameters</param>
     /// <returns>Workflow outputs</returns>
-    /// <exception cref="CommandErrorException">on error</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the HTTP response for <paramref name="url"/> is not HTTP 200 OK; also
+    ///     propagated from <see cref="RunBytes"/> when the integrity check fails or the workflow
+    ///     structure is invalid.
+    /// </exception>
     public static Dictionary<string, string> RunUrl(Context context, string url, string? integrity,
         Dictionary<string, string> parameters)
     {

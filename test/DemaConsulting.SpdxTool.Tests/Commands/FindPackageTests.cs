@@ -18,11 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+using DemaConsulting.SpdxTool.Commands;
+
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'find-package' command
 /// </summary>
+[Collection("CommandSequential")]
 public class FindPackageTests
 {
     /// <summary>
@@ -382,5 +385,181 @@ public class FindPackageTests
         {
             File.Delete("spdx.json");
         }
+    }
+
+    /// <summary>
+    ///     Test that find-package workflow step with missing 'output' input reports error
+    /// </summary>
+    [Fact]
+    public void FindPackage_Run_MissingOutputInput_ReportsError()
+    {
+        // Workflow contents - missing 'output' input
+        const string workflowContents =
+            """
+            steps:
+            - command: find-package
+              inputs:
+                spdx: spdx.json
+                name: Test Package
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'find-package' command missing 'output' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that find-package workflow step with missing 'spdx' input reports error
+    /// </summary>
+    [Fact]
+    public void FindPackage_Run_MissingSpdxInput_ReportsError()
+    {
+        // Workflow contents - missing 'spdx' input
+        const string workflowContents =
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                name: Test Package
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'find-package' command missing 'spdx' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that find-package command reports an error when no package matches the criteria
+    /// </summary>
+    [Fact]
+    public void FindPackage_Run_NoPackageFound_ReportsError()
+    {
+        // Workflow contents - criteria that match no package
+        const string workflowContents =
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: spdx.json
+                name: Nonexistent Package
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX and workflow files
+            File.WriteAllText("spdx.json", SpdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Package not found", output);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that find-package command reports an error when multiple packages match the criteria
+    /// </summary>
+    [Fact]
+    public void FindPackage_Run_MultiplePackagesFound_ReportsError()
+    {
+        // Workflow contents - criteria that match more than one package (version wildcard matches both)
+        const string workflowContents =
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: spdx.json
+                download: https://github.com/demaconsulting/*
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX and workflow files
+            File.WriteAllText("spdx.json", SpdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Multiple packages found", output);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that ParseCriteria throws CommandUsageException when a criterion has an empty key
+    /// </summary>
+    [Fact]
+    public void FindPackage_ParseCriteria_EmptyKey_ThrowsCommandUsageException()
+    {
+        // Arrange: criteria argument where the key part is empty (e.g. "=value")
+        var criteria = new Dictionary<string, string>();
+
+        // Act / Assert: empty key throws CommandUsageException
+        Assert.Throws<CommandUsageException>(
+            () => FindPackage.ParseCriteria(["=value"], criteria));
     }
 }

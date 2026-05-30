@@ -83,6 +83,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="CommandUsageException">Thrown when fewer than four arguments are provided.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 4
@@ -105,6 +106,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="YamlException">Thrown when the spdx, id, or relationships inputs are absent from the workflow step, or when the replace input cannot be parsed as a boolean.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -181,7 +183,8 @@ public sealed class AddRelationship : Command
     /// <param name="relationships">Relationships YAML sequence node</param>
     /// <param name="variables">Variables for expansion</param>
     /// <returns>Array of SPDX relationships</returns>
-    /// <exception cref="YamlException">On error</exception>
+    /// <exception cref="YamlException">Thrown when a relationship entry is not a mapping node, or
+    /// when the 'type' or 'element' field is absent or unrecognized.</exception>
     public static SpdxRelationship[] Parse(
         string command,
         string packageId,
@@ -200,7 +203,10 @@ public sealed class AddRelationship : Command
             ..relationships.Children.Select(node =>
             {
                 // Get the relationship map
-                if (node is not YamlMappingNode relationshipMap) { throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping"); }
+                if (node is not YamlMappingNode relationshipMap)
+                {
+                    throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping");
+                }
 
                 // Parse the relationship
                 return Parse(command, packageId, relationshipMap, variables);
@@ -216,7 +222,9 @@ public sealed class AddRelationship : Command
     /// <param name="relationshipMap">Relationship YAML mapping node</param>
     /// <param name="variables">Variables for expansion</param>
     /// <returns>SPDX relationship</returns>
-    /// <exception cref="YamlException">On error</exception>
+    /// <exception cref="YamlException">Thrown when the 'type' or 'element' field is absent
+    /// from the relationship mapping, or when 'type' is not a recognized SPDX relationship
+    /// type.</exception>
     public static SpdxRelationship Parse(
         string command,
         string packageId,

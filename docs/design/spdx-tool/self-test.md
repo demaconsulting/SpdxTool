@@ -1,4 +1,4 @@
-## Self-Test
+## SelfTest
 
 ### Overview
 
