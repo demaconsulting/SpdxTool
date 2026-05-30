@@ -63,4 +63,8 @@ boolean. This scenario is tested by `CopyPackage_Run_InvalidFilesInput_ReportsEr
 in the source SPDX document. This scenario is tested by `CopyPackage_Run_PackageNotFound_ReportsError`.
 
 **InvalidPackageId**: the unit reports a usage error when the package argument is empty or equals
-`SPDXRef-DOCUMENT`. This scenario is tested by `CopyPackage_Run_InvalidPackageId_ReportsError`.
+`SPDXRef-DOCUMENT`. This scenario is tested by `CopyPackage_Run_InvalidPackageId_ReportsError`
+and `CopyPackage_Run_EmptyPackageId_ReportsError`.
+
+**EmptyPackageId**: the unit reports a usage error when the package argument is an empty string.
+This scenario is tested by `CopyPackage_Run_EmptyPackageId_ReportsError`.

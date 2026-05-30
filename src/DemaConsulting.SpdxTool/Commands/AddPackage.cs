@@ -125,10 +125,16 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Add a package to the SPDX document
     /// </summary>
+    /// <remarks>
+    ///     Loads the document from disk, applies Add and AddRelationship.Add in sequence, and
+    ///     saves the result back to disk. The two mutation calls are not wrapped in a transaction:
+    ///     if AddRelationship.Add fails after Add succeeds the file is not saved (the write only
+    ///     occurs after both calls succeed), so the on-disk file remains unchanged. However, the
+    ///     in-memory document is partially mutated in that case, which is why this method is
+    ///     considered non-atomic.
+    /// </remarks>
     /// <param name="spdxFile">
-    ///     Path to an existing, valid SPDX JSON file. Must not be null or empty. The file must exist on disk;
-    ///     a missing file causes <see cref="CommandUsageException"/> to be thrown by
-    ///     <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/>.
+    ///     Path to an existing, valid SPDX JSON file. Must not be null or empty.
     /// </param>
     /// <param name="package">
     ///     Package to add or enhance. Must not be null. The package identity (name and version) determines
@@ -138,6 +144,7 @@ public sealed class AddPackage : Command
     ///     Relationships to add to the document alongside the package. Must not be null; pass an empty
     ///     array when no relationships are required.
     /// </param>
+    /// <exception cref="CommandUsageException">Thrown when <paramref name="spdxFile"/> does not exist on disk (propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/>).</exception>
     /// <exception cref="CommandErrorException">Thrown when the relationships cannot be applied to the document.</exception>
     public static void AddPackageToSpdxFile(string spdxFile, SpdxPackage package, SpdxRelationship[] relationships)
     {
@@ -192,6 +199,15 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Create an SPDX package from a YAML mapping node
     /// </summary>
+    /// <remarks>
+    ///     <c>CopyrightText</c> and both license fields default to <c>NOASSERTION</c> when absent
+    ///     because SPDX requires these fields to be populated; <c>NOASSERTION</c> is the standard
+    ///     sentinel value indicating that the information was not determined. The <c>license</c>
+    ///     input is mapped to both <c>ConcludedLicense</c> and <c>DeclaredLicense</c> because
+    ///     a workflow author supplying a single <c>license</c> field most commonly intends both
+    ///     the concluded and declared license to be identical; providing separate fields for each
+    ///     is not currently supported.
+    /// </remarks>
     /// <param name="command">
     ///     Command name used to prefix error messages so that callers can identify which command step
     ///     triggered the error. Must not be null or empty.

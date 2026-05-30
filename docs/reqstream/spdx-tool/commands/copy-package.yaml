@@ -44,6 +44,7 @@ sections:
                   - CopyPackage_Run_MissingArguments_ReportsError
                   - CopyPackage_Run_MissingFile_ReportsError
                   - CopyPackage_Run_InvalidPackageId_ReportsError
+                  - CopyPackage_Run_EmptyPackageId_ReportsError
 
               - id: SpdxTool-Commands-CopyPackage-ValidateWorkflow
                 title: >-

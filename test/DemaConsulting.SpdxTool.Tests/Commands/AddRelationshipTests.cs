@@ -111,6 +111,48 @@ public class AddRelationshipTests
     }
 
     /// <summary>
+    ///     Test that add-relationship command on command line without a comment adds a relationship
+    /// </summary>
+    [Fact]
+    public void AddRelationship_Run_OnCommandLine_WithoutComment_AddsRelationship()
+    {
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("spdx.json", SpdxContents);
+
+            // Act: Run the command using the four-argument form (no comment)
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "add-relationship",
+                "spdx.json",
+                "SPDXRef-Package-1",
+                "CONTAINS",
+                "SPDXRef-Package-2");
+
+            // Assert: Verify relationship added successfully
+            Assert.Equal(0, exitCode);
+
+            // Read the SPDX document
+            Assert.True(File.Exists("spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
+
+            // Assert: Verify the relationship was added and the comment is absent
+            Assert.Single(doc.Relationships);
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[0].Id);
+            Assert.Equal(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Null(doc.Relationships[0].Comment);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+        }
+    }
+
+    /// <summary>
     ///     Test that add-relationship command on command line adds a relationship
     /// </summary>
     [Fact]

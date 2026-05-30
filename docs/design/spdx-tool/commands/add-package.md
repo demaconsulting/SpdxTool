@@ -9,7 +9,8 @@ invocation is rejected.
 
 #### Data Model
 
-N/A — AddPackage is a stateless singleton; all state is carried via method parameters.
+AddPackage carries no instance state; all state is method-local. The following static fields serve
+as registry entries:
 
 **Instance**: `AddPackage` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record advertising name, summary, usage details, and the

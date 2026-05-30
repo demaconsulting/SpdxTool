@@ -34,7 +34,7 @@ namespace DemaConsulting.SpdxTool.Commands;
 ///     AddPackage and CopyPackage. Callers that only have a file path use the
 ///     <see cref="Add(string, SpdxRelationship[], bool)"/> overload; callers that already hold an
 ///     in-memory document use the <see cref="Add(SpdxDocument, SpdxRelationship[], bool)"/> overload
-///     to avoid redundant file I/O.
+///     to avoid redundant file I/O. Stateless and thread-safe; all state is passed via parameters.
 /// </remarks>
 public sealed class AddRelationship : Command
 {
@@ -178,7 +178,7 @@ public sealed class AddRelationship : Command
     ///     <c>SpdxRelationships.Add</c> in a <see cref="CommandErrorException"/> so that all
     ///     command-layer callers receive a consistent exception type.
     /// </remarks>
-    /// <param name="doc">SPDX document</param>
+    /// <param name="doc">SPDX document. Must not be null.</param>
     /// <param name="relationships">SPDX relationships</param>
     /// <param name="replace">Replace existing relationships</param>
     /// <exception cref="CommandErrorException">Thrown when SpdxRelationships.Add raises an error (for example, duplicate relationships when replace is false).</exception>
@@ -222,7 +222,7 @@ public sealed class AddRelationship : Command
             return [];
         }
 
-        // Parse each relationship
+        // Project each YAML child node to an SpdxRelationship, throwing YamlException for any invalid entry
         return
         [
             ..relationships.Children.Select(node =>

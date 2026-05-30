@@ -27,7 +27,7 @@ scenario is tested by `FindPackage_Run_MissingFile_ReportsError`.
 
 **CommandLineNameLookup**: the unit successfully finds and prints a package ID when invoked from the
 command line with a name criterion. This scenario is tested by
-`FindPackage_ByName_OnCommandLine_FindsPackage`.
+`FindPackage_Run_ByNameOnCommandLine_FindsPackage`.
 
 **WorkflowNameLookup**: the unit stores the matching package identifier in a workflow variable when
 searching by name. This scenario is tested by `FindPackage_Run_ByName_FindsPackage`.

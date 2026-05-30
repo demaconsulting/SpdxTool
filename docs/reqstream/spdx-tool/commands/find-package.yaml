@@ -14,17 +14,16 @@ sections:
                   Users need to locate specific packages within SPDX documents based on
                   criteria such as name, version, or other attributes to query or modify them.
                 tests:
-                  - FindPackage_ByName_OnCommandLine_FindsPackage
+                  - FindPackage_Run_ByNameOnCommandLine_FindsPackage
                   - FindPackage_Run_ByName_FindsPackage
                   - FindPackage_Run_ByVersion_FindsPackage
                   - FindPackage_Run_ByFileName_FindsPackage
                   - FindPackage_Run_ByDownloadUrl_FindsPackage
                   - FindPackage_Run_ById_FindsPackage
 
-              - id: SpdxTool-Commands-FindPackage-Validate
+              - id: SpdxTool-Commands-FindPackage-ValidateMissingInput
                 title: >-
-                  The find-package command shall report a usage error when any required input is absent
-                  or any criterion argument is malformed.
+                  The find-package command shall report a usage error when required inputs are absent.
                 tags:
                   - spdx
                 justification: |
@@ -32,11 +31,31 @@ sections:
                   diagnose configuration mistakes quickly.
                 tests:
                   - FindPackage_Run_MissingArguments_ReportsError
-                  - FindPackage_Run_MissingFile_ReportsError
-                  - FindPackage_Run_InvalidCriteria_ReportsError
                   - FindPackage_Run_MissingOutputInput_ReportsError
                   - FindPackage_Run_MissingSpdxInput_ReportsError
+
+              - id: SpdxTool-Commands-FindPackage-ValidateMalformedCriteria
+                title: >-
+                  The find-package command shall report a usage error when criterion arguments are malformed.
+                tags:
+                  - spdx
+                justification: |
+                  Criterion strings that cannot be parsed must be rejected so that users receive
+                  actionable feedback instead of silent incorrect behavior.
+                tests:
+                  - FindPackage_Run_InvalidCriteria_ReportsError
                   - FindPackage_ParseCriteria_EmptyKey_ThrowsCommandUsageException
+
+              - id: SpdxTool-Commands-FindPackage-LoadError
+                title: >-
+                  The find-package command shall report an error when the SPDX file cannot be loaded.
+                tags:
+                  - spdx
+                justification: |
+                  Users may supply a file path that does not exist. The command must detect
+                  this condition and report a clear error.
+                tests:
+                  - FindPackage_Run_MissingFile_ReportsError
 
               - id: SpdxTool-Commands-FindPackage-NoMatch
                 title: >-

@@ -33,7 +33,8 @@ from the step node and calls Add(string, SpdxRelationship[], bool).
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
   `Dictionary<string, string> variables` — current workflow variable map.
 - *Returns*: `void`
-- *Preconditions*: step inputs must contain spdx, id, and relationships keys.
+- *Preconditions*: step inputs must contain spdx, id, and relationships keys. When present, the
+  `replace` input must be a valid boolean value.
 - *Post-conditions*: The specified relationships are added (or replace existing relationships) in the
   SPDX file.
 - *Note*: The workflow `replace` input defaults to `true` when omitted.

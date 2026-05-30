@@ -41,6 +41,22 @@ requested. This scenario is tested by `Diagram_Run_WithToolsOption_GeneratesDiag
 when the `tools` option is not specified. This scenario is tested by
 `Diagram_Run_WithoutToolsOption_ExcludesToolRelationships`.
 
+**DevToolOfExclusion**: the unit excludes `DEV_TOOL_OF` relationships from the generated diagram
+when the `tools` option is not specified. This scenario is tested by
+`Diagram_Run_WithDevToolOfRelationship_ExcludedFromDefaultDiagram`.
+
+**DevToolOfInclusion**: the unit includes `DEV_TOOL_OF` relationships in the generated diagram
+when the `tools` option is specified. This scenario is tested by
+`Diagram_Run_WithDevToolOfRelationship_IncludedInToolsDiagram`.
+
+**TestToolOfExclusion**: the unit excludes `TEST_TOOL_OF` relationships from the generated diagram
+when the `tools` option is not specified. This scenario is tested by
+`Diagram_Run_WithTestToolOfRelationship_ExcludedFromDefaultDiagram`.
+
+**TestToolOfInclusion**: the unit includes `TEST_TOOL_OF` relationships in the generated diagram
+when the `tools` option is specified. This scenario is tested by
+`Diagram_Run_WithTestToolOfRelationship_IncludedInToolsDiagram`.
+
 **WorkflowStepInvocation**: the unit accepts spdx, mermaid, and optional tools inputs when invoked
 from a workflow step and produces a Mermaid diagram file. This scenario is tested by
 `Diagram_Run_InWorkflow_GeneratesDiagram`.

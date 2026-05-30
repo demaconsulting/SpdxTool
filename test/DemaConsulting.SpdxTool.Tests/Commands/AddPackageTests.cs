@@ -136,6 +136,12 @@ public class AddPackageTests
             Assert.Equal("SPDXRef-Package-2", doc.Relationships[1].Id);
             Assert.Equal(SpdxRelationshipType.BuildToolOf, doc.Relationships[1].RelationshipType);
             Assert.Equal("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
+
+            // Assert: Verify the purl external reference was stored on the new package
+            Assert.Single(doc.Packages[1].ExternalReferences);
+            Assert.Equal(SpdxReferenceCategory.PackageManager, doc.Packages[1].ExternalReferences[0].Category);
+            Assert.Equal("purl", doc.Packages[1].ExternalReferences[0].Type);
+            Assert.Equal("pkg:nuget/BogusPackage@2.0.0", doc.Packages[1].ExternalReferences[0].Locator);
         }
         finally
         {

@@ -973,8 +973,10 @@ public class CopyPackageTests
         Assert.Contains("'copy-package' package argument may not be empty or 'SPDXRef-DOCUMENT'", output);
     }
 
-
-    /// <inheritdoc/>
+    /// <summary>
+    ///     Test that copy-package reports an error when the specified package identifier does not
+    ///     exist in the source document.
+    /// </summary>
     [Fact]
     public void CopyPackage_Run_PackageNotFound_ReportsError()
     {

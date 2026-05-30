@@ -52,7 +52,7 @@ is cleared because the destination does not carry the source file entries unless
 set. For an enhancement (same-identity package found), the existing package is enhanced and renamed
 but `FilesAnalyzed` is not automatically reset — it remains as enhanced. In both paths, `FilesAnalyzed`
 is set to true and files are copied only when all three conditions hold: (1) the `files` flag is
-true, (2) `fromPackage.FilesAnalyzed == true`, and (3) `fromPackage.HasFiles.Length > 0`.
+true, (2) `fromPackage.FilesAnalyzed != false`, and (3) `fromPackage.HasFiles.Length > 0`.
 
 - *Parameters*: `SpdxDocument fromDoc` — source document; `SpdxDocument toDoc` — destination
   document; `string packageId` — package to copy; `bool files` — include analyzed files.

@@ -89,8 +89,8 @@ contain "=", or when the key part (the substring before "=") is empty.
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the output or spdx
 inputs are missing.
 
-**CommandErrorException** — thrown by FindPackageByCriteria when no package matches or when multiple
-packages match.
+**CommandErrorException** — thrown by `FindPackageByCriteria` when the SPDX file cannot be loaded,
+when no package matches, or when multiple packages match.
 
 #### Dependencies
 

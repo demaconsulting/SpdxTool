@@ -115,7 +115,7 @@ public class DiagramTests
         try
         {
             // Arrange: Write the SPDX file
-            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("diagram-invalidoption.spdx.json", spdxContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -123,7 +123,7 @@ public class DiagramTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "diagram",
-                "test.spdx.json",
+                "diagram-invalidoption.spdx.json",
                 "output.mermaid.txt",
                 "invalid-option");
 
@@ -133,7 +133,7 @@ public class DiagramTests
         }
         finally
         {
-            File.Delete("test.spdx.json");
+            File.Delete("diagram-invalidoption.spdx.json");
         }
     }
 
@@ -190,7 +190,7 @@ public class DiagramTests
         try
         {
             // Arrange: Write the SPDX file
-            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("diagram-validfile.spdx.json", spdxContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -198,7 +198,7 @@ public class DiagramTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "diagram",
-                "test.spdx.json",
+                "diagram-validfile.spdx.json",
                 "test.mermaid.txt");
 
             // Assert: Verify success reported
@@ -214,7 +214,7 @@ public class DiagramTests
         }
         finally
         {
-            File.Delete("test.spdx.json");
+            File.Delete("diagram-validfile.spdx.json");
             File.Delete("test.mermaid.txt");
         }
     }
@@ -272,7 +272,7 @@ public class DiagramTests
         try
         {
             // Arrange: Write the SPDX file
-            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("diagram-withtools.spdx.json", spdxContents);
 
             // Act: Run the command with tools option
             var exitCode = Runner.Run(
@@ -280,7 +280,7 @@ public class DiagramTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "diagram",
-                "test.spdx.json",
+                "diagram-withtools.spdx.json",
                 "test-with-tools.mermaid.txt",
                 "tools");
 
@@ -292,7 +292,7 @@ public class DiagramTests
         }
         finally
         {
-            File.Delete("test.spdx.json");
+            File.Delete("diagram-withtools.spdx.json");
             File.Delete("test-with-tools.mermaid.txt");
         }
     }
@@ -350,7 +350,7 @@ public class DiagramTests
         try
         {
             // Arrange: Write the SPDX file
-            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("diagram-notools.spdx.json", spdxContents);
 
             // Act: Run the command without tools option
             var exitCode = Runner.Run(
@@ -358,7 +358,7 @@ public class DiagramTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "diagram",
-                "test.spdx.json",
+                "diagram-notools.spdx.json",
                 "test-no-tools.mermaid.txt");
 
             // Assert: Verify success and tools not included
@@ -368,7 +368,7 @@ public class DiagramTests
         }
         finally
         {
-            File.Delete("test.spdx.json");
+            File.Delete("diagram-notools.spdx.json");
             File.Delete("test-no-tools.mermaid.txt");
         }
     }
@@ -544,14 +544,14 @@ public class DiagramTests
             steps:
             - command: diagram
               inputs:
-                spdx: test.spdx.json
+                spdx: diagram-workflow.spdx.json
                 mermaid: test.workflow.mermaid.txt
             """;
 
         try
         {
             // Arrange: Write the SPDX file and workflow file
-            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("diagram-workflow.spdx.json", spdxContents);
             File.WriteAllText("test.workflow.yaml", workflowContents);
 
             // Act: Run the workflow
@@ -573,9 +573,317 @@ public class DiagramTests
         }
         finally
         {
-            File.Delete("test.spdx.json");
+            File.Delete("diagram-workflow.spdx.json");
             File.Delete("test.workflow.yaml");
             File.Delete("test.workflow.mermaid.txt");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command without tools option excludes DEV_TOOL_OF relationships
+    /// </summary>
+    [Fact]
+    public void Diagram_Run_WithDevToolOfRelationship_ExcludedFromDefaultDiagram()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-DevTool",
+                  "name": "Dev Tool",
+                  "versionInfo": "3.4.5",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-DevTool",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DEV_TOOL_OF"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("diagram-devtoolof-notools.spdx.json", spdxContents);
+
+            // Act: Run the command without tools option
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "diagram",
+                "diagram-devtoolof-notools.spdx.json",
+                "diagram-devtoolof-notools.mermaid.txt");
+
+            // Assert: Verify success and DEV_TOOL_OF relationship excluded
+            Assert.Equal(0, exitCode);
+            var mermaid = File.ReadAllText("diagram-devtoolof-notools.mermaid.txt");
+            Assert.DoesNotContain("Dev Tool", mermaid);
+        }
+        finally
+        {
+            File.Delete("diagram-devtoolof-notools.spdx.json");
+            File.Delete("diagram-devtoolof-notools.mermaid.txt");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command with tools option includes DEV_TOOL_OF relationships
+    /// </summary>
+    [Fact]
+    public void Diagram_Run_WithDevToolOfRelationship_IncludedInToolsDiagram()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-DevTool",
+                  "name": "Dev Tool",
+                  "versionInfo": "3.4.5",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-DevTool",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DEV_TOOL_OF"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("diagram-devtoolof-tools.spdx.json", spdxContents);
+
+            // Act: Run the command with tools option
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "diagram",
+                "diagram-devtoolof-tools.spdx.json",
+                "diagram-devtoolof-tools.mermaid.txt",
+                "tools");
+
+            // Assert: Verify success and DEV_TOOL_OF relationship included
+            Assert.Equal(0, exitCode);
+            var mermaid = File.ReadAllText("diagram-devtoolof-tools.mermaid.txt");
+            Assert.Contains("Dev Tool / 3.4.5", mermaid);
+            Assert.Contains("DEV_TOOL_OF", mermaid);
+        }
+        finally
+        {
+            File.Delete("diagram-devtoolof-tools.spdx.json");
+            File.Delete("diagram-devtoolof-tools.mermaid.txt");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command without tools option excludes TEST_TOOL_OF relationships
+    /// </summary>
+    [Fact]
+    public void Diagram_Run_WithTestToolOfRelationship_ExcludedFromDefaultDiagram()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-TestTool",
+                  "name": "Test Tool",
+                  "versionInfo": "3.4.5",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-TestTool",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "TEST_TOOL_OF"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("diagram-testtoolof-notools.spdx.json", spdxContents);
+
+            // Act: Run the command without tools option
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "diagram",
+                "diagram-testtoolof-notools.spdx.json",
+                "diagram-testtoolof-notools.mermaid.txt");
+
+            // Assert: Verify success and TEST_TOOL_OF relationship excluded
+            Assert.Equal(0, exitCode);
+            var mermaid = File.ReadAllText("diagram-testtoolof-notools.mermaid.txt");
+            Assert.DoesNotContain("Test Tool", mermaid);
+        }
+        finally
+        {
+            File.Delete("diagram-testtoolof-notools.spdx.json");
+            File.Delete("diagram-testtoolof-notools.mermaid.txt");
+        }
+    }
+
+    /// <summary>
+    ///     Test that diagram command with tools option includes TEST_TOOL_OF relationships
+    /// </summary>
+    [Fact]
+    public void Diagram_Run_WithTestToolOfRelationship_IncludedInToolsDiagram()
+    {
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Application",
+                  "name": "Test Application",
+                  "versionInfo": "1.2.3",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-TestTool",
+                  "name": "Test Tool",
+                  "versionInfo": "3.4.5",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [
+                {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "DESCRIBES"
+                },
+                {
+                  "spdxElementId": "SPDXRef-TestTool",
+                  "relatedSpdxElement": "SPDXRef-Application",
+                  "relationshipType": "TEST_TOOL_OF"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText("diagram-testtoolof-tools.spdx.json", spdxContents);
+
+            // Act: Run the command with tools option
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "diagram",
+                "diagram-testtoolof-tools.spdx.json",
+                "diagram-testtoolof-tools.mermaid.txt",
+                "tools");
+
+            // Assert: Verify success and TEST_TOOL_OF relationship included
+            Assert.Equal(0, exitCode);
+            var mermaid = File.ReadAllText("diagram-testtoolof-tools.mermaid.txt");
+            Assert.Contains("Test Tool / 3.4.5", mermaid);
+            Assert.Contains("TEST_TOOL_OF", mermaid);
+        }
+        finally
+        {
+            File.Delete("diagram-testtoolof-tools.spdx.json");
+            File.Delete("diagram-testtoolof-tools.mermaid.txt");
         }
     }
 
@@ -630,7 +938,7 @@ public class DiagramTests
         try
         {
             // Arrange: Write the SPDX file with packages that have no versionInfo
-            File.WriteAllText("test.spdx.json", spdxContents);
+            File.WriteAllText("diagram-noversion.spdx.json", spdxContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -638,7 +946,7 @@ public class DiagramTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "diagram",
-                "test.spdx.json",
+                "diagram-noversion.spdx.json",
                 "test-no-version.mermaid.txt");
 
             // Assert: Verify success
@@ -652,7 +960,7 @@ public class DiagramTests
         }
         finally
         {
-            File.Delete("test.spdx.json");
+            File.Delete("diagram-noversion.spdx.json");
             File.Delete("test-no-version.mermaid.txt");
         }
     }

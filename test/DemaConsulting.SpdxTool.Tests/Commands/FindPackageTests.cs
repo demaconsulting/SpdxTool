@@ -117,7 +117,7 @@ public class FindPackageTests
     ///     Test that find-package command by name on command line finds a package
     /// </summary>
     [Fact]
-    public void FindPackage_ByName_OnCommandLine_FindsPackage()
+    public void FindPackage_Run_ByNameOnCommandLine_FindsPackage()
     {
         try
         {

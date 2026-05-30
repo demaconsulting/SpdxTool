@@ -37,11 +37,15 @@ sections:
                 tags:
                   - spdx
                 justification: |
-                  Tool relationships (GENERATED_FROM, BUILD_TOOL_OF, etc.) are implementation
+                  Tool relationships (BUILD_TOOL_OF, DEV_TOOL_OF, and TEST_TOOL_OF) are implementation
                   details that clutter diagrams when not requested. Excluding them by default
                   produces cleaner, more readable diagrams.
                 tests:
                   - Diagram_Run_WithoutToolsOption_ExcludesToolRelationships
+                  - Diagram_Run_WithDevToolOfRelationship_ExcludedFromDefaultDiagram
+                  - Diagram_Run_WithDevToolOfRelationship_IncludedInToolsDiagram
+                  - Diagram_Run_WithTestToolOfRelationship_ExcludedFromDefaultDiagram
+                  - Diagram_Run_WithTestToolOfRelationship_IncludedInToolsDiagram
 
               - id: SpdxTool-Commands-Diagram-UnspecifiedVersion
                 title: >-
