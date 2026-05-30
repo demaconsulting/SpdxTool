@@ -60,6 +60,14 @@ internal static class ValidateAddPackage
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from <see cref="DoValidate"/> when the temporary directory or files
+    ///     cannot be created or deleted.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Propagated from <see cref="DoValidate"/> when the current user lacks write access
+    ///     to the working directory.
+    /// </exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
         var passed = DoValidate();
