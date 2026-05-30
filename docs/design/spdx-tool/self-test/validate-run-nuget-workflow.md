@@ -8,7 +8,9 @@ local cache and executed successfully, with outputs captured into workflow varia
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+N/A - this unit is a static class with no instance state. The `PreRunSpdxToolHookForTest` property
+holds an optional `Action` delegate that is `null` in production; tests may set it to corrupt fixture
+files immediately before `Validate.RunSpdxTool` is called, exercising the CommandFailure path.
 
 #### Key Methods
 
@@ -32,9 +34,9 @@ N/A - this unit is a static class with no instance state.
   never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory and writes a workflow YAML that uses the nuget input to reference
-DemaConsulting.SpdxWorkflows and the GetDotNetVersion.yaml workflow file within it, mapping its
-version output to the dotnet-version variable and then printing it. Calls Validate.RunSpdxTool with
---silent and run-workflow arguments. Returns true if the exit code is zero.
+`DemaConsulting.SpdxWorkflows` version `1.0.0` and the GetDotNetVersion.yaml workflow file within it,
+mapping its version output to the dotnet-version variable and then printing it. Calls
+Validate.RunSpdxTool with --silent and run-workflow arguments. Returns true if the exit code is zero.
 
 #### Error Handling
 

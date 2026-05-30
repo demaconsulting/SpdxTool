@@ -29,10 +29,10 @@ capture group. This scenario is tested by `Query_Run_PatternMissingValueGroup_Re
 scenario is tested by `Query_Run_InvalidProgram_ReportsError`.
 
 **CommandLineCapture**: the unit extracts a named value from external program output and prints it.
-This scenario is tested by `Query_DotNetVersion_OnCommandLine_ReturnsVersion`.
+This scenario is tested by `Query_Run_DotNetVersionOnCommandLine_ReturnsVersion`.
 
 **WorkflowCapture**: the unit stores the captured value for downstream workflow use. This scenario
-is tested by `Query_DotNetVersion_InWorkflow_StoresVersion`.
+is tested by `Query_Run_DotNetVersionInWorkflow_StoresVersion`.
 
 **InvalidRegexPattern**: the unit reports an error when the supplied regular expression is syntactically invalid. This
 scenario is tested by `Query_Run_InvalidRegexPattern_ReportsError`.

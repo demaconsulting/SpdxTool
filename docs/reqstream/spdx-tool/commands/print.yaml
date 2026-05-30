@@ -36,7 +36,7 @@ sections:
                   The text input is required for the print command in workflow mode; its
                   absence must be reported clearly.
                 tests:
-                  - Print_Run_MissingTextInput_ThrowsYamlException
+                  - Print_Run_MissingTextInput_ReportsError
 
               - id: SpdxTool-Commands-Print-WorkflowVariableExpansion
                 title: >-

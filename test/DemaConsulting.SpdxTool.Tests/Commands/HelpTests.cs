@@ -110,6 +110,44 @@ public class HelpTests
     }
 
     /// <summary>
+    ///     Test that help command in a YAML workflow step reports an error when the about input is absent
+    /// </summary>
+    [Fact]
+    public void Help_Run_YamlInvocation_MissingAbout_ReportsError()
+    {
+        // Arrange: workflow step omits the required 'about' input
+        const string workflowContents =
+            """
+            steps:
+            - command: help
+              inputs: {}
+            """;
+
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: write the workflow file to disk
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: non-zero exit code reported for missing input
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'help' command missing 'about' input", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
     ///     Test that help command in a YAML workflow step displays help
     /// </summary>
     [Fact]

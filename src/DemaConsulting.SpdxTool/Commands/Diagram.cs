@@ -34,7 +34,7 @@ public sealed class Diagram : Command
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string CommandName = "diagram";
+    private const string Command = "diagram";
 
     /// <summary>
     ///     Singleton instance of this command
@@ -45,7 +45,7 @@ public sealed class Diagram : Command
     ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        CommandName,
+        Command,
         "diagram <spdx.json> <mermaid.txt> [tools]",
         "Generate mermaid diagram.",
         [
@@ -129,7 +129,7 @@ public sealed class Diagram : Command
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="mermaidFile">Mermaid diagram file name</param>
     /// <param name="tools">True to include build/dev/test tool relationships; false (default) to exclude them</param>
-    /// <exception cref="System.IO.FileNotFoundException">Thrown when <paramref name="spdxFile"/> does not exist on disk.</exception>
+    /// <exception cref="CommandUsageException">Thrown when <paramref name="spdxFile"/> does not exist on disk (propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/>).</exception>
     /// <exception cref="System.IO.IOException">Thrown when <paramref name="spdxFile"/> cannot be read or <paramref name="mermaidFile"/> cannot be written.</exception>
     /// <exception cref="System.Text.Json.JsonException">Thrown when <paramref name="spdxFile"/> is not valid JSON.</exception>
     public static void GenerateDiagram(string spdxFile, string mermaidFile, bool tools = false)

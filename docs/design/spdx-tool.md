@@ -101,13 +101,13 @@ must be installed as a .NET tool in the build environment for the target to succ
 ## Dependencies
 
 - **DemaConsulting.SpdxModel** - SPDX 2.x document object model, JSON serialization, and
-  deserialization via Spdx2JsonSerializer and Spdx2JsonDeserializer. See `docs/design/ots/spdx-model.md`.
+  deserialization via Spdx2JsonSerializer and Spdx2JsonDeserializer. See *SpdxModel Integration Design*.
 - **DemaConsulting.NuGet.Caching** - local NuGet cache resolution used by the run-workflow command
-  to locate NuGet-embedded workflow files. See `docs/design/ots/nuget-caching.md`.
+  to locate NuGet-embedded workflow files. See *NuGetCaching Integration Design*.
 - **DemaConsulting.TestResults** - test result writing for the self-validation suite; supports TRX
-  and JUnit XML output formats. See `docs/design/ots/test-results.md`.
+  and JUnit XML output formats. See *TestResults Integration Design*.
 - **YamlDotNet** - YAML parsing for workflow files and per-step command argument nodes.
-  See `docs/design/ots/yamldotnet.md`.
+  See *YamlDotNet Integration Design*.
 
 ## Risk Control Measures
 
@@ -116,7 +116,11 @@ N/A - not a safety-classified software item.
 ## Data Flow
 
 1. The user invokes `spdx-tool` at the command line; Program parses global flags and constructs a
-   Context carrying the flag state, an optional log writer, and an error counter.
+   Context carrying the flag state, an optional log writer, and an error counter. If `--silent` is
+   specified, `Context.Silent` is set to `true`, which suppresses all `context.WriteLine` and
+   `context.WriteError` calls from writing to the console. If `--log <file>` is specified,
+   `Context.LogWriter` is set to a `StreamWriter` for that file, and all output is duplicated to
+   the log file regardless of the silent state.
 2. If the argument list is empty and --validate was not set, Program records an error
    ('Error: Missing arguments') and prints usage information; execution terminates with exit code 1.
 3. If --validate is set, execution is redirected to SelfTest.Validate.Run, which exercises every

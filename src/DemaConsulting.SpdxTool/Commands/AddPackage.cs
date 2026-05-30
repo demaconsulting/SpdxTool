@@ -126,10 +126,18 @@ public sealed class AddPackage : Command
     ///     Add a package to the SPDX document
     /// </summary>
     /// <param name="spdxFile">
-    ///     Path to an existing, valid SPDX JSON file. Must not be null or empty.
+    ///     Path to an existing, valid SPDX JSON file. Must not be null or empty. The file must exist on disk;
+    ///     a missing file causes <see cref="CommandUsageException"/> to be thrown by
+    ///     <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/>.
     /// </param>
-    /// <param name="package">Package to add</param>
-    /// <param name="relationships">Relationships to add</param>
+    /// <param name="package">
+    ///     Package to add or enhance. Must not be null. The package identity (name and version) determines
+    ///     whether an existing entry is enhanced in place or a new entry is appended.
+    /// </param>
+    /// <param name="relationships">
+    ///     Relationships to add to the document alongside the package. Must not be null; pass an empty
+    ///     array when no relationships are required.
+    /// </param>
     /// <exception cref="CommandErrorException">Thrown when the relationships cannot be applied to the document.</exception>
     public static void AddPackageToSpdxFile(string spdxFile, SpdxPackage package, SpdxRelationship[] relationships)
     {
@@ -158,7 +166,11 @@ public sealed class AddPackage : Command
     /// <param name="doc">
     ///     The SPDX document to modify. Must not be null.
     /// </param>
-    /// <param name="package">SPDX package to add</param>
+    /// <param name="package">
+    ///     SPDX package to add or merge. Must not be null. When a same-identity package already exists in
+    ///     <paramref name="doc"/>, this package's fields are used to enhance the existing entry rather than
+    ///     appending a duplicate.
+    /// </param>
     public static void Add(SpdxDocument doc, SpdxPackage package)
     {
         // Look for the same package
@@ -180,9 +192,21 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Create an SPDX package from a YAML mapping node
     /// </summary>
-    /// <param name="command">Command to blame for errors</param>
-    /// <param name="packageMap">Package YAML mapping node</param>
-    /// <param name="variables">Variables for expansion</param>
+    /// <param name="command">
+    ///     Command name used to prefix error messages so that callers can identify which command step
+    ///     triggered the error. Must not be null or empty.
+    /// </param>
+    /// <param name="packageMap">
+    ///     YAML mapping node containing the package fields. Must not be null and must include the
+    ///     required keys <c>id</c>, <c>name</c>, and <c>download</c>. Optional keys (<c>version</c>,
+    ///     <c>filename</c>, <c>supplier</c>, <c>originator</c>, <c>homepage</c>, <c>copyright</c>,
+    ///     <c>summary</c>, <c>description</c>, <c>license</c>, <c>purl</c>, <c>cpe23</c>) are silently
+    ///     omitted when absent.
+    /// </param>
+    /// <param name="variables">
+    ///     Variable map used to expand <c>${{ variable }}</c> tokens in field values. Must not be null;
+    ///     pass an empty dictionary when no expansion is required.
+    /// </param>
     /// <returns>New SPDX package</returns>
     /// <exception cref="YamlException">
     ///     Thrown when a required field (id, name, or download) is absent from <paramref name="packageMap"/>.

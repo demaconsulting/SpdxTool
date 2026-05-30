@@ -241,10 +241,25 @@ public sealed class RunWorkflow : Command
     /// </summary>
     /// <param name="context">Program context</param>
     /// <param name="step">Step for reporting errors</param>
-    /// <param name="file">Optional file</param>
-    /// <param name="url">Optional URL</param>
+    /// <param name="file">
+    ///     Local file path of the workflow to execute. Exactly one of <paramref name="file"/> or
+    ///     <paramref name="url"/> must be non-null, unless the caller has already resolved a NuGet
+    ///     source into a file path (in which case <paramref name="url"/> is null and this provides
+    ///     the resolved path). Pass <see langword="null"/> when specifying a URL source.
+    /// </param>
+    /// <param name="url">
+    ///     HTTP or HTTPS URL of the workflow to execute. Exactly one of <paramref name="file"/> or
+    ///     <paramref name="url"/> must be non-null. Pass <see langword="null"/> when specifying a
+    ///     local file source. Providing both a non-null <paramref name="file"/> and a non-null
+    ///     <paramref name="url"/> is an error.
+    /// </param>
     /// <param name="integrity">Optional integrity</param>
-    /// <param name="parameters">Workflow parameters</param>
+    /// <param name="parameters">
+    ///     Workflow parameter values to pass into the sub-workflow. May be an empty dictionary
+    ///     but must not be <see langword="null"/>. Each key must match a parameter name declared
+    ///     in the target workflow's <c>parameters</c> section; undeclared keys cause a
+    ///     <see cref="CommandErrorException"/>.
+    /// </param>
     /// <returns>Workflow outputs</returns>
     /// <exception cref="YamlException">
     ///     Thrown when both <paramref name="file"/> and <paramref name="url"/> are non-null
@@ -482,7 +497,13 @@ public sealed class RunWorkflow : Command
     /// <param name="file">File path within the NuGet package</param>
     /// <param name="url">URL (must be null when nuget is specified)</param>
     /// <returns>Resolved file path</returns>
-    /// <exception cref="YamlException">On invalid inputs</exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when <paramref name="url"/> is non-null while <paramref name="nuget"/> is
+    ///     specified (the two source types are mutually exclusive); thrown when
+    ///     <paramref name="file"/> is null while <paramref name="nuget"/> is specified (a relative
+    ///     path within the package is required); thrown when <paramref name="nuget"/> does not
+    ///     contain the <c>:</c> separator expected by the <c>PackageName:version</c> format.
+    /// </exception>
     private static string ResolveNuGetFile(YamlMappingNode step, string nuget, string? file, string? url)
     {
         // Cannot specify both nuget and url

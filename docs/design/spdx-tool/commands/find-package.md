@@ -41,13 +41,15 @@ YAML step node, finds the matching package, and stores its ID in variables[outpu
 
 **ParseCriteria(IEnumerable, Dictionary)**: Splits each "key=value" string from args into a
 criteria dictionary entry. Throws CommandUsageException if any entry does not contain "=", or if
-the key part (the substring before "=") is empty.
+the key part (the substring before "=") is empty. The split is performed on the first `=` only,
+so field values containing `=` characters are preserved intact.
 
 - *Parameters*: `IEnumerable<string> args` — criterion strings;
   `Dictionary<string, string> criteria` — dictionary to populate.
 - *Returns*: `void`
 - *Preconditions*: None.
-- *Post-conditions*: criteria contains all parsed key-value pairs.
+- *Post-conditions*: criteria contains all parsed key-value pairs. When a key appears more than once
+  the last occurrence silently overwrites earlier entries (last writer wins).
 
 **ParseCriteria(YamlMappingNode?, Dictionary, Dictionary)**: Extracts the optional id, name,
 version, filename, and download fields from a YAML inputs map into the criteria dictionary.
@@ -66,7 +68,8 @@ unique package matching all criteria. Throws if zero or more than one package ma
   `IReadOnlyDictionary<string, string> criteria` — search criteria.
 - *Returns*: `SpdxPackage`
 - *Preconditions*: spdxFile must exist.
-- *Post-conditions*: Returns exactly one matching package.
+- *Post-conditions*: Returns exactly one matching package. The document is loaded fresh from disk on
+  every call; no caching is performed.
 
 **IsPackageMatch(SpdxPackage, IReadOnlyDictionary)**: Tests a single package against all supplied
 criteria using Wildcard.IsMatch for each field.

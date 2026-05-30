@@ -7,12 +7,11 @@ sections:
           - title: ValidateToMarkdown Requirements
             requirements:
               - id: SpdxTool-SelfTest-ToMarkdown
-                title: The SelfTest shall exercise the to-markdown command.
+                title: The SelfTest shall exercise the to-markdown command end-to-end.
                 tags:
                   - self-test
                 justification: |
                   Self-validation of the to-markdown command ensures it correctly generates
                   Markdown summaries of SPDX documents after installation or deployment.
                 tests:
-                  - ValidateToMarkdown_Run_ValidToMarkdownWorkflow_Passes
-                  - ValidateToMarkdown_Run_IoError_PropagatesException
+                  - SpdxTool_ToMarkdown

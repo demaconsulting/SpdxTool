@@ -209,6 +209,11 @@ steps:
     - SBOM validated and decorated successfully
 ```
 
+> **Note**: `SPDXRef-Tool-dotnet` in Step 4 is an example element identifier. The referenced element
+> must already exist in the SPDX document before `add-relationship` is called. If your SPDX document
+> does not contain this element, add it first using `add-package`, or replace `SPDXRef-Tool-dotnet`
+> with an element ID that is already present in your document.
+
 ## Multi-Targeting Projects
 
 The targets package automatically handles multi-targeting projects correctly. When your project targets

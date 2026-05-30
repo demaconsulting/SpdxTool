@@ -35,6 +35,18 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateRunNuGetWorkflow
 {
     /// <summary>
+    ///     Optional test hook invoked after fixture files are written and immediately before
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
+    /// </summary>
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that
+    ///     corrupts <c>validate.tmp/workflow.yaml</c> so that the run-workflow command fails
+    ///     with a non-zero exit code, exercising the CommandFailure path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PreRunSpdxToolHookForTest { get; set; }
+
+    /// <summary>
     ///     Executes the NuGet workflow self-test and records the result.
     /// </summary>
     /// <remarks>
@@ -44,7 +56,7 @@ internal static class ValidateRunNuGetWorkflow
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
-    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="context">The active Program context providing output and error streams. Must not be null.</param>
     /// <param name="results">The TestResults collection to append the step outcome to.</param>
     /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
@@ -116,6 +128,9 @@ internal static class ValidateRunNuGetWorkflow
                     text:
                     - DotNet version is ${{ dotnet-version }}
                 """);
+
+            // Allow tests to corrupt fixtures immediately before the command runs
+            PreRunSpdxToolHookForTest?.Invoke();
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(

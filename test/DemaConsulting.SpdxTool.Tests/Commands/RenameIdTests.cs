@@ -192,6 +192,11 @@ public class RenameIdTests
                   "spdxElementId": "SPDXRef-File-1",
                   "relatedSpdxElement": "SPDXRef-Package-1",
                   "relationshipType": "CONTAINED_BY"
+                },
+                {
+                  "spdxElementId": "SPDXRef-Package-1",
+                  "relatedSpdxElement": "SPDXRef-File-1",
+                  "relationshipType": "CONTAINS"
                 }
               ],
               "spdxVersion": "SPDX-2.2",
@@ -240,6 +245,9 @@ public class RenameIdTests
 
             // Assert: Verify the relationship from-element was updated
             Assert.Equal("SPDXRef-File-2", doc.Relationships[1].Id);
+
+            // Assert: Verify the relationship to-element was updated
+            Assert.Equal("SPDXRef-File-2", doc.Relationships[2].RelatedSpdxElement);
         }
         finally
         {
@@ -251,7 +259,7 @@ public class RenameIdTests
     ///     Test that Rename throws a usage exception when the old ID is empty
     /// </summary>
     [Fact]
-    public void RenameId_Run_EmptyOldId_ThrowsException()
+    public void RenameId_Rename_EmptyOldId_ThrowsException()
     {
         // Arrange: empty document (exception raised before any document access)
         var doc = new SpdxDocument
@@ -271,7 +279,7 @@ public class RenameIdTests
     ///     Test that Rename throws a usage exception when the old ID is SPDXRef-DOCUMENT
     /// </summary>
     [Fact]
-    public void RenameId_Run_OldIdIsDocument_ThrowsException()
+    public void RenameId_Rename_OldIdIsDocument_ThrowsException()
     {
         // Arrange: empty document (exception raised before any document access)
         var doc = new SpdxDocument
@@ -291,7 +299,7 @@ public class RenameIdTests
     ///     Test that Rename throws a usage exception when the new ID is empty
     /// </summary>
     [Fact]
-    public void RenameId_Run_EmptyNewId_ThrowsException()
+    public void RenameId_Rename_EmptyNewId_ThrowsException()
     {
         // Arrange: empty document (exception raised before any document access)
         var doc = new SpdxDocument
@@ -311,7 +319,7 @@ public class RenameIdTests
     ///     Test that Rename throws a usage exception when the new ID is SPDXRef-DOCUMENT
     /// </summary>
     [Fact]
-    public void RenameId_Run_NewIdIsDocument_ThrowsException()
+    public void RenameId_Rename_NewIdIsDocument_ThrowsException()
     {
         // Arrange: empty document (exception raised before any document access)
         var doc = new SpdxDocument
@@ -331,7 +339,7 @@ public class RenameIdTests
     ///     Test that Rename throws a command-error exception when the new ID is already in use
     /// </summary>
     [Fact]
-    public void RenameId_Run_NewIdAlreadyInUse_ThrowsException()
+    public void RenameId_Rename_NewIdAlreadyInUse_ThrowsException()
     {
         // Arrange: document with two packages
         var doc = new SpdxDocument
@@ -355,7 +363,7 @@ public class RenameIdTests
     ///     Test that Rename performs no operation when the old and new IDs are the same
     /// </summary>
     [Fact]
-    public void RenameId_Run_SameId_NoOp()
+    public void RenameId_Rename_SameId_NoOp()
     {
         // Arrange: document with a single package
         var doc = new SpdxDocument
@@ -445,6 +453,7 @@ public class RenameIdTests
             // Assert: Verify the SPDX ID was updated
             Assert.Equal("SPDXRef-Package-2", doc.Packages[0].Id);
             Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Package-2", doc.Describes[0]);
         }
         finally
         {

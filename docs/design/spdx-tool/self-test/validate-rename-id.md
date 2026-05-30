@@ -8,7 +8,9 @@ all relationship references updated to reflect the new identifier.
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+N/A - this unit is a static class with no instance state. The `PreRunSpdxToolHookForTest` property
+holds an optional `Action` delegate that is `null` in production; tests may set it to corrupt fixture
+files immediately before `Validate.RunSpdxTool` is called, exercising the CommandFailure path.
 
 #### Key Methods
 
@@ -31,18 +33,20 @@ N/A - this unit is a static class with no instance state.
   never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory, writes an SPDX JSON document containing one package with ID
-SPDXRef-Package-1 and a DESCRIBES relationship referencing that ID, and writes a workflow YAML that
-executes rename-id to rename SPDXRef-Package-1 to SPDXRef-Package-2. Calls Validate.RunSpdxTool
-with --silent and run-workflow arguments. Returns `false` immediately if the output SPDX file is
-absent after tool invocation, without attempting deserialization. Otherwise reads the modified SPDX
-document and verifies that the package ID is now SPDXRef-Package-2 and the relationship's related
-element has also been updated.
+SPDXRef-Package-1, a documentDescribes entry referencing that ID, and a DESCRIBES relationship
+referencing that ID, and writes a workflow YAML that executes rename-id to rename SPDXRef-Package-1
+to SPDXRef-Package-2. Calls Validate.RunSpdxTool with --silent and run-workflow arguments. Returns
+`false` immediately if the output SPDX file is absent after tool invocation, without attempting
+deserialization. Otherwise reads the modified SPDX document and verifies that the package ID is now
+SPDXRef-Package-2, the relationship's related element has also been updated, and the documentDescribes
+entry has been updated to SPDXRef-Package-2.
 
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the output SPDX
 file is absent after the rename-id tool invocation. Returns false if the deserialized SPDX document
-still contains the old ID or if the relationship reference was not updated. Any
+still contains the old ID, if the relationship reference was not updated, or if the documentDescribes
+entry was not updated. Any
 exception thrown by DoValidate propagates uncaught from Run; no TestResult is recorded for this step
 if an exception is thrown — the exception surfaces to the Self-Test orchestrator. The finally block
 guards the Directory.Delete call with a Directory.Exists check to prevent a secondary

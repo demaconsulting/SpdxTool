@@ -8,7 +8,9 @@ contains the expected title, section headings, and package information.
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+N/A - this unit is a static class with no instance state. The `PreRunSpdxToolHookForTest` property
+holds an optional `Action` delegate that is `null` in production; tests may set it to corrupt fixture
+files immediately before `Validate.RunSpdxTool` is called, exercising the CommandFailure path.
 
 #### Key Methods
 

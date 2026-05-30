@@ -23,7 +23,7 @@ Print holds no mutable instance state; its data model consists of static members
 - *Preconditions*: None.
 - *Post-conditions*: Each arg is written to context.
 
-**Run(Context, YamlMappingNode, Dictionary\<string, string\>)**: Reads the text sequence from the YAML step
+**Run(Context, YamlMappingNode, Dictionary<string, string>)**: Reads the text sequence from the YAML step
 inputs, applies variable expansion to each entry via GetSequenceString, and writes each line to context.
 
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
@@ -34,7 +34,7 @@ inputs, applies variable expansion to each entry via GetSequenceString, and writ
 
 #### Error Handling
 
-**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary\<string, string\>) when the text
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary<string, string>) when the text
 sequence input is absent from the step inputs.
 
 **InvalidOperationException** — propagated from GetSequenceString/Expand when a text line contains

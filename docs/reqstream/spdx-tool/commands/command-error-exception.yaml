@@ -12,4 +12,4 @@ sections:
                   Separating operational errors from usage errors allows Program to apply the
                   correct response: report the error without printing usage information.
                 tests:
-                  - GetVersion_MissingFile_ReportsError
+                  - GetVersion_Run_MissingFile_ReportsError

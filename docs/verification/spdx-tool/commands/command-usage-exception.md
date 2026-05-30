@@ -20,4 +20,4 @@ results in usage information being printed.
 
 **IncorrectUsageSignaling**: CommandUsageException is thrown when a workflow-only command is
 invoked from the command line, causing the tool to print usage information. This scenario is
-tested by `AddPackage_OnCommandLine_ReportsWorkflowOnlyError`.
+tested by `AddPackage_Run_OnCommandLine_ReportsWorkflowOnlyError`.

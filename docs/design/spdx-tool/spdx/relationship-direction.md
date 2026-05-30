@@ -38,5 +38,4 @@ N/A — GetDirection never throws; unrecognized types return Sibling.
 #### Callers
 
 - Diagram — calls GetDirection on each relationship to determine rendering orientation
-- FindPackage — uses direction to navigate the relationship graph during package traversal
 - CopyPackage — uses direction to identify dependent packages in recursive copy

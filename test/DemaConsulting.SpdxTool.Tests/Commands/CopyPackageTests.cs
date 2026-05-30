@@ -951,8 +951,30 @@ public class CopyPackageTests
     }
 
     /// <summary>
-    ///     Test that copy-package command reports error when the specified package is not in the source document
+    ///     Test that copy-package command with an empty package ID reports an error
     /// </summary>
+    [Fact]
+    public void CopyPackage_Run_EmptyPackageId_ReportsError()
+    {
+        // Arrange: No test data required — error is triggered before any file I/O
+
+        // Act: Run the command with an empty package ID argument
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "copy-package",
+            "from.spdx.json",
+            "to.spdx.json",
+            "");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'copy-package' package argument may not be empty or 'SPDXRef-DOCUMENT'", output);
+    }
+
+
+    /// <inheritdoc/>
     [Fact]
     public void CopyPackage_Run_PackageNotFound_ReportsError()
     {

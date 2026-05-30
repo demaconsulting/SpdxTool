@@ -2,7 +2,7 @@
 sections:
   - title: SpdxTool Requirements
     sections:
-      - title: Platform Support
+      - title: PlatformSupport Requirements
         requirements:
           - id: SpdxTool-Platform-Windows
             title: The tool shall run successfully on Windows platforms.

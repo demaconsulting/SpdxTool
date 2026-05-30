@@ -19,7 +19,12 @@ target SPDX identifier and its references.
 #### Test Scenarios
 
 **EndToEndRenameId**: the self-test step proves that `rename-id` updates the target identifier
-consistently during validation. This scenario is tested by `ValidateRenameId_Run_ValidRenameIdWorkflow_Passes`.
+consistently during validation. This scenario is tested by `SpdxTool_RenameId`.
+
+**CommandFailure**: when the rename-id command exits with a non-zero exit code (triggered via the
+`PreRunSpdxToolHookForTest` hook corrupting `validate.tmp/test.spdx.json`), `Run` records
+`TestOutcome.Failed` and no exception propagates. This scenario is tested by
+`ValidateRenameId_Run_CommandFailure_RecordsFailedOutcome`.
 
 **IoError**: when `validate.tmp` cannot be created as a directory (e.g., it pre-exists as a file),
 `Run` propagates the `IOException` uncaught and records no `TestResult`. This scenario is tested by

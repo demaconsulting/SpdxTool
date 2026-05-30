@@ -43,3 +43,13 @@ sections:
                   can diagnose incorrect search criteria rather than receiving an empty result.
                 tests:
                   - GetVersion_Run_PackageNotFound_ReportsError
+              - id: SpdxTool-Commands-GetVersion-MissingWorkflowInputs
+                title: The get-version command shall report an error when required workflow inputs (spdx or output) are absent.
+                tags:
+                  - workflow
+                justification: |
+                  The spdx and output inputs are both required for workflow invocation; their
+                  absence must be reported clearly so workflow authors can diagnose
+                  misconfigured steps without reading internal error output.
+                tests:
+                  - GetVersion_Run_MissingWorkflowInputs_ReportsError

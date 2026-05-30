@@ -37,6 +37,18 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateAddPackage
 {
     /// <summary>
+    ///     Optional test hook invoked after fixture files are written and immediately before
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
+    /// </summary>
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that
+    ///     corrupts <c>validate.tmp/test.spdx.json</c> so that the add-package command fails
+    ///     with a non-zero exit code, exercising the CommandFailure path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PreRunSpdxToolHookForTest { get; set; }
+
+    /// <summary>
     ///     Executes the add-package self-test and records the result.
     /// </summary>
     /// <param name="context">The active Program context providing output and error streams.</param>
@@ -149,6 +161,9 @@ internal static class ValidateAddPackage
                       - type: BUILD_TOOL_OF
                         element: SPDXRef-Package-1
                 """);
+
+            // Allow tests to corrupt fixtures immediately before the command runs
+            PreRunSpdxToolHookForTest?.Invoke();
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(

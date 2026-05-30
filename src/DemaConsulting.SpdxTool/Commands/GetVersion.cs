@@ -56,7 +56,7 @@ public sealed class GetVersion : Command
             "This command gets the version of an SPDX package.",
             "",
             "From the command-line this can be used as:",
-            "  spdx-tool get-version <spdx.json> [criteria]",
+            "  spdx-tool get-version <spdx.json> <criteria>",
             "",
             "  The supported criteria are:",
             "    id=<id>                         # Optional package ID header",

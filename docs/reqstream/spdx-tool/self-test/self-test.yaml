@@ -12,6 +12,20 @@ sections:
               collect pass/fail results into a structured outcome.
             children:
               - SpdxTool-SelfTest-Orchestrate
+              - SpdxTool-SelfTest-AddPackage
+              - SpdxTool-SelfTest-AddRelationship
+              - SpdxTool-SelfTest-Basic
+              - SpdxTool-SelfTest-CopyPackage
+              - SpdxTool-SelfTest-Diagram
+              - SpdxTool-SelfTest-FindPackage
+              - SpdxTool-SelfTest-GetVersion
+              - SpdxTool-SelfTest-Hash
+              - SpdxTool-SelfTest-Ntia
+              - SpdxTool-SelfTest-Query
+              - SpdxTool-SelfTest-RenameId
+              - SpdxTool-SelfTest-RunNuGetWorkflow
+              - SpdxTool-SelfTest-ToMarkdown
+              - SpdxTool-SelfTest-UpdatePackage
             tests:
               - SelfTest_Validate_ValidContext_Succeeds
 
@@ -55,4 +69,3 @@ sections:
               detect configuration mistakes in their CI pipeline.
             tests:
               - SelfTest_Validate_UnsupportedResultExtension_ReportsError
-              - SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError

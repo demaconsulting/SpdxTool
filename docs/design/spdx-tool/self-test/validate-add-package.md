@@ -8,7 +8,9 @@ document contains the expected package and relationship entries.
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+`PreRunSpdxToolHookForTest` — an internal property, `null` in production, that tests may set to a
+delegate invoked immediately before `Validate.RunSpdxTool` is called. Allows tests to corrupt
+`validate.tmp/test.spdx.json` to exercise the CommandFailure path deterministically.
 
 #### Key Methods
 
@@ -18,8 +20,9 @@ N/A - this unit is a static class with no instance state.
   append to.
 - *Returns*: void.
 - *Preconditions*: None.
-- *Post-conditions*: A TestResult entry named SpdxTool_AddPackage has been appended to results; a
-  pass or fail message has been written to the Context.
+- *Post-conditions*: If DoValidate returns without throwing, a TestResult entry named
+  SpdxTool_AddPackage has been appended to results; a pass or fail message has been written to the
+  Context.
 
 **DoValidate**: performs the actual add-package validation in a temporary directory.
 

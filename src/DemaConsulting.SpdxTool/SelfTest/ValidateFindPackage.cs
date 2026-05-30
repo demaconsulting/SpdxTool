@@ -122,7 +122,9 @@ internal static class ValidateFindPackage
                       "versionInfo": "1.0.0",
                       "packageFileName": "package1.zip",
                       "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                      "licenseConcluded": "MIT"
+                      "licenseConcluded": "MIT",
+                      "licenseDeclared": "MIT",
+                      "copyrightText": "NOASSERTION"
                     },
                     {
                       "SPDXID": "SPDXRef-Package-2",
@@ -130,7 +132,9 @@ internal static class ValidateFindPackage
                       "versionInfo": "2.0.0",
                       "packageFileName": "package2.tar",
                       "downloadLocation": "https://github.com/demaconsulting/SpdxModel",
-                      "licenseConcluded": "MIT"
+                      "licenseConcluded": "MIT",
+                      "licenseDeclared": "MIT",
+                      "copyrightText": "NOASSERTION"
                     }
                   ],
                   "relationships": [    {

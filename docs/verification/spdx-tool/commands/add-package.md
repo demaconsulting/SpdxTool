@@ -21,34 +21,34 @@ SPDX document.
 #### Test Scenarios
 
 **WorkflowOnlyGuard**: the unit rejects direct command-line invocation and requires workflow
-context. This scenario is tested by `AddPackage_OnCommandLine_ReportsWorkflowOnlyError`.
+context. This scenario is tested by `AddPackage_Run_OnCommandLine_ReportsWorkflowOnlyError`.
 
 **PackageAndRelationshipAddition**: the unit adds a package and creates the requested relationship
 entries in the target document. This scenario is tested by
-`AddPackage_InWorkflowWithRelationship_AddsPackageAndRelationship`.
+`AddPackage_Run_InWorkflowWithRelationship_AddsPackageAndRelationship`.
 
 **PackageOnlyAddition**: the unit adds a package even when no relationship block is supplied. This
-scenario is tested by `AddPackage_InWorkflowNoRelationship_AddsPackageOnly`.
+scenario is tested by `AddPackage_Run_InWorkflowNoRelationship_AddsPackageOnly`.
 
 **QueryExpandedVersion**: the unit accepts workflow-populated version data that was produced by an
-earlier query step. This scenario is tested by `AddPackage_InWorkflowWithQueryVersion_AddsPackage`.
+earlier query step. This scenario is tested by `AddPackage_Run_InWorkflowWithQueryVersion_AddsPackage`.
 
 **EnhanceExistingPackage**: the unit enhances an existing package rather than duplicating it when a
 package with the same identity is already present. This scenario is tested by
-`AddPackage_InWorkflowWithExistingPackage_EnhancesPackage`.
+`AddPackage_Run_InWorkflowWithExistingPackage_EnhancesPackage`.
 
 **MissingSpdxInput**: the unit reports an error when the `spdx` input is missing from the workflow
-step. This scenario is tested by `AddPackage_InWorkflowMissingSpdxInput_ReportsError`.
+step. This scenario is tested by `AddPackage_Run_InWorkflowMissingSpdxInput_ReportsError`.
 
 **MissingPackageInput**: the unit reports an error when the `package` input is missing from the
-workflow step. This scenario is tested by `AddPackage_InWorkflowMissingPackageInput_ReportsError`.
+workflow step. This scenario is tested by `AddPackage_Run_InWorkflowMissingPackageInput_ReportsError`.
 
 **EmptyPackageId**: the unit reports an error when the package `id` input is empty.
-This scenario is tested by `AddPackage_InWorkflowWithEmptyPackageId_ReportsError`.
+This scenario is tested by `AddPackage_Run_InWorkflowWithEmptyPackageId_ReportsError`.
 
 **DocumentPackageId**: the unit reports an error when the package `id` is set to the reserved value
 `SPDXRef-DOCUMENT`. This scenario is tested by
-`AddPackage_InWorkflowWithDocumentPackageId_ReportsError`.
+`AddPackage_Run_InWorkflowWithDocumentPackageId_ReportsError`.
 
 **MissingPackageName**: the unit reports an error when the package `name` field is absent from the
 workflow step package definition. This scenario is tested by
@@ -57,3 +57,7 @@ workflow step package definition. This scenario is tested by
 **MissingPackageDownload**: the unit reports an error when the package `download` field is absent
 from the workflow step package definition. This scenario is tested by
 `AddPackage_ParsePackage_MissingPackageDownload_ReportsError`.
+
+**MissingPackageId**: the unit reports an error when the package `id` field is entirely absent from
+the workflow step package definition. This scenario is tested by
+`AddPackage_ParsePackage_MissingPackageId_ReportsError`.

@@ -12,19 +12,14 @@ sections:
               help system to enumerate available commands. The registry must correctly
               map command names to their implementations.
             children:
-              - SpdxTool-Package-AddPackage
-              - SpdxTool-Relationship-AddRelationship
+              - SpdxTool-Commands-AddPackage
+              - SpdxTool-Commands-AddRelationship
               - SpdxTool-Commands-CopyPackage
-              - SpdxTool-Transform-Diagram
+              - SpdxTool-Commands-Diagram
               - SpdxTool-Commands-FindPackage
               - SpdxTool-Commands-GetVersion-RetrievePackageVersion
               - SpdxTool-Commands-Hash-Generate
               - SpdxTool-Commands-Hash-Verify
-              - SpdxTool-Commands-Hash-MissingArguments
-              - SpdxTool-Commands-Hash-MissingFile
-              - SpdxTool-Commands-Hash-UnsupportedAlgorithm
-              - SpdxTool-Commands-Hash-InvalidOperation
-              - SpdxTool-Commands-Hash-MissingSidecarFile
               - SpdxTool-Commands-Help-DisplayHelp
               - SpdxTool-Commands-Print-WorkflowOutput
               - SpdxTool-Commands-Query-ExternalProgramQuery
@@ -58,6 +53,7 @@ sections:
               arguments. The expansion must handle missing variables, simple variable
               substitution, and nested variable references where a variable name
               itself contains a variable reference.
+            children: [SpdxTool-Command-VariableExpansion]
             tests:
               - Command_Expand_MissingVariable_ThrowsInvalidOperationException
               - Command_Expand_NoVariables_ReturnsOriginal

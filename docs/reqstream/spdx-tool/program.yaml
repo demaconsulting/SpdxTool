@@ -25,7 +25,7 @@ sections:
               to the right handler based on the command name that follows the global flags.
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError
-              - UnknownCommand_UnrecognizedCommand_ReportsError
+              - Commands_Dispatch_UnknownCommand_ReportsError
           - id: SpdxTool-Program-NonZeroExitOnFailure
             title: The tool shall exit with a non-zero exit code when any error is recorded during execution.
             justification: |

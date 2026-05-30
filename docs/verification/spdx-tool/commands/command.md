@@ -26,6 +26,11 @@ implementations. This scenario is tested by `Command_Expand_NoVariables_ReturnsO
 execution time. This scenario is tested by `Command_Expand_BasicVariable_ReturnsExpanded`
 and `Command_GetMapString_WithVariableExpansion_ReturnsExpanded`.
 
+**YamlInputExtraction**: the base class correctly extracts values from YAML mapping nodes,
+returning null for missing entries and applying variable expansion for present entries. This
+scenario is tested by `Command_GetMapString_WithVariableExpansion_ReturnsExpanded` (present-entry
+case) and `Command_GetMapString_MissingEntry_ReturnsNull` (null/missing-entry case).
+
 **MissingVariableRejection**: undefined variable tokens cause expansion to throw an
 `InvalidOperationException` rather than silently substituting an empty string. This scenario is
 tested by `Command_Expand_MissingVariable_ThrowsInvalidOperationException`.

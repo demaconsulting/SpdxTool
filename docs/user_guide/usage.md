@@ -198,3 +198,54 @@ spdx-tool rename-id <arguments>
 ```bash
 dotnet spdx-tool rename-id manifest.spdx.json SPDXRef-Package-1 SPDXRef-Package-2
 ```
+
+## Query Command
+
+The `query` command executes an external program, captures its output, and extracts a value using a
+regular expression with a named capture group.
+
+**Syntax:**
+
+```bash
+spdx-tool query <spdxfile> <expression>
+```
+
+**Workflow YAML example:**
+
+```yaml
+- command: query
+  inputs:
+    output: dotnet-version
+    pattern: "(?<value>\\d+\\.\\d+\\.\\d+.*)"
+    program: dotnet
+    arguments:
+      - --version
+```
+
+The `query` command queries a field from an SPDX document using a dot-separated expression path, or
+executes a program and applies a regular expression with a named `value` capture group to extract a
+result. In CLI mode the extracted value is written to stdout. In workflow mode the result is stored
+in the named output variable for use by subsequent steps.
+
+## Print Command
+
+The `print` command prints the value of one or more workflow variables to the output.
+
+**Syntax:**
+
+```bash
+spdx-tool print <variable> [<variable>...]
+```
+
+**Workflow YAML example:**
+
+```yaml
+- command: print
+  inputs:
+    text:
+      - "Version: ${{ dotnet-version }}"
+```
+
+The `print` command writes one or more lines of text to the output. In CLI mode each argument is
+printed as a separate line. In workflow mode a `text` sequence node provides the lines, with variable
+expansion applied to each entry.

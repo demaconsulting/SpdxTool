@@ -19,7 +19,11 @@ expected package content into the destination document.
 #### Test Scenarios
 
 **EndToEndCopyPackage**: the self-test step proves that `copy-package` updates the destination SPDX
-document during validation. This scenario is tested by `ValidateCopyPackage_Run_ValidPackageWorkflow_Passes`.
+document during validation. This scenario is tested by `SpdxTool_CopyPackage`.
+
+**CommandFailure**: when the copy-package command exits non-zero, `Run` records
+`TestOutcome.Failed`. This scenario is tested by
+`ValidateCopyPackage_Run_CommandFailure_RecordsFailedOutcome`.
 
 **ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by

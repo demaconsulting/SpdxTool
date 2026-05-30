@@ -63,3 +63,9 @@ declared in the workflow's parameters section. This scenario is tested by
 
 **MalformedCliArgument**: the unit reports a usage error when a CLI argument does not contain the
 `=` separator. This scenario is tested by `RunWorkflow_Run_MalformedCliArgument_ReportsError`.
+
+**VerboseOutput**: the unit prints each workflow step's outputs to the console when the `--verbose`
+flag is supplied. This scenario is tested by `RunWorkflow_Run_WithVerboseFlag_PrintsOutputs`.
+
+**DisplayName**: the unit prints the `displayName` label for each workflow step that declares one.
+This scenario is tested by `RunWorkflow_Run_WithDisplayName_PrintsLabel`.

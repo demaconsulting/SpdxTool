@@ -35,17 +35,16 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 public class ValidateUpdatePackageTests
 {
     /// <summary>
-    ///     Test that ValidateUpdatePackage validation passes and records the expected result.
+    ///     Test that ValidateUpdatePackage validation passes.
     /// </summary>
     /// <remarks>
-    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateUpdatePackage.Run"/> is
-    ///     <c>SpdxTool_UpdatePackage</c>; the assertion in this test guards against regressions
-    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
-    ///     convention; <c>SpdxTool_UpdatePackage</c> is the <c>TestResult.Name</c> identifier
-    ///     recorded by the self-test step, not the test method name.
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_UpdatePackage</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateUpdatePackage.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
     /// </remarks>
     [Fact]
-    public void ValidateUpdatePackage_Run_ValidWorkflow_RecordsPassResult()
+    public void SpdxTool_UpdatePackage()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -54,10 +53,54 @@ public class ValidateUpdatePackageTests
         // Act: run the update-package self-test step
         ValidateUpdatePackage.Run(context, results);
 
-        // Assert: single passing result recorded with the expected name
+        // Assert: single passing result recorded
         Assert.Single(results.Results);
-        Assert.Equal("SpdxTool_UpdatePackage", results.Results[0].Name);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+    }
+
+    /// <summary>
+    ///     Test that ValidateUpdatePackage.Run records TestOutcome.Failed when the update-package command
+    ///     exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateUpdatePackage.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>test.spdx.json</c> with invalid JSON immediately before the in-process update-package
+    ///     command reads it. This causes update-package to fail with a non-zero exit code, which causes
+    ///     <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateUpdatePackage_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        // Arrange: save original directory and create an isolated temp directory
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts test.spdx.json immediately before update-package reads it,
+            // causing the command to fail with a non-zero exit code
+            ValidateUpdatePackage.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/test.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the update-package self-test step with the poisoned hook active
+            ValidateUpdatePackage.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateUpdatePackage.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 
     /// <summary>

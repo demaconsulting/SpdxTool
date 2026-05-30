@@ -133,7 +133,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    ///     Do the requested Sha256 operation
+    ///     Validates the algorithm and dispatches the hash operation to <see cref="GenerateSha256"/> or <see cref="VerifySha256"/>.
     /// </summary>
     /// <remarks>
     ///     The algorithm check lives here rather than in each leaf method so that unsupported algorithms

@@ -30,7 +30,10 @@ namespace DemaConsulting.SpdxTool.Spdx;
 /// <remarks>
 ///     Provides centralized file-system operations for loading and saving SPDX 2.x JSON
 ///     documents. All commands that read or write SPDX files use these helpers to ensure
-///     consistent error handling and document stamping behavior.
+///     consistent error handling and document stamping behavior. Not thread-safe for
+///     concurrent access to the same file path. <see cref="SaveJsonDocument"/> temporarily
+///     mutates the passed-in document's <c>CreationInformation.Creators</c> array during
+///     serialization; the original array is always restored in a <c>finally</c> block.
 /// </remarks>
 public static class SpdxHelpers
 {
@@ -88,14 +91,22 @@ public static class SpdxHelpers
         // Construct the tool name
         var toolName = $"Tool: DemaConsulting.SpdxTool-{Program.Version}";
 
-        // Add this tool if missing
-        if (!doc.CreationInformation.Creators.Contains(toolName))
-        {
-            doc.CreationInformation.Creators = [.. doc.CreationInformation.Creators.Append(toolName)];
-        }
+        // Build a local modified creators list for serialization, leaving the original doc unchanged
+        var originalCreators = doc.CreationInformation.Creators;
+        var creators = originalCreators.Contains(toolName)
+            ? originalCreators
+            : [.. originalCreators.Append(toolName)];
 
-        // Save the document
-        var serializedContent = Spdx2JsonSerializer.Serialize(doc);
-        File.WriteAllText(spdxFile, serializedContent);
+        // Temporarily apply the serialization creators, serialize, then restore the originals
+        doc.CreationInformation.Creators = creators;
+        try
+        {
+            var serializedContent = Spdx2JsonSerializer.Serialize(doc);
+            File.WriteAllText(spdxFile, serializedContent);
+        }
+        finally
+        {
+            doc.CreationInformation.Creators = originalCreators;
+        }
     }
 }

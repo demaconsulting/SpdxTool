@@ -38,14 +38,13 @@ public class ValidateNtiaTests
     ///     Test that ValidateNtia validation passes.
     /// </summary>
     /// <remarks>
-    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateNtia.Run"/> is
-    ///     <c>SpdxTool_Ntia</c>; the assertion in this test guards against regressions
-    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
-    ///     convention; <c>SpdxTool_Ntia</c> is the <c>TestResult.Name</c> identifier recorded by
-    ///     the self-test step, not the test method name.
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_Ntia</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateNtia.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
     /// </remarks>
     [Fact]
-    public void ValidateNtia_Run_ValidNtiaWorkflow_Passes()
+    public void SpdxTool_Ntia()
     {
         // Arrange: create context and an empty test results collection
         using var context = Context.Create(["--validate"]);
@@ -58,6 +57,50 @@ public class ValidateNtiaTests
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
         Assert.Equal("SpdxTool_Ntia", results.Results[0].Name);
+    }
+
+    /// <summary>
+    ///     Test that ValidateNtia.Run records TestOutcome.Failed when the validate command
+    ///     exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateNtia.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>test-ntia.spdx.json</c> with invalid content immediately before the in-process
+    ///     validate command reads it. This causes validate to fail with a non-zero exit code,
+    ///     which causes <c>DoValidateMissingSupplier</c> to return <c>false</c> and <c>Run</c>
+    ///     to record <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateNtia_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts test-ntia.spdx.json immediately before the validate
+            // command reads it, causing the command to fail with a non-zero exit code
+            ValidateNtia.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/test-ntia.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the ValidateNtia self-test step with the poisoned hook active
+            ValidateNtia.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateNtia.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 
     /// <summary>

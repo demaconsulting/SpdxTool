@@ -47,7 +47,9 @@ sections:
                   - utility
                 justification: |
                   Commands that resolve file paths need a reliable utility for combining
-                  base and relative paths in a safe manner.
+                  base and relative paths in a safe manner. Paths containing `..` as a
+                  substring, including filenames, are excluded as a conservative security
+                  measure and are not considered 'valid' in this context.
                 tests:
                   - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
                   - PathHelpers_SafePathCombine_CurrentDirectoryReference_CombinesCorrectly

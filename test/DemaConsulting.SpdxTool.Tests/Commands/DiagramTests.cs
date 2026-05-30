@@ -29,7 +29,7 @@ public class DiagramTests
     ///     Test that diagram command with missing arguments reports an error
     /// </summary>
     [Fact]
-    public void Diagram_MissingArguments_ReportsError()
+    public void Diagram_Run_MissingArguments_ReportsError()
     {
         // Arrange: no setup required
 
@@ -49,7 +49,7 @@ public class DiagramTests
     ///     Test that diagram command with insufficient arguments reports an error
     /// </summary>
     [Fact]
-    public void Diagram_InsufficientArguments_ReportsError()
+    public void Diagram_Run_InsufficientArguments_ReportsError()
     {
         // Arrange: no setup required
 
@@ -70,7 +70,7 @@ public class DiagramTests
     ///     Test that diagram command with missing SPDX file reports an error
     /// </summary>
     [Fact]
-    public void Diagram_MissingSpdxFile_ReportsError()
+    public void Diagram_Run_MissingSpdxFile_ReportsError()
     {
         // Arrange: no setup required
 
@@ -92,7 +92,7 @@ public class DiagramTests
     ///     Test that diagram command with invalid option reports an error
     /// </summary>
     [Fact]
-    public void Diagram_InvalidOption_ReportsError()
+    public void Diagram_Run_InvalidOption_ReportsError()
     {
         const string spdxContents =
             """
@@ -141,7 +141,7 @@ public class DiagramTests
     ///     Test that diagram command with valid SPDX file generates a diagram
     /// </summary>
     [Fact]
-    public void Diagram_ValidSpdxFile_GeneratesDiagram()
+    public void Diagram_Run_ValidSpdxFile_GeneratesDiagram()
     {
         const string spdxContents =
             """
@@ -223,7 +223,7 @@ public class DiagramTests
     ///     Test that diagram command with tools option generates diagram with tools
     /// </summary>
     [Fact]
-    public void Diagram_WithToolsOption_GeneratesDiagramWithTools()
+    public void Diagram_Run_WithToolsOption_GeneratesDiagramWithTools()
     {
         const string spdxContents =
             """
@@ -301,7 +301,7 @@ public class DiagramTests
     ///     Test that diagram command without tools option excludes tool relationships
     /// </summary>
     [Fact]
-    public void Diagram_WithoutToolsOption_ExcludesToolRelationships()
+    public void Diagram_Run_WithoutToolsOption_ExcludesToolRelationships()
     {
         const string spdxContents =
             """
@@ -493,7 +493,7 @@ public class DiagramTests
     ///     Test that diagram command in a workflow step generates a diagram from YAML inputs
     /// </summary>
     [Fact]
-    public void Diagram_InWorkflow_GeneratesDiagram()
+    public void Diagram_Run_InWorkflow_GeneratesDiagram()
     {
         const string spdxContents =
             """
@@ -583,7 +583,7 @@ public class DiagramTests
     ///     Test that diagram command with a package missing versionInfo uses "unspecified" as the fallback
     /// </summary>
     [Fact]
-    public void Diagram_PackageWithoutVersion_UsesUnspecifiedFallback()
+    public void Diagram_Run_PackageWithoutVersion_UsesUnspecifiedFallback()
     {
         const string spdxContents =
             """

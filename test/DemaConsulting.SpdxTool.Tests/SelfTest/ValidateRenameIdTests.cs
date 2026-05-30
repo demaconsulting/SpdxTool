@@ -38,14 +38,13 @@ public class ValidateRenameIdTests
     ///     Test that ValidateRenameId validation passes.
     /// </summary>
     /// <remarks>
-    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateRenameId.Run"/> is
-    ///     <c>SpdxTool_RenameId</c>; the assertion in this test guards against regressions
-    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
-    ///     convention; <c>SpdxTool_RenameId</c> is the <c>TestResult.Name</c> identifier recorded
-    ///     by the self-test step, not the test method name.
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_RenameId</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateRenameId.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
     /// </remarks>
     [Fact]
-    public void ValidateRenameId_Run_ValidRenameIdWorkflow_Passes()
+    public void SpdxTool_RenameId()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -58,6 +57,50 @@ public class ValidateRenameIdTests
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
         Assert.Equal("SpdxTool_RenameId", results.Results[0].Name);
+    }
+
+    /// <summary>
+    ///     Test that ValidateRenameId.Run records TestOutcome.Failed when the rename-id command
+    ///     exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateRenameId.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>test.spdx.json</c> with invalid content immediately before the in-process rename-id
+    ///     command reads it. This causes the command to fail with a non-zero exit code, which
+    ///     causes <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateRenameId_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts test.spdx.json immediately before the rename-id command
+            // reads it, causing the command to fail with a non-zero exit code
+            ValidateRenameId.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/test.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the rename-id self-test step with the poisoned hook active
+            ValidateRenameId.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateRenameId.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 
     /// <summary>

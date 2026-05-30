@@ -61,3 +61,6 @@ boolean. This scenario is tested by `CopyPackage_Run_InvalidFilesInput_ReportsEr
 
 **PackageNotFound**: the unit reports an error when the specified package identifier does not exist
 in the source SPDX document. This scenario is tested by `CopyPackage_Run_PackageNotFound_ReportsError`.
+
+**InvalidPackageId**: the unit reports a usage error when the package argument is empty or equals
+`SPDXRef-DOCUMENT`. This scenario is tested by `CopyPackage_Run_InvalidPackageId_ReportsError`.

@@ -8,8 +8,10 @@ point for version reporting, help display, and error handling when no command is
 
 ### Test Environment
 
-Tests run the tool as a subprocess in the standard xUnit v3 environment. No external service
-or file system access is required for the core program tests.
+ProgramTests.cs exercises the in-process `Program.Run()` entry point directly in the standard
+xUnit v3 environment. Other test files (VersionTests.cs, UsageTests.cs, SilentTests.cs,
+LogTests.cs, IntegrationTests.cs) launch the tool as a subprocess via Runner.cs. No external
+service or file system access is required for the core program tests.
 
 ### Acceptance Criteria
 

@@ -47,3 +47,6 @@ InvalidOperationException. This scenario is exercised by
 **InvalidLogFileRejection**: Context.Create rejects an invalid log file path with
 InvalidOperationException. This scenario is exercised by
 `Context_Create_InvalidLogFilePath_ThrowsInvalidOperationException`.
+
+**DefaultDepth**: Context defaults the depth to 1 when no `--depth` flag is supplied. This
+scenario is exercised by `SpdxTool_Version_ShortFlag_DisplaysVersion`.

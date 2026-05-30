@@ -47,8 +47,9 @@ sections:
 
               - id: SpdxTool-Commands-CopyPackage-ValidateWorkflow
                 title: >-
-                  The copy-package command shall validate all workflow inputs and report an error for
-                  each missing or invalid field including from, to, package, recursive, and files.
+                  The copy-package command shall validate all workflow inputs and report an error for each
+                  missing required field (from, to, package) and each invalid optional field (recursive, files)
+                  where the value cannot be parsed as a boolean.
                 tags:
                   - spdx
                 justification: |

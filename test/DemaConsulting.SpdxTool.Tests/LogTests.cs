@@ -135,16 +135,4 @@ public class LogTests
             File.Delete("output-silent.log");
         }
     }
-
-    /// <summary>
-    ///     Test that Context.Create with an invalid log file path throws InvalidOperationException
-    /// </summary>
-    [Fact]
-    public void Context_Create_InvalidLogFilePath_ThrowsInvalidOperationException()
-    {
-        // Arrange: use an empty string as an invalid path (triggers ArgumentException in StreamWriter)
-        // Act/Assert: creating context with invalid log path throws InvalidOperationException
-        Assert.Throws<InvalidOperationException>(
-            () => Context.Create(["-l", ""]));
-    }
 }

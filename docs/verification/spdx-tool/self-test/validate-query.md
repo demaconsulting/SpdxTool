@@ -18,7 +18,12 @@ expected value from external process output.
 #### Test Scenarios
 
 **EndToEndQuery**: the self-test step proves that `query` can capture a named value from external
-process output during validation. This scenario is tested by `ValidateQuery_Run_ValidQueryWorkflow_Passes`.
+process output during validation. This scenario is tested by `SpdxTool_Query`.
+
+**CommandFailure**: when the query command exits with a non-zero exit code (triggered via the
+`PreRunSpdxToolHookForTest` hook corrupting `validate.tmp/workflow.yaml`), `Run` records
+`TestOutcome.Failed` and no exception propagates. This scenario is tested by
+`ValidateQuery_Run_CommandFailure_RecordsFailedOutcome`.
 
 **IoError**: when `validate.tmp` cannot be created as a directory (e.g., it pre-exists as a file),
 `Run` propagates the `IOException` uncaught and records no `TestResult`. This scenario is tested by

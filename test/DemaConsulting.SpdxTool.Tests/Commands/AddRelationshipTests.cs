@@ -157,7 +157,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow adds the relationship
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflow_AddsRelationship()
+    public void AddRelationship_Run_InWorkflow_AddsRelationship()
     {
         // Workflow contents
         const string workflowContents =
@@ -212,7 +212,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command with replace mode replaces existing relationships
     /// </summary>
     [Fact]
-    public void AddRelationship_ReplaceMode_ReplacesExistingRelationship()
+    public void AddRelationship_Run_ReplaceMode_ReplacesExistingRelationship()
     {
         // Workflow1 contents
         const string workflow1Contents =
@@ -313,7 +313,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow with missing spdx input reports error
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflowMissingSpdxInput_ReportsError()
+    public void AddRelationship_Run_InWorkflowMissingSpdxInput_ReportsError()
     {
         // Workflow contents - missing 'spdx' input
         const string workflowContents =
@@ -354,7 +354,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow with missing id input reports error
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflowMissingIdInput_ReportsError()
+    public void AddRelationship_Run_InWorkflowMissingIdInput_ReportsError()
     {
         // Workflow contents - missing 'id' input
         const string workflowContents =
@@ -395,7 +395,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow with missing relationships input reports error
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflowMissingRelationshipsInput_ReportsError()
+    public void AddRelationship_Run_InWorkflowMissingRelationshipsInput_ReportsError()
     {
         // Workflow contents - missing 'relationships' input
         const string workflowContents =
@@ -434,7 +434,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow with invalid replace value reports error
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflowInvalidReplaceValue_ReportsError()
+    public void AddRelationship_Run_InWorkflowInvalidReplaceValue_ReportsError()
     {
         // Workflow contents - invalid 'replace' value
         const string workflowContents =
@@ -477,7 +477,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow with non-mapping relationship node reports error
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflowNonMappingRelationshipNode_ReportsError()
+    public void AddRelationship_Run_InWorkflowNonMappingRelationshipNode_ReportsError()
     {
         // Workflow contents - relationship is a scalar, not a mapping
         const string workflowContents =
@@ -518,7 +518,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow with missing relationship type reports error
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflowMissingRelationshipType_ReportsError()
+    public void AddRelationship_Run_InWorkflowMissingRelationshipType_ReportsError()
     {
         // Workflow contents - relationship missing 'type'
         const string workflowContents =
@@ -559,7 +559,7 @@ public class AddRelationshipTests
     ///     Test that add-relationship command in workflow with missing relationship element reports error
     /// </summary>
     [Fact]
-    public void AddRelationship_InWorkflowMissingRelationshipElement_ReportsError()
+    public void AddRelationship_Run_InWorkflowMissingRelationshipElement_ReportsError()
     {
         // Workflow contents - relationship missing 'element'
         const string workflowContents =

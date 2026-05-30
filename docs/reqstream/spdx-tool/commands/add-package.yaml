@@ -6,7 +6,7 @@ sections:
         sections:
           - title: AddPackage Requirements
             requirements:
-              - id: SpdxTool-Package-AddPackage
+              - id: SpdxTool-Commands-AddPackage
                 title: The tool shall add packages to SPDX documents using the add-package command.
                 tags:
                   - spdx
@@ -14,11 +14,11 @@ sections:
                   Users need to incrementally build SPDX documents by adding new packages
                   that represent software components, libraries, or dependencies.
                 tests:
-                  - AddPackage_InWorkflowWithRelationship_AddsPackageAndRelationship
-                  - AddPackage_InWorkflowNoRelationship_AddsPackageOnly
-                  - AddPackage_InWorkflowWithQueryVersion_AddsPackage
+                  - AddPackage_Run_InWorkflowWithRelationship_AddsPackageAndRelationship
+                  - AddPackage_Run_InWorkflowNoRelationship_AddsPackageOnly
+                  - AddPackage_Run_InWorkflowWithQueryVersion_AddsPackage
 
-              - id: SpdxTool-Package-AddPackage-WorkflowOnly
+              - id: SpdxTool-Commands-AddPackage-WorkflowOnly
                 title: >-
                   The add-package command shall only be available in workflow mode; direct CLI invocation
                   shall be rejected with a usage error.
@@ -29,9 +29,9 @@ sections:
                   package data via YAML inputs. Direct CLI invocation cannot supply the
                   necessary structured input.
                 tests:
-                  - AddPackage_OnCommandLine_ReportsWorkflowOnlyError
+                  - AddPackage_Run_OnCommandLine_ReportsWorkflowOnlyError
 
-              - id: SpdxTool-Package-AddPackage-Enhance
+              - id: SpdxTool-Commands-AddPackage-Enhance
                 title: >-
                   When a package with the same identity already exists in the target SPDX document,
                   the add-package command shall enhance the existing package rather than adding a duplicate.
@@ -42,9 +42,9 @@ sections:
                   Enhancing rather than duplicating ensures SPDX document consistency and
                   avoids invalid documents with duplicate package entries.
                 tests:
-                  - AddPackage_InWorkflowWithExistingPackage_EnhancesPackage
+                  - AddPackage_Run_InWorkflowWithExistingPackage_EnhancesPackage
 
-              - id: SpdxTool-Package-AddPackage-Validate
+              - id: SpdxTool-Commands-AddPackage-Validate
                 title: >-
                   The add-package command shall validate its workflow inputs and report an error for missing
                   or invalid values.
@@ -54,10 +54,10 @@ sections:
                   Invalid inputs must be detected early and reported clearly so that workflow
                   authors can diagnose configuration mistakes quickly.
                 tests:
-                  - AddPackage_InWorkflowMissingSpdxInput_ReportsError
-                  - AddPackage_InWorkflowMissingPackageInput_ReportsError
-                  - AddPackage_InWorkflowWithEmptyPackageId_ReportsError
-                  - AddPackage_InWorkflowWithDocumentPackageId_ReportsError
+                  - AddPackage_Run_InWorkflowMissingSpdxInput_ReportsError
+                  - AddPackage_Run_InWorkflowMissingPackageInput_ReportsError
+                  - AddPackage_Run_InWorkflowWithEmptyPackageId_ReportsError
+                  - AddPackage_Run_InWorkflowWithDocumentPackageId_ReportsError
                   - AddPackage_ParsePackage_MissingPackageId_ReportsError
                   - AddPackage_ParsePackage_MissingPackageName_ReportsError
                   - AddPackage_ParsePackage_MissingPackageDownload_ReportsError

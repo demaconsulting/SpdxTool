@@ -21,7 +21,11 @@ expected package metadata in the SPDX document.
 #### Test Scenarios
 
 **EndToEndUpdatePackage**: the self-test step proves that `update-package` updates package metadata
-during validation. This scenario is tested by `ValidateUpdatePackage_Run_ValidWorkflow_RecordsPassResult`.
+during validation. This scenario is tested by `SpdxTool_UpdatePackage`.
+
+**CommandFailure**: when the update-package command exits with a non-zero exit code,
+`ValidateUpdatePackage.Run` records `TestOutcome.Failed` rather than `TestOutcome.Passed`. This
+scenario is tested by `ValidateUpdatePackage_Run_CommandFailure_RecordsFailedOutcome`.
 
 **ExceptionPropagation**: when an I/O error prevents DoValidate from running, the exception
 propagates uncaught from Run() and no TestResult is recorded. This scenario is tested by

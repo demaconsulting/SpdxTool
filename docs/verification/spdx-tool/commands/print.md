@@ -24,5 +24,9 @@ is tested by `Print_Run_OnCommandLine_PrintsText`.
 **WorkflowOutput**: the unit writes text when invoked from a workflow step. This scenario is tested
 by `Print_Run_InWorkflow_PrintsText`.
 
+**VariableExpansion**: the unit expands `${{ variable }}` tokens in text lines before writing them
+to output. This scenario is tested by `Print_Run_InWorkflow_PrintsText`, which supplies a variable
+reference in the text and asserts the resolved value appears in the output.
+
 **MissingTextInput**: the unit reports an error when the text input is absent from the workflow step.
-This scenario is tested by `Print_Run_MissingTextInput_ThrowsYamlException`.
+This scenario is tested by `Print_Run_MissingTextInput_ReportsError`.

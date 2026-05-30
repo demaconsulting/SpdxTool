@@ -21,6 +21,6 @@ expected package version.
 **EndToEndGetVersion**: the self-test step proves that `get-version` retrieves the expected version
 during validation. This scenario is tested by `ValidateGetVersion_Run_ValidVersionWorkflow_Passes`.
 
-**ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
+**ExceptionPropagation**: when an I/O error occurs within `DoValidate`, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by
 `ValidateGetVersion_Run_IoError_PropagatesException`.

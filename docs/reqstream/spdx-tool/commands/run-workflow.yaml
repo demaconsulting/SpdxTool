@@ -95,14 +95,51 @@ sections:
 
               - id: SpdxTool-Commands-RunWorkflow-MalformedWorkflow
                 title: >-
-                  The run-workflow command shall report an error when the workflow file is malformed
-                  or when a CLI argument does not follow the key=value format.
+                  The run-workflow command shall report an error when the workflow file content
+                  is malformed.
                 tags:
                   - workflow
                 justification: |
-                  Malformed workflow files and invalid CLI arguments are programming errors that
-                  must be surfaced clearly so users can correct their configuration without
-                  debugging silent misbehavior.
+                  Malformed workflow files are programming errors that must be surfaced clearly
+                  so users can correct their configuration without debugging silent misbehavior.
                 tests:
                   - RunWorkflow_Run_InvalidWorkflowFile_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-MalformedArgument
+                title: >-
+                  The run-workflow command shall report an error when a CLI argument does not
+                  follow the key=value format.
+                tags:
+                  - workflow
+                justification: |
+                  Invalid CLI arguments indicate incorrect invocation. A clear error message
+                  guides users to the correct parameter syntax without requiring them to read
+                  source code.
+                tests:
                   - RunWorkflow_Run_MalformedCliArgument_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-VerboseOutput
+                title: >-
+                  The run-workflow command shall print all workflow output variables when the
+                  --verbose flag is specified on the CLI.
+                tags:
+                  - workflow
+                justification: |
+                  Users debugging complex workflows need visibility into the variable state
+                  produced by a workflow run. The --verbose flag surfaces all output variables
+                  without requiring extra print steps in the workflow definition.
+                tests:
+                  - RunWorkflow_Run_WithVerboseFlag_PrintsOutputs
+
+              - id: SpdxTool-Commands-RunWorkflow-DisplayName
+                title: >-
+                  The run-workflow command shall print the value of the displayName attribute
+                  to the output before executing a workflow step when the attribute is present.
+                tags:
+                  - workflow
+                justification: |
+                  Users need a way to annotate workflow steps with human-readable labels so
+                  that workflow output is easier to follow without embedding extra print commands
+                  in the workflow definition.
+                tests:
+                  - RunWorkflow_Run_WithDisplayName_PrintsLabel

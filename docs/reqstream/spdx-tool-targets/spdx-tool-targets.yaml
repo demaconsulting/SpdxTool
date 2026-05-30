@@ -62,3 +62,30 @@ sections:
           - SpdxToolTargets-SingleTfm-ReportMissingWorkflow
         tests:
           - SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
+
+      - id: SpdxToolTargets-ConfigurableWorkflowFile
+        title: The system shall allow the path of the SBOM decoration workflow file to be configured via the SpdxWorkflowFile
+          MSBuild property.
+        tags:
+          - msbuild
+          - sbom
+        justification: |
+          Users may need to use a custom workflow file name or location. The
+          SpdxWorkflowFile property allows the workflow file path to be
+          overridden from the default of spdx-workflow.yaml in the project
+          directory.
+        tests:
+          - SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
+
+      - id: SpdxToolTargets-ConfigurableToolCommand
+        title: The system shall allow the SpdxTool invocation command to be configured via the SpdxToolCommand MSBuild property.
+        tags:
+          - msbuild
+          - sbom
+        justification: |
+          Users may install SpdxTool using a different invocation (e.g., a
+          local tool or a wrapper script). The SpdxToolCommand property allows
+          the command used to invoke the tool to be overridden from the default
+          of dotnet spdx-tool.
+        tests:
+          - SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom

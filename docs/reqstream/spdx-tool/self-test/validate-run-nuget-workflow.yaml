@@ -16,4 +16,3 @@ sections:
                   after installation or deployment.
                 tests:
                   - ValidateRunNuGetWorkflow_Run_ValidNuGetWorkflow_Passes
-                  - ValidateRunNuGetWorkflow_Run_IoError_PropagatesException

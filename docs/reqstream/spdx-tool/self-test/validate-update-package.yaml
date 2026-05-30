@@ -14,5 +14,4 @@ sections:
                   Self-validation of the update-package command ensures it correctly updates
                   package metadata in SPDX documents after installation or deployment.
                 tests:
-                  - ValidateUpdatePackage_Run_ValidWorkflow_RecordsPassResult
-                  - ValidateUpdatePackage_Run_IoError_PropagatesException
+                  - SpdxTool_UpdatePackage

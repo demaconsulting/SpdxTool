@@ -133,20 +133,4 @@ public partial class ProgramTests
         Assert.Contains("Error: Missing arguments", output);
         Assert.Contains("Usage: spdx-tool", output);
     }
-
-    /// <summary>
-    ///     Test that Context.Create with a negative depth value throws InvalidOperationException.
-    /// </summary>
-    [Fact]
-    public void Context_Create_NegativeDepth_ThrowsInvalidOperationException()
-    {
-        // Arrange: N/A — no fixture required
-
-        // Act / Assert: negative depth must be rejected with a controlled error, not a crash
-        var ex = Assert.Throws<InvalidOperationException>(
-            () => Context.Create(["--validate", "--depth", "-1"]));
-
-        // Assert: error message is user-friendly and mentions depth
-        Assert.Contains("depth", ex.Message);
-    }
 }

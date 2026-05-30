@@ -623,4 +623,84 @@ output);
             File.Delete("workflow2.yaml");
         }
     }
+
+    /// <summary>
+    ///     Test that run-workflow command with --verbose prints workflow output variables
+    /// </summary>
+    [Fact]
+    public void RunWorkflow_Run_WithVerboseFlag_PrintsOutputs()
+    {
+        const string fileContents =
+            """
+            parameters:
+              result: hello-world
+
+            steps:
+            - command: help
+              inputs:
+                about: help
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("verbose.yaml", fileContents);
+
+            // Act: Run the workflow with the --verbose flag
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "verbose.yaml",
+                "--verbose");
+
+            // Assert: Verify success and that output variables are printed
+            Assert.Equal(0, exitCode);
+            Assert.Contains("Outputs:", output);
+            Assert.Contains("result = hello-world", output);
+        }
+        finally
+        {
+            File.Delete("verbose.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that run-workflow command prints the displayName label before a step executes
+    /// </summary>
+    [Fact]
+    public void RunWorkflow_Run_WithDisplayName_PrintsLabel()
+    {
+        const string fileContents =
+            """
+            steps:
+            - command: help
+              displayName: Testing Help Command
+              inputs:
+                about: help
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("displayname.yaml", fileContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "displayname.yaml");
+
+            // Assert: Verify success and that the displayName was printed
+            Assert.Equal(0, exitCode);
+            Assert.Contains("Testing Help Command", output);
+        }
+        finally
+        {
+            File.Delete("displayname.yaml");
+        }
+    }
 }

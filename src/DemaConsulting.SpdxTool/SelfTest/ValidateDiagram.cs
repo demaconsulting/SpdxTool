@@ -37,7 +37,11 @@ internal static class ValidateDiagram
     /// <summary>
     ///     Executes the diagram self-test and records the result.
     /// </summary>
-    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="context">
+    ///     The active Program context providing output and error streams. During normal execution,
+    ///     <c>Run</c> writes a pass or fail status line to <c>context</c> via
+    ///     <see cref="Context.WriteLine"/> or <see cref="Context.WriteError"/> respectively.
+    /// </param>
     /// <param name="results">The TestResults collection to append the step outcome to.</param>
     /// <remarks>
     ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named

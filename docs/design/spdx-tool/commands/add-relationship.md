@@ -104,6 +104,6 @@ SpdxRelationships.Add raises an exception (for example duplicate relationships w
 
 - CommandsRegistry — routes CLI and workflow steps
 - AddPackage — calls Parse to parse relationships from the add-package step, and calls
-  Add(SpdxDocument, SpdxRelationship[]) to persist them
-- CopyPackage — calls Parse to parse relationships, and calls Add(SpdxDocument, SpdxRelationship[])
+  Add(SpdxDocument, SpdxRelationship[], bool replace = false) to persist them
+- CopyPackage — calls Parse to parse relationships, and calls Add(SpdxDocument, SpdxRelationship[], bool replace = false)
   to add root relationships to the destination document

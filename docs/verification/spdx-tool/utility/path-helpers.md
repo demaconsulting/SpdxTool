@@ -14,7 +14,8 @@ external service or file system access beyond in-process path manipulation is re
 #### Acceptance Criteria
 
 Verification is acceptable when path traversal and rooted-path inputs are rejected with
-`ArgumentException`, and safe relative paths are preserved and combined correctly.
+`ArgumentException`, null arguments are rejected with `ArgumentNullException` before any
+path operation, and safe relative paths are preserved and combined correctly.
 
 #### Test Scenarios
 

@@ -10,6 +10,11 @@ a workflow file and that the resulting document reflects every changed value.
 
 N/A - this unit is a static class with no instance state.
 
+**PreRunSpdxToolHookForTest**: `internal static Action? PreRunSpdxToolHookForTest { get; set; }` —
+optional test hook that is `null` in production. Tests may set this to a delegate that corrupts
+`validate.tmp/test.spdx.json` immediately before `Validate.RunSpdxTool` is called, exercising the
+CommandFailure path. Callers must reset this property to `null` after the test completes.
+
 #### Key Methods
 
 **Run**: executes the update-package self-test and records the result.

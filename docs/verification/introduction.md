@@ -29,7 +29,7 @@ their test methods provide verification evidence.
 - System and unit requirements are maintained in `docs/reqstream/spdx-tool/spdx-tool.yaml`,
   `docs/reqstream/spdx-tool/commands/*.yaml`,
   `docs/reqstream/spdx-tool/self-test/*.yaml`,
-  `docs/reqstream/spdx-tool/utility/utility.yaml`,
+  `docs/reqstream/spdx-tool/utility/*.yaml`,
   `docs/reqstream/spdx-tool/spdx/*.yaml`,
   `docs/reqstream/spdx-tool/context.yaml`,
   `docs/reqstream/spdx-tool/program.yaml`, and

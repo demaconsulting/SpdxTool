@@ -37,7 +37,9 @@ N/A - this unit is a static class with no instance state.
 - *Returns*: `bool` — true if RunSpdxTool returns exit code zero, the .sha256 file exists, and the
   hash value matches the known expected digest.
 - *Preconditions*: validate.tmp exists.
-- *Post-conditions*: test-file.txt.sha256 has been created in validate.tmp.
+- *Post-conditions*: test-file.txt.sha256 has been created in validate.tmp. The comparison is exact
+  (case-sensitive, no trimming), relying on the assumption that `GenerateSha256` writes only a
+  lowercase hex string with no trailing whitespace.
 
 Writes a test file containing "The quick brown fox jumps over the lazy dog", calls Validate.RunSpdxTool
 with --silent, hash, generate, sha256, and the file path, then verifies the generated hash file

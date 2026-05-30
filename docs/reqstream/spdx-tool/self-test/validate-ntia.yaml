@@ -15,5 +15,4 @@ sections:
                   command correctly identifies NTIA-compliant and non-compliant SPDX
                   documents after installation or deployment.
                 tests:
-                  - ValidateNtia_Run_ValidNtiaWorkflow_Passes
-                  - ValidateNtia_Run_IoError_PropagatesException
+                  - SpdxTool_Ntia

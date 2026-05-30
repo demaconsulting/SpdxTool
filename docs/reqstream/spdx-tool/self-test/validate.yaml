@@ -73,3 +73,30 @@ sections:
                   a caller provides an unrecognized file extension for the results file.
                 tests:
                   - SelfTest_Validate_UnsupportedResultExtension_ReportsError
+
+              - id: SpdxTool-SelfTest-Orchestrate-SystemInfoHeader
+                title: >-
+                  The SelfTest orchestrator shall write a system-information header (including
+                  tool version, machine name, OS description, .NET runtime version, and UTC
+                  timestamp) before executing any validation steps.
+                tags:
+                  - self-test
+                justification: |
+                  Including system information in the validation header ensures that results
+                  can be correlated with specific tool versions and execution environments,
+                  supporting effective debugging and compliance evidence.
+                tests:
+                  - SelfTest_Validate_ValidContext_Succeeds
+
+              - id: SpdxTool-SelfTest-Orchestrate-DepthHeading
+                title: >-
+                  The SelfTest orchestrator shall use the context depth setting to control the
+                  heading level of the system-information header in the output.
+                tags:
+                  - self-test
+                justification: |
+                  Depth-controlled heading output enables embedding the self-test report at an
+                  appropriate heading level within a larger document, supporting hierarchical
+                  report composition.
+                tests:
+                  - SelfTest_Validate_WithDepth_Succeeds

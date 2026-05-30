@@ -61,6 +61,50 @@ public class ValidateRunNuGetWorkflowTests
     }
 
     /// <summary>
+    ///     Test that ValidateRunNuGetWorkflow.Run records TestOutcome.Failed when the run-workflow
+    ///     command exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateRunNuGetWorkflow.PreRunSpdxToolHookForTest"/> hook is set to
+    ///     corrupt <c>workflow.yaml</c> with invalid content immediately before the in-process
+    ///     run-workflow command reads it. This causes the command to fail with a non-zero exit code,
+    ///     which causes <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateRunNuGetWorkflow_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts workflow.yaml immediately before the run-workflow command
+            // reads it, causing the command to fail with a non-zero exit code
+            ValidateRunNuGetWorkflow.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/workflow.yaml", "not: valid: yaml: content:");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the ValidateRunNuGetWorkflow step with the poisoned hook active
+            ValidateRunNuGetWorkflow.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateRunNuGetWorkflow.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    /// <summary>
     ///     Verifies that an I/O error in DoValidate propagates as an uncaught exception from Run.
     /// </summary>
     /// <remarks>

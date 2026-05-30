@@ -33,7 +33,7 @@ public class AddPackageTests
     ///     Test that add-package command on command line reports workflow-only error
     /// </summary>
     [Fact]
-    public void AddPackage_OnCommandLine_ReportsWorkflowOnlyError()
+    public void AddPackage_Run_OnCommandLine_ReportsWorkflowOnlyError()
     {
         // Arrange: no setup required
 
@@ -53,7 +53,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with relationship adds package and relationship
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowWithRelationship_AddsPackageAndRelationship()
+    public void AddPackage_Run_InWorkflowWithRelationship_AddsPackageAndRelationship()
     {
         // SPDX contents
         const string spdxContents =
@@ -148,7 +148,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with no relationship adds package only
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowNoRelationship_AddsPackageOnly()
+    public void AddPackage_Run_InWorkflowNoRelationship_AddsPackageOnly()
     {
         // SPDX contents
         const string spdxContents =
@@ -224,7 +224,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with query version adds package
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowWithQueryVersion_AddsPackage()
+    public void AddPackage_Run_InWorkflowWithQueryVersion_AddsPackage()
     {
         // SPDX contents
         const string spdxContents =
@@ -330,7 +330,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with existing same-identity package enhances rather than duplicates
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowWithExistingPackage_EnhancesPackage()
+    public void AddPackage_Run_InWorkflowWithExistingPackage_EnhancesPackage()
     {
         // SPDX contents - existing package with name "Test Package" version "1.0.0"
         const string spdxContents =
@@ -413,7 +413,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with missing spdx input reports error
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowMissingSpdxInput_ReportsError()
+    public void AddPackage_Run_InWorkflowMissingSpdxInput_ReportsError()
     {
         // Workflow contents - missing 'spdx' input
         const string workflowContents =
@@ -455,7 +455,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with missing package input reports error
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowMissingPackageInput_ReportsError()
+    public void AddPackage_Run_InWorkflowMissingPackageInput_ReportsError()
     {
         // Workflow contents - missing 'package' input
         const string workflowContents =
@@ -493,7 +493,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with empty package ID reports error
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowWithEmptyPackageId_ReportsError()
+    public void AddPackage_Run_InWorkflowWithEmptyPackageId_ReportsError()
     {
         // Workflow contents - empty package ID
         const string workflowContents =
@@ -536,7 +536,7 @@ public class AddPackageTests
     ///     Test that add-package command in workflow with SPDXRef-DOCUMENT package ID reports error
     /// </summary>
     [Fact]
-    public void AddPackage_InWorkflowWithDocumentPackageId_ReportsError()
+    public void AddPackage_Run_InWorkflowWithDocumentPackageId_ReportsError()
     {
         // Workflow contents - reserved document package ID
         const string workflowContents =

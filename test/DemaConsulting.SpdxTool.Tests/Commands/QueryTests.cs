@@ -25,7 +25,6 @@ namespace DemaConsulting.SpdxTool.Tests.Commands;
 /// <summary>
 ///     Tests for the 'query' command
 /// </summary>
-[Collection("CommandSequential")]
 public partial class QueryTests
 {
     /// <summary>
@@ -104,7 +103,7 @@ public partial class QueryTests
     ///     Test that query command for dotnet version on command line returns the version
     /// </summary>
     [Fact]
-    public void Query_DotNetVersion_OnCommandLine_ReturnsVersion()
+    public void Query_Run_DotNetVersionOnCommandLine_ReturnsVersion()
     {
         // Arrange: no setup required
 
@@ -127,7 +126,7 @@ public partial class QueryTests
     ///     Test that query command for dotnet version in workflow stores the version
     /// </summary>
     [Fact]
-    public void Query_DotNetVersion_InWorkflow_StoresVersion()
+    public void Query_Run_DotNetVersionInWorkflow_StoresVersion()
     {
         // Workflow contents
         const string workflowContents =

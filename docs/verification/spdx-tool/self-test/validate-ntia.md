@@ -19,7 +19,12 @@ elements are enforced correctly.
 
 **EndToEndNtiaValidation**: the self-test step proves that `validate ntia` distinguishes compliant
 and non-compliant SPDX content during validation. This scenario is tested by
-`ValidateNtia_Run_ValidNtiaWorkflow_Passes`.
+`SpdxTool_Ntia`.
+
+**CommandFailure**: when the validate command exits with a non-zero exit code (triggered via the
+`PreRunSpdxToolHookForTest` hook corrupting `validate.tmp/test-ntia.spdx.json`), `Run` records
+`TestOutcome.Failed` and no exception propagates. This scenario is tested by
+`ValidateNtia_Run_CommandFailure_RecordsFailedOutcome`.
 
 **IoError**: when `validate.tmp` cannot be created as a directory (e.g., it pre-exists as a file),
 `Run` propagates the `IOException` uncaught and records no `TestResult`. This scenario is tested by

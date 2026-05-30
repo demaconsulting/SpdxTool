@@ -19,6 +19,7 @@ sections:
               - SpdxTool-Utility-RejectNullArguments
               - SpdxTool-Utility-ValidPath
               - SpdxTool-Utility-Wildcard
+              - SpdxTool-Utility-Wildcard-NullArgs
             tests:
-              - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
-              - Wildcard_IsMatch_ExactMatch_ReturnsTrue
+              - FindPackage_ByName_FindsPackage
+              - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow

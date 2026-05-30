@@ -20,10 +20,12 @@ paths are preserved, and wildcard matching behaves correctly for exact, `*`, and
 
 **PathTraversalProtection**: path traversal inputs containing parent-directory segments are
 rejected. This scenario is tested by
-`PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException`.
+`PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException` and
+`PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException`.
 
 **AbsolutePathRejection**: absolute path inputs are rejected regardless of content. This scenario
-is tested by `PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException`.
+is tested by `PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException` and
+`PathHelpers_SafePathCombine_WindowsAbsolutePath_ThrowsArgumentException`.
 
 **NullArgumentRejection**: null base-path or relative-path arguments are rejected with
 ArgumentNullException. This scenario is tested by

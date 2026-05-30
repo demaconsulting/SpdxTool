@@ -52,8 +52,8 @@ self-validation, or command execution based on Context flags.
 
 - **InvalidOperationException**: caught in Main; message is printed to console in red and the
   process exits with code 1.
-- **Exception** (non-InvalidOperationException): caught in Main; the full exception including
-  stack trace is printed to console in red and then re-thrown.
+- **Exception** (non-InvalidOperationException): caught in Main; the exception message (not
+  stack trace) is printed to console in red and then re-thrown.
 - **CommandUsageException**: caught in Run; message is printed via context.WriteError and usage
   information is printed.
 - **CommandErrorException**: caught in Run; message is printed via context.WriteError.

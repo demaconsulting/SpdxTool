@@ -9,6 +9,8 @@ both the CLI and workflow YAML files.
 
 #### Data Model
 
+**Command**: `private const string` — the registered command name `"hash"`.
+
 **Instance**: `Hash` — the singleton instance registered with CommandsRegistry.
 
 **Entry**: `CommandEntry` — the CommandEntry record for Hash.

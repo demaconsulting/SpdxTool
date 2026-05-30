@@ -2,7 +2,7 @@
 sections:
   - title: SpdxTool Requirements
     sections:
-      - title: Command-Line Interface
+      - title: CommandLineInterface Requirements
         requirements:
           - id: SpdxTool-Command-Version
             title: The tool shall display version information when invoked with the -v or --version flag.
@@ -119,14 +119,10 @@ sections:
             tests:
               - SpdxTool_SelfTest_ValidateFlagWithResults_ShortFlag_GeneratesTrxFile
 
-      - title: Command Execution
+      - title: CommandExecution Requirements
         requirements:
           - id: SpdxTool-CommandExecution-SupportedCommands
-            title: >-
-              The tool shall support SPDX document manipulation commands including
-              add-package, add-relationship, copy-package, diagram, find-package,
-              get-version, hash, help, print, query, rename-id, run-workflow,
-              set-variable, to-markdown, update-package, and validate.
+            title: The tool shall execute the corresponding command operation when invoked with any supported command name.
             tags:
               - commands
             justification: |
@@ -134,13 +130,14 @@ sections:
               Each command must be reachable by name from the command-line dispatcher so
               that users can invoke them in scripts and CI/CD pipelines.
             children:
-              - SpdxTool-Package-AddPackage
-              - SpdxTool-Relationship-AddRelationship
+              - SpdxTool-Commands-AddPackage
+              - SpdxTool-Commands-AddRelationship
               - SpdxTool-Commands-CopyPackage
-              - SpdxTool-Transform-Diagram
+              - SpdxTool-Commands-Diagram
               - SpdxTool-Commands-FindPackage
               - SpdxTool-Commands-GetVersion-RetrievePackageVersion
               - SpdxTool-Commands-Hash-Generate
+              - SpdxTool-Commands-Hash-Verify
               - SpdxTool-Commands-Help-DisplayHelp
               - SpdxTool-Commands-Print-WorkflowOutput
               - SpdxTool-Commands-Query-ExternalProgramQuery
@@ -152,6 +149,7 @@ sections:
               - SpdxTool-Commands-Validate-Validate
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError
+              - CommandsRegistry_Commands_AllExpectedNames_ArePresent
 
           - id: SpdxTool-CommandExecution-WorkflowExecution
             title: The tool shall execute SPDX manipulation workflows defined in YAML workflow files.
@@ -167,7 +165,7 @@ sections:
             tests:
               - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow
 
-      - title: Platform Support
+      - title: PlatformSupport Requirements
         requirements:
           - id: SpdxTool-Platform-CrossPlatform
             title: The tool shall run successfully on Windows, Linux, and macOS platforms.
@@ -201,5 +199,6 @@ sections:
             # reflecting the compiled TFM of the test assembly. The dotnet8.x@/dotnet9.x@/dotnet10.x@
             # prefixes used in child requirements are installed SDK version CI dimensions.
             tests:
+              - net8.0@SpdxTool_Version_ShortFlag_DisplaysVersion
               - net9.0@SpdxTool_Version_ShortFlag_DisplaysVersion
               - net10.0@SpdxTool_Version_ShortFlag_DisplaysVersion

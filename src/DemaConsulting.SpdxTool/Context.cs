@@ -156,7 +156,7 @@ public sealed class Context : IDisposable
     }
 
     /// <summary>
-    ///     Writes a warning message in yellow to the console (when not silent) and to the log file (when configured).
+    ///     Writes a warning message in dark yellow to the console (when not silent) and to the log file (when configured).
     /// </summary>
     /// <param name="message">Warning message to write</param>
     /// <remarks>

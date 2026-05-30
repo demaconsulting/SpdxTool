@@ -23,8 +23,10 @@ N/A - this unit is a static class with no instance state.
   summary has been written to the Context; if Context.ValidationFile is set the results file is written.
 
 Writes a system-information header (tool version, machine name, OS description, .NET runtime version,
-UTC timestamp) before invoking any steps. Computes total, passed, and failed counts after all steps
-complete, writing "Validation Passed" if Context.Errors is zero.
+UTC timestamp) before invoking any steps. The header uses `Context.Depth` `#` characters for its
+Markdown heading level: depth 1 produces `#`, depth 2 produces `##`, and so on, allowing the report to
+be embedded at any nesting level within a larger Markdown document. Computes total, passed, and failed
+counts after all steps complete, writing "Validation Passed" if Context.Errors is zero.
 
 **WriteResultsFile**: serializes the collected TestResults to the file path in Context.ValidationFile.
 

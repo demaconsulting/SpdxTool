@@ -36,6 +36,18 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateNtia
 {
     /// <summary>
+    ///     Optional test hook invoked after fixture files are written and immediately before
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called for the first time.
+    /// </summary>
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that
+    ///     corrupts <c>validate.tmp/test-ntia.spdx.json</c> so that the validate command fails
+    ///     with a non-zero exit code, exercising the CommandFailure path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PreRunSpdxToolHookForTest { get; set; }
+
+    /// <summary>
     ///     Executes the NTIA validation self-test and records the result.
     /// </summary>
     /// <remarks>
@@ -167,6 +179,9 @@ internal static class ValidateNtia
               }
             }
             """);
+
+        // Allow tests to corrupt fixtures immediately before the command runs
+        PreRunSpdxToolHookForTest?.Invoke();
 
         // Run validation without NTIA flag - should succeed
         var exitCode1 = Validate.RunSpdxTool(

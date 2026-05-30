@@ -38,14 +38,13 @@ public class ValidateQueryTests
     ///     Test that ValidateQuery validation passes.
     /// </summary>
     /// <remarks>
-    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateQuery.Run"/> is
-    ///     <c>SpdxTool_Query</c>; the assertion in this test guards against regressions
-    ///     where the wrong name is recorded. The test method name follows the standard 4-segment
-    ///     convention; <c>SpdxTool_Query</c> is the <c>TestResult.Name</c> identifier recorded by
-    ///     the self-test step, not the test method name.
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_Query</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateQuery.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
     /// </remarks>
     [Fact]
-    public void ValidateQuery_Run_ValidQueryWorkflow_Passes()
+    public void SpdxTool_Query()
     {
         // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
@@ -58,6 +57,50 @@ public class ValidateQueryTests
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
         Assert.Equal("SpdxTool_Query", results.Results[0].Name);
+    }
+
+    /// <summary>
+    ///     Test that ValidateQuery.Run records TestOutcome.Failed when the query command
+    ///     exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateQuery.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>workflow.yaml</c> with invalid content immediately before the in-process query
+    ///     command reads it. This causes the command to fail with a non-zero exit code, which
+    ///     causes <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateQuery_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts workflow.yaml immediately before the query command reads it,
+            // causing the command to fail with a non-zero exit code
+            ValidateQuery.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/workflow.yaml", "not: valid: yaml: content:");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the ValidateQuery self-test step with the poisoned hook active
+            ValidateQuery.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateQuery.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 
     /// <summary>

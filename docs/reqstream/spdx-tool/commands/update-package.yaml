@@ -80,3 +80,16 @@ sections:
                   A clear error when it is missing prevents ambiguous or incorrect updates.
                 tests:
                   - UpdatePackage_Run_MissingPackageIdInput_ReportsError
+
+              - id: SpdxTool-Commands-UpdatePackage-UnrecognizedField
+                title: >-
+                  The update-package command shall report an error when an unrecognized
+                  field name is present in the package map.
+                tags:
+                  - spdx
+                justification: |
+                  Unrecognized field names indicate a misconfiguration that would silently
+                  discard user intent. A clear error forces the user to correct the field
+                  name rather than proceeding with an incomplete update.
+                tests:
+                  - UpdatePackage_Run_UnrecognizedField_ReportsError

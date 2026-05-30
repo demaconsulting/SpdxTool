@@ -38,13 +38,13 @@ public class ValidateCopyPackageTests
     ///     Test that ValidateCopyPackage validation passes.
     /// </summary>
     /// <remarks>
-    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateCopyPackage.Run"/> is
-    ///     <c>SpdxTool_CopyPackage</c>; the assertion in this test guards against regressions
-    ///     where the wrong name is recorded. This system-level naming convention is appropriate
-    ///     for self-test integration tests.
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_CopyPackage</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateCopyPackage.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
     /// </remarks>
     [Fact]
-    public void ValidateCopyPackage_Run_ValidPackageWorkflow_Passes()
+    public void SpdxTool_CopyPackage()
     {
         // Arrange: create a context in validate mode and an empty results collection
         using var context = Context.Create(["--validate"]);
@@ -57,6 +57,50 @@ public class ValidateCopyPackageTests
         Assert.Single(results.Results);
         Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
         Assert.Equal("SpdxTool_CopyPackage", results.Results[0].Name);
+    }
+
+    /// <summary>
+    ///     Test that ValidateCopyPackage.Run records TestOutcome.Failed when the copy-package command
+    ///     exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateCopyPackage.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>from.spdx.json</c> with invalid JSON immediately before the in-process copy-package
+    ///     command reads it. This causes copy-package to fail with a non-zero exit code, which causes
+    ///     <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateCopyPackage_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts from.spdx.json immediately before copy-package reads it,
+            // causing the command to fail with a non-zero exit code
+            ValidateCopyPackage.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/from.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the copy-package self-test step with the poisoned hook active
+            ValidateCopyPackage.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateCopyPackage.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
     }
 
     /// <summary>

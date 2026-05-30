@@ -8,7 +8,9 @@ the destination document contains the copied package with the expected relations
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+`PreRunSpdxToolHookForTest` — an internal property, `null` in production, that tests may set to a
+delegate invoked immediately before `Validate.RunSpdxTool` is called. Allows tests to corrupt
+`validate.tmp/from.spdx.json` to exercise the CommandFailure path deterministically.
 
 #### Key Methods
 

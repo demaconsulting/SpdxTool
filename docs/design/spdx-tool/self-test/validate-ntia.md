@@ -8,7 +8,12 @@ SPDX document and accepts a fully compliant one.
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+N/A - this unit is a static class with no instance state. The `PreRunSpdxToolHookForTest` property
+holds an optional `Action` delegate that is `null` in production. When set by a test, the delegate is
+invoked in `DoValidateMissingSupplier` immediately after the fixture file is written and before
+`Validate.RunSpdxTool` is called. This hook allows tests to corrupt the fixture so that the validate
+command returns a non-zero exit code, exercising the CommandFailure path without spawning an external
+process.
 
 #### Key Methods
 

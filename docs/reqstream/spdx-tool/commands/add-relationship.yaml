@@ -6,7 +6,7 @@ sections:
         sections:
           - title: AddRelationship Requirements
             requirements:
-              - id: SpdxTool-Relationship-AddRelationship
+              - id: SpdxTool-Commands-AddRelationship
                 title: The tool shall add relationships to SPDX documents using the add-relationship command.
                 tags:
                   - spdx
@@ -16,10 +16,10 @@ sections:
                   dependency graphs and component hierarchies.
                 tests:
                   - AddRelationship_Run_OnCommandLine_AddsRelationship
-                  - AddRelationship_InWorkflow_AddsRelationship
-                  - AddRelationship_ReplaceMode_ReplacesExistingRelationship
+                  - AddRelationship_Run_InWorkflow_AddsRelationship
+                  - AddRelationship_Run_ReplaceMode_ReplacesExistingRelationship
 
-              - id: SpdxTool-Relationship-AddRelationship-Validate
+              - id: SpdxTool-Commands-AddRelationship-Validate
                 title: >-
                   The add-relationship command shall validate its workflow inputs and report an error for
                   missing or invalid values.
@@ -29,15 +29,15 @@ sections:
                   Invalid inputs must be detected early and reported clearly so that workflow
                   authors can diagnose configuration mistakes quickly.
                 tests:
-                  - AddRelationship_InWorkflowMissingSpdxInput_ReportsError
-                  - AddRelationship_InWorkflowMissingIdInput_ReportsError
-                  - AddRelationship_InWorkflowMissingRelationshipsInput_ReportsError
-                  - AddRelationship_InWorkflowInvalidReplaceValue_ReportsError
-                  - AddRelationship_InWorkflowNonMappingRelationshipNode_ReportsError
-                  - AddRelationship_InWorkflowMissingRelationshipType_ReportsError
-                  - AddRelationship_InWorkflowMissingRelationshipElement_ReportsError
+                  - AddRelationship_Run_InWorkflowMissingSpdxInput_ReportsError
+                  - AddRelationship_Run_InWorkflowMissingIdInput_ReportsError
+                  - AddRelationship_Run_InWorkflowMissingRelationshipsInput_ReportsError
+                  - AddRelationship_Run_InWorkflowInvalidReplaceValue_ReportsError
+                  - AddRelationship_Run_InWorkflowNonMappingRelationshipNode_ReportsError
+                  - AddRelationship_Run_InWorkflowMissingRelationshipType_ReportsError
+                  - AddRelationship_Run_InWorkflowMissingRelationshipElement_ReportsError
 
-              - id: SpdxTool-Relationship-AddRelationship-Validate-CLI
+              - id: SpdxTool-Commands-AddRelationship-Validate-CLI
                 title: >-
                   The add-relationship command shall validate CLI arguments and report an error for
                   missing or invalid values.

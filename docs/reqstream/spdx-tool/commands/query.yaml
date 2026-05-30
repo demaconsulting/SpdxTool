@@ -14,8 +14,8 @@ sections:
                   Workflows often need to extract information from external tools or
                   commands to incorporate into SPDX documents or workflow logic.
                 tests:
-                  - Query_DotNetVersion_OnCommandLine_ReturnsVersion
-                  - Query_DotNetVersion_InWorkflow_StoresVersion
+                  - Query_Run_DotNetVersionOnCommandLine_ReturnsVersion
+                  - Query_Run_DotNetVersionInWorkflow_StoresVersion
 
               - id: SpdxTool-Commands-Query-ValueCaptureGroup
                 title: The tool shall require the regex pattern to contain a named value capture group.
@@ -35,7 +35,7 @@ sections:
                   Users running the query command from the command line need the captured
                   value written to standard output for scripting and inspection.
                 tests:
-                  - Query_DotNetVersion_OnCommandLine_ReturnsVersion
+                  - Query_Run_DotNetVersionOnCommandLine_ReturnsVersion
 
               - id: SpdxTool-Commands-Query-WorkflowOutput
                 title: >-
@@ -47,7 +47,7 @@ sections:
                   Workflows need to store extracted values for use in downstream steps;
                   the output input specifies the target variable.
                 tests:
-                  - Query_DotNetVersion_InWorkflow_StoresVersion
+                  - Query_Run_DotNetVersionInWorkflow_StoresVersion
 
               - id: SpdxTool-Commands-Query-PatternNotFound
                 title: The tool shall report an error when the pattern is not matched in any line of the program output.

@@ -15,5 +15,4 @@ sections:
                   external programs and extracts values from their output after installation
                   or deployment.
                 tests:
-                  - ValidateQuery_Run_ValidQueryWorkflow_Passes
-                  - ValidateQuery_Run_IoError_PropagatesException
+                  - SpdxTool_Query

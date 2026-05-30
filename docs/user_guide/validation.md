@@ -37,6 +37,12 @@ To control the depth of the validation report:
 dotnet spdx-tool --validate --depth 2
 ```
 
+The `--depth` flag accepts a positive integer value (default: 1). It controls the Markdown heading
+level used for the validation output header: depth 1 produces `#`, depth 2 produces `##`, depth 3
+produces `###`, and so on. This allows the validation report to be embedded at any nesting level
+within a larger Markdown document (for example, when capturing the report to a log file that is part
+of a broader compliance document).
+
 The output format is automatically selected based on the file extension: `.trx` produces a Visual Studio
 TRX file and `.xml` produces a JUnit XML file.
 

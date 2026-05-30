@@ -36,7 +36,7 @@ and calls DoValidate. The ntia input is evaluated case-insensitively via ToLower
 - *Preconditions*: spdx input is required.
 - *Post-conditions*: The document is validated; issues reported.
 
-**DoValidate(Context, string, bool)**: Loads the SPDX document, calls doc.Validate to collect
+**DoValidate(Context, string, bool)** (`public static`): Loads the SPDX document, calls doc.Validate to collect
 issues, writes each issue as a warning to context, writes a blank line to separate the warning list
 from the error summary, and throws CommandErrorException if any issues were found. Callable directly
 by external callers (e.g., self-test) without going through the CLI or workflow dispatch paths.
@@ -50,7 +50,8 @@ by external callers (e.g., self-test) without going through the CLI or workflow 
 
 #### Error Handling
 
-**CommandUsageException** — thrown by Run(Context, string[]) when no arguments are provided.
+**CommandUsageException** — thrown by Run(Context, string[]) when no arguments are provided; also
+propagated from `DoValidate` via `SpdxHelpers.LoadJsonDocument` when `spdxFile` does not exist on disk.
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the spdx input is
 missing.

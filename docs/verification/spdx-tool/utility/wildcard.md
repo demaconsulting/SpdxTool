@@ -31,8 +31,7 @@ is tested by `Wildcard_IsMatch_QuestionMarkPattern_MatchesSingleChar`.
 
 **NullArguments**: null input or pattern arguments throw ArgumentNullException immediately.
 This scenario is tested by `Wildcard_IsMatch_NullInput_ThrowsArgumentNullException` and
-`Wildcard_IsMatch_NullPattern_ThrowsArgumentNullException`, linked to requirement
-`SpdxTool-Utility-Wildcard-NullArgs`.
+`Wildcard_IsMatch_NullPattern_ThrowsArgumentNullException`.
 
 **EmptyStringBoundary**: empty input and empty pattern boundary conditions are handled
 correctly — an empty input matches an empty pattern, a non-empty input does not match an

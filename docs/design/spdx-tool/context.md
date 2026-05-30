@@ -31,8 +31,8 @@ recognized flag to consume its required value from the argument sequence.
 - *Returns*: `Context`
 - *Preconditions*: args must not be null.
 - *Post-conditions*: Returns a fully initialized Context. Throws ArgumentNullException when args
-  is null. Throws InvalidOperationException if a flag is missing its required value argument or
-  if the depth value is not a valid integer.
+  is null. Throws InvalidOperationException if a flag is missing its required value argument, or
+  if the depth value is not a valid integer, or if the depth value is a valid integer but is negative.
 
 **WriteLine(string)**: Writes a line to the console (unless Silent) and to the log (if open).
 
@@ -73,9 +73,10 @@ log, and increments the Errors counter.
 **ArgumentNullException** — thrown by Create when args is null.
 
 **InvalidOperationException** — thrown by Create when a flag argument is missing (e.g.,
-`--log` without a filename) or when `--depth` is followed by a non-integer value. Also
-thrown by Create when the log file cannot be created (wraps UnauthorizedAccessException,
-ArgumentException, NotSupportedException, IOException).
+`--log` without a filename), when `--depth` is followed by a non-integer value, or when
+`--depth` is followed by a negative integer value. Also thrown by Create when the log file
+cannot be created (wraps UnauthorizedAccessException, ArgumentException,
+NotSupportedException, IOException).
 
 ### Dependencies
 

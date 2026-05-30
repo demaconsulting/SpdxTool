@@ -19,7 +19,12 @@ expected Markdown summary.
 #### Test Scenarios
 
 **EndToEndMarkdownGeneration**: the self-test step proves that `to-markdown` generates a Markdown
-summary during validation. This scenario is tested by `ValidateToMarkdown_Run_ValidToMarkdownWorkflow_Passes`.
+summary during validation. This scenario is tested by `SpdxTool_ToMarkdown`.
+
+**CommandFailure**: when the to-markdown command exits with a non-zero exit code (triggered via the
+`PreRunSpdxToolHookForTest` hook corrupting `validate.tmp/test-markdown.spdx.json`), `Run` records
+`TestOutcome.Failed` and no exception propagates. This scenario is tested by
+`ValidateToMarkdown_Run_CommandFailure_RecordsFailedOutcome`.
 
 **IoError**: when `validate.tmp` cannot be created as a directory (e.g., it pre-exists as a file),
 `Run` propagates the `IOException` uncaught and records no `TestResult`. This scenario is tested by

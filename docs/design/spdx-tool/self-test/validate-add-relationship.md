@@ -9,7 +9,9 @@ element IDs, and comment.
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+`PreRunSpdxToolHookForTest` — an internal property, `null` in production, that tests may set to a
+delegate invoked immediately before `Validate.RunSpdxTool` is called. Allows tests to corrupt
+`validate.tmp/test.spdx.json` to exercise the CommandFailure path deterministically.
 
 #### Key Methods
 
@@ -19,7 +21,7 @@ N/A - this unit is a static class with no instance state.
   append to.
 - *Returns*: void.
 - *Preconditions*: None.
-- *Post-conditions*: A TestResult entry named SpdxTool_AddRelationship has been appended to results;
+- *Post-conditions*: If DoValidate returns without throwing, a TestResult entry named SpdxTool_AddRelationship has been appended to results;
   a pass message has been written to the Context's standard output stream, or a fail message to the
   Context's error output stream.
 

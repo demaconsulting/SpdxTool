@@ -6,7 +6,7 @@ sections:
         sections:
           - title: Diagram Requirements
             requirements:
-              - id: SpdxTool-Transform-Diagram
+              - id: SpdxTool-Commands-Diagram
                 title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
                 tags:
                   - spdx
@@ -15,10 +15,10 @@ sections:
                   help users understand complex dependency graphs. Mermaid is a popular
                   text-based diagramming language.
                 tests:
-                  - Diagram_ValidSpdxFile_GeneratesDiagram
-                  - Diagram_WithToolsOption_GeneratesDiagramWithTools
+                  - Diagram_Run_ValidSpdxFile_GeneratesDiagram
+                  - Diagram_Run_WithToolsOption_GeneratesDiagramWithTools
 
-              - id: SpdxTool-Transform-Diagram-Workflow
+              - id: SpdxTool-Commands-Diagram-Workflow
                 title: >-
                   The diagram command shall accept spdx, mermaid, and optional tools inputs when invoked
                   from a workflow step.
@@ -28,9 +28,9 @@ sections:
                   Workflow users need to generate Mermaid diagrams as part of automated
                   pipelines using structured YAML inputs rather than positional CLI arguments.
                 tests:
-                  - Diagram_InWorkflow_GeneratesDiagram
+                  - Diagram_Run_InWorkflow_GeneratesDiagram
 
-              - id: SpdxTool-Transform-Diagram-ToolsFilter
+              - id: SpdxTool-Commands-Diagram-ToolsFilter
                 title: >-
                   When the tools option is not specified, the diagram command shall exclude tool-related
                   relationships from the generated Mermaid diagram.
@@ -41,9 +41,9 @@ sections:
                   details that clutter diagrams when not requested. Excluding them by default
                   produces cleaner, more readable diagrams.
                 tests:
-                  - Diagram_WithoutToolsOption_ExcludesToolRelationships
+                  - Diagram_Run_WithoutToolsOption_ExcludesToolRelationships
 
-              - id: SpdxTool-Transform-Diagram-UnspecifiedVersion
+              - id: SpdxTool-Commands-Diagram-UnspecifiedVersion
                 title: >-
                   When a package has no version information, the diagram command shall use
                   "unspecified" as the version label in the generated diagram.
@@ -55,9 +55,9 @@ sections:
                   "unspecified" communicates clearly to the diagram reader that no version
                   was declared.
                 tests:
-                  - Diagram_PackageWithoutVersion_UsesUnspecifiedFallback
+                  - Diagram_Run_PackageWithoutVersion_UsesUnspecifiedFallback
 
-              - id: SpdxTool-Transform-Diagram-Validate
+              - id: SpdxTool-Commands-Diagram-Validate
                 title: >-
                   The diagram command shall validate its inputs and report an error for missing or
                   invalid values.
@@ -67,10 +67,10 @@ sections:
                   Invalid inputs must be detected early and reported clearly so that users can
                   diagnose configuration mistakes quickly.
                 tests:
-                  - Diagram_MissingArguments_ReportsError
-                  - Diagram_InsufficientArguments_ReportsError
-                  - Diagram_MissingSpdxFile_ReportsError
-                  - Diagram_InvalidOption_ReportsError
+                  - Diagram_Run_MissingArguments_ReportsError
+                  - Diagram_Run_InsufficientArguments_ReportsError
+                  - Diagram_Run_MissingSpdxFile_ReportsError
+                  - Diagram_Run_InvalidOption_ReportsError
                   - Diagram_Run_MissingSpdxInput_ReportsError
                   - Diagram_Run_MissingMermaidInput_ReportsError
                   - Diagram_Run_InvalidToolsInput_ReportsError

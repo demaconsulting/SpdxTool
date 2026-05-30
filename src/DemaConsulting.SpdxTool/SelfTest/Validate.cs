@@ -110,16 +110,16 @@ public static class Validate
             context.WriteLine($"Failed: {failedTests}");
         }
 
-        // If all validations succeeded (no errors) then report validation passed
-        if (context.Errors == 0)
-        {
-            context.WriteLine("\nValidation Passed");
-        }
-
         // Save test results
         if (!string.IsNullOrEmpty(context.ValidationFile))
         {
             WriteResultsFile(context, results);
+        }
+
+        // If all validations succeeded (no errors) then report validation passed
+        if (context.Errors == 0)
+        {
+            context.WriteLine("\nValidation Passed");
         }
     }
 

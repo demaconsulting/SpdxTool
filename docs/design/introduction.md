@@ -165,6 +165,12 @@ Each local software item has corresponding artifacts in parallel directory trees
 
 - Requirements: `docs/reqstream/{system-name}.yaml`,
   `docs/reqstream/{system-name}[/{subsystem-name}...]/{item}.yaml`
+
+Note: `docs/reqstream/spdx-tool/platform-requirements.yaml` is an auxiliary requirements file for
+platform-specific decomposition. It sits outside the standard subsystem naming convention and does
+not follow the `{subsystem-name}.yaml` pattern; renaming it would break the ReqStream section-merge
+linkage with the parent `spdx-tool.yaml`.
+
 - Design: `docs/design/{system-name}.md`,
   `docs/design/{system-name}[/{subsystem-name}...]/{item}.md`
 - Verification: `docs/verification/{system-name}.md`,

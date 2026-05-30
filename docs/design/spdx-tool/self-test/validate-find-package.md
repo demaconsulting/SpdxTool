@@ -44,7 +44,9 @@ must execute serially to avoid races.
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the log file
-does not contain the expected "Found package SPDXRef-Package-1" text. The finally block guards the
+`output.log` is absent after a successful tool exit, guarding against the tool exiting zero without
+writing the log. Returns false if the log file does not contain the expected "Found package
+SPDXRef-Package-1" text. The finally block guards the
 Directory.Delete call with a Directory.Exists check to prevent a secondary DirectoryNotFoundException
 masking the original exception when Directory.CreateDirectory fails (e.g., because validate.tmp
 already exists as a file).

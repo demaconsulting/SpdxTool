@@ -21,6 +21,10 @@ expected package and relationship to the SPDX document.
 **EndToEndAddPackage**: the self-test step proves that `add-package` can add a package and
 relationship in a realistic validation run. This scenario is tested by `SpdxTool_AddPackage`.
 
+**CommandFailure**: when the add-package command exits non-zero, `Run` records
+`TestOutcome.Failed`. This scenario is tested by
+`ValidateAddPackage_Run_CommandFailure_RecordsFailedOutcome`.
+
 **ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by
 `ValidateAddPackage_Run_IoError_PropagatesException`.

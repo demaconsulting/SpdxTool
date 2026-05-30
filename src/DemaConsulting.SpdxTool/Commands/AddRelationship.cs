@@ -29,6 +29,13 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Add a relationship between SPDX elements
 /// </summary>
+/// <remarks>
+///     Stateless singleton registered with CommandsRegistry and exposed as a static helper reused by
+///     AddPackage and CopyPackage. Callers that only have a file path use the
+///     <see cref="Add(string, SpdxRelationship[], bool)"/> overload; callers that already hold an
+///     in-memory document use the <see cref="Add(SpdxDocument, SpdxRelationship[], bool)"/> overload
+///     to avoid redundant file I/O.
+/// </remarks>
 public sealed class AddRelationship : Command
 {
     /// <summary>
@@ -140,6 +147,12 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Add the SPDX relationships to the SPDX document
     /// </summary>
+    /// <remarks>
+    ///     File-path entry point that loads the document from disk, delegates to
+    ///     <see cref="Add(SpdxDocument, SpdxRelationship[], bool)"/>, and saves the result.
+    ///     Use this overload when the caller holds only a file path; use the document overload when
+    ///     the document is already in memory to avoid redundant I/O.
+    /// </remarks>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="relationships">SPDX relationships</param>
     /// <param name="replace">Replace existing relationships</param>
@@ -159,6 +172,12 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Add the SPDX relationships to the SPDX document
     /// </summary>
+    /// <remarks>
+    ///     Shared document-level integration point reused by AddPackage and CopyPackage to attach
+    ///     relationships without incurring additional file I/O. Wraps any exception from
+    ///     <c>SpdxRelationships.Add</c> in a <see cref="CommandErrorException"/> so that all
+    ///     command-layer callers receive a consistent exception type.
+    /// </remarks>
     /// <param name="doc">SPDX document</param>
     /// <param name="relationships">SPDX relationships</param>
     /// <param name="replace">Replace existing relationships</param>
@@ -178,6 +197,12 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Parse SPDX relationships from a YAML sequence node
     /// </summary>
+    /// <remarks>
+    ///     Sequence-level entry point called by workflow callers that hold a
+    ///     <see cref="YamlSequenceNode"/>. Returns an empty array when <paramref name="relationships"/>
+    ///     is null so that callers with an optional relationships block do not need a null guard before
+    ///     calling this method.
+    /// </remarks>
     /// <param name="command">Command to blame for errors</param>
     /// <param name="packageId">Package ID</param>
     /// <param name="relationships">Relationships YAML sequence node</param>
@@ -217,6 +242,10 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Parse an SPDX relationship from a YAML mapping node
     /// </summary>
+    /// <remarks>
+    ///     Mapping-level entry point called by the sequence overload for each child node and directly
+    ///     by callers that already hold a <see cref="YamlMappingNode"/> for a single relationship entry.
+    /// </remarks>
     /// <param name="command">Command to blame for errors</param>
     /// <param name="packageId">Package ID</param>
     /// <param name="relationshipMap">Relationship YAML mapping node</param>

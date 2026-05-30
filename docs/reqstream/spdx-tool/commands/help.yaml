@@ -30,3 +30,4 @@ sections:
                   via the about input in YAML steps, not only from the command line.
                 tests:
                   - Help_Run_YamlInvocation_DisplaysHelp
+                  - Help_Run_YamlInvocation_MissingAbout_ReportsError

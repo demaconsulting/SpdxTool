@@ -34,14 +34,32 @@ public class SelfTestTests
     [Fact]
     public void SelfTest_Validate_ValidContext_Succeeds()
     {
-        // Arrange: create context with --validate flag
+        // Arrange: create context with --validate flag; capture console output
         using var context = Context.Create(["--validate"]);
+        var originalOut = Console.Out;
+        using var writer = new StringWriter();
+        Console.SetOut(writer);
 
-        // Act: run the self-test subsystem directly
-        Validate.Run(context);
+        try
+        {
+            // Act: run the self-test subsystem directly
+            Validate.Run(context);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
 
         // Assert: no errors
         Assert.Equal(0, context.ExitCode);
+
+        // Assert: system-information header fields are present in the output
+        var output = writer.ToString();
+        Assert.Contains("SpdxTool Version", output);
+        Assert.Contains("Machine Name", output);
+        Assert.Contains("OS Version", output);
+        Assert.Contains("DotNet Runtime", output);
+        Assert.Contains("Time Stamp", output);
     }
 
     /// <summary>
@@ -50,14 +68,26 @@ public class SelfTestTests
     [Fact]
     public void SelfTest_Validate_WithDepth_Succeeds()
     {
-        // Arrange: create context with --validate --depth flags
+        // Arrange: create context with --validate --depth flags; capture console output
         using var context = Context.Create(["--validate", "--depth", "2"]);
+        var originalOut = Console.Out;
+        using var writer = new StringWriter();
+        Console.SetOut(writer);
 
-        // Act: run the self-test subsystem directly
-        Validate.Run(context);
+        try
+        {
+            // Act: run the self-test subsystem directly
+            Validate.Run(context);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
 
-        // Assert: no errors
+        // Assert: no errors and depth-structured output was produced (depth=2 produces "## " header)
         Assert.Equal(0, context.ExitCode);
+        var output = writer.ToString();
+        Assert.Contains("## ", output);
     }
 
     /// <summary>

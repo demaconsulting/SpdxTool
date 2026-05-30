@@ -109,7 +109,7 @@ For issues, questions, or feature requests:
 - **SPDX Model Library**: <https://github.com/demaconsulting/SpdxModel>
 - **SPDX Workflows Library**: <https://github.com/demaconsulting/SpdxWorkflows>
 
-[spdx-spec]: https://spdx.github.io/spdx-spec/
+[spdx-spec]: https://spdx.github.io/spdx-spec/v2.3/
 [spdx-github]: https://github.com/spdx/spdx-spec
 [ntia-sbom]: https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf
 [releases]: https://github.com/demaconsulting/SpdxTool/releases

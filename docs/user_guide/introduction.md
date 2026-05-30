@@ -29,11 +29,6 @@ Prerequisites: .NET SDK 8.0 or later. The guide includes:
 
 ## References
 
-- [SPDX Specification v2.3][spdx-spec] — the SPDX document standard implemented by SpdxTool.
-- [NTIA Minimum Elements for a Software Bill of Materials][ntia-sbom] — NTIA requirements enforced
-  by the `validate ntia` command.
-- [SpdxTool releases][spdx-releases] — compiled documentation and release artifacts.
-
-[spdx-spec]: https://spdx.github.io/spdx-spec/v2.3/
-[ntia-sbom]: https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf
-[spdx-releases]: https://github.com/demaconsulting/SpdxTool/releases
+- [REF-1] SPDX Specification, Version 2.3, SPDX Workgroup. <https://spdx.github.io/spdx-spec/v2.3/>
+- [REF-2] NTIA Minimum Elements for a Software Bill of Materials, NTIA. <https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf>
+- [REF-3] SpdxTool releases. <https://github.com/demaconsulting/SpdxTool/releases>

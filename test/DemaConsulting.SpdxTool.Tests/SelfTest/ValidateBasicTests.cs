@@ -60,6 +60,50 @@ public class ValidateBasicTests
     }
 
     /// <summary>
+    ///     Test that ValidateBasic.Run records TestOutcome.Failed when the validate command exits
+    ///     with a non-zero exit code on the valid-document sub-test.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateBasic.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>test-valid.spdx.json</c> with invalid JSON immediately before the in-process
+    ///     validate command reads it. This causes the validate command to fail with a non-zero exit
+    ///     code, causing <c>DoValidateValid</c> to return <c>false</c>, <c>DoValidate</c> to return
+    ///     <c>false</c>, and <c>Run</c> to record <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateBasic_Run_ValidationFails_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts test-valid.spdx.json immediately before the validate command
+            // reads it, causing the validate command to fail with a non-zero exit code
+            ValidateBasic.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/test-valid.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the ValidateBasic self-test step with the poisoned hook active
+            ValidateBasic.Run(context, results);
+
+            // Assert: one result recorded with Failed outcome
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateBasic.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    /// <summary>
     ///     Test that ValidateBasic.Run propagates an I/O exception when the working
     ///     directory prevents validate.tmp from being used correctly.
     ///     This exercises the failure path of Run() as documented in the design: exceptions

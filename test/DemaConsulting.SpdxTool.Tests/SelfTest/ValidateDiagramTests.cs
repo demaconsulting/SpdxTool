@@ -38,13 +38,13 @@ public class ValidateDiagramTests
     ///     Test that ValidateDiagram validation passes.
     /// </summary>
     /// <remarks>
-    ///     The <c>TestResult.Name</c> recorded by <see cref="ValidateDiagram.Run"/> is
-    ///     <c>SpdxTool_Diagram</c>; the assertion in this test guards against regressions
-    ///     where the wrong name is recorded. This system-level naming convention is appropriate
-    ///     for self-test integration tests.
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_Diagram</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateDiagram.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
     /// </remarks>
     [Fact]
-    public void ValidateDiagram_Run_ValidDiagramWorkflow_Passes()
+    public void SpdxTool_Diagram()
     {
         // Arrange: create a validate context and an empty results collection
         using var context = Context.Create(["--validate"]);

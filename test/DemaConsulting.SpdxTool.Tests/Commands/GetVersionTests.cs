@@ -190,6 +190,45 @@ public class GetVersionTests
     }
 
     /// <summary>
+    ///     Test that get-version command in a workflow step reports an error when required inputs are absent
+    /// </summary>
+    [Fact]
+    public void GetVersion_Run_MissingWorkflowInputs_ReportsError()
+    {
+        // Arrange: workflow step omits the required 'spdx' input
+        const string workflowContents =
+            """
+            steps:
+            - command: get-version
+              inputs:
+                output: version
+            """;
+
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: write the workflow file
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: error reported for the specific missing 'spdx' input
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'get-version' command missing 'spdx' input", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
     ///     Test that get-version command reports an error when no package matches the supplied criteria
     /// </summary>
     [Fact]

@@ -60,6 +60,50 @@ public class ValidateAddRelationshipTests
     }
 
     /// <summary>
+    ///     Test that ValidateAddRelationship.Run records TestOutcome.Failed when the add-relationship
+    ///     command exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateAddRelationship.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>test.spdx.json</c> with invalid JSON immediately before the in-process add-relationship
+    ///     command reads it. This causes add-relationship to fail with a non-zero exit code, which
+    ///     causes <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateAddRelationship_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook corrupts test.spdx.json immediately before add-relationship reads it,
+            // causing the command to fail with a non-zero exit code
+            ValidateAddRelationship.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/test.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the add-relationship self-test step with the poisoned hook active
+            ValidateAddRelationship.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateAddRelationship.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    /// <summary>
     ///     Test that ValidateAddRelationship.Run propagates an I/O exception when the working
     ///     directory prevents validate.tmp from being used correctly.
     ///     This exercises the failure path of Run() as documented in the design: exceptions

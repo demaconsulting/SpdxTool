@@ -7,7 +7,9 @@ sections:
           - title: SpdxHelpers Requirements
             requirements:
               - id: SpdxTool-Spdx-SpdxHelpers-LoadDocument
-                title: SpdxHelpers shall load an SPDX document or throw CommandUsageException if the file is missing.
+                title: >-
+                  SpdxHelpers shall load and return an SPDX document, and shall report a usage error
+                  when the specified file does not exist.
                 justification: |
                   Commands that process SPDX documents must have a reliable way to load them
                   from the file system. Centralizing the file-existence check in SpdxHelpers

@@ -2,9 +2,12 @@
 
 ### Overview
 
-The Self-Test subsystem implements the `--validate` self-test suite for DemaConsulting.SpdxTool. It exercises
-every command against embedded SPDX fixtures to verify tool correctness after installation or deployment,
-without requiring external tools or network access except where noted.
+The Self-Test subsystem implements the `--validate` self-test suite for DemaConsulting.SpdxTool. Core
+SPDX-manipulation commands each have a dedicated step class that exercises them against embedded SPDX
+fixtures to verify tool correctness after installation or deployment, without requiring external tools or
+network access except where noted. The Help, Print, and SetVariable commands do not have dedicated step
+classes; Print is exercised implicitly within ValidateQuery's workflow YAML, and Help and SetVariable
+coverage is provided at the unit-test level.
 
 The subsystem contains the following units:
 
@@ -53,6 +56,10 @@ ValidateAddRelationship, ValidateBasic, ValidateCopyPackage, ValidateDiagram, Va
 ValidateGetVersion, ValidateHash, ValidateNtia, ValidateQuery, ValidateRenameId, ValidateRunNuGetWorkflow,
 ValidateToMarkdown, and ValidateUpdatePackage.
 
+The heading written at the start of the report uses `Context.Depth` `#` characters (e.g., depth 1
+produces `#`, depth 2 produces `##`). This controls the nesting level of the validation output, allowing
+the report to be embedded at any heading level within a larger Markdown document.
+
 Each step creates a validate.tmp directory, writes inline fixture files (SPDX JSON and/or workflow YAML),
 calls Validate.RunSpdxTool to invoke one or more commands in-process, verifies the result by inspecting exit
 codes or output file content, and deletes the temporary directory in a finally block. The step records its
@@ -66,8 +73,9 @@ or JUnit XML format (for a .xml extension) using JUnitSerializer.
 If `Context.ValidationFile` is set to a path with an extension other than `.trx` or `.xml`,
 `WriteResultsFile` calls `context.WriteError` with the message
 `"Unsupported results file format '{extension}'. Use .trx or .xml extension."` and returns
-without writing any file. The validation summary (pass/fail counts) is still written to the
-output; only the result file is skipped.
+without writing any file. Calling `context.WriteError` increments the error count and results
+in a non-zero exit code (see *Context Design*). The validation summary (pass/fail counts) is
+still written to the output; only the result file is skipped.
 
 Most steps run entirely in-process. ValidateQuery spawns dotnet as an external process and requires dotnet
 on the system PATH. ValidateRunNuGetWorkflow may restore a NuGet package on a cache miss, which requires

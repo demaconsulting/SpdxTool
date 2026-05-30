@@ -21,16 +21,19 @@ it into an SpdxDocument using Spdx2JsonDeserializer.
 - *Preconditions*: spdxFile must be a non-null path.
 - *Post-conditions*: Returns a fully deserialized SpdxDocument.
 
-**SaveJsonDocument(SpdxDocument, string)**: Appends the tool creator entry (if not already
-present), serializes the document to JSON using Spdx2JsonSerializer, and writes the result
-to the specified file path.
+**SaveJsonDocument(SpdxDocument, string)**: Stamps the tool creator entry and serializes the
+document to a JSON file. Temporarily replaces `doc.CreationInformation.Creators` with a
+creator-stamped copy for serialization; the original array is always restored in a `finally`
+block so the in-memory document is left unchanged. The creator entry is appended only if not
+already present.
 
 - *Parameters*: `SpdxDocument doc` — the document to serialize; `string spdxFile` — output
   file path.
 - *Returns*: `void`
 - *Preconditions*: doc must not be null; spdxFile must be a writable path.
 - *Post-conditions*: The file at spdxFile contains the serialized document with the tool
-  creator entry appended.
+  creator entry stamped. The in-memory `doc.CreationInformation.Creators` array is identical
+  to its value before the call.
 
 #### Error Handling
 

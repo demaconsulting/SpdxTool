@@ -39,7 +39,7 @@ public sealed class UpdatePackage : Command
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string CommandName = "update-package";
+    private const string Command = "update-package";
 
     /// <summary>
     ///     Singleton instance of this command
@@ -58,7 +58,7 @@ public sealed class UpdatePackage : Command
     ///     instance for registration with <see cref="CommandsRegistry"/>.
     /// </remarks>
     public static readonly CommandEntry Entry = new(
-        CommandName,
+        Command,
         "update-package",
         "Update package in SPDX document (workflow only).",
         [
@@ -222,7 +222,11 @@ public sealed class UpdatePackage : Command
     /// <summary>
     ///     Read the package update fields from the YAML inputs.
     /// </summary>
-    /// <param name="map">Package sub-map containing the update field entries. May be <see langword="null"/>; if null the method returns immediately with no updates.</param>
+    /// <param name="map">
+    ///     Package sub-map containing the update field entries. May be <see langword="null"/>; when
+    ///     null, all field reads return null and no entries are added. The null check before the
+    ///     unrecognized-keys loop prevents the error injection path from executing.
+    /// </param>
     /// <param name="variables">Currently defined variables</param>
     /// <param name="updates">Updates dictionary to populate</param>
     /// <remarks>
@@ -239,81 +243,17 @@ public sealed class UpdatePackage : Command
         Dictionary<string, string> variables,
         Dictionary<string, string> updates)
     {
-        // Get the 'name' input
-        var name = GetMapString(map, "name", variables);
-        if (name != null)
+        // Read each recognized field and add it to updates when present; fields absent from
+        // the map return null from GetMapString and are silently skipped
+        foreach (var field in new[]
+            { "name", "download", "version", "filename", "supplier",
+              "originator", "homepage", "copyright", "summary", "description", "license" })
         {
-            updates["name"] = name;
-        }
-
-        // Get the 'download' input
-        var download = GetMapString(map, "download", variables);
-        if (download != null)
-        {
-            updates["download"] = download;
-        }
-
-        // Get the 'version' input
-        var version = GetMapString(map, "version", variables);
-        if (version != null)
-        {
-            updates["version"] = version;
-        }
-
-        // Get the 'filename' input
-        var filename = GetMapString(map, "filename", variables);
-        if (filename != null)
-        {
-            updates["filename"] = filename;
-        }
-
-        // Get the 'supplier' input
-        var supplier = GetMapString(map, "supplier", variables);
-        if (supplier != null)
-        {
-            updates["supplier"] = supplier;
-        }
-
-        // Get the 'originator' input
-        var originator = GetMapString(map, "originator", variables);
-        if (originator != null)
-        {
-            updates["originator"] = originator;
-        }
-
-        // Get the 'homepage' input
-        var homepage = GetMapString(map, "homepage", variables);
-        if (homepage != null)
-        {
-            updates["homepage"] = homepage;
-        }
-
-        // Get the 'copyright' input
-        var copyright = GetMapString(map, "copyright", variables);
-        if (copyright != null)
-        {
-            updates["copyright"] = copyright;
-        }
-
-        // Get the 'summary' input
-        var summary = GetMapString(map, "summary", variables);
-        if (summary != null)
-        {
-            updates["summary"] = summary;
-        }
-
-        // Get the 'description' input
-        var description = GetMapString(map, "description", variables);
-        if (description != null)
-        {
-            updates["description"] = description;
-        }
-
-        // Get the 'license' input
-        var license = GetMapString(map, "license", variables);
-        if (license != null)
-        {
-            updates["license"] = license;
+            var value = GetMapString(map, field, variables);
+            if (value != null)
+            {
+                updates[field] = value;
+            }
         }
 
         // Detect any unrecognized keys — these will be passed to UpdatePackageInSpdxFile,

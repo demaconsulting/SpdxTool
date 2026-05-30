@@ -37,5 +37,4 @@ command-line flag. This scenario is tested by `SpdxTool_SelfTest_ValidateFlag_Su
 **UnsupportedResultExtension**: the orchestrator reports an error and produces no file when
 `Context.ValidationFile` has an unsupported extension. This scenario is tested at the unit level by
 `SelfTest_Validate_UnsupportedResultExtension_ReportsError`
-(covers `SpdxTool-SelfTest-Orchestrate-UnsupportedExtension`)
 and at the system level by `SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError`.

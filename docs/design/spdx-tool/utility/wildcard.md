@@ -17,6 +17,8 @@ N/A — Wildcard is a static class with no instance state.
 - *Parameters*: `string input` — the text to test; `string pattern` — the glob-style wildcard
   pattern.
 - *Returns*: `bool` — true when input matches pattern.
+- *Access*: public (within `internal static class Wildcard`; the test assembly accesses this
+  method via `InternalsVisibleTo` which grants access to the internal class).
 - *Preconditions*: Neither parameter may be null.
 - *Post-conditions*: Pure function; no side effects. The match is evaluated with a 100 ms
   regex timeout to prevent catastrophic backtracking.

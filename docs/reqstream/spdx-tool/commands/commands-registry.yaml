@@ -12,5 +12,5 @@ sections:
                   Named lookup enables Program and RunWorkflow to dispatch commands by the name
                   string provided by the user or workflow author.
                 tests:
-                  - UnknownCommand_UnrecognizedCommand_ReportsError
+                  - Commands_Dispatch_UnknownCommand_ReportsError
                   - Command_Expand_NoVariables_ReturnsOriginal

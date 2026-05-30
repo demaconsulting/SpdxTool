@@ -50,34 +50,42 @@ requested. This scenario is tested by `SpdxTool_SelfTest_ValidateFlagWithResults
 requested. This scenario is tested by `SpdxTool_SelfTest_ValidateFlagWithResults_GeneratesJUnitFile`.
 
 **SilentFlagSuppression**: the tool suppresses console output when the silent flag is set. This
-scenario covers `SpdxTool-Command-Silent` and is tested by `SpdxTool_Silent_ShortFlag_SuppressesOutput`
+scenario is tested by `SpdxTool_Silent_ShortFlag_SuppressesOutput`
 and `SpdxTool_Silent_LongFlag_SuppressesOutput`.
 
 **LogFileOutput**: the tool writes output to a log file when the log flag is set. This scenario
-covers `SpdxTool-Command-Log` and is tested by `SpdxTool_Log_ShortFlag_WritesOutputToFile` and
+is tested by `SpdxTool_Log_ShortFlag_WritesOutputToFile` and
 `SpdxTool_Log_LongFlag_WritesOutputToFile`.
 
 **DepthControl**: the tool controls self-validation output depth when the depth flag is set. This
-scenario covers `SpdxTool-Command-Depth` and is tested by
+scenario is tested by
 `SpdxTool_SelfTest_ValidateFlagWithDepth_ShowsDepth`.
 
 **ShortResultFlagAlias**: the tool accepts -r as a short alias for the --result flag. This scenario
-covers `SpdxTool-Command-ResultShortFlag` and is tested by
+is tested by
 `SpdxTool_SelfTest_ValidateFlagWithResults_ShortFlag_GeneratesTrxFile`.
 
 **SupportedCommands**: the tool registers and dispatches all supported SPDX manipulation commands.
-This scenario covers `SpdxTool-CommandExecution-SupportedCommands` and is tested by
-`SpdxTool_Usage_NoArguments_DisplaysError`.
+This scenario is tested by `SpdxTool_Usage_NoArguments_DisplaysError` and, at the Commands
+subsystem level, by `CommandsRegistry_Commands_AllExpectedNames_ArePresent`.
 
 **WorkflowExecution**: the tool executes SPDX manipulation workflows defined in YAML files. This
-scenario covers `SpdxTool-CommandExecution-WorkflowExecution` and is tested by
+scenario is tested by
 `RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow`.
 
 **CrossPlatformSupport**: the tool runs successfully on Windows, Linux, and macOS. This scenario
-covers `SpdxTool-Platform-CrossPlatform` and is tested by `SpdxTool_Basic` on each supported
+is tested by `SpdxTool_Basic` on each supported
 platform in the CI matrix (`windows@SpdxTool_Basic`, `ubuntu@SpdxTool_Basic`,
 `macos@SpdxTool_Basic`).
 
-**MultiFrameworkSupport**: the tool runs on .NET 8, .NET 9, and .NET 10. This scenario covers
-`SpdxTool-Platform-MultiFramework` and is tested by `SpdxTool_Version_ShortFlag_DisplaysVersion`
+**MultiFrameworkSupport**: the tool runs on .NET 8, .NET 9, and .NET 10. This scenario is tested by
+`SpdxTool_Version_ShortFlag_DisplaysVersion`
 on each supported target framework.
+
+**UnsupportedResultExtension**: the tool reports an error when an unsupported extension is supplied to
+the `--result` flag. This scenario is tested by
+`SpdxTool_SelfTest_UnsupportedResultExtension_ReportsError`.
+
+**SilentLogCombination**: the tool writes output to the log file but not to the console when both
+`--silent` and `--log` are supplied together. This scenario is tested by
+`SpdxTool_Log_SilentFlag_WritesToLogButNotConsole`.

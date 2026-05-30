@@ -30,7 +30,8 @@ namespace DemaConsulting.SpdxTool.Commands;
 ///     Delegates to <see cref="ShowUsage"/> for both CLI and workflow invocations. The CLI overload requires
 ///     exactly one argument (the target command name); the workflow overload reads the command name from the
 ///     <c>about</c> input. Both paths throw on an unknown command so callers receive a clear error message.
-///     Thread-safe: all public methods are static and operate only on method-local state.
+///     Thread-safe: the instance <c>Run</c> methods delegate exclusively to the static
+///     <see cref="ShowUsage"/> helper and carry no mutable instance state.
 /// </remarks>
 public sealed class Help : Command
 {

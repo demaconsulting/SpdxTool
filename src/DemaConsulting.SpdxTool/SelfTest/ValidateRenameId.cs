@@ -37,6 +37,18 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateRenameId
 {
     /// <summary>
+    ///     Optional test hook invoked after fixture files are written and immediately before
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
+    /// </summary>
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that
+    ///     corrupts <c>validate.tmp/test.spdx.json</c> so that the rename-id command fails
+    ///     with a non-zero exit code, exercising the CommandFailure path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PreRunSpdxToolHookForTest { get; set; }
+
+    /// <summary>
     ///     Executes the rename-id self-test and records the result.
     /// </summary>
     /// <remarks>
@@ -46,7 +58,7 @@ internal static class ValidateRenameId
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
-    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="context">The active Program context providing output and error streams. Must not be null.</param>
     /// <param name="results">The TestResults collection to append the step outcome to.</param>
     /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
@@ -156,6 +168,9 @@ internal static class ValidateRenameId
                     new: SPDXRef-Package-2
                 """);
 
+            // Allow tests to corrupt fixtures immediately before the command runs
+            PreRunSpdxToolHookForTest?.Invoke();
+
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(
                 "validate.tmp",
@@ -183,7 +198,8 @@ internal static class ValidateRenameId
             // Verify expected SPDX content using order-insensitive LINQ checks so that
             // changes to deserializer ordering do not cause false failures
             return doc.Packages.Any(p => p.Id == "SPDXRef-Package-2") &&
-                   doc.Relationships.Any(r => r.RelatedSpdxElement == "SPDXRef-Package-2");
+                   doc.Relationships.Any(r => r.RelatedSpdxElement == "SPDXRef-Package-2") &&
+                   doc.Describes.Any(d => d == "SPDXRef-Package-2");
         }
         finally
         {

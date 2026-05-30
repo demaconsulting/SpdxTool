@@ -155,9 +155,20 @@ public sealed class Query : Command
     ///     regular expression is compiled with a 100 ms match timeout to guard against catastrophic
     ///     backtracking on untrusted patterns.
     /// </remarks>
-    /// <param name="pattern">Regular expression pattern to capture 'value'</param>
-    /// <param name="program">Program to execute</param>
-    /// <param name="arguments">Program arguments</param>
+    /// <param name="pattern">
+    ///     Regular expression pattern used to capture the output value. Must be non-null and
+    ///     syntactically valid; must contain a named <c>value</c> capture group. A syntactically
+    ///     invalid pattern or a pattern without the <c>value</c> group throws
+    ///     <see cref="CommandUsageException"/>.
+    /// </param>
+    /// <param name="program">
+    ///     Name or full path of the program to execute. Must be non-null and non-empty. If the
+    ///     program cannot be found or launched a <see cref="CommandErrorException"/> is thrown.
+    /// </param>
+    /// <param name="arguments">
+    ///     Arguments forwarded to the program. Must be non-null; an empty array is valid and
+    ///     results in the program being invoked with no arguments.
+    /// </param>
     /// <returns>Captured value</returns>
     /// <exception cref="CommandUsageException">
     ///     Thrown when <paramref name="pattern"/> is syntactically invalid or does not contain a

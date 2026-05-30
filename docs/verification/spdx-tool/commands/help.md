@@ -33,3 +33,6 @@ tested by `Help_Run_RunWorkflowCommand_DisplaysHelp`.
 
 **YamlInvocation**: the unit displays help when invoked from a YAML workflow step with the about
 input. This scenario is tested by `Help_Run_YamlInvocation_DisplaysHelp`.
+
+**MissingAboutInput**: the unit reports an error when a YAML workflow step omits the required
+`about` input. This scenario is tested by `Help_Run_YamlInvocation_MissingAbout_ReportsError`.

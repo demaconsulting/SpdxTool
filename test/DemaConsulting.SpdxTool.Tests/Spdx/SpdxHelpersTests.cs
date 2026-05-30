@@ -61,6 +61,16 @@ public class SpdxHelpersTests
     }
 
     /// <summary>
+    ///     Test that SpdxHelpers.SaveJsonDocument with a null document throws ArgumentNullException
+    /// </summary>
+    [Fact]
+    public void SpdxHelpers_SaveJsonDocument_NullDocument_ThrowsArgumentNullException()
+    {
+        // Act/Assert: null document throws ArgumentNullException
+        Assert.Throws<ArgumentNullException>(() => SpdxHelpers.SaveJsonDocument(null!, "output.spdx.json"));
+    }
+
+    /// <summary>
     ///     Test that SpdxHelpers.SaveJsonDocument with a null path throws ArgumentNullException
     /// </summary>
     [Fact]

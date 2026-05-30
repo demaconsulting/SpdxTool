@@ -75,7 +75,7 @@ public class FindPackageTests
     ///     Test that find-package command with missing arguments reports an error
     /// </summary>
     [Fact]
-    public void FindPackage_MissingArguments_ReportsError()
+    public void FindPackage_Run_MissingArguments_ReportsError()
     {
         // Arrange: no setup required
 
@@ -95,7 +95,7 @@ public class FindPackageTests
     ///     Test that find-package command with missing file reports an error
     /// </summary>
     [Fact]
-    public void FindPackage_MissingFile_ReportsError()
+    public void FindPackage_Run_MissingFile_ReportsError()
     {
         // Arrange: no setup required
 
@@ -147,7 +147,7 @@ public class FindPackageTests
     ///     Test that find-package command by name finds the package
     /// </summary>
     [Fact]
-    public void FindPackage_ByName_FindsPackage()
+    public void FindPackage_Run_ByName_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =
@@ -166,7 +166,7 @@ public class FindPackageTests
 
         try
         {
-            // Arrange: Write the SPDX files
+            // Arrange: Write the SPDX and workflow files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
@@ -193,7 +193,7 @@ public class FindPackageTests
     ///     Test that find-package command by version finds the package
     /// </summary>
     [Fact]
-    public void FindPackage_ByVersion_FindsPackage()
+    public void FindPackage_Run_ByVersion_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =
@@ -212,7 +212,7 @@ public class FindPackageTests
 
         try
         {
-            // Arrange: Write the SPDX files
+            // Arrange: Write the SPDX and workflow files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
@@ -239,7 +239,7 @@ public class FindPackageTests
     ///     Test that find-package command by file name finds the package
     /// </summary>
     [Fact]
-    public void FindPackage_ByFileName_FindsPackage()
+    public void FindPackage_Run_ByFileName_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =
@@ -258,7 +258,7 @@ public class FindPackageTests
 
         try
         {
-            // Arrange: Write the SPDX files
+            // Arrange: Write the SPDX and workflow files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
@@ -285,7 +285,7 @@ public class FindPackageTests
     ///     Test that find-package command by download URL finds the package
     /// </summary>
     [Fact]
-    public void FindPackage_ByDownloadUrl_FindsPackage()
+    public void FindPackage_Run_ByDownloadUrl_FindsPackage()
     {
         // Workflow contents
         const string workflowContents =
@@ -304,7 +304,7 @@ public class FindPackageTests
 
         try
         {
-            // Arrange: Write the SPDX files
+            // Arrange: Write the SPDX and workflow files
             File.WriteAllText("spdx.json", SpdxContents);
             File.WriteAllText("workflow.yaml", workflowContents);
 
@@ -331,7 +331,7 @@ public class FindPackageTests
     ///     Test that find-package command by ID finds the package
     /// </summary>
     [Fact]
-    public void FindPackage_ById_FindsPackage()
+    public void FindPackage_Run_ById_FindsPackage()
     {
         try
         {
@@ -361,7 +361,7 @@ public class FindPackageTests
     ///     Test that find-package command with invalid criteria format reports an error
     /// </summary>
     [Fact]
-    public void FindPackage_InvalidCriteria_ReportsError()
+    public void FindPackage_Run_InvalidCriteria_ReportsError()
     {
         try
         {
@@ -513,7 +513,7 @@ public class FindPackageTests
     [Fact]
     public void FindPackage_Run_MultiplePackagesFound_ReportsError()
     {
-        // Workflow contents - criteria that match more than one package (version wildcard matches both)
+        // Workflow contents - criteria that match more than one package (download URL wildcard matches both)
         const string workflowContents =
             """
             steps:

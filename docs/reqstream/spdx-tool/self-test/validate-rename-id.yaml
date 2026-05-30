@@ -15,5 +15,4 @@ sections:
                   SPDX element IDs and updates all references throughout a document after
                   installation or deployment.
                 tests:
-                  - ValidateRenameId_Run_ValidRenameIdWorkflow_Passes
-                  - ValidateRenameId_Run_IoError_PropagatesException
+                  - SpdxTool_RenameId

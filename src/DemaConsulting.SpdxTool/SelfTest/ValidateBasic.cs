@@ -36,6 +36,19 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateBasic
 {
     /// <summary>
+    ///     Optional test hook invoked after <c>validate.tmp/test-valid.spdx.json</c> is written
+    ///     and immediately before <see cref="Validate.RunSpdxTool(string, string[])"/> is called
+    ///     in the valid-document sub-test.
+    /// </summary>
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that
+    ///     corrupts the fixture so that the validate command fails with a non-zero exit code,
+    ///     exercising the CommandFailure path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PreRunSpdxToolHookForTest { get; set; }
+
+    /// <summary>
     ///     Executes the basic SPDX validation self-test and records the result.
     /// </summary>
     /// <param name="context">The active Program context providing output and error streams.</param>
@@ -159,6 +172,9 @@ internal static class ValidateBasic
               }
             }
             """);
+
+        // Allow tests to corrupt the fixture immediately before the command runs
+        PreRunSpdxToolHookForTest?.Invoke();
 
         // Run validation without NTIA flag on valid document
         var exitCode = Validate.RunSpdxTool(

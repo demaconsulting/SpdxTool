@@ -6,8 +6,8 @@ sections:
         requirements:
           - id: SpdxTool-Context-ExecutionState
             title: >-
-              Context shall hold the parsed flag values, remaining command arguments,
-              optional log writer, and error count for a single tool invocation.
+              Context shall make parsed global flags, command arguments, output channels, and error status
+              available to all commands for the duration of a single tool invocation.
             justification: |
               Centralizing execution state in Context enables all commands and subsystems to
               share a consistent view of flag values, output channels, and error counts without
@@ -34,3 +34,11 @@ sections:
               - SpdxTool_Log_ShortFlag_WritesOutputToFile
               - SpdxTool_Log_LongFlag_WritesOutputToFile
               - SpdxTool_Log_SilentFlag_WritesToLogButNotConsole
+          - id: SpdxTool-Context-DefaultDepth
+            title: Context shall default the depth to 1 when the --depth flag is not specified.
+            justification: |
+              A default depth of 1 provides sensible output for typical invocations without
+              requiring explicit configuration. This default is an observable behavior that
+              affects SelfTest output and must be specified to ensure consistent tool behavior.
+            tests:
+              - SpdxTool_Version_ShortFlag_DisplaysVersion

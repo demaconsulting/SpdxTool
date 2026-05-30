@@ -9,7 +9,7 @@ units:
 - PathHelpers - safe path combining that rejects path-traversal sequences.
 - Wildcard - glob-style pattern matching via compiled regular expressions.
 
-Both units are consumed by the Commands subsystem and by the SelfTest subsystem. The subsystem
+Both units are consumed by the Commands subsystem. The subsystem
 has no internal dispatcher; units are invoked directly by their consumers through static method
 calls.
 
@@ -31,7 +31,8 @@ contain * (any sequence of characters) and ? (any single character). Matching is
 and uses a regular expression derived from the wildcard pattern, with a 100-millisecond
 evaluation timeout to guard against catastrophic backtracking.
 
-- *Type*: Static method (public).
+- *Type*: Static method (public within `internal static class Wildcard`; the test assembly
+  accesses this via `InternalsVisibleTo` which grants access to the internal class).
 - *Role*: Provider.
 - *Contract*: Returns true when the input matches the entire pattern from start to end; returns
   false otherwise.

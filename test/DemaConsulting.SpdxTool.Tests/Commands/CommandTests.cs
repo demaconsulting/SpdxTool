@@ -26,6 +26,7 @@ namespace DemaConsulting.SpdxTool.Tests.Commands;
 /// <summary>
 ///     Tests for the <see cref="Command" /> class.
 /// </summary>
+[Collection("CommandSequential")]
 public class CommandTests
 {
     /// <summary>
@@ -144,6 +145,21 @@ public class CommandTests
             // Cleanup: Remove the test environment variable
             Environment.SetEnvironmentVariable(varName, null);
         }
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with undefined environment variable throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_UndefinedEnvironmentVariable_ThrowsInvalidOperationException()
+    {
+        // Arrange: ensure the environment variable is not set
+        Environment.SetEnvironmentVariable("SPDXTOOL_TEST_NONEXISTENT", null);
+        const string text = "${{ environment.SPDXTOOL_TEST_NONEXISTENT }}";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert: expanding an undefined environment variable throws
+        Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
     }
 
     /// <summary>

@@ -8,7 +8,9 @@ expression pattern, with the result captured into a workflow variable.
 
 #### Data Model
 
-N/A - this unit is a static class with no instance state.
+N/A - this unit is a static class with no instance state. The `PreRunSpdxToolHookForTest` property
+holds an optional `Action` delegate that is `null` in production; tests may set it to corrupt fixture
+files immediately before `Validate.RunSpdxTool` is called, exercising the CommandFailure path.
 
 #### Key Methods
 
@@ -46,6 +48,7 @@ the log file and verifies it matches the VersionRegex pattern (a dotted decimal 
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the log file
+(`validate.tmp/output.log`) is absent after a successful tool exit. Returns false if the log file
 content does not match the VersionRegex pattern. This step requires dotnet to be on the PATH; if
 dotnet is unavailable the RunSpdxTool call will return a non-zero exit code. Any exception thrown by
 DoValidate propagates uncaught from Run; no TestResult is recorded for this step if an exception is

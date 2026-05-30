@@ -192,7 +192,9 @@ public sealed class CopyPackage : Command
     /// <param name="recursive">Recursive copy option</param>
     /// <param name="files">Copy files option</param>
     /// <exception cref="CommandUsageException">
-    ///     Thrown when <paramref name="packageId"/> is empty or equal to "SPDXRef-DOCUMENT".
+    ///     Thrown when <paramref name="packageId"/> is empty or equal to "SPDXRef-DOCUMENT"; also
+    ///     thrown by <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when either
+    ///     <paramref name="fromFile"/> or <paramref name="toFile"/> does not exist on disk.
     /// </exception>
     /// <exception cref="CommandErrorException">
     ///     Thrown when the package identified by <paramref name="packageId"/> is not found in
@@ -368,6 +370,7 @@ public sealed class CopyPackage : Command
     /// <summary>
     ///     Test if a relationship indicates a child package
     /// </summary>
+    /// <remarks>Stateless and thread-safe; reads only its parameters and has no side effects.</remarks>
     /// <param name="relationship">SPDX relationship</param>
     /// <param name="parentId">Parent package ID</param>
     /// <returns>Child package ID or null</returns>

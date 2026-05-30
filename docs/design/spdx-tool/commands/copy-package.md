@@ -70,10 +70,11 @@ toDoc, guarding against infinite recursion with a visited set.
 - *Returns*: `void`
 - *Preconditions*: None beyond document validity.
 - *Post-conditions*: All reachable child packages and their relationships are present in toDoc.
-- *Note*: The child ID is added to `copied` after the `Copy` and `SpdxRelationships.Add` calls,
-  immediately before recursing into the child's own children. `Copy` and `SpdxRelationships.Add`
-  are both idempotent, so repeated calls for the same child in a diamond-shaped graph are safe and
-  produce the same result.
+- *Note*: After `Copy` and `SpdxRelationships.Add`, `copied.Add(childId)` both records the visit
+  and gates recursion — `HashSet<T>.Add` returns `false` when the ID is already present, so
+  recursion into a child's own children is skipped for already-visited IDs, guarding against
+  infinite loops in cyclic graphs. `Copy` and `SpdxRelationships.Add` are both idempotent, so
+  repeated calls for the same child in a diamond-shaped graph are safe and produce the same result.
 
 **GetChild(SpdxRelationship, string)**: Returns the child package ID for a given relationship and
 parent ID, using RelationshipDirection to determine the parent/child orientation, or null if the
@@ -89,7 +90,8 @@ relationship does not express a child of the given parent.
 
 **CommandUsageException** — thrown by Run(Context, string[]) for fewer than three arguments or
 unrecognized option tokens; thrown by CopyPackageBetweenSpdxFiles for an invalid packageId (empty
-or "SPDXRef-DOCUMENT").
+or "SPDXRef-DOCUMENT"); thrown by SpdxHelpers.LoadJsonDocument when either the source or destination
+SPDX file does not exist on disk.
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) for missing from, to, or
 package inputs, or for non-boolean recursive/files values.

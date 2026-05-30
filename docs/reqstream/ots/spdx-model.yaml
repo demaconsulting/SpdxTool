@@ -14,7 +14,7 @@ sections:
               and related model types that SpdxTool depends on for all SPDX document operations.
             tests:
               - SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument
-              - Diagram_ValidSpdxFile_GeneratesDiagram
+              - Diagram_Run_ValidSpdxFile_GeneratesDiagram
 
           - id: SpdxTool-OTS-SpdxModel-Serialization
             title: DemaConsulting.SpdxModel shall provide JSON serialization for SPDX 2.3 documents.

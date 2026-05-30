@@ -74,7 +74,11 @@ HttpClient configured to use the system proxy and calls RunBytes.
 
 **RunBytes(Context, string, byte[], string?, Dictionary)**: Optionally verifies SHA-256 integrity,
 parses the YAML stream, processes the parameters section, validates provided parameters, and
-iterates over the steps sequence dispatching each command via CommandsRegistry.Commands.
+iterates over the steps sequence dispatching each command via CommandsRegistry.Commands. Before
+each step is dispatched, if the step contains a `displayName` key, its value is printed to the
+context. Caller-supplied parameter keys that are not declared in the workflow's `parameters:`
+section cause a `CommandErrorException` to be thrown. Workflow-declared parameters that are not
+supplied by the caller use the default value defined in the workflow's `parameters:` section.
 
 - *Parameters*: `Context context`; `string source` — display name for error messages;
   `byte[] bytes` — YAML content; `string? integrity`;
@@ -113,6 +117,11 @@ when the integrity check fails, when the YAML structure is invalid, when the ste
 when a step is not a mapping node, when a step mapping node lacks the `command` key (message:
 "Workflow {source} step missing command"), or when a caller-supplied parameter name is not declared
 in the workflow's parameters section.
+
+**YamlException** — thrown by Run(Context, YamlMappingNode, string?, string?, string?, Dictionary)
+when both `file` and `url` are specified or when neither is specified; thrown by ResolveNuGetFile
+when `nuget` and `url` are both specified, when `nuget` is used without a `file` input, or when
+the `nuget` value does not contain the `:` separator.
 
 #### Dependencies
 

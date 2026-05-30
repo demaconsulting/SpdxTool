@@ -29,32 +29,32 @@ scenario is tested by `AddRelationship_Run_MissingFile_ReportsError`.
 with valid arguments. This scenario is tested by `AddRelationship_Run_OnCommandLine_AddsRelationship`.
 
 **WorkflowRelationshipAddition**: the unit adds a relationship when invoked from a workflow step.
-This scenario is tested by `AddRelationship_InWorkflow_AddsRelationship`.
+This scenario is tested by `AddRelationship_Run_InWorkflow_AddsRelationship`.
 
 **ReplaceMode**: the unit replaces existing relationships when replacement mode is requested. This
-scenario is tested by `AddRelationship_ReplaceMode_ReplacesExistingRelationship`.
+scenario is tested by `AddRelationship_Run_ReplaceMode_ReplacesExistingRelationship`.
 
 **MissingSpdxInput**: the unit reports an error when the `spdx` input is missing from the workflow
-step. This scenario is tested by `AddRelationship_InWorkflowMissingSpdxInput_ReportsError`.
+step. This scenario is tested by `AddRelationship_Run_InWorkflowMissingSpdxInput_ReportsError`.
 
 **MissingIdInput**: the unit reports an error when the `id` input is missing from the workflow step.
-This scenario is tested by `AddRelationship_InWorkflowMissingIdInput_ReportsError`.
+This scenario is tested by `AddRelationship_Run_InWorkflowMissingIdInput_ReportsError`.
 
 **MissingRelationshipsInput**: the unit reports an error when the `relationships` input is missing
 from the workflow step.
-This scenario is tested by `AddRelationship_InWorkflowMissingRelationshipsInput_ReportsError`.
+This scenario is tested by `AddRelationship_Run_InWorkflowMissingRelationshipsInput_ReportsError`.
 
 **InvalidReplaceValue**: the unit reports an error when the `replace` input is not a valid boolean
-value. This scenario is tested by `AddRelationship_InWorkflowInvalidReplaceValue_ReportsError`.
+value. This scenario is tested by `AddRelationship_Run_InWorkflowInvalidReplaceValue_ReportsError`.
 
 **NonMappingRelationshipNode**: the unit reports an error when a relationship entry is not a YAML
 mapping node. This scenario is tested by
-`AddRelationship_InWorkflowNonMappingRelationshipNode_ReportsError`.
+`AddRelationship_Run_InWorkflowNonMappingRelationshipNode_ReportsError`.
 
 **MissingRelationshipType**: the unit reports an error when a relationship entry is missing the
 `type` field.
-This scenario is tested by `AddRelationship_InWorkflowMissingRelationshipType_ReportsError`.
+This scenario is tested by `AddRelationship_Run_InWorkflowMissingRelationshipType_ReportsError`.
 
 **MissingRelationshipElement**: the unit reports an error when a relationship entry is missing the
 `element` field.
-This scenario is tested by `AddRelationship_InWorkflowMissingRelationshipElement_ReportsError`.
+This scenario is tested by `AddRelationship_Run_InWorkflowMissingRelationshipElement_ReportsError`.

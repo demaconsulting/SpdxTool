@@ -20,32 +20,32 @@ the SPDX identifier of the uniquely matching package for each supported criterio
 #### Test Scenarios
 
 **MissingArguments**: the unit reports a usage error when no search criteria are supplied. This
-scenario is tested by `FindPackage_MissingArguments_ReportsError`.
+scenario is tested by `FindPackage_Run_MissingArguments_ReportsError`.
 
 **MissingInputFile**: the unit reports an error when the input SPDX file does not exist. This
-scenario is tested by `FindPackage_MissingFile_ReportsError`.
+scenario is tested by `FindPackage_Run_MissingFile_ReportsError`.
 
 **CommandLineNameLookup**: the unit successfully finds and prints a package ID when invoked from the
 command line with a name criterion. This scenario is tested by
 `FindPackage_ByName_OnCommandLine_FindsPackage`.
 
 **WorkflowNameLookup**: the unit stores the matching package identifier in a workflow variable when
-searching by name. This scenario is tested by `FindPackage_ByName_FindsPackage`.
+searching by name. This scenario is tested by `FindPackage_Run_ByName_FindsPackage`.
 
 **ByVersionLookup**: the unit finds packages by version criterion. This scenario is tested by
-`FindPackage_ByVersion_FindsPackage`.
+`FindPackage_Run_ByVersion_FindsPackage`.
 
 **ByFileNameLookup**: the unit finds a package by filename when the filename criterion is supplied.
-This scenario is tested by `FindPackage_ByFileName_FindsPackage`.
+This scenario is tested by `FindPackage_Run_ByFileName_FindsPackage`.
 
 **ByDownloadUrlLookup**: the unit finds a package by download URL when the download criterion is
-supplied. This scenario is tested by `FindPackage_ByDownloadUrl_FindsPackage`.
+supplied. This scenario is tested by `FindPackage_Run_ByDownloadUrl_FindsPackage`.
 
 **ByIdLookup**: the unit finds a package by its SPDX element identifier when the id criterion is
-supplied. This scenario is tested by `FindPackage_ById_FindsPackage`.
+supplied. This scenario is tested by `FindPackage_Run_ById_FindsPackage`.
 
 **InvalidCriteria**: the unit reports a usage error when a criterion string does not contain an '='
-separator. This scenario is tested by `FindPackage_InvalidCriteria_ReportsError`.
+separator. This scenario is tested by `FindPackage_Run_InvalidCriteria_ReportsError`.
 
 **WorkflowMissingOutput**: the unit reports an error when the `output` input is absent from the
 workflow step. This scenario is tested by `FindPackage_Run_MissingOutputInput_ReportsError`.

@@ -20,30 +20,30 @@ diagrams, and the optional tools mode changes the rendered relationship set as i
 #### Test Scenarios
 
 **MissingArguments**: the unit reports a usage error when required arguments are omitted. This
-scenario is tested by `Diagram_MissingArguments_ReportsError`.
+scenario is tested by `Diagram_Run_MissingArguments_ReportsError`.
 
 **InsufficientArguments**: the unit reports a usage error when fewer than the required two
-arguments are provided. This scenario is tested by `Diagram_InsufficientArguments_ReportsError`.
+arguments are provided. This scenario is tested by `Diagram_Run_InsufficientArguments_ReportsError`.
 
 **MissingInputFile**: the unit reports an error when the input SPDX file is absent. This scenario is
-tested by `Diagram_MissingSpdxFile_ReportsError`.
+tested by `Diagram_Run_MissingSpdxFile_ReportsError`.
 
 **InvalidOption**: the unit rejects unsupported command options. This scenario is tested by
-`Diagram_InvalidOption_ReportsError`.
+`Diagram_Run_InvalidOption_ReportsError`.
 
 **DiagramGeneration**: the unit generates Mermaid output from a valid SPDX document. This scenario
-is tested by `Diagram_ValidSpdxFile_GeneratesDiagram`.
+is tested by `Diagram_Run_ValidSpdxFile_GeneratesDiagram`.
 
 **ToolRelationshipRendering**: the unit includes tool relationships when the tools option is
-requested. This scenario is tested by `Diagram_WithToolsOption_GeneratesDiagramWithTools`.
+requested. This scenario is tested by `Diagram_Run_WithToolsOption_GeneratesDiagramWithTools`.
 
 **DefaultToolExclusion**: the unit excludes tool-related relationships from the generated diagram
 when the `tools` option is not specified. This scenario is tested by
-`Diagram_WithoutToolsOption_ExcludesToolRelationships`.
+`Diagram_Run_WithoutToolsOption_ExcludesToolRelationships`.
 
 **WorkflowStepInvocation**: the unit accepts spdx, mermaid, and optional tools inputs when invoked
 from a workflow step and produces a Mermaid diagram file. This scenario is tested by
-`Diagram_InWorkflow_GeneratesDiagram`.
+`Diagram_Run_InWorkflow_GeneratesDiagram`.
 
 **WorkflowMissingSpdxInput**: the unit reports an error when the `spdx` input is absent from the
 workflow step. This scenario is tested by `Diagram_Run_MissingSpdxInput_ReportsError`.
@@ -55,6 +55,5 @@ the workflow step. This scenario is tested by `Diagram_Run_MissingMermaidInput_R
 a boolean. This scenario is tested by `Diagram_Run_InvalidToolsInput_ReportsError`.
 
 **UnspecifiedVersionFallback**: the unit uses `"unspecified"` as the version label in the generated
-diagram when a package has no `versionInfo`. This scenario covers
-`SpdxTool-Transform-Diagram-UnspecifiedVersion` and is tested by
-`Diagram_PackageWithoutVersion_UsesUnspecifiedFallback`.
+diagram when a package has no `versionInfo`. This scenario is tested by
+`Diagram_Run_PackageWithoutVersion_UsesUnspecifiedFallback`.
