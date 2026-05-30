@@ -34,7 +34,7 @@ files immediately before `Validate.RunSpdxTool` is called, exercising the Comman
   never succeeded, the delete is skipped rather than raising a secondary exception.
 
 Creates a validate.tmp directory and writes a workflow YAML that uses the nuget input to reference
-`DemaConsulting.SpdxWorkflows` version `1.0.0` and the GetDotNetVersion.yaml workflow file within it,
+`DemaConsulting.SpdxWorkflows` version `1.0.0` and the `contentFiles/any/any/workflows/GetDotNetVersion.yaml` workflow file within it,
 mapping its version output to the dotnet-version variable and then printing it. Calls
 Validate.RunSpdxTool with --silent and run-workflow arguments. Returns true if the exit code is zero.
 

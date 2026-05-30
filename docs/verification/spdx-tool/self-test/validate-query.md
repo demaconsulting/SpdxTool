@@ -5,6 +5,12 @@
 `ValidateQuery` is verified by `test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateQueryTests.cs`,
 which runs the step end-to-end against an external process query scenario.
 
+The defensive guard in `DoValidate` that returns `false` when the log file is absent after a
+successful tool exit is intentionally untested. This path cannot be triggered without mock
+infrastructure to intercept the file system between a zero exit code and the subsequent log file
+check, and that level of mocking lies outside the integration-test-only test strategy applied to
+all self-test units.
+
 #### Test Environment
 
 The test uses the standard xUnit v3 environment and requires `dotnet` on the system path because the
