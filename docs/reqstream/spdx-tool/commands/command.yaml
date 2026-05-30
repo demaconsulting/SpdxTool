@@ -27,3 +27,28 @@ sections:
                   - Command_Expand_NoVariables_ReturnsOriginal
                   - Command_Expand_BasicVariable_ReturnsExpanded
                   - Command_Expand_NestedVariable_ReturnsFullyExpanded
+
+              - id: SpdxTool-Command-MapString
+                title: >-
+                  The command shall extract an optional string value from a YAML mapping node,
+                  applying variable expansion to the result.
+                justification: |
+                  Command implementations read their arguments from YAML mapping nodes.
+                  Centralizing GetMapString ensures null is returned for missing entries and
+                  variable expansion is applied uniformly across all commands.
+                tests:
+                  - Command_GetMapString_MissingEntry_ReturnsNull
+                  - Command_GetMapString_WithVariableExpansion_ReturnsExpanded
+                  - Command_GetMapString_NullMap_ReturnsNull
+
+              - id: SpdxTool-Command-EnvironmentVariableExpansion
+                title: >-
+                  The command shall expand ${{ environment.NAME }} tokens by reading the named
+                  environment variable from the process environment.
+                justification: |
+                  Workflow files may reference environment variables for CI tokens, paths, and
+                  other deployment-specific values. The environment. prefix ensures these are
+                  resolved from the process environment rather than workflow variables.
+                tests:
+                  - Command_Expand_EnvironmentVariable_ReturnsEnvironmentValue
+                  - Command_Expand_UndefinedEnvironmentVariable_ThrowsInvalidOperationException

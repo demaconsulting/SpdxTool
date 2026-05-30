@@ -48,9 +48,11 @@ public class CommandTests
     [Fact]
     public void Command_Expand_NoVariables_ReturnsOriginal()
     {
-        // Arrange/Act: Expand text with no variable references
+        // Arrange: Expand text with no variable references
         const string text = "Hello, world!";
         var variables = new Dictionary<string, string>();
+
+        // Act:
         var result = Command.Expand(text, variables);
 
         // Assert:
@@ -89,6 +91,19 @@ public class CommandTests
 
         // Assert:
         Assert.Equal("Hello, world!", result);
+    }
+
+    /// <summary>
+    ///     Test that Command.GetMapString with null map returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetMapString_NullMap_ReturnsNull()
+    {
+        // Arrange: no setup required — null map is passed directly
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        Assert.Null(Command.GetMapString(null, "any-key", variables));
     }
 
     /// <summary>

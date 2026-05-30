@@ -14,3 +14,5 @@ sections:
                 tests:
                   - Commands_Dispatch_UnknownCommand_ReportsError
                   - Command_Expand_NoVariables_ReturnsOriginal
+                  - CommandsRegistry_Commands_AllExpectedNames_ArePresent
+                  - CommandsRegistry_Commands_KnownCommandName_ResolvesEntry

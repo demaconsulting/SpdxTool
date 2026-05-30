@@ -209,7 +209,11 @@ public sealed class Context : IDisposable
     /// <param name="args">Program arguments. Must not be null.</param>
     /// <returns>Program context</returns>
     /// <exception cref="ArgumentNullException">Thrown when args is null.</exception>
-    /// <exception cref="InvalidOperationException">Thrown on invalid arguments</exception>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when a flag is missing its required value argument; when <c>--depth</c> is
+    ///     followed by a non-integer string; when <c>--depth</c> is followed by a negative
+    ///     integer; or when the log file path is inaccessible or invalid.
+    /// </exception>
     /// <remarks>
     ///     Creates or opens a log file (I/O side effect) when the <c>--log</c> flag is present.
     ///     Not thread-safe; do not call concurrently from multiple threads.

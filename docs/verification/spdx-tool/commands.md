@@ -29,7 +29,8 @@ handler. This scenario is tested by `Commands_Dispatch_UnknownCommand_ReportsErr
 scenario is tested by `Command_Expand_NestedVariable_ReturnsFullyExpanded`.
 
 **YamlInputExtraction**: string values read from workflow mappings preserve variable expansion
-semantics. This scenario is tested by `Command_GetMapString_WithVariableExpansion_ReturnsExpanded`.
+semantics. This scenario is tested by `Command_GetMapString_WithVariableExpansion_ReturnsExpanded`
+and the null-map guard is verified by `Command_GetMapString_NullMap_ReturnsNull`.
 
 **WorkflowExecution**: the subsystem executes a valid workflow and dispatches its steps in order.
 This scenario is tested by `RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow`.
@@ -58,3 +59,25 @@ registry dictionary. This scenario is tested by
 return null when their primary input parameter is null. These scenarios are tested by
 `Command_GetMapMap_NullMap_ReturnsNull`, `Command_GetMapSequence_NullMap_ReturnsNull`, and
 `Command_GetSequenceString_NullSequence_ReturnsNull`.
+
+**VariableExpansionNormalPath**: when no `${{ }}` tokens appear in the input string, the
+original string is returned unchanged. This scenario is tested by
+`Command_Expand_NoVariables_ReturnsOriginal`.
+
+**VariableExpansionMissingVariable**: when a `${{ name }}` token refers to a variable that is
+not present in the variables dictionary, `Command.Expand` throws
+`InvalidOperationException`. This scenario is tested by
+`Command_Expand_MissingVariable_ThrowsInvalidOperationException`.
+
+**MapStringMissingEntry**: when the requested key is absent from the YAML mapping node,
+`Command.GetMapString` returns null. This scenario is tested by
+`Command_GetMapString_MissingEntry_ReturnsNull`.
+
+**RegistryDispatchKnownCommand**: a known command name resolves to a non-null registry entry
+with a non-null instance. This scenario is tested by
+`CommandsRegistry_Commands_KnownCommandName_ResolvesEntry`.
+
+**EnvironmentVariableExpansionUndefined**: when a `${{ environment.NAME }}` token refers to an
+environment variable that is not set, `Command.Expand` throws `InvalidOperationException`.
+This scenario is tested by
+`Command_Expand_UndefinedEnvironmentVariable_ThrowsInvalidOperationException`.

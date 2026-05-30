@@ -20,6 +20,3 @@ sections:
               - SpdxTool-Utility-ValidPath
               - SpdxTool-Utility-Wildcard
               - SpdxTool-Utility-Wildcard-NullArgs
-            tests:
-              - FindPackage_ByName_FindsPackage
-              - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow

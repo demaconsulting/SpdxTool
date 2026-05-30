@@ -26,3 +26,17 @@ sections:
               operations.
             tests:
               - SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator
+
+          - id: SpdxTool-OTS-SpdxModel-Validation
+            title: DemaConsulting.SpdxModel shall provide SPDX document validation against NTIA minimum-element and SPDX-schema
+              rules.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SpdxModel exposes package and relationship validation helpers
+              that the Validate command uses to enforce NTIA minimum-element and SPDX-schema
+              compliance, ensuring the tool can report standards-conformance errors without
+              implementing the validation logic itself.
+            tests:
+              - Validate_Run_NtiaValidDocument_Succeeds
+              - Validate_Run_NtiaInvalidDocument_ReportsNtiaErrors

@@ -49,6 +49,7 @@ public static class SpdxHelpers
     /// </remarks>
     /// <param name="spdxFile">Path to the SPDX JSON file. Must not be null.</param>
     /// <returns>Fully deserialized SPDX document.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="spdxFile"/> is null.</exception>
     /// <exception cref="Commands.CommandUsageException">Thrown when the specified file does not exist.</exception>
     public static SpdxDocument LoadJsonDocument(string spdxFile)
     {
@@ -82,6 +83,7 @@ public static class SpdxHelpers
     ///     Path to the output JSON file. Must not be null. Any existing file at this path is
     ///     overwritten.
     /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="doc"/> or <paramref name="spdxFile"/> is null.</exception>
     public static void SaveJsonDocument(SpdxDocument doc, string spdxFile)
     {
         // Validate arguments

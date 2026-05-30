@@ -17,7 +17,3 @@ sections:
               - SpdxTool-Spdx-SpdxHelpers-SaveDocument
               - SpdxTool-Spdx-RelationshipDirection-Enumeration
               - SpdxTool-Spdx-RelationshipDirection-DirectionalMapping
-            tests:
-              - SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument
-              - SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator
-              - RelationshipDirectionExtensions_GetDirection_DescribesRelationship_ReturnsParent

@@ -5,7 +5,7 @@ sections:
       - title: SelfTest Requirements
         requirements:
           - id: SpdxTool-SelfTest-Validate
-            title: The SelfTest subsystem shall perform self-validation of all commands and report results.
+            title: The SelfTest subsystem shall orchestrate execution of all validation step classes and collect their outcomes.
             justification: |
               Self-validation ensures that the tool functions correctly after installation
               or deployment. The subsystem must orchestrate all validation steps and
@@ -26,6 +26,16 @@ sections:
               - SpdxTool-SelfTest-RunNuGetWorkflow
               - SpdxTool-SelfTest-ToMarkdown
               - SpdxTool-SelfTest-UpdatePackage
+            tests:
+              - SelfTest_Validate_ValidContext_Succeeds
+
+          - id: SpdxTool-SelfTest-Report
+            title: The SelfTest subsystem shall report a pass/fail summary of all validation step outcomes to the context
+              output stream.
+            justification: |
+              Users and CI pipelines need immediate feedback on whether all self-test
+              steps passed or failed. Writing the summary to the context output stream
+              ensures it appears in console output and any configured log file.
             tests:
               - SelfTest_Validate_ValidContext_Succeeds
 

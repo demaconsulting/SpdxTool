@@ -25,9 +25,12 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 
 /// <summary>
 ///     xUnit v3 collection definition that enforces serial execution of all Self-Test validation
-///     test classes. All ValidateXxx self-test classes use the hardcoded relative path
-///     <c>validate.tmp</c> via <c>Directory.SetCurrentDirectory</c>, which mutates global process
-///     state. This collection prevents concurrent test classes from racing on that directory.
+///     test classes. Two sources of global process state mutation require serial execution:
+///     (1) all ValidateXxx self-test classes use the hardcoded relative path <c>validate.tmp</c>
+///     via <c>Directory.SetCurrentDirectory</c>, which races across concurrent test classes; and
+///     (2) <see cref="SelfTestTests"/> redirects <c>Console.Out</c> around each
+///     <c>Validate.Run</c> call, which would corrupt output observed by concurrently running
+///     tests. This collection prevents races on both sources of global process state.
 /// </summary>
 [CollectionDefinition("SelfTestValidation")]
 public class SelfTestValidationCollection { }

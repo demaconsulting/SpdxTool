@@ -69,6 +69,6 @@ Program.Version to construct the tool creator stamp.
 
 RelationshipDirection and GetDirection decouple the Commands subsystem from the raw
 SpdxRelationshipType enumeration defined by DemaConsulting.SpdxModel. Commands that traverse SPDX
-relationships (such as Query and FindPackage) call GetDirection to convert a relationship type into
+relationships (such as Diagram and CopyPackage) call GetDirection to convert a relationship type into
 a directional intent and filter traversal results accordingly, without needing to enumerate every
 SpdxRelationshipType case inline.

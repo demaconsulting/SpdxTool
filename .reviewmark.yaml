@@ -186,6 +186,7 @@ reviews:
       - "docs/verification/spdx-tool/context.md"
       - "src/**/Context.cs"
       - "test/**/LogTests.cs"
+      - "test/**/ContextTests.cs"
 
   # Commands unit reviews
   - id: SpdxTool-Commands-AddPackage

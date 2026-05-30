@@ -25,9 +25,10 @@ namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     xUnit v3 collection definition that enforces serial execution of command test classes that
-///     write fixed-name files ("spdx.json", "workflow.yaml") to the process working directory.
-///     Without this collection, parallel test class execution can cause race conditions on those
-///     shared file names.
+///     either write fixed-name files ("spdx.json", "workflow.yaml") to the process working
+///     directory or mutate process-wide environment variables. Without this collection, parallel
+///     test class execution can cause race conditions on shared file names or on environment
+///     variables set and cleared by <see cref="CommandTests"/>.
 /// </summary>
 [CollectionDefinition("CommandSequential")]
 public class CommandSequentialCollection { }

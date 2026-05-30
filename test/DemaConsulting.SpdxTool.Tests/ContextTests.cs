@@ -26,6 +26,53 @@ namespace DemaConsulting.SpdxTool.Tests;
 public class ContextTests
 {
     /// <summary>
+    ///     Test that Context.Create with no --depth flag defaults the depth to 1.
+    /// </summary>
+    [Fact]
+    public void Context_Create_NoDepthFlag_DefaultsDepthToOne()
+    {
+        // Arrange: N/A — no fixture required
+
+        // Act: create a context with no flags
+        using var context = Context.Create([]);
+
+        // Assert: default depth is 1
+        Assert.Equal(1, context.Depth);
+    }
+
+    /// <summary>
+    ///     Test that Context.Create with --silent flag sets Silent to true.
+    /// </summary>
+    [Fact]
+    public void Context_Create_SilentFlag_SetsSilentToTrue()
+    {
+        // Arrange: N/A — no fixture required
+
+        // Act: create a context with the --silent flag
+        using var context = Context.Create(["--silent"]);
+
+        // Assert: Silent property reflects the flag
+        Assert.True(context.Silent);
+    }
+
+    /// <summary>
+    ///     Test that Context.WriteError increments the error count and sets exit code to 1.
+    /// </summary>
+    [Fact]
+    public void Context_WriteError_SingleCall_IncrementsErrorCount()
+    {
+        // Arrange: create a context with silent output to suppress console noise
+        using var context = Context.Create(["--silent"]);
+
+        // Act: report a single error
+        context.WriteError("test error");
+
+        // Assert: error count incremented and exit code is 1
+        Assert.Equal(1, context.Errors);
+        Assert.Equal(1, context.ExitCode);
+    }
+
+    /// <summary>
     ///     Test that Context.Create with a negative depth value throws InvalidOperationException.
     /// </summary>
     [Fact]
@@ -35,7 +82,7 @@ public class ContextTests
 
         // Act / Assert: negative depth must be rejected with a controlled error, not a crash
         var ex = Assert.Throws<InvalidOperationException>(
-            () => Context.Create(["--validate", "--depth", "-1"]));
+            () => Context.Create(["--depth", "-1"]));
 
         // Assert: error message is user-friendly and mentions depth
         Assert.Contains("depth", ex.Message);
