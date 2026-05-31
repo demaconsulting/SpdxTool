@@ -24,8 +24,11 @@ usage line, summary text, and extended help lines with the singleton Instance fo
 #### Key Methods
 
 **Run(Context, string[])**: Parses the workflow path or URL, optional key=value parameters, and the
---verbose flag from CLI arguments. Dispatches to RunUrl for HTTP paths or RunFile for local file
-paths. Optionally prints the resulting output variables.
+--verbose flag from CLI arguments. Dispatches to RunUrl for HTTP/HTTPS paths (checked with explicit
+scheme comparison) or RunFile for local file paths. Optionally prints the resulting output
+variables. NuGet package sources are not supported from the CLI; only local file paths and HTTP/HTTPS
+URLs are accepted. Integrity verification is only available via YAML workflow step inputs; the CLI
+path always passes `null` for the integrity argument and therefore cannot perform hash checks.
 
 - *Parameters*: `Context context` — execution context; `string[] args` — [workflowPathOrUrl,
   optional parameter=value pairs, optional --verbose].
@@ -44,7 +47,7 @@ variables back into the caller's variable dictionary.
 - *Preconditions*: Exactly one of file or url must be non-null.
 - *Post-conditions*: All steps are executed; requested outputs are stored in variables.
 
-**Run(Context, YamlMappingNode, string?, string?, string?, Dictionary)**: Validates that file and
+**public static Run(Context, YamlMappingNode, string?, string?, string?, Dictionary)**: Validates that file and
 url are not both specified, then dispatches to RunFile or RunUrl. At least one of file or url must
 be non-null.
 

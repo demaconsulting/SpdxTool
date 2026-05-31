@@ -16,3 +16,14 @@ requirements traceability tool.
 
 No vendor test results or third-party compliance reports are required; the integration tests
 described above provide sufficient evidence.
+
+### Test Scenarios
+
+**TRX Serialization**: The SelfTest subsystem serializes validation results in TRX format using
+`TrxSerializer`. The result file is created at the specified path and contains the expected test
+result entries. This scenario is tested by `SelfTest_Validate_WithTrxResult_GeneratesTrxFile`.
+
+**JUnit Serialization**: The SelfTest subsystem serializes validation results in JUnit XML format
+using `JUnitSerializer`. The result file is created at the specified path and contains the expected
+test result entries in JUnit schema. This scenario is tested by
+`SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile`.

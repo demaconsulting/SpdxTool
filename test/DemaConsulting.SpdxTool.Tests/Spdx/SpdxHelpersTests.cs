@@ -103,7 +103,7 @@ public class SpdxHelpersTests
     public void SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument()
     {
         // Arrange: write a minimal SPDX JSON file to a temporary path
-        var spdxFile = Path.GetTempFileName() + ".spdx.json";
+        var spdxFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".spdx.json");
         File.WriteAllText(spdxFile, MinimalSpdxJson);
 
         try
@@ -126,14 +126,17 @@ public class SpdxHelpersTests
     }
 
     /// <summary>
-    ///     Test that SpdxHelpers.SaveJsonDocument stamps the creator entry
+    ///     Test that SpdxHelpers.SaveJsonDocument stamps the creator entry and restores the creators array
     /// </summary>
     [Fact]
     public void SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator()
     {
         // Arrange: deserialize a minimal document and prepare output path
         var doc = Spdx2JsonDeserializer.Deserialize(MinimalSpdxJson);
-        var outputFile = Path.GetTempFileName() + ".spdx.json";
+        var outputFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".spdx.json");
+
+        // Capture the creators array before the save call
+        var creatorsBefore = doc.CreationInformation.Creators.ToArray();
 
         try
         {
@@ -144,6 +147,9 @@ public class SpdxHelpersTests
             Assert.True(File.Exists(outputFile));
             var content = File.ReadAllText(outputFile);
             Assert.Contains("DemaConsulting.SpdxTool", content);
+
+            // Assert: the in-memory creators array is unchanged after the save call
+            Assert.Equal(creatorsBefore, doc.CreationInformation.Creators);
         }
         finally
         {

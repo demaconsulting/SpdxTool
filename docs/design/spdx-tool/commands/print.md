@@ -30,12 +30,14 @@ inputs, applies variable expansion to each entry via GetSequenceString, and writ
   `Dictionary<string, string> variables` — variable map.
 - *Returns*: `void`
 - *Preconditions*: text input (a YAML sequence) is required.
-- *Post-conditions*: All expanded text lines are written to context.
+- *Post-conditions*: All expanded text lines are written to context. Null sequence entries returned
+  by `GetSequenceString` are treated as empty strings.
 
 #### Error Handling
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary<string, string>) when the text
-sequence input is absent from the step inputs.
+sequence input is absent from the step inputs. A missing `inputs` node is handled identically to a
+missing `text` node and also results in a `YamlException`.
 
 **InvalidOperationException** — propagated from GetSequenceString/Expand when a text line contains
 an undefined variable reference, an empty variable name, or an unmatched macro delimiter (`${{` or

@@ -14,7 +14,8 @@ runner because it only writes to the command context output stream.
 #### Acceptance Criteria
 
 Verification is acceptable when the unit writes the expected text in both direct and workflow
-execution modes.
+execution modes, and reports errors with the correct messages for all documented error paths
+(missing text input, undefined variable, empty variable name, unmatched macro delimiter).
 
 #### Test Scenarios
 

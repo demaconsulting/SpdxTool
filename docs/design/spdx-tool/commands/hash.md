@@ -57,7 +57,9 @@ compares them. Writes a confirmation message to context on success.
 - *Parameters*: `Context context` — execution context; `string file` — path to the file to verify.
 - *Returns*: `void`
 - *Preconditions*: file must exist. A sidecar file (file + ".sha256") must exist.
-- *Post-conditions*: Confirms or rejects the file integrity.
+- *Post-conditions*: Confirms or rejects the file integrity. The sidecar content is trimmed of
+  leading/trailing whitespace and converted to lowercase via `ToLowerInvariant()` before comparison
+  so that digests produced by external tools in any case or with trailing newlines are accepted.
 
 **CalculateSha256(string)**: Opens the file as a stream and computes its SHA-256 digest using
 System.Security.Cryptography.SHA256. Returns the digest as a lowercase hex string.

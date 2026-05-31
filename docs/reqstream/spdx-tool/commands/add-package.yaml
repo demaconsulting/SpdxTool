@@ -44,10 +44,8 @@ sections:
                 tests:
                   - AddPackage_Run_InWorkflowWithExistingPackage_EnhancesPackage
 
-              - id: SpdxTool-Commands-AddPackage-ValidateMissingInputs
-                title: >-
-                  The add-package command shall report a usage error when required inputs (spdx, package)
-                  are absent.
+              - id: SpdxTool-Commands-AddPackage-ValidateMissingSpdxInput
+                title: The add-package command shall report an error when the spdx input is missing.
                 tags:
                   - spdx
                 justification: |
@@ -55,12 +53,57 @@ sections:
                   authors can diagnose configuration mistakes quickly.
                 tests:
                   - AddPackage_Run_InWorkflowMissingSpdxInput_ReportsError
+
+              - id: SpdxTool-Commands-AddPackage-ValidateMissingPackageInput
+                title: The add-package command shall report an error when the package input is missing.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that workflow
+                  authors can diagnose configuration mistakes quickly.
+                tests:
                   - AddPackage_Run_InWorkflowMissingPackageInput_ReportsError
 
-              - id: SpdxTool-Commands-AddPackage-ValidatePackageFields
+              - id: SpdxTool-Commands-AddPackage-ValidateMissingId
                 title: >-
-                  The add-package command shall report a usage error when required package fields (id, name,
-                  download) are absent, or when the package ID is empty or equals SPDXRef-DOCUMENT.
+                  The add-package command shall report a usage error when the required package id
+                  field is absent.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid package field values must be detected early and reported clearly so
+                  that workflow authors can diagnose configuration mistakes quickly.
+                tests:
+                  - AddPackage_ParsePackage_MissingPackageId_ReportsError
+
+              - id: SpdxTool-Commands-AddPackage-ValidateMissingName
+                title: >-
+                  The add-package command shall report a usage error when the required package name
+                  field is absent.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid package field values must be detected early and reported clearly so
+                  that workflow authors can diagnose configuration mistakes quickly.
+                tests:
+                  - AddPackage_ParsePackage_MissingPackageName_ReportsError
+
+              - id: SpdxTool-Commands-AddPackage-ValidateMissingDownload
+                title: >-
+                  The add-package command shall report a usage error when the required package
+                  download field is absent.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid package field values must be detected early and reported clearly so
+                  that workflow authors can diagnose configuration mistakes quickly.
+                tests:
+                  - AddPackage_ParsePackage_MissingPackageDownload_ReportsError
+
+              - id: SpdxTool-Commands-AddPackage-ValidateEmptyId
+                title: >-
+                  The add-package command shall report a usage error when the package id field is
+                  present but empty.
                 tags:
                   - spdx
                 justification: |
@@ -68,7 +111,15 @@ sections:
                   that workflow authors can diagnose configuration mistakes quickly.
                 tests:
                   - AddPackage_Run_InWorkflowWithEmptyPackageId_ReportsError
+
+              - id: SpdxTool-Commands-AddPackage-ValidateReservedId
+                title: >-
+                  The add-package command shall report a usage error when the package id is the
+                  reserved value SPDXRef-DOCUMENT.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid package field values must be detected early and reported clearly so
+                  that workflow authors can diagnose configuration mistakes quickly.
+                tests:
                   - AddPackage_Run_InWorkflowWithDocumentPackageId_ReportsError
-                  - AddPackage_ParsePackage_MissingPackageId_ReportsError
-                  - AddPackage_ParsePackage_MissingPackageName_ReportsError
-                  - AddPackage_ParsePackage_MissingPackageDownload_ReportsError

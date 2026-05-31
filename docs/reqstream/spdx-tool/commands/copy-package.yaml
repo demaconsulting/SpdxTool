@@ -31,26 +31,47 @@ sections:
                 tests:
                   - CopyPackage_Run_InWorkflowWithExistingPackage_EnhancesPackage
 
-              - id: SpdxTool-Commands-CopyPackage-Validate
+              - id: SpdxTool-Commands-CopyPackage-ValidateMissingSpdxFile
                 title: >-
-                  The copy-package command shall validate its inputs and report an error for missing,
-                  invalid, or reserved values including an empty or SPDXRef-DOCUMENT package argument.
+                  The copy-package command shall report an error when the source or destination
+                  SPDX file does not exist.
                 tags:
                   - spdx
                 justification: |
                   Invalid inputs must be detected early and reported clearly so that users can
                   diagnose configuration mistakes quickly.
                 tests:
-                  - CopyPackage_Run_MissingArguments_ReportsError
                   - CopyPackage_Run_MissingFile_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-ValidateInvalidRecursive
+                title: >-
+                  The copy-package command shall report an error when the recursive flag cannot be
+                  parsed as a boolean.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that users can
+                  diagnose configuration mistakes quickly.
+                tests:
+                  - CopyPackage_Run_InvalidRecursiveInput_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-ValidateReservedId
+                title: >-
+                  The copy-package command shall report an error when the package argument is
+                  empty or equals the reserved value SPDXRef-DOCUMENT.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that users can
+                  diagnose configuration mistakes quickly.
+                tests:
                   - CopyPackage_Run_InvalidPackageId_ReportsError
                   - CopyPackage_Run_EmptyPackageId_ReportsError
 
-              - id: SpdxTool-Commands-CopyPackage-ValidateWorkflow
+              - id: SpdxTool-Commands-CopyPackage-ValidateWorkflowMissingFrom
                 title: >-
-                  The copy-package command shall validate all workflow inputs and report an error for each
-                  missing required field (from, to, package) and each invalid optional field (recursive, files)
-                  where the value cannot be parsed as a boolean.
+                  The copy-package command shall report an error when the required from input is
+                  absent from the workflow step.
                 tags:
                   - spdx
                 justification: |
@@ -59,9 +80,57 @@ sections:
                   inspecting source code.
                 tests:
                   - CopyPackage_Run_MissingFromInput_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-ValidateWorkflowMissingTo
+                title: >-
+                  The copy-package command shall report an error when the required to input is
+                  absent from the workflow step.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow authors must receive actionable error messages for every missing or
+                  invalid input so that configuration mistakes can be diagnosed without
+                  inspecting source code.
+                tests:
                   - CopyPackage_Run_MissingToInput_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-ValidateWorkflowMissingPackage
+                title: >-
+                  The copy-package command shall report an error when the required package input is
+                  absent from the workflow step.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow authors must receive actionable error messages for every missing or
+                  invalid input so that configuration mistakes can be diagnosed without
+                  inspecting source code.
+                tests:
                   - CopyPackage_Run_MissingPackageInput_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-ValidateWorkflowInvalidRecursive
+                title: >-
+                  The copy-package command shall report an error when the recursive input cannot
+                  be parsed as a boolean.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow authors must receive actionable error messages for every missing or
+                  invalid input so that configuration mistakes can be diagnosed without
+                  inspecting source code.
+                tests:
                   - CopyPackage_Run_InvalidRecursiveInput_ReportsError
+
+              - id: SpdxTool-Commands-CopyPackage-ValidateWorkflowInvalidFiles
+                title: >-
+                  The copy-package command shall report an error when the files input cannot be
+                  parsed as a boolean.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow authors must receive actionable error messages for every missing or
+                  invalid input so that configuration mistakes can be diagnosed without
+                  inspecting source code.
+                tests:
                   - CopyPackage_Run_InvalidFilesInput_ReportsError
 
               - id: SpdxTool-Commands-CopyPackage-PackageNotFound

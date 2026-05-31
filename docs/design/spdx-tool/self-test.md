@@ -34,8 +34,13 @@ The subsystem contains the following units:
 - *Type*: Public static method on the Validate class.
 - *Role*: Writes a system-information header, invokes all Validate step classes in sequence, collects
   TestResult entries, prints a pass/fail summary, and optionally writes a results file.
-- *Contract*: Must be called with a fully initialized Context; does not throw on individual step failures;
-  writes "Validation Passed" to the Context when all steps succeed with no errors.
+- *Contract*: Must be called with a fully initialized Context; distinguishes two failure modes:
+  (1) step failures — a Validate step's `DoValidate` returns `false`, which is captured as a
+  `TestResult.Failed` entry and the loop continues to the next step; (2) step exceptions — an
+  uncaught exception thrown from a step's `DoValidate` propagates through the step's `Run` method
+  into `Validate.Run`, aborting the validation loop immediately with no `TestResult` recorded for
+  the failing step. Writes "Validation Passed" to the Context when all steps succeed with no
+  errors.
 - *Constraints*: The --validate flag must be detected by Program before normal command dispatch.
 
 **RunSpdxTool Helper**: shared in-process runner used by all Validate step classes to invoke commands.

@@ -12,7 +12,8 @@ sections:
               Command implementations that handle user-supplied file paths and filter SPDX content
               by name need shared utility functions. Centralizing these in the Utility subsystem
               ensures consistent path-traversal protection and pattern-matching behavior across all
-              commands.
+              commands. This is an intentional rollup requirement; full decomposition is provided by
+              the child requirements SpdxTool-Utility-PathHelpers and SpdxTool-Utility-Wildcard.
             children:
               - SpdxTool-Utility-RejectTraversal
               - SpdxTool-Utility-RejectAbsolutePath
@@ -20,3 +21,7 @@ sections:
               - SpdxTool-Utility-ValidPath
               - SpdxTool-Utility-Wildcard
               - SpdxTool-Utility-Wildcard-NullArgs
+            tests:
+              - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
+              - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
+              - Wildcard_IsMatch_ExactMatch_ReturnsTrue

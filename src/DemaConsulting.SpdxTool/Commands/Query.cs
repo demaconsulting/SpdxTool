@@ -102,7 +102,7 @@ public sealed class Query : Command
         // Report an error if fewer than 2 arguments are provided
         if (args.Length < 2)
         {
-            throw new CommandUsageException("'query' command missing arguments");
+            throw new CommandUsageException($"'{Command}' command missing arguments");
         }
 
         // Query the program output
@@ -128,15 +128,15 @@ public sealed class Query : Command
 
         // Get the 'output' input
         var output = GetMapString(inputs, "output", variables) ??
-                     throw new YamlException(step.Start, step.End, "'query' command missing 'output' input");
+                     throw new YamlException(step.Start, step.End, $"'{Command}' command missing 'output' input");
 
         // Get the 'pattern' input
         var pattern = GetMapString(inputs, "pattern", variables) ??
-                      throw new YamlException(step.Start, step.End, "'query' command missing 'pattern' input");
+                      throw new YamlException(step.Start, step.End, $"'{Command}' command missing 'pattern' input");
 
         // Get the 'program' input
         var program = GetMapString(inputs, "program", variables) ??
-                      throw new YamlException(step.Start, step.End, "'query' command missing 'program' input");
+                      throw new YamlException(step.Start, step.End, $"'{Command}' command missing 'program' input");
 
         // Get the arguments
         var argumentsSequence = GetMapSequence(inputs, "arguments");

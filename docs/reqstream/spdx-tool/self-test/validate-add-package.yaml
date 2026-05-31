@@ -7,7 +7,7 @@ sections:
           - title: ValidateAddPackage Requirements
             requirements:
               - id: SpdxTool-SelfTest-AddPackage
-                title: The ValidateAddPackage unit shall exercise the add-package command end-to-end.
+                title: The SelfTest shall exercise the add-package command end-to-end.
                 tags:
                   - self-test
                 justification: |

@@ -74,6 +74,7 @@ public class ValidateRunNuGetWorkflowTests
     [Fact]
     public void ValidateRunNuGetWorkflow_Run_CommandFailure_RecordsFailedOutcome()
     {
+        // Arrange: save original directory and create isolated temp directory
         var originalDirectory = Directory.GetCurrentDirectory();
         var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDirectory);

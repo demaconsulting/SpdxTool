@@ -7,7 +7,7 @@ sections:
           - title: Hash Requirements
             requirements:
               - id: SpdxTool-Commands-Hash-Generate
-                title: The tool shall compute SHA-256 hashes for files and write them to sidecar files.
+                title: The tool shall generate a SHA-256 sidecar file for the specified file.
                 tags:
                   - spdx
                 justification: |
@@ -26,7 +26,17 @@ sections:
                 tests:
                   - Hash_Run_VerifyOperation_SucceedsForValidHash
                   - Hash_Run_VerifyOperation_FailsForInvalidHash
-                  - Hash_Run_VerifySha256_UppercaseDigest_Succeeds
+
+              - id: SpdxTool-Commands-Hash-VerifyCaseInsensitive
+                title: The tool shall accept sidecar hash files whose digest is stored
+                  in any combination of upper- and lowercase hexadecimal characters.
+                tags:
+                  - spdx
+                justification: |
+                  External tools may produce sidecar files with uppercase hex digits;
+                  case-insensitive comparison ensures interoperability.
+                tests:
+                  - Hash_Run_VerifyUppercaseDigest_Succeeds
 
               - id: SpdxTool-Commands-Hash-MissingArguments
                 title: >-
@@ -42,7 +52,7 @@ sections:
                   - Hash_Run_ExcessArguments_ReportsError
 
               - id: SpdxTool-Commands-Hash-MissingFile
-                title: The tool shall report an error when the target file does not exist.
+                title: The tool shall report an error when the file to be hashed does not exist.
                 tags:
                   - spdx
                 justification: |
@@ -92,17 +102,41 @@ sections:
                   - Hash_Run_VerifyTargetMissing_ReportsError
 
               - id: SpdxTool-Commands-Hash-WorkflowInvocation
-                title: >-
-                  The tool shall support hash command invocation from a workflow YAML step,
-                  reporting errors for missing operation, algorithm, or file inputs.
+                title: The tool shall support hash command invocation from a workflow YAML step.
                 tags:
                   - spdx
                 justification: |
                   Workflow users must be able to generate and verify hashes via YAML step
-                  configuration; missing required inputs must be reported clearly to prevent
-                  silent workflow failures.
+                  configuration.
                 tests:
                   - Hash_Run_InWorkflow_GeneratesHash
+
+              - id: SpdxTool-Commands-Hash-WorkflowMissingOperation
+                title: The tool shall report an error when the operation input is missing from a workflow hash step.
+                tags:
+                  - spdx
+                justification: |
+                  Missing required inputs must be reported clearly to prevent silent workflow
+                  failures.
+                tests:
                   - Hash_Run_InWorkflow_MissingOperation_ReportsError
+
+              - id: SpdxTool-Commands-Hash-WorkflowMissingAlgorithm
+                title: The tool shall report an error when the algorithm input is missing from a workflow hash step.
+                tags:
+                  - spdx
+                justification: |
+                  Missing required inputs must be reported clearly to prevent silent workflow
+                  failures.
+                tests:
                   - Hash_Run_InWorkflow_MissingAlgorithm_ReportsError
+
+              - id: SpdxTool-Commands-Hash-WorkflowMissingFile
+                title: The tool shall report an error when the file input is missing from a workflow hash step.
+                tags:
+                  - spdx
+                justification: |
+                  Missing required inputs must be reported clearly to prevent silent workflow
+                  failures.
+                tests:
                   - Hash_Run_InWorkflow_MissingFile_ReportsError

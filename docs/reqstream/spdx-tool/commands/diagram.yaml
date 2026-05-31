@@ -32,14 +32,15 @@ sections:
 
               - id: SpdxTool-Commands-Diagram-ToolsFilter
                 title: >-
-                  When the tools option is not specified, the diagram command shall exclude tool-related
-                  relationships from the generated Mermaid diagram.
+                  The diagram command shall exclude tool-related relationships when the tools option is
+                  not specified, and shall include them when the tools option is specified.
                 tags:
                   - spdx
                 justification: |
                   Tool relationships (BUILD_TOOL_OF, DEV_TOOL_OF, and TEST_TOOL_OF) are implementation
                   details that clutter diagrams when not requested. Excluding them by default
-                  produces cleaner, more readable diagrams.
+                  produces cleaner, more readable diagrams; the tools option allows users to include
+                  them explicitly when full tool visibility is needed.
                 tests:
                   - Diagram_Run_WithoutToolsOption_ExcludesToolRelationships
                   - Diagram_Run_WithDevToolOfRelationship_ExcludedFromDefaultDiagram

@@ -51,6 +51,10 @@ internal static class ValidateHash
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Capture start time before validation begins so the recorded StartTime
+        // reflects when Run was entered, not when DoValidate returned
+        var startTime = DateTime.Now;
+
         // Perform the validation
         var passed = DoValidate();
 
@@ -71,7 +75,7 @@ internal static class ValidateHash
                 Name = "SpdxTool_Hash",
                 ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateHash",
                 ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
+                StartTime = startTime,
                 Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
             });
     }

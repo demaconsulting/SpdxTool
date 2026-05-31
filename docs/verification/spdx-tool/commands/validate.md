@@ -1,4 +1,4 @@
-### Validate
+### Validate (Command)
 
 #### Verification Approach
 

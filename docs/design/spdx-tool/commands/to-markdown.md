@@ -26,7 +26,8 @@ the command name, usage string, description, help lines string array, and refere
 Document"), and optional depth (default 2) from CLI arguments and calls
 GenerateSummaryMarkdown.
 
-- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, markdownFile,
+- *Parameters*: `Context context` — execution context (currently unused by this unit);
+  `string[] args` — [spdxFile, markdownFile,
   optional title, optional depth].
 - *Returns*: `void`
 - *Preconditions*: args.Length must be at least 2. depth must be a positive integer if provided.
@@ -36,7 +37,8 @@ GenerateSummaryMarkdown.
 **Run(Context, YamlMappingNode, Dictionary)**: Reads spdx, markdown, title, and depth inputs from
 the YAML step node and calls GenerateSummaryMarkdown.
 
-- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+- *Parameters*: `Context context` — execution context (currently unused by this unit);
+  `YamlMappingNode step` — YAML step node;
   `Dictionary<string, string> variables` — variable map.
 - *Returns*: `void`
 - *Preconditions*: spdx and markdown inputs are required. depth must parse to a positive integer.

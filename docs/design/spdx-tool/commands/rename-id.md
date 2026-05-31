@@ -53,8 +53,8 @@ collections. Skips the operation when oldId == newId. Validates that neither ID 
   SnippetFromFile field of each snippet and, by extension, the `reference` fields inside
   the snippet's start and end range pointers — which the serializer derives from SnippetFromFile),
   relationships, HasFiles arrays, and Describes are
-  updated to newId. If oldId matches no element in the document, the method returns with no
-  changes applied (silent no-op).
+  updated to newId. If oldId matches no element in the document, the method completes with no
+  changes applied — all collection-update loops execute but find no matching ID to replace.
 
 **UpdateId(string, string, string)**: Returns the new ID if `id == oldId`, otherwise returns `id`
 unchanged. Used as the single consistent replacement primitive called by all collection-update

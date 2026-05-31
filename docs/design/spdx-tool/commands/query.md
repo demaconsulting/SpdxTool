@@ -9,7 +9,13 @@ variable. It is available from both the CLI and workflow YAML files.
 
 #### Data Model
 
-N/A — Query is a stateless singleton.
+Query carries no mutable instance state; all state is passed via method parameters. The following
+static fields serve as registry entries:
+
+**Command**: `private const string` — the registered command name `"query"`.
+
+**RegexMatchTimeoutMs**: `private const int` — match timeout in milliseconds (100) guarding against
+catastrophic backtracking (ReDoS protection).
 
 **Instance**: `Query` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record for Query.

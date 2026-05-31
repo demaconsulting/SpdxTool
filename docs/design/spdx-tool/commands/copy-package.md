@@ -58,7 +58,8 @@ true, (2) `fromPackage.FilesAnalyzed != false`, and (3) `fromPackage.HasFiles.Le
   document; `string packageId` — package to copy; `bool files` — include analyzed files.
 - *Returns*: `void`
 - *Preconditions*: The package identified by packageId must exist in fromDoc.
-- *Post-conditions*: toDoc contains the package; any required SpdxFile entries are added.
+- *Post-conditions*: toDoc contains the package; any required SpdxFile entries are added. In the
+  enhance path, only file IDs absent from the destination package's existing `HasFiles` are appended.
 
 **CopyChildren(SpdxDocument, SpdxDocument, string, HashSet<string>, bool)**: Recursively copies child
 packages (identified via RelationshipDirection on fromDoc relationships) and their relationships to

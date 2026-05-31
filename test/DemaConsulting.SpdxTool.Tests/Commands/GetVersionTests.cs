@@ -89,6 +89,27 @@ public class GetVersionTests
     }
 
     /// <summary>
+    ///     Test that get-version command with one argument (missing criteria) reports an error
+    /// </summary>
+    [Fact]
+    public void GetVersion_Run_OneArgument_ReportsError()
+    {
+        // Arrange: N/A — no test fixture required
+
+        // Act: Run the command with a file path but no criteria
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "get-version",
+            "some.spdx.json");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'get-version' command missing arguments", output);
+    }
+
+    /// <summary>
     ///     Test that get-version command with missing file reports an error
     /// </summary>
     [Fact]

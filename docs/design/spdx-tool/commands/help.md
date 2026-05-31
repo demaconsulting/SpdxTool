@@ -30,7 +30,8 @@ calls ShowUsage.
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
   `Dictionary<string, string> variables` — variable map.
 - *Returns*: `void`
-- *Preconditions*: about input is required.
+- *Preconditions*: about input is required. An absent `inputs` node is treated identically to an
+  absent `about` input and results in a `YamlException`.
 - *Post-conditions*: The named command's detailed usage text is written to context. Workflow
   variable references in the `about` value are expanded using the `variables` dictionary before
   the resolved name is passed to `ShowUsage`.

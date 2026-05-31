@@ -264,7 +264,10 @@ public sealed class FindPackage : Command
     ///     Evaluates each criterion in <paramref name="criteria"/> using
     ///     <see cref="Wildcard.IsMatch"/> so callers can use glob-style patterns. A criterion
     ///     for an optional SPDX field (version, filename) that is absent from the package
-    ///     counts as a non-match. Pure function; no side effects. Stateless and thread-safe.
+    ///     counts as a non-match. <c>DownloadLocation</c> applies the same null guard as
+    ///     <c>version</c> and <c>filename</c>: if <c>package.DownloadLocation</c> is null, the
+    ///     download criterion evaluates to <see langword="false"/>. Pure function; no side
+    ///     effects. Stateless and thread-safe.
     /// </remarks>
     /// <param name="package">Package to match</param>
     /// <param name="criteria">Criteria</param>
@@ -298,7 +301,8 @@ public sealed class FindPackage : Command
         }
 
         // Check the download location
-        if (criteria.TryGetValue("download", out var download) && !Wildcard.IsMatch(package.DownloadLocation, download))
+        if (criteria.TryGetValue("download", out var download) &&
+            (package.DownloadLocation == null || !Wildcard.IsMatch(package.DownloadLocation, download)))
         {
             return false;
         }

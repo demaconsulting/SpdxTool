@@ -15,17 +15,20 @@ language: en
 # Project-specific technical terms and tool names
 words:
   - Anson
+  - behaviour
   - Blockquotes
   - buildmark
   - BuildMark
   - build_notes
   - buildMultiTargeting
   - camelcase
+  - Centralising
   - Checkmarx
   - code_quality
   - code_review_plan
   - code_review_report
   - CodeQL
+  - colour
   - copilot
   - cspell
   - csproj
@@ -37,6 +40,8 @@ words:
   - DEMACONSULTINGNUGETKEY
   - Dependabot
   - dependabot
+  - devtoolof
+  - displayname
   - doctitle
   - dotnet
   - dotnettool
@@ -48,6 +53,7 @@ words:
   - gitignore
   - hotspots
   - ibiqlik
+  - invalidoption
   - LINQ
   - maintainer
   - markdownlint
@@ -60,6 +66,8 @@ words:
   - myterm
   - ncipollo
   - NOASSERTION
+  - notools
+  - noversion
   - ntia
   - nuget
   - nupkg
@@ -78,6 +86,7 @@ words:
   - reviewmark
   - ReviewMark
   - rezip
+  - rollup
   - sandboxed
   - Sarif
   - SarifMark
@@ -101,12 +110,14 @@ words:
   - streetsidesoftware
   - templatetool
   - TemplateDotNetTool
+  - testtoolof
   - testname
   - TMPL
   - trace_matrix
   - triaging
   - Trivy
   - trx
+  - validfile
   - vbproj
   - vcxproj
   - versionmark
@@ -114,6 +125,7 @@ words:
   - Xunit
   - VersionMark
   - Weasyprint
+  - withtools
   - wildcards
   - YamlDotNet
   - yamllint

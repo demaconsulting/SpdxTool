@@ -50,6 +50,10 @@ internal static class ValidateFindPackage
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
+        // Capture start time before validation begins so the recorded StartTime
+        // reflects when Run was entered, not when DoValidate returned
+        var startTime = DateTime.Now;
+
         // Perform the validation
         var passed = DoValidate();
 
@@ -70,7 +74,7 @@ internal static class ValidateFindPackage
                 Name = "SpdxTool_FindPackage",
                 ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateFindPackage",
                 ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
+                StartTime = startTime,
                 Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
             });
     }

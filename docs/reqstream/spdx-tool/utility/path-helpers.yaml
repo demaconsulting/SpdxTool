@@ -29,6 +29,7 @@ sections:
                   injection. SafePathCombine ensures that rooted paths are rejected.
                 tests:
                   - PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException
+                  - PathHelpers_SafePathCombine_WindowsAbsolutePath_ThrowsArgumentException
 
               - id: SpdxTool-Utility-RejectNullArguments
                 title: The PathHelpers unit shall reject null arguments.

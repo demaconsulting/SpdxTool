@@ -120,7 +120,12 @@ N/A - not a safety-classified software item.
    specified, `Context.Silent` is set to `true`, which suppresses all `context.WriteLine` and
    `context.WriteError` calls from writing to the console. If `--log <file>` is specified,
    `Context.LogWriter` is set to a `StreamWriter` for that file, and all output is duplicated to
-   the log file regardless of the silent state.
+   the log file regardless of the silent state. If `Context.Create` throws
+   `InvalidOperationException` (for example, when `--log` is specified without a following
+   argument, or `--depth` receives an invalid or negative value), `Main` writes
+   `Error: {message}` in red directly to the console, resets the console colour, and calls
+   `Environment.Exit(1)`. This failure path does not construct a `Context` and does not return
+   through `Run`.
 2. If the argument list is empty and --validate was not set, Program records an error
    ('Error: Missing arguments') and prints usage information; execution terminates with exit code 1.
 3. If --validate is set, execution is redirected to SelfTest.Validate.Run, which exercises every
@@ -128,7 +133,11 @@ N/A - not a safety-classified software item.
    one was specified.
 4. Otherwise, Program looks up the command name in CommandsRegistry.Commands and calls
    Command.Run(context, args) on the matched entry; an unrecognized name produces an error and
-   prints usage information.
+   prints usage information.    CommandUsageException is caught, reported as `Error: {message}`, and usage information
+   is printed; CommandErrorException is caught and reported as `Error: {message}` without
+   printing usage. Any other unexpected exception from command execution is
+   caught by the catch-all handler and reported via context.WriteError using ex.ToString(),
+   which includes the full stack trace, to aid debugging of unexpected failures in CI environments.
 5. The selected command reads any required SPDX JSON documents from the file system via
    SpdxHelpers.LoadJsonDocument, and YAML workflow files via YamlDotNet.
 6. The command applies the requested transformation or query using SpdxHelpers, PathHelpers, and

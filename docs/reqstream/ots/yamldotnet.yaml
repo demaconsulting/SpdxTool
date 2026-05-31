@@ -15,3 +15,7 @@ sections:
               gives direct access to YAML nodes for flexible, schema-free parsing.
             tests:
               - SpdxTool_SelfTest_ValidateFlag_Succeeds
+              - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow
+              - RunWorkflow_Run_InvalidWorkflowFile_ReportsError
+              - RunWorkflow_Run_WithDefaultParameters_UsesDefaults
+              - RunWorkflow_Run_WithSpecifiedParameters_UsesSpecified

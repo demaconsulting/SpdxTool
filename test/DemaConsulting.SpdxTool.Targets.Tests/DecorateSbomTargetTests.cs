@@ -139,6 +139,29 @@ public class DecorateSbomTargetTests
     }
 
     /// <summary>
+    ///     Test that IsPackable=false skips all SBOM processing including decoration.
+    /// </summary>
+    [Fact]
+    public void SpdxToolTargets_DecorateSbom_SingleTfm_NotPackable_SkipsDecoration()
+    {
+        // Arrange
+        var fixtureDir = FixturePaths.GetSingleTfmProjectPath();
+        CleanBinObj(fixtureDir);
+
+        // Act: pack with IsPackable=false
+        var exitCode = DotnetRunner.Run(
+            out var output,
+            fixtureDir,
+            "pack",
+            "--configuration", "Release",
+            "/p:IsPackable=false");
+
+        // Assert: pack succeeded but decoration did NOT run
+        Assert.True(exitCode == 0, $"dotnet pack failed:\n{output}");
+        Assert.DoesNotContain("SpdxTool: Decorating SBOM", output);
+    }
+
+    /// <summary>
     ///     Test that a missing workflow file produces a clear error message.
     /// </summary>
     [Fact]

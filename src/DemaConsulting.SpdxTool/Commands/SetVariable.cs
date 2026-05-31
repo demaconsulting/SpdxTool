@@ -80,7 +80,7 @@ public sealed class SetVariable : Command
         Instance);
 
     /// <summary>
-    ///     Private constructor - this is a singleton
+    ///     Initializes the singleton instance. Use <see cref="Instance"/> to access the singleton.
     /// </summary>
     private SetVariable()
     {
@@ -116,11 +116,15 @@ public sealed class SetVariable : Command
         // Get the step inputs
         var inputs = GetMapMap(step, "inputs");
 
-        // Get the 'value' input
+        // Get the 'value' input - GetMapString handles a null inputs map gracefully by returning
+        // null, so no explicit null check is needed here
         var value = GetMapString(inputs, "value", variables) ??
                     throw new YamlException(step.Start, step.End, "'set-variable' command missing 'value' input");
 
-        // Get the 'output' input (not expanded - used literally as the variable key)
+        // Get the 'output' input (not expanded - used literally as the variable key).
+        // GetMapString cannot be used here because it applies variable expansion; instead we
+        // access inputs.Children directly so the key is stored literally. A null inputs map
+        // has no Children to check, so an explicit null guard is required.
         string output;
         if (inputs != null && inputs.Children.TryGetValue("output", out var rawOutput))
         {

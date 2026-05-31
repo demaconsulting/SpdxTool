@@ -36,7 +36,9 @@ YAML step node, finds the matching package, and stores its ID in variables[outpu
 - *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
   `Dictionary<string, string> variables` — variable map.
 - *Returns*: `void`
-- *Preconditions*: output and spdx inputs are required; at least one criterion should be provided.
+- *Preconditions*: output and spdx inputs are required; empty criteria are accepted and will match
+  all packages. Note: the CLI path (`Run(Context, string[])`) enforces at least one argument,
+  creating an asymmetry with the workflow path.
 - *Post-conditions*: variables[output] is set to the matching package ID.
 
 **ParseCriteria(IEnumerable, Dictionary)**: Splits each "key=value" string from args into a
@@ -78,7 +80,9 @@ criteria using Wildcard.IsMatch for each field.
   `IReadOnlyDictionary<string, string> criteria` — criteria to match.
 - *Returns*: `bool`
 - *Preconditions*: None.
-- *Post-conditions*: Pure function; no side effects.
+- *Post-conditions*: Pure function; no side effects. `DownloadLocation` applies the same null guard
+  as `version` and `filename`: if `package.DownloadLocation` is null, the download criterion
+  evaluates to `false` (non-match).
 
 #### Error Handling
 

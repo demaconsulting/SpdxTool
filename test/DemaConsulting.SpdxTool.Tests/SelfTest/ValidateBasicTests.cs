@@ -47,6 +47,10 @@ public class ValidateBasicTests
     [Fact]
     public void SpdxTool_Basic()
     {
+        // No temp-directory setup is needed here: ValidateBasic creates and deletes its own
+        // validate.tmp subdirectory relative to the current directory and does not mutate the
+        // current directory itself, so the default working directory is sufficient for this test.
+
         // Arrange: create a validation context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();

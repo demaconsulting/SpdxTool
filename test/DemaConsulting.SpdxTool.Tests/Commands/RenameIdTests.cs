@@ -208,7 +208,7 @@ public class RenameIdTests
                 "created": "2021-10-01T00:00:00Z",
                 "creators": [ "Person: Malcolm Nixon" ]
               },
-              "documentDescribes": [ "SPDXRef-Package-1" ]
+              "documentDescribes": [ "SPDXRef-Package-1", "SPDXRef-File-1" ]
             }
             """;
 
@@ -248,6 +248,10 @@ public class RenameIdTests
 
             // Assert: Verify the relationship to-element was updated
             Assert.Equal("SPDXRef-File-2", doc.Relationships[2].RelatedSpdxElement);
+
+            // Assert: Verify the document Describes entry was updated
+            Assert.Contains("SPDXRef-File-2", doc.Describes);
+            Assert.DoesNotContain("SPDXRef-File-1", doc.Describes);
         }
         finally
         {

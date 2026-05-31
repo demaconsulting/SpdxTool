@@ -48,3 +48,14 @@ sections:
               diagnostic message guides users to the corrective action.
             tests:
               - SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
+
+          - id: SpdxToolTargets-SingleTfm-SkipWhenNotPackable
+            title: The targets shall skip all SBOM processing for a single-TFM project when IsPackable is false.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Projects with IsPackable=false do not produce a NuGet package. The single-TFM
+              path must exit cleanly without invoking spdx-tool or requiring a workflow file.
+            tests:
+              - SpdxToolTargets_DecorateSbom_SingleTfm_NotPackable_SkipsDecoration

@@ -143,7 +143,8 @@ public sealed class RunWorkflow : Command
         }
 
         // Execute the workflow
-        var outputs = name.StartsWith("http")
+        var outputs = name.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                      name.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
             ? RunUrl(context, name, null, parameters)
             : RunFile(context, name, null, parameters);
 
@@ -300,13 +301,20 @@ public sealed class RunWorkflow : Command
     }
 
     /// <summary>
-    ///     Execute the workflow
+    ///     Reads the workflow YAML file from disk and executes it.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="workflowFile">Workflow file</param>
-    /// <param name="integrity">Optional integrity hash</param>
-    /// <param name="parameters">Workflow parameters</param>
-    /// <returns>Workflow outputs</returns>
+    /// <param name="context">Program context used for output. Must not be null.</param>
+    /// <param name="workflowFile">
+    ///     Local file path of the workflow to execute. Must not be null; must exist on disk.
+    /// </param>
+    /// <param name="integrity">
+    ///     Optional SHA-256 hex string for integrity verification. Pass null to skip integrity checking.
+    /// </param>
+    /// <param name="parameters">
+    ///     Workflow parameter values. May be empty but must not be null. Each key must match a
+    ///     parameter declared in the workflow's <c>parameters</c> section.
+    /// </param>
+    /// <returns>Workflow outputs as a variable dictionary after all steps execute.</returns>
     /// <exception cref="CommandUsageException">
     ///     Thrown when the file specified by <paramref name="workflowFile"/> does not exist on disk.
     /// </exception>
@@ -332,18 +340,26 @@ public sealed class RunWorkflow : Command
     }
 
     /// <summary>
-    ///     Run workflow from URL
+    ///     Downloads the workflow YAML from an HTTP/HTTPS URL and executes it.
     /// </summary>
     /// <remarks>
     ///     Blocks on the async HTTP operations using <c>.Result</c>. This is safe because
     ///     SpdxTool runs as a console application without a synchronization context that could
     ///     cause a deadlock.
     /// </remarks>
-    /// <param name="context">Program context</param>
-    /// <param name="url">Workflow URL</param>
-    /// <param name="integrity">Optional integrity hash</param>
-    /// <param name="parameters">Workflow parameters</param>
-    /// <returns>Workflow outputs</returns>
+    /// <param name="context">Program context used for output. Must not be null.</param>
+    /// <param name="url">
+    ///     HTTP or HTTPS URL of the workflow to download. Must not be null; must be reachable
+    ///     and return HTTP 200 OK.
+    /// </param>
+    /// <param name="integrity">
+    ///     Optional SHA-256 hex string for integrity verification. Pass null to skip integrity checking.
+    /// </param>
+    /// <param name="parameters">
+    ///     Workflow parameter values. May be empty but must not be null. Each key must match a
+    ///     parameter declared in the workflow's <c>parameters</c> section.
+    /// </param>
+    /// <returns>Workflow outputs as a variable dictionary after all steps execute.</returns>
     /// <exception cref="CommandErrorException">
     ///     Thrown when the HTTP response for <paramref name="url"/> is not HTTP 200 OK; also
     ///     propagated from <see cref="RunBytes"/> when the integrity check fails or the workflow
@@ -382,14 +398,25 @@ public sealed class RunWorkflow : Command
     }
 
     /// <summary>
-    ///     Execute the workflow from Yaml bytes (from file, url, etc.)
+    ///     Parses and executes a workflow from its raw YAML byte content.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="source">Yaml source</param>
-    /// <param name="bytes">Yaml bytes</param>
-    /// <param name="integrity">Optional integrity hash</param>
-    /// <param name="parameters">Parameters</param>
-    /// <returns>Workflow outputs</returns>
+    /// <param name="context">Program context used for output. Must not be null.</param>
+    /// <param name="source">
+    ///     Display name for the workflow source used in error messages (e.g., a file path or URL).
+    ///     Must not be null.
+    /// </param>
+    /// <param name="bytes">
+    ///     Raw YAML content to parse and execute. Must not be null; must be valid YAML with a
+    ///     root mapping node containing a <c>steps</c> sequence.
+    /// </param>
+    /// <param name="integrity">
+    ///     Optional SHA-256 hex string for integrity verification. Pass null to skip integrity checking.
+    /// </param>
+    /// <param name="parameters">
+    ///     Workflow parameter values. May be empty but must not be null. Each key must match a
+    ///     parameter declared in the workflow's <c>parameters</c> section.
+    /// </param>
+    /// <returns>The local variables map after all steps execute, representing workflow outputs.</returns>
     /// <exception cref="CommandErrorException">
     ///     Thrown when the integrity hash does not match the computed SHA-256 hash of
     ///     <paramref name="bytes"/>, when the YAML root node is not a mapping node, when the
@@ -405,7 +432,7 @@ public sealed class RunWorkflow : Command
         {
             var hashBytes = SHA256.HashData(bytes);
             var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-            if (hash != integrity)
+            if (hash != integrity.ToLowerInvariant())
             {
                 throw new CommandErrorException($"Integrity check of {source} failed");
             }

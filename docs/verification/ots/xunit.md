@@ -17,3 +17,15 @@ project's test methods.
 
 No vendor test results or third-party compliance reports are required; the self-validating nature
 of the test infrastructure provides sufficient evidence.
+
+### Test Scenarios
+
+**Execution**: xUnit discovers and executes `[Fact]` test methods in the project's test
+assemblies. This scenario is demonstrated by the passage of
+`SpdxTool_Version_ShortFlag_DisplaysVersion` and `SpdxTool_Version_LongFlag_DisplaysVersion`.
+
+**Reporting**: xUnit produces TRX result files that are subsequently consumed by ReqStream for
+requirements traceability. This scenario is verified indirectly: a successful pipeline run with
+all requirements covered confirms that TRX output was generated and parsed correctly. Representative
+tests `SpdxTool_Version_ShortFlag_DisplaysVersion` and `SpdxTool_Usage_ShortHelpFlag_DisplaysUsage`
+appear in the TRX output on every run.

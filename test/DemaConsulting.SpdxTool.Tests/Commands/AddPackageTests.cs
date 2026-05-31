@@ -703,4 +703,212 @@ public class AddPackageTests
             File.Delete("workflow.yaml");
         }
     }
+
+    /// <summary>
+    ///     Test that add-package workflow step with a non-existent SPDX file reports an error
+    /// </summary>
+    [Fact]
+    public void AddPackage_Run_InWorkflowWithMissingSpdxFile_ReportsError()
+    {
+        // Workflow contents - references a non-existent SPDX file
+        const string workflowContents =
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: nonexistent.json
+                package:
+                  id: SPDXRef-Package-1
+                  name: Test Package
+                  download: https://example.com
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify non-zero exit code and error message
+            Assert.Equal(1, exitCode);
+            Assert.Contains("nonexistent.json", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that ParsePackage stores a cpe23 field as a Security/cpe23Type external reference
+    /// </summary>
+    [Fact]
+    public void AddPackage_ParsePackage_WithCpe23_StoresCpe23ExternalReference()
+    {
+        // SPDX contents - empty document to receive the new package
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
+
+        // Workflow contents - package with a cpe23 field
+        const string workflowContents =
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-Package-1
+                  name: Test Package
+                  download: https://example.com
+                  cpe23: cpe:2.3:a:test:package:1.0:*:*:*:*:*:*:*
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX and workflow files
+            File.WriteAllText("spdx.json", spdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+
+            // Read the SPDX document
+            Assert.True(File.Exists("spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
+
+            // Assert: Verify the cpe23 external reference was stored on the package
+            Assert.Single(doc.Packages);
+            Assert.Single(doc.Packages[0].ExternalReferences);
+            Assert.Equal(SpdxReferenceCategory.Security, doc.Packages[0].ExternalReferences[0].Category);
+            Assert.Equal("cpe23Type", doc.Packages[0].ExternalReferences[0].Type);
+            Assert.Equal(
+                "cpe:2.3:a:test:package:1.0:*:*:*:*:*:*:*",
+                doc.Packages[0].ExternalReferences[0].Locator);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that add-package renames document references when enhancing an existing package
+    ///     with a different ID, validating the F-01 fix (old ID captured before Enhance is called)
+    /// </summary>
+    [Fact]
+    public void AddPackage_Run_InWorkflowWithExistingPackageAndRelationship_RenamesReferences()
+    {
+        // SPDX contents — package SPDXRef-OldId described by the document relationship
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-OldId",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://example.com",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-OldId",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-OldId" ]
+            }
+            """;
+
+        // Workflow contents — same-identity package (same name + version) but different ID
+        const string workflowContents =
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: spdx.json
+                package:
+                  id: SPDXRef-NewId
+                  name: Test Package
+                  version: 1.0.0
+                  download: https://example.com
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX and workflow files
+            File.WriteAllText("spdx.json", spdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+
+            // Read the SPDX document
+            Assert.True(File.Exists("spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
+
+            // Assert: Verify the package was enhanced (only one package) with the new ID
+            Assert.Single(doc.Packages);
+            Assert.Equal("SPDXRef-NewId", doc.Packages[0].Id);
+
+            // Assert: Verify the relationship was renamed to reference the new ID (not the stale old ID)
+            Assert.Single(doc.Relationships);
+            Assert.Equal("SPDXRef-NewId", doc.Relationships[0].RelatedSpdxElement);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
 }

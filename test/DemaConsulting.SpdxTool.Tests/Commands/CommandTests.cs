@@ -265,6 +265,58 @@ public class CommandTests
     }
 
     /// <summary>
+    ///     Integration test that verifies the Commands subsystem expands environment variables in
+    ///     workflow arguments when dispatched through the full run-workflow path.
+    /// </summary>
+    /// <remarks>
+    ///     This is a subsystem-level test: it runs the tool as an external process, creates a
+    ///     workflow file that references an environment variable via the ${{ environment.NAME }}
+    ///     syntax, and confirms the expanded value appears in the output. It provides compliance
+    ///     evidence for SpdxTool-Commands-EnvironmentVariableExpansion at the subsystem boundary.
+    /// </remarks>
+    [Fact]
+    public void Commands_EnvironmentVariableExpansion_WorkflowWithEnvVar_ExpandsCorrectly()
+    {
+        // Arrange: set a known environment variable and build a workflow that reads it
+        const string varName = "SPDXTOOL_SUBSYSTEM_TEST_VAR";
+        const string varValue = "subsystem-env-expansion-ok";
+        Environment.SetEnvironmentVariable(varName, varValue);
+
+        const string workflowContents =
+            """
+            steps:
+            - command: print
+              inputs:
+                text:
+                - ${{ environment.SPDXTOOL_SUBSYSTEM_TEST_VAR }}
+            """;
+
+        try
+        {
+            // Arrange: write the workflow file
+            File.WriteAllText("env-test.yaml", workflowContents);
+
+            // Act: run the workflow via the full subsystem dispatch path
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "env-test.yaml");
+
+            // Assert: verify the environment variable was expanded and printed
+            Assert.Equal(0, exitCode);
+            Assert.Contains(varValue, output);
+        }
+        finally
+        {
+            // Cleanup: remove test artifacts
+            File.Delete("env-test.yaml");
+            Environment.SetEnvironmentVariable(varName, null);
+        }
+    }
+
+    /// <summary>
     ///     Test that Command.GetMapMap with null map returns null
     /// </summary>
     [Fact]

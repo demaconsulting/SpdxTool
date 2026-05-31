@@ -55,7 +55,7 @@ public partial class QueryTests
     }
 
     /// <summary>
-    ///     Test that query command with bad regex pattern reports an error
+    ///     Test that query command with a regex pattern missing the value capture group reports an error
     /// </summary>
     [Fact]
     public void Query_Run_PatternMissingValueGroup_ReportsError()
@@ -128,7 +128,7 @@ public partial class QueryTests
     [Fact]
     public void Query_Run_DotNetVersionInWorkflow_StoresVersion()
     {
-        // Workflow contents
+        // Arrange: define workflow content and write it to a temp file
         const string workflowContents =
             """
             parameters:
@@ -152,7 +152,6 @@ public partial class QueryTests
         var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
-            // Arrange: Write the workflow file to a temp location
             File.WriteAllText(workflowFile, workflowContents);
 
             // Act: Run the command
@@ -217,5 +216,41 @@ public partial class QueryTests
         // Assert: Verify error reported
         Assert.Equal(1, exitCode);
         Assert.Contains("not found in program output", output);
+    }
+
+    /// <summary>
+    ///     Test that query command in workflow with missing required inputs reports an error
+    /// </summary>
+    [Fact]
+    public void Query_Run_MissingWorkflowInputs_ReportsError()
+    {
+        const string workflowContents =
+            """
+            steps:
+            - command: query
+            """;
+
+        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: Write a workflow with a query step that has no inputs
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: Verify error reported for missing required input
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'query' command missing 'output' input", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
     }
 }

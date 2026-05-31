@@ -4,26 +4,51 @@ sections:
     sections:
       - title: Context Requirements
         requirements:
-          - id: SpdxTool-Context-ExecutionState
+          - id: SpdxTool-Context-FlagState
             title: >-
-              Context shall make parsed global flags, command arguments, output channels, and error status
-              available to all commands for the duration of a single tool invocation.
+              Context shall preserve parsed global flag values (Silent, Help, Version, Validate) for
+              the duration of a single tool invocation.
             justification: |
-              Centralizing execution state in Context enables all commands and subsystems to
-              share a consistent view of flag values, output channels, and error counts without
-              using global variables. Explicit state passing makes commands independently testable.
+              Storing parsed flag values in Context enables all commands and subsystems to share a
+              consistent view of global options without re-parsing the command line. Explicit state
+              passing makes commands independently testable.
             tests:
-              - SpdxTool_Version_ShortFlag_DisplaysVersion
-              - SpdxTool_Silent_ShortFlag_SuppressesOutput
-              - SpdxTool_Usage_NoArguments_DisplaysError
               - Context_Create_SilentFlag_SetsSilentToTrue
+              - Context_Create_WithDepthFlag_SetsDepth
+              - Context_Create_NoDepthFlag_DefaultsDepthToOne
+          - id: SpdxTool-Context-CommandArguments
+            title: >-
+              Context shall expose the remaining command-line tokens after global flags have been parsed.
+            justification: |
+              Command implementations require access to their positional arguments. Context collects
+              all tokens following the last recognized global flag and exposes them via the Arguments
+              property, enabling the dispatch layer to forward the correct arguments to each command.
+          - id: SpdxTool-Context-OutputChannels
+            title: >-
+              Context shall route WriteLine, WriteWarning, and WriteError calls to the console and
+              log file according to the Silent flag and log configuration.
+            justification: |
+              Centralizing output routing in Context ensures consistent behavior across all commands:
+              Silent mode suppresses console output while still capturing to the log, and every output
+              channel (line, warning, error) writes to the log when configured.
+            tests:
+              - Context_WriteLine_WithLogFile_WritesLineToFile
+              - Context_WriteWarning_DoesNotIncrementErrors
+          - id: SpdxTool-Context-ErrorStatus
+            title: >-
+              Context shall make accumulated error state available via the Errors and ExitCode properties.
+            justification: |
+              Exposing error state through Context properties enables Program to determine the process
+              exit code after all commands complete. The ExitCode property translates the Errors counter
+              into a binary process result, ensuring CI pipelines detect any failures.
+            tests:
+              - Context_WriteError_SingleCall_IncrementsErrorCount
           - id: SpdxTool-Context-ErrorCount
             title: The tool shall reflect whether any errors occurred during invocation via the process exit code.
             justification: |
               Error counting enables the process exit code to reflect whether any errors occurred
               during the invocation, which is essential for CI/CD pipeline integration.
             tests:
-              - SpdxTool_Usage_NoArguments_DisplaysError
               - Context_WriteError_SingleCall_IncrementsErrorCount
           - id: SpdxTool-Context-LogOutput
             title: Context shall write output to a log file when the -l/--log flag is supplied.

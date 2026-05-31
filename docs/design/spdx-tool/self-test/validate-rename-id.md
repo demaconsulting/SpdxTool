@@ -44,9 +44,9 @@ entry has been updated to SPDXRef-Package-2.
 #### Error Handling
 
 Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the output SPDX
-file is absent after the rename-id tool invocation. Returns false if the deserialized SPDX document
-still contains the old ID, if the relationship reference was not updated, or if the documentDescribes
-entry was not updated. Any
+file is absent after the rename-id tool invocation. Returns false if `SPDXRef-Package-2` is not
+found in the packages collection, if `SPDXRef-Package-2` is not found as the related element of any
+relationship, or if `SPDXRef-Package-2` is not found in the `documentDescribes` entries. Any
 exception thrown by DoValidate propagates uncaught from Run; no TestResult is recorded for this step
 if an exception is thrown — the exception surfaces to the Self-Test orchestrator. The finally block
 guards the Directory.Delete call with a Directory.Exists check to prevent a secondary

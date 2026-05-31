@@ -52,15 +52,75 @@ sections:
 
               - id: SpdxTool-Commands-RenameId-AllCollectionsRename
                 title: >-
-                  The rename-id command shall update all element collections when renaming an ID,
-                  including file IDs, snippet SnippetFromFile references, package HasFiles arrays,
-                  relationship from-element IDs, relationship to-element IDs
-                  (RelatedSpdxElement), and the document Describes array.
+                  The rename-id command shall update all element collections throughout the
+                  document when renaming an ID.
                 tags:
                   - spdx
                 justification: |
                   SPDX element IDs are referenced across multiple collections in a document.
                   Renaming only some of those references would produce an inconsistent document
                   that fails validation and causes downstream tooling errors.
+
+                  Non-normative detail: the collections updated are file IDs, snippet
+                  SnippetFromFile references, package HasFiles arrays, relationship
+                  from-element IDs, relationship to-element IDs (RelatedSpdxElement),
+                  and the document Describes array.
                 tests:
                   - RenameId_Run_ValidSpdxFile_RenamesAllCollections
+
+              - id: SpdxTool-Commands-RenameId-ValidateEmptyOldId
+                title: The rename-id command shall reject an empty old ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  An empty old ID is not a valid SPDX element identifier. Rejecting it
+                  early with a clear usage error prevents silent failures and guides users
+                  to supply a well-formed identifier.
+                tests:
+                  - RenameId_Rename_EmptyOldId_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateEmptyNewId
+                title: The rename-id command shall reject an empty new ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  An empty new ID is not a valid SPDX element identifier. Rejecting it
+                  early with a clear usage error prevents the document from being written
+                  with an invalid element identifier.
+                tests:
+                  - RenameId_Rename_EmptyNewId_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateSpdxDocumentOldId
+                title: The rename-id command shall reject SPDXRef-DOCUMENT as the old ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  SPDXRef-DOCUMENT is a reserved identifier that identifies the document
+                  itself. Renaming it would invalidate the document structure, so the
+                  command must reject it as a source ID.
+                tests:
+                  - RenameId_Rename_OldIdIsDocument_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateSpdxDocumentNewId
+                title: The rename-id command shall reject SPDXRef-DOCUMENT as the new ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  SPDXRef-DOCUMENT is a reserved identifier that identifies the document
+                  itself. Renaming another element to this identifier would cause an ID
+                  collision and invalidate the document structure.
+                tests:
+                  - RenameId_Rename_NewIdIsDocument_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateDuplicateNewId
+                title: >-
+                  The rename-id command shall reject a new ID that is already in use by another
+                  element with an error.
+                tags:
+                  - spdx
+                justification: |
+                  SPDX element IDs must be unique within a document. Renaming an element
+                  to an ID already used by another element would introduce a duplicate
+                  identifier, producing an invalid document.
+                tests:
+                  - RenameId_Rename_NewIdAlreadyInUse_ThrowsException

@@ -305,7 +305,7 @@ public sealed class Context : IDisposable
         {
             try
             {
-                logWriter = new StreamWriter(logFile);
+                logWriter = new StreamWriter(logFile) { AutoFlush = true };
             }
             catch (UnauthorizedAccessException e)
             {

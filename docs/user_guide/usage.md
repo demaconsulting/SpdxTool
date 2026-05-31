@@ -108,7 +108,7 @@ The `find-package` command locates a package in an SPDX document based on criter
 **Syntax:**
 
 ```bash
-spdx-tool find-package <spdx.json> [criteria]
+spdx-tool find-package <spdx.json> <criteria>
 ```
 
 **Example:**
@@ -125,7 +125,7 @@ The `get-version` command retrieves the version of a package in an SPDX document
 **Syntax:**
 
 ```bash
-spdx-tool get-version <spdx.json> [criteria]
+spdx-tool get-version <spdx.json> <criteria>
 ```
 
 **Example:**
@@ -207,7 +207,7 @@ regular expression with a named capture group.
 **Syntax:**
 
 ```bash
-spdx-tool query <spdxfile> <expression>
+spdx-tool query <pattern> <program> [args]
 ```
 
 **Workflow YAML example:**
@@ -222,10 +222,9 @@ spdx-tool query <spdxfile> <expression>
       - --version
 ```
 
-The `query` command queries a field from an SPDX document using a dot-separated expression path, or
-executes a program and applies a regular expression with a named `value` capture group to extract a
-result. In CLI mode the extracted value is written to stdout. In workflow mode the result is stored
-in the named output variable for use by subsequent steps.
+The `query` command executes a program and applies a regular expression with a named `value` capture
+group to extract a result from its output. In CLI mode the extracted value is written to stdout. In
+workflow mode the result is stored in the named output variable for use by subsequent steps.
 
 ## Print Command
 

@@ -56,6 +56,10 @@ Add and AddRelationship.Add, and saves the document.
 - *Returns*: `void`
 - *Preconditions*: spdxFile must exist and be a valid SPDX JSON document.
 - *Post-conditions*: The file is updated in place with the package and relationships applied.
+- *Note*: This method is non-atomic. If `AddRelationship.Add` fails after `Add` has already merged
+  the package into the in-memory document, the file on disk is not written (preserving the on-disk
+  state), but the in-memory document is left partially mutated. Callers must not reuse the in-memory
+  document after a failure from this method.
 
 **Add(SpdxDocument, SpdxPackage)**: Adds or enhances a package in memory. If an existing package
 with the same identity (by SpdxPackage.Same equality) is found, it is enhanced and renamed;
@@ -66,13 +70,18 @@ otherwise a deep copy of the package is appended.
 - *Returns*: `void`
 - *Preconditions*: doc must not be null.
 - *Post-conditions*: doc.Packages contains the package; if an existing same-identity package was found
-  its ID is updated to match the supplied package ID via RenameId.Rename. If the existing package's
-  ID already matches `package.Id`, the rename is a no-op; the enhance still runs.
+  its ID is updated to match the supplied package ID via RenameId.Rename. The existing package ID is
+  captured before `Enhance` is called; `RenameId.Rename` receives the pre-enhance ID to guarantee all
+  document references are correctly updated regardless of whether `Enhance` modifies the `Id` field.
+  If the existing package's ID already matches `package.Id`, the rename is a no-op; the enhance still
+  runs.
 
 #### Error Handling
 
 **CommandUsageException** — thrown by Run(Context, string[]) unconditionally (workflow-only command);
-also thrown by ParsePackage when the package ID is empty or equals "SPDXRef-DOCUMENT".
+also thrown by ParsePackage when the package ID is empty or equals "SPDXRef-DOCUMENT";
+also thrown by AddPackageToSpdxFile when the SPDX file does not exist on disk
+(propagated from SpdxHelpers.LoadJsonDocument).
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the spdx or package
 inputs are missing; thrown by ParsePackage when the id, name, or download fields are absent from

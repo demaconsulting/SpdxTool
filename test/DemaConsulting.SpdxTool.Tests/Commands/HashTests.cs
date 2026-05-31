@@ -260,7 +260,7 @@ public class HashTests
     ///     Test that hash command verify operation succeeds when the sidecar file contains an uppercase digest
     /// </summary>
     [Fact]
-    public void Hash_Run_VerifySha256_UppercaseDigest_Succeeds()
+    public void Hash_Run_VerifyUppercaseDigest_Succeeds()
     {
         var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = testFile + ".sha256";

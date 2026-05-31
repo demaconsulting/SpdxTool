@@ -95,7 +95,8 @@ public sealed class GetVersion : Command
     /// </param>
     /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are supplied.</exception>
     /// <exception cref="CommandErrorException">
-    ///     Thrown when no package matches the supplied criteria, or when multiple packages match.
+    ///     Thrown when no package matches the supplied criteria, when multiple packages match, or when the SPDX file
+    ///     cannot be loaded.
     /// </exception>
     public override void Run(Context context, string[] args)
     {
@@ -125,7 +126,8 @@ public sealed class GetVersion : Command
     /// <param name="variables">Workflow variable map; the retrieved version is stored under the key given by the <c>output</c> input.</param>
     /// <exception cref="YamlException">Thrown when the <c>spdx</c> or <c>output</c> input is absent from the step.</exception>
     /// <exception cref="CommandErrorException">
-    ///     Thrown when no package matches the supplied criteria, or when multiple packages match.
+    ///     Thrown when no package matches the supplied criteria, when multiple packages match, or when the SPDX file
+    ///     cannot be loaded.
     /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {

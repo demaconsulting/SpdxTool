@@ -14,8 +14,8 @@ N/A - this unit is a static class with no instance state.
 
 **Run**: executes the diagram self-test and records the result.
 
-- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
-  append to.
+- *Parameters*: `context` — the active Program Context; must not be null. `results` — the TestResults
+  collection to append to; must not be null.
 - *Returns*: void.
 - *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
   current directory mutated by `Validate.RunSpdxTool`.

@@ -73,6 +73,7 @@ public class ValidateNtiaTests
     [Fact]
     public void ValidateNtia_Run_CommandFailure_RecordsFailedOutcome()
     {
+        // Arrange: save original directory and create isolated temp directory for test isolation
         var originalDirectory = Directory.GetCurrentDirectory();
         var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDirectory);

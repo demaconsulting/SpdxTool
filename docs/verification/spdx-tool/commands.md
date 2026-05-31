@@ -77,6 +77,12 @@ not present in the variables dictionary, `Command.Expand` throws
 with a non-null instance. This scenario is tested by
 `CommandsRegistry_Commands_KnownCommandName_ResolvesEntry`.
 
+**EnvironmentVariableExpansionSubsystem**: when a workflow step references
+`${{ environment.NAME }}`, the Commands subsystem expands the token to the
+process environment variable value before dispatching the step. This scenario
+is tested by
+`Commands_EnvironmentVariableExpansion_WorkflowWithEnvVar_ExpandsCorrectly`.
+
 **EnvironmentVariableExpansionUndefined**: when a `${{ environment.NAME }}` token refers to an
 environment variable that is not set, `Command.Expand` throws `InvalidOperationException`.
 This scenario is tested by

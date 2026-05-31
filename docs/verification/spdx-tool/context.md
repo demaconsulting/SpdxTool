@@ -33,8 +33,9 @@ state after parsing command-line arguments. This scenario is primarily exercised
 with supplementary coverage by `SpdxTool_Program_Run_VersionContext_WritesVersion` and
 `SpdxTool_Program_Run_HelpContext_WritesUsage`.
 
-> **Note**: `SpdxTool_Program_Run_*` tests reside in `ProgramTests.cs` and are covered by
-> the `SpdxTool-Architecture` review set.
+> **Note**: `SpdxTool_Program_Run_VersionContext_WritesVersion` and
+> `SpdxTool_Program_Run_HelpContext_WritesUsage` reside in `ProgramTests.cs` and exercise
+> Context flag parsing through the Program entry point.
 
 **ErrorCount**: Context accumulates errors and translates the error count into an exit code
 of 1 when errors are present. This scenario is exercised by

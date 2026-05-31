@@ -6,14 +6,29 @@ sections:
     sections:
       - title: xUnit Requirements
         requirements:
-          - id: SpdxTool-OTS-xUnit
-            title: xUnit shall execute unit tests and report results.
+          - id: SpdxTool-OTS-xUnit-Execution
+            title: xUnit shall discover and execute unit test methods.
             tags:
               - ots
             justification: |
-              xUnit (xunit.v3 and xunit.runner.visualstudio) is the unit-testing framework
-              used by the project. It discovers and runs all test methods and writes TRX result
-              files that feed into coverage reporting and requirements traceability.
+              xUnit (xunit.v3) is the unit-testing framework used by the project. It discovers
+              all methods marked with [Fact] or [Theory] in the test assemblies and executes them.
+              The successful passage of representative tests on every pipeline run constitutes
+              verification that xUnit can discover and execute test methods for the project.
+            tests:
+              - SpdxTool_Version_ShortFlag_DisplaysVersion
+              - SpdxTool_Version_LongFlag_DisplaysVersion
+              - SpdxTool_Usage_ShortHelpFlag_DisplaysUsage
+
+          - id: SpdxTool-OTS-xUnit-Reporting
+            title: xUnit shall produce TRX result files for pipeline test reporting.
+            tags:
+              - ots
+            justification: |
+              xUnit (xunit.runner.visualstudio) writes TRX result files that feed into coverage
+              reporting and requirements traceability via ReqStream. The successful pipeline
+              completion with all requirements covered is direct evidence that TRX output was
+              correctly produced and consumed.
             tests:
               - SpdxTool_Version_ShortFlag_DisplaysVersion
               - SpdxTool_Version_LongFlag_DisplaysVersion

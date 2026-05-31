@@ -41,7 +41,7 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "rename-id";
+    private const string CommandName = "rename-id";
 
     /// <summary>
     ///     Singleton instance of this command
@@ -60,7 +60,7 @@ public sealed class RenameId : Command
     ///     instance for registration with <see cref="CommandsRegistry"/>.
     /// </remarks>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "rename-id <arguments>",
         "Rename an element ID in an SPDX document.",
         [
@@ -205,13 +205,13 @@ public sealed class RenameId : Command
         // Verify the old ID is valid
         if (oldId.Length == 0 || oldId == "SPDXRef-DOCUMENT")
         {
-            throw new CommandUsageException("Invalid old ID");
+            throw new CommandUsageException("Old ID must not be empty or 'SPDXRef-DOCUMENT'");
         }
 
         // Verify the new ID is valid
         if (newId.Length == 0 || newId == "SPDXRef-DOCUMENT")
         {
-            throw new CommandUsageException("Invalid new ID");
+            throw new CommandUsageException("New ID must not be empty or 'SPDXRef-DOCUMENT'");
         }
 
         // Verify ID is not in use
@@ -268,6 +268,13 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Updates an element ID by replacing the old ID with the new ID if they match.
     /// </summary>
+    /// <remarks>
+    ///     This is the single consistent replacement primitive called by all collection-update loops
+    ///     in <see cref="Rename(SpdxDocument, string, string)"/>. Centralising the comparison here
+    ///     ensures that every collection (packages, files, snippets, relationships, Describes) applies
+    ///     identical comparison semantics and reduces the risk of divergent behaviour across loops.
+    ///     Stateless and thread-safe.
+    /// </remarks>
     /// <param name="id">The current ID to be checked and potentially updated.</param>
     /// <param name="oldId">The old ID to be replaced.</param>
     /// <param name="newId">The new ID to replace the old ID.</param>

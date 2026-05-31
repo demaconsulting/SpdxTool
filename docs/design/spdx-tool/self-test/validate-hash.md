@@ -19,8 +19,11 @@ N/A - this unit is a static class with no instance state.
 - *Returns*: void.
 - *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
   current directory mutated by `Validate.RunSpdxTool`.
-- *Post-conditions*: When no exception is thrown, a TestResult entry named SpdxTool_Hash has been
-  appended to results and a pass or fail message has been written to the Context.
+- *Post-conditions*: `StartTime` records the time at which `Run` was entered, captured before
+  `DoValidate()` is called. When no exception is thrown, a TestResult entry named SpdxTool_Hash
+  has been appended to results. On success, `"✓ SpdxTool_Hash - Passed"` has been written to
+  `context.WriteLine`; on failure, `"✗ SpdxTool_Hash - Failed"` has been written to
+  `context.WriteError`.
 
 **DoValidate**: orchestrates both sub-tests in a shared temporary directory.
 
@@ -43,7 +46,7 @@ N/A - this unit is a static class with no instance state.
 
 Writes a test file containing "The quick brown fox jumps over the lazy dog", calls Validate.RunSpdxTool
 with --silent, hash, generate, sha256, and the file path, then verifies the generated hash file
-contains the expected SHA-256 digest value.
+contains the expected SHA-256 digest `d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592`.
 
 **DoValidateVerify**: verifies that the hash verify sub-command accepts a correct hash and rejects a
 corrupted one.

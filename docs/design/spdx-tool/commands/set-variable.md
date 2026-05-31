@@ -35,7 +35,9 @@ that the literal key name is used as the variable name.
 command).
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the value or output
-inputs are missing.
+inputs are missing. An absent `inputs` map node (i.e. the step has no `inputs:` key at all) is
+treated as a missing-input error: `GetMapString` returns null for value, and the null guard for
+output fires, causing a `YamlException` in both cases.
 
 #### Dependencies
 

@@ -64,10 +64,11 @@ public class ValidateAddRelationshipTests
     ///     command exits with a non-zero exit code.
     /// </summary>
     /// <remarks>
-    ///     The <see cref="ValidateAddRelationship.PreRunSpdxToolHookForTest"/> hook is set to corrupt
-    ///     <c>test.spdx.json</c> with invalid JSON immediately before the in-process add-relationship
-    ///     command reads it. This causes add-relationship to fail with a non-zero exit code, which
-    ///     causes <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     The <see cref="ValidateAddRelationship.PreRunSpdxToolHookForTest"/> hook is set to replace
+    ///     <c>test.spdx.json</c> with an empty JSON object (<c>{}</c>) — valid JSON but not a valid
+    ///     SPDX document — immediately before the in-process add-relationship command reads it.
+    ///     This causes add-relationship to fail with a non-zero exit code, which causes
+    ///     <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
     ///     <see cref="TestOutcome.Failed"/>.
     /// </remarks>
     [Fact]

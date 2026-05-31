@@ -21,7 +21,8 @@ delegate invoked immediately before `Validate.RunSpdxTool` is called. Allows tes
   append to.
 - *Returns*: void.
 - *Preconditions*: None.
-- *Post-conditions*: If DoValidate returns without throwing, a TestResult entry named SpdxTool_AddRelationship has been appended to results;
+- *Post-conditions*: If DoValidate returns without throwing, a TestResult entry named
+  SpdxTool_AddRelationship has been appended to results;
   a pass message has been written to the Context's standard output stream, or a fail message to the
   Context's error output stream.
 

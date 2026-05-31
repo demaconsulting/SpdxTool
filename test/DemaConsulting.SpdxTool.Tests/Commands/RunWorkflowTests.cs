@@ -625,6 +625,59 @@ output);
     }
 
     /// <summary>
+    ///     Test that run-workflow command with a valid uppercase integrity hash executes the workflow
+    /// </summary>
+    [Fact]
+    public void RunWorkflow_Run_WithUppercaseIntegrity_ExecutesWorkflow()
+    {
+        // Exact byte content for workflow2 so the SHA-256 hash is deterministic
+        const string workflow2 =
+            "steps:\n" +
+            "- command: help\n" +
+            "  inputs:\n" +
+            "    about: help\n";
+
+        try
+        {
+            // Arrange: Write the sub-workflow file and compute its SHA-256 hash in uppercase
+            File.WriteAllText("workflow2.yaml", workflow2);
+            var bytes = File.ReadAllBytes("workflow2.yaml");
+            var hashBytes = SHA256.HashData(bytes);
+            var integrity = BitConverter.ToString(hashBytes).Replace("-", "").ToUpperInvariant();
+
+            // Arrange: Write the outer workflow referencing the sub-workflow with its uppercase hash
+            var workflow1 = $"""
+                steps:
+                - command: run-workflow
+                  inputs:
+                    file: workflow2.yaml
+                    integrity: {integrity}
+                """;
+            File.WriteAllText("workflow1.yaml", workflow1);
+
+            // Act: Run the outer workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow1.yaml");
+
+            // Assert: Verify success — the inner help step ran
+            Assert.Equal(0, exitCode);
+            Assert.Contains(
+                "This command displays extended help information about the specified command",
+                output);
+        }
+        finally
+        {
+            // Delete the files
+            File.Delete("workflow1.yaml");
+            File.Delete("workflow2.yaml");
+        }
+    }
+
+    /// <summary>
     ///     Test that run-workflow command with --verbose prints workflow output variables
     /// </summary>
     [Fact]

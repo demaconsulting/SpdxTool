@@ -28,3 +28,8 @@ relationship in a realistic validation run. This scenario is tested by `SpdxTool
 **ExceptionPropagation**: when an I/O error prevents `DoValidate` from running, the exception
 propagates uncaught from `Run()` and no `TestResult` is recorded. This scenario is tested by
 `ValidateAddPackage_Run_IoError_PropagatesException`.
+
+**ContentMismatch**: when the add-package command exits with a zero exit code but the output SPDX
+document does not contain the expected package IDs or the expected BUILD_TOOL_OF relationship, `Run`
+records `TestOutcome.Failed`. This scenario is tested by
+`ValidateAddPackage_Run_ContentMismatch_RecordsFailedOutcome`.

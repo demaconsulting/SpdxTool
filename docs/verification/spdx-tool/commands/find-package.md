@@ -60,6 +60,10 @@ supplied search criteria. This scenario is tested by `FindPackage_Run_NoPackageF
 matches the supplied search criteria. This scenario is tested by
 `FindPackage_Run_MultiplePackagesFound_ReportsError`.
 
+**WildcardLookup**: the unit successfully finds and returns the package identifier when a wildcard
+pattern is supplied as a search criterion. This scenario is tested by
+`FindPackage_Run_ByNameWildcard_FindsPackage`.
+
 **ParseCriteriaEmptyKey**: the unit throws a usage exception when a criterion argument has an empty
 key (e.g. `=value`). This scenario is tested by
 `FindPackage_ParseCriteria_EmptyKey_ThrowsCommandUsageException`.

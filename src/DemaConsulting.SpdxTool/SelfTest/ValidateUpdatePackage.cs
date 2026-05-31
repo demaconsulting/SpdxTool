@@ -91,10 +91,12 @@ internal static class ValidateUpdatePackage
     /// </summary>
     /// <remarks>
     ///     Creates a validate.tmp directory, writes a minimal SPDX JSON document containing
-    ///     SPDXRef-Package-1 and a workflow YAML that updates all twelve metadata fields, then
-    ///     invokes the SpdxTool run-workflow command with --silent. After the tool exits, checks
-    ///     that the output SPDX file exists, then uses LINQ to locate SPDXRef-Package-1 by Id and
-    ///     verifies each of the twelve updated field values individually so that deserializer
+    ///     SPDXRef-Package-1 and a workflow YAML that updates eleven workflow inputs (mapping to
+    ///     twelve SPDX document fields, since <c>license</c> sets both ConcludedLicense and
+    ///     DeclaredLicense), then invokes the SpdxTool run-workflow command with --silent. After
+    ///     the tool exits, checks that the output SPDX file exists, then uses LINQ to locate
+    ///     SPDXRef-Package-1 by Id and verifies each of the twelve updated field values
+    ///     individually so that deserializer
     ///     ordering changes do not cause false failures. Deletes the temporary directory in a
     ///     <c>finally</c> block only if it exists, guarding against a secondary
     ///     <see cref="DirectoryNotFoundException"/> masking the original exception when

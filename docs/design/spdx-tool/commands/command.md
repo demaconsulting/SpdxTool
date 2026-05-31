@@ -95,7 +95,8 @@ is malformed, or macro brackets are unmatched.
 
 #### Callers
 
-- CommandsRegistry — holds CommandEntry references to Command subclass instances
+- CommandsRegistry — stores `CommandEntry` instances whose `Instance` field references `Command` subclass singletons
+  (does not invoke Command methods directly)
 - RunWorkflow — dispatches commands by calling Run(Context, YamlMappingNode, Dictionary)
 - Program — dispatches CLI commands by calling Run(Context, string[])
 - All Command subclasses inherit from Command

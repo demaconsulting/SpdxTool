@@ -33,14 +33,14 @@ namespace DemaConsulting.SpdxTool.Tests.Utility;
 public class WildcardTests
 {
     /// <summary>
-    ///     Test that exact pattern matching returns true for matching strings
+    ///     Test that exact pattern matching behaves correctly for matching and non-matching strings
     /// </summary>
     /// <remarks>
     ///     Verifies that IsMatch returns true for case-insensitive exact matches and false when
     ///     the input differs in content, length, or separator from the pattern.
     /// </remarks>
     [Fact]
-    public void Wildcard_IsMatch_ExactMatch_ReturnsTrue()
+    public void Wildcard_IsMatch_ExactMatch_MatchesCorrectly()
     {
         // Arrange: no setup required
         // Act / Assert: verify exact matching behavior across multiple inputs
@@ -141,6 +141,7 @@ public class WildcardTests
     [Fact]
     public void Wildcard_IsMatch_EmptyInputs_BehavesCorrectly()
     {
+        // Arrange: no setup required
         // Act / Assert: verify empty string and empty pattern boundary behavior
         Assert.Multiple(
             () => Assert.True(Wildcard.IsMatch("", "")),

@@ -52,6 +52,7 @@ placeholder to avoid null-reference exceptions and to produce valid Mermaid outp
 - *Preconditions*: spdxFile must be a valid SPDX JSON document.
 - *Post-conditions*: mermaidFile is written with an erDiagram block containing one line per
   qualifying relationship.
+- *Note*: Not thread-safe when called concurrently with the same `mermaidFile` path.
 
 #### Error Handling
 
@@ -67,7 +68,8 @@ on `RelationshipDirection` includes a `_ => throw new InvalidDataException()` ar
 (unmapped relationship types default to `Sibling`), making this arm permanently unreachable.
 The arm is retained as a defensive guard against future changes to the direction enum.
 
-**CommandUsageException** — propagated from `SpdxHelpers.LoadJsonDocument` when the specified SPDX file does not exist on disk.
+**CommandUsageException** — propagated from `SpdxHelpers.LoadJsonDocument` when the specified SPDX file
+does not exist on disk.
 
 **IOException** — propagated from GenerateDiagram when spdxFile cannot be read or mermaidFile cannot
 be written.

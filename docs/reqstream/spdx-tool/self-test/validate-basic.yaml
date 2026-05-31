@@ -7,7 +7,7 @@ sections:
           - title: ValidateBasic Requirements
             requirements:
               - id: SpdxTool-SelfTest-Basic
-                title: The ValidateBasic unit shall verify basic SpdxTool validation behavior.
+                title: The SelfTest shall verify basic SpdxTool validation behavior.
                 tags:
                   - self-test
                 justification: |
@@ -22,20 +22,20 @@ sections:
 
               - id: SpdxTool-SelfTest-Basic-ValidAccepted
                 title: >-
-                  The ValidateBasic unit shall verify that the validate command accepts a
+                  The SelfTest shall verify that the validate command accepts a
                   well-formed SPDX document.
                 tags:
                   - self-test
                 justification: |
-                  Self-validation of basic tool functionality ensures the core CLI flags
-                  (silent mode, logging) work correctly with the validate command
-                  after installation or deployment.
+                  Verifies that the validate workflow accepts a well-formed SPDX document without
+                  raising errors, confirming the happy-path execution is not broken by
+                  negative-case changes.
                 tests:
                   - SpdxTool_Basic
 
               - id: SpdxTool-SelfTest-Basic-InvalidRejected
                 title: >-
-                  The ValidateBasic unit shall verify that the validate command rejects a
+                  The SelfTest shall verify that the validate command rejects a
                   malformed SPDX document.
                 tags:
                   - self-test

@@ -99,4 +99,99 @@ public class ContextTests
         Assert.Throws<InvalidOperationException>(
             () => Context.Create(["-l", ""]));
     }
+
+    /// <summary>
+    ///     Test that Context.WriteLine with a log file writes the line to the file.
+    /// </summary>
+    [Fact]
+    public void Context_WriteLine_WithLogFile_WritesLineToFile()
+    {
+        // Arrange: create a temporary file path for the log
+        var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".log");
+
+        try
+        {
+            // Act: create a context with a log file, write a line, then dispose
+            using (var context = Context.Create(["--log", tempFilePath, "some-command"]))
+            {
+                context.WriteLine("test output");
+            }
+
+            // Assert: the log file contains the written line
+            var contents = File.ReadAllText(tempFilePath);
+            Assert.Contains("test output", contents);
+        }
+        finally
+        {
+            // Cleanup
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Test that Context.Create with --log flag but no following filename throws InvalidOperationException.
+    /// </summary>
+    [Fact]
+    public void Context_Create_WithLogFlagMissingFilename_ThrowsInvalidOperationException()
+    {
+        // Arrange: N/A — no fixture required
+
+        // Act / Assert: --log without a filename argument must be rejected
+        var ex = Assert.Throws<InvalidOperationException>(
+            () => Context.Create(["--log"]));
+
+        // Assert: error message is user-friendly
+        Assert.NotNull(ex.Message);
+    }
+
+    /// <summary>
+    ///     Test that Context.Create with a non-integer depth value throws InvalidOperationException.
+    /// </summary>
+    [Fact]
+    public void Context_Create_WithNonIntegerDepth_ThrowsInvalidOperationException()
+    {
+        // Arrange: N/A — no fixture required
+
+        // Act / Assert: non-integer depth must be rejected with a controlled error
+        var ex = Assert.Throws<InvalidOperationException>(
+            () => Context.Create(["--depth", "abc"]));
+
+        // Assert: error message mentions the invalid value
+        Assert.Contains("abc", ex.Message);
+    }
+
+    /// <summary>
+    ///     Test that Context.WriteWarning does not increment the error counter.
+    /// </summary>
+    [Fact]
+    public void Context_WriteWarning_DoesNotIncrementErrors()
+    {
+        // Arrange: create a context with silent output to suppress console noise
+        using var context = Context.Create(["--silent"]);
+
+        // Act: write a warning (not an error)
+        context.WriteWarning("test warning");
+
+        // Assert: error count remains zero and exit code is 0
+        Assert.Equal(0, context.Errors);
+        Assert.Equal(0, context.ExitCode);
+    }
+
+    /// <summary>
+    ///     Test that Context.Create with --depth 3 sets the Depth property to 3.
+    /// </summary>
+    [Fact]
+    public void Context_Create_WithDepthFlag_SetsDepth()
+    {
+        // Arrange: N/A — no fixture required
+
+        // Act: create a context with --depth 3
+        using var context = Context.Create(["--depth", "3"]);
+
+        // Assert: Depth property reflects the flag value
+        Assert.Equal(3, context.Depth);
+    }
 }

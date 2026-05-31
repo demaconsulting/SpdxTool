@@ -67,6 +67,10 @@ public sealed class Diagram : Command
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     The <paramref name="context"/> parameter is not used by this command because all output is written
+    ///     directly to the mermaid file via <see cref="File.WriteAllText(string, string?)"/>.
+    /// </remarks>
     /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are provided, or when an unrecognized option token is encountered.</exception>
     public override void Run(Context context, string[] args)
     {
@@ -92,6 +96,10 @@ public sealed class Diagram : Command
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     The <paramref name="context"/> parameter is not used by this command because all output is written
+    ///     directly to the mermaid file via <see cref="File.WriteAllText(string, string?)"/>.
+    /// </remarks>
     /// <exception cref="YamlException">Thrown when the spdx or mermaid inputs are absent from the workflow step, or when the tools input cannot be parsed as a boolean.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {

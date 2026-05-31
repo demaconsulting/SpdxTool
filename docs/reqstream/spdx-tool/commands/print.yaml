@@ -63,16 +63,26 @@ sections:
                 tests:
                   - Print_Run_UndefinedVariable_ReportsError
 
-              - id: SpdxTool-Commands-Print-MalformedExpansion
-                title: >-
-                  The print command shall report an error when a text line contains an unmatched
-                  macro delimiter or an empty variable name.
+              - id: SpdxTool-Commands-Print-EmptyVariableName
+                title: The tool shall report an error when a variable substitution
+                  token contains an empty variable name.
                 tags:
                   - workflow
                 justification: |
-                  Malformed macro syntax is a workflow authoring error; a clear error message
-                  allows authors to identify and correct the problem without reading internal
-                  stack traces.
+                  An empty variable name in a macro token is a workflow authoring error; a clear
+                  error message allows authors to identify and correct the problem without reading
+                  internal stack traces.
                 tests:
                   - Print_Run_EmptyVariableName_ReportsError
+
+              - id: SpdxTool-Commands-Print-UnmatchedMacroDelimiter
+                title: The tool shall report an error when a variable substitution
+                  token has an unmatched opening delimiter.
+                tags:
+                  - workflow
+                justification: |
+                  An unmatched macro delimiter in a text line is a workflow authoring error; a clear
+                  error message allows authors to identify and correct the problem without reading
+                  internal stack traces.
+                tests:
                   - Print_Run_UnmatchedMacroDelimiter_ReportsError

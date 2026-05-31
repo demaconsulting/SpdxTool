@@ -33,6 +33,7 @@ sections:
               - SpdxTool-Commands-Validate-NtiaMinimum
             tests:
               - Commands_Dispatch_UnknownCommand_ReportsError
+              - CommandsRegistry_Commands_AllExpectedNames_ArePresent
 
           - id: SpdxTool-Commands-Dispatch
             title: The Commands subsystem shall dispatch commands by name to their implementations.
@@ -43,6 +44,7 @@ sections:
               command is not found.
             tests:
               - Commands_Dispatch_UnknownCommand_ReportsError
+              - CommandsRegistry_Commands_KnownCommandName_ResolvesEntry
 
           - id: SpdxTool-Commands-VariableExpansion
             title: The Commands subsystem shall expand variables in command arguments using ${{ variable }} syntax.
@@ -52,6 +54,10 @@ sections:
               substitution, and nested variable references where a variable name
               itself contains a variable reference.
             children: [SpdxTool-Command-VariableExpansion]
+            tests:
+              - Command_Expand_BasicVariable_ReturnsExpanded
+              - Command_Expand_NestedVariable_ReturnsFullyExpanded
+              - Commands_EnvironmentVariableExpansion_WorkflowWithEnvVar_ExpandsCorrectly
 
           - id: SpdxTool-Commands-MapString
             title: The Commands subsystem shall extract string values from YAML mapping nodes with variable expansion.
@@ -61,6 +67,8 @@ sections:
               variable expansion to present entries, enabling consistent argument
               handling across all commands.
             children: [SpdxTool-Command-MapString]
+            tests:
+              - Command_GetMapString_WithVariableExpansion_ReturnsExpanded
 
           - id: SpdxTool-Commands-EnvironmentVariableExpansion
             title: The Commands subsystem shall expand environment variables using ${{ environment.NAME }} syntax.
@@ -69,3 +77,5 @@ sections:
               paths) without hard-coding them. The environment. prefix in variable expansion
               reads from the process environment, allowing secure parameterization.
             children: [SpdxTool-Command-EnvironmentVariableExpansion]
+            tests:
+              - Commands_EnvironmentVariableExpansion_WorkflowWithEnvVar_ExpandsCorrectly

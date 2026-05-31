@@ -38,7 +38,7 @@ by `Hash_Run_VerifyOperation_SucceedsForValidHash`.
 
 **VerifyUppercaseDigest**: the unit accepts a matching hash stored in uppercase in the sidecar
 file, confirming case-insensitive digest comparison. This scenario is tested by
-`Hash_Run_VerifySha256_UppercaseDigest_Succeeds`.
+`Hash_Run_VerifyUppercaseDigest_Succeeds`.
 
 **MissingHashFile**: the unit reports an error when the sidecar hash file does not exist during
 verification. This scenario is tested by `Hash_Run_VerifyMissingSidecarFile_ReportsError`.

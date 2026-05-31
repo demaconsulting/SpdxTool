@@ -13,4 +13,4 @@ sections:
                   to understand the correct syntax. The dedicated exception type enables Program
                   to distinguish this case from other errors.
                 tests:
-                  - AddPackage_OnCommandLine_ReportsWorkflowOnlyError
+                  - AddPackage_Run_OnCommandLine_ReportsWorkflowOnlyError

@@ -39,3 +39,7 @@ scenario is tested by `Query_Run_InvalidRegexPattern_ReportsError`.
 
 **PatternNotFound**: the unit reports an error when the pattern is not matched in any line of the
 program output. This scenario is tested by `Query_Run_PatternNotFound_ReportsError`.
+
+**MissingWorkflowInputs**: the unit reports an error when a required workflow input (output,
+pattern, or program) is absent from a query step. This scenario is tested by
+`Query_Run_MissingWorkflowInputs_ReportsError`.

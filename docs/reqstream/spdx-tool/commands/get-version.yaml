@@ -25,6 +25,7 @@ sections:
                   to correct usage and prevents undefined behavior.
                 tests:
                   - GetVersion_Run_MissingArguments_ReportsError
+                  - GetVersion_Run_OneArgument_ReportsError
               - id: SpdxTool-Commands-GetVersion-FileNotFound
                 title: The get-version command shall report an error when the specified SPDX file does not exist.
                 tags:
@@ -44,7 +45,8 @@ sections:
                 tests:
                   - GetVersion_Run_PackageNotFound_ReportsError
               - id: SpdxTool-Commands-GetVersion-MissingWorkflowSpdx
-                title: The get-version command shall report a usage error when the required workflow input `spdx` is absent.
+                title: The get-version command shall report a usage error when the
+                  required workflow input `spdx` is absent.
                 tags:
                   - workflow
                 justification: |
@@ -54,7 +56,8 @@ sections:
                 tests:
                   - GetVersion_Run_MissingWorkflowInputs_ReportsError
               - id: SpdxTool-Commands-GetVersion-MissingWorkflowOutput
-                title: The get-version command shall report a usage error when the required workflow input `output` is absent.
+                title: The get-version command shall report a usage error when the
+                  required workflow input `output` is absent.
                 tags:
                   - workflow
                 justification: |

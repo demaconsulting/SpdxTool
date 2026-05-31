@@ -46,6 +46,7 @@ sections:
                   and permits execution.
                 tests:
                   - RunWorkflow_Run_WithValidIntegrity_ExecutesWorkflow
+                  - RunWorkflow_Run_WithUppercaseIntegrity_ExecutesWorkflow
 
               - id: SpdxTool-Commands-RunWorkflow-IntegrityRejected
                 title: >-

@@ -19,8 +19,11 @@ N/A - this unit is a static class with no instance state.
 - *Returns*: void.
 - *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
   current directory mutated by `Validate.RunSpdxTool`.
-- *Post-conditions*: A TestResult entry named SpdxTool_FindPackage has been appended to results; a
-  pass or fail message has been written to the Context.
+- *Post-conditions*: `StartTime` records the time at which `Run` was entered, captured before
+  `DoValidate()` is called. A TestResult entry named SpdxTool_FindPackage has been appended to
+  results. On success, `"✓ SpdxTool_FindPackage - Passed"` has been written to
+  `context.WriteLine`; on failure, `"✗ SpdxTool_FindPackage - Failed"` has been written to
+  `context.WriteError`.
 
 **DoValidate**: performs the actual find-package validation in a temporary directory.
 

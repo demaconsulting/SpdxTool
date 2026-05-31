@@ -40,7 +40,7 @@ provided.
 inputs are missing.
 
 **CommandErrorException** — propagated from FindPackage.FindPackageByCriteria when no package
-matches or multiple packages match.
+matches, multiple packages match, or the SPDX file cannot be loaded.
 
 #### Dependencies
 

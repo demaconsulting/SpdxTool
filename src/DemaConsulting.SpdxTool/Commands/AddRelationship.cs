@@ -41,7 +41,7 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "add-relationship";
+    private const string CommandName = "add-relationship";
 
     /// <summary>
     ///     Singleton instance of this command
@@ -52,7 +52,7 @@ public sealed class AddRelationship : Command
     ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "add-relationship <spdx.json> <args>",
         "Add relationship between elements.",
         [
@@ -66,7 +66,7 @@ public sealed class AddRelationship : Command
             "    inputs:",
             "      spdx: <spdx.json>             # SPDX file name",
             "      id: <id>                      # Element ID",
-            "      replace: false                # Replace existing relationships (default: true)",
+            "      replace: true                 # Replace existing relationships (default: true)",
             "      relationships:",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
@@ -91,6 +91,7 @@ public sealed class AddRelationship : Command
 
     /// <inheritdoc />
     /// <exception cref="CommandUsageException">Thrown when fewer than four arguments are provided.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the relationship type argument is not a recognized SPDX relationship type string.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 4
@@ -138,7 +139,7 @@ public sealed class AddRelationship : Command
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
                                     throw new YamlException(step.Start, step.End,
                                         "'add-relationship' missing 'relationships' input");
-        var relationships = Parse(Command, id, relationshipsSequence, variables);
+        var relationships = Parse(CommandName, id, relationshipsSequence, variables);
 
         // Add the relationship
         Add(spdxFile, relationships, replace);

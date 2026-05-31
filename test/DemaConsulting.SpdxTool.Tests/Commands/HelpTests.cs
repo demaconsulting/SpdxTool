@@ -153,7 +153,7 @@ public class HelpTests
     [Fact]
     public void Help_Run_YamlInvocation_DisplaysHelp()
     {
-        // Workflow contents
+        // Arrange: workflow step specifies 'about: run-workflow'
         const string workflowContents =
             """
             steps:

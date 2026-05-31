@@ -610,6 +610,11 @@ public class CopyPackageTests
             Assert.Equal(2, doc.Files.Count());
             Assert.Equal("SPDXRef-File1", doc.Files[0].Id);
             Assert.Equal("SPDXRef-File2", doc.Files[1].Id);
+
+            // Assert: Verify the copied package has filesAnalyzed and the expected hasFiles entries
+            Assert.True(doc.Packages[1].FilesAnalyzed);
+            Assert.Contains("SPDXRef-File1", doc.Packages[1].HasFiles);
+            Assert.Contains("SPDXRef-File2", doc.Packages[1].HasFiles);
         }
         finally
         {

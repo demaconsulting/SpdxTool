@@ -28,8 +28,9 @@ scenario is tested by `RenameId_Run_MissingFile_ReportsError`.
 scenario is tested by `RenameId_Run_ValidSpdxFile_RenamesId`.
 
 **AllCollectionsRename**: the unit renames the target SPDX identifier across all element collections,
-including file IDs, snippet from-file references, package HasFiles entries, and relationship
-from-element IDs. This scenario is tested by `RenameId_Run_ValidSpdxFile_RenamesAllCollections`.
+including file IDs, snippet from-file references, package HasFiles entries, relationship from-element
+IDs, relationship to-element IDs (RelatedSpdxElement), and the document Describes array. This
+scenario is tested by `RenameId_Run_ValidSpdxFile_RenamesAllCollections`.
 
 **EmptyOldId**: the unit throws a `CommandUsageException` when the old ID argument is an empty
 string. This scenario is tested by `RenameId_Rename_EmptyOldId_ThrowsException`.

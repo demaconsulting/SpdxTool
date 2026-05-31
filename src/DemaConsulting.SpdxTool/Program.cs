@@ -91,6 +91,12 @@ public static class Program
     /// <remarks>
     ///     Each call to context.WriteError increments the error counter; the caller should check
     ///     context.ExitCode after Run returns to determine whether any errors occurred.
+    ///     CommandUsageException is caught, reported as <c>Error: {message}</c>, and usage
+    ///     information is printed; CommandErrorException is caught and reported as
+    ///     <c>Error: {message}</c> without printing usage. Any other exception is caught and reported via
+    ///     context.WriteError using ex.ToString() — which includes the full stack trace — so
+    ///     that unexpected failures during command execution produce diagnostic output useful
+    ///     for debugging in CI environments.
     /// </remarks>
     public static void Run(Context context)
     {

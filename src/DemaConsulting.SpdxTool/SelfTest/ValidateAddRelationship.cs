@@ -60,6 +60,7 @@ internal static class ValidateAddRelationship
     ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
     ///     throws an exception, the exception propagates uncaught from this method and no
     ///     <see cref="TestResult"/> is recorded for this step.
+    ///     Not thread-safe; see class remarks for the serial-execution requirement.
     /// </remarks>
     public static void Run(Context context, TestResults.TestResults results)
     {

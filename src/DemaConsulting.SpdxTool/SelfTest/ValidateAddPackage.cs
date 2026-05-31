@@ -49,6 +49,18 @@ internal static class ValidateAddPackage
     internal static Action? PreRunSpdxToolHookForTest { get; set; }
 
     /// <summary>
+    ///     Optional test hook invoked immediately after <see cref="Validate.RunSpdxTool(string, string[])"/>
+    ///     returns a zero exit code and before the content-verification step reads the output SPDX file.
+    /// </summary>
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that overwrites
+    ///     <c>validate.tmp/test.spdx.json</c> with valid JSON containing wrong package IDs so that the
+    ///     content check returns <c>false</c>, exercising the ContentMismatch path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PostRunSpdxToolHookForTest { get; set; }
+
+    /// <summary>
     ///     Executes the add-package self-test and records the result.
     /// </summary>
     /// <param name="context">The active Program context providing output and error streams.</param>
@@ -187,6 +199,9 @@ internal static class ValidateAddPackage
             {
                 return false;
             }
+
+            // Allow tests to overwrite the output file before content verification
+            PostRunSpdxToolHookForTest?.Invoke();
 
             // Read the SPDX document
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/test.spdx.json"));

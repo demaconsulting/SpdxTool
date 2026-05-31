@@ -335,7 +335,7 @@ public class UpdatePackageTests
 
             // Assert: Verify error reported
             Assert.Equal(1, exitCode);
-            Assert.Contains("not found", output);
+            Assert.Contains("SPDXRef-NotExist", output);
         }
         finally
         {

@@ -178,7 +178,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    ///     Generate a Sha256 hash for a file
+    ///     Generate a SHA-256 hash for a file
     /// </summary>
     /// <remarks>
     ///     This is the generate path: it computes the digest via <see cref="CalculateSha256"/> and
@@ -200,7 +200,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    ///     Verify a Sha256 hash for a file
+    ///     Verify a SHA-256 hash for a file
     /// </summary>
     /// <remarks>
     ///     This is the verify path: it reads the stored digest from the sidecar file, normalizes it
@@ -212,8 +212,8 @@ public sealed class Hash : Command
     /// <param name="context">Program context</param>
     /// <param name="file">Name of the file to verify</param>
     /// <exception cref="CommandErrorException">
-    ///     Thrown when the sidecar hash file does not exist, or when the computed digest does not
-    ///     match the stored digest.
+    ///     Thrown when the sidecar hash file does not exist, when the target file does not exist,
+    ///     or when the computed digest does not match the stored digest.
     /// </exception>
     public static void VerifySha256(Context context, string file)
     {
@@ -242,7 +242,7 @@ public sealed class Hash : Command
     }
 
     /// <summary>
-    ///     Calculate the Sha256 hash of a file
+    ///     Calculate the SHA-256 hash of a file
     /// </summary>
     /// <remarks>
     ///     File existence is checked explicitly with <see cref="File.Exists"/> before opening the

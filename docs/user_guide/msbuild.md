@@ -183,6 +183,7 @@ steps:
 - command: find-package
   inputs:
     spdx: ${{ spdx-file }}
+    name: MyCompany.MyPackage
     output: root-package-id
 
 # Step 3: Update package metadata
@@ -264,8 +265,8 @@ The targets package provides clear error messages for common issues.
 If the specified workflow file does not exist:
 
 ```text
-error : SBOM decoration workflow file not found: spdx-workflow.yaml
-error : Create the workflow file or set DecorateSBOM=false to disable decoration.
+error : SpdxTool workflow file not found: spdx-workflow.yaml.
+        Create the file or set the SpdxWorkflowFile property to the correct path.
 ```
 
 **Solution**: Create the workflow file at the specified path or adjust the `SpdxWorkflowFile` property.

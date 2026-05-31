@@ -9,7 +9,8 @@ own operations.
 
 #### Data Model
 
-N/A — AddRelationship is a stateless singleton; all state is carried via method parameters.
+AddRelationship carries no mutable instance state; all state is carried via method parameters.
+The following static fields serve as registry entries:
 
 **Instance**: `AddRelationship` — the singleton instance registered with CommandsRegistry.
 **Entry**: `CommandEntry` — the CommandEntry record advertising name, summary, usage details, and the
@@ -82,6 +83,11 @@ into an SpdxRelationship.
 
 **CommandUsageException** — thrown by Run(Context, string[]) when fewer than four arguments are
 provided.
+
+**InvalidOperationException** — thrown by Run(Context, string[]) when the relationship type
+argument (args[2]) is not a recognized SPDX relationship type string (propagated from
+SpdxRelationshipTypeExtensions.FromText); also thrown by Parse(string, string, YamlMappingNode,
+Dictionary) when the type field value is not a recognized SPDX relationship type string.
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when spdx, id, or
 relationships inputs are missing or the replace value is not a valid boolean; thrown by the Parse

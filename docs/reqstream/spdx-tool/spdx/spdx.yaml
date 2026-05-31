@@ -12,8 +12,14 @@ sections:
               Commands that operate on SPDX documents require a centralized subsystem for
               loading and saving documents and for traversing relationship graphs. Centralizing
               this logic ensures consistent error handling and behavior across all commands.
+              This is an intentional rollup requirement; full decomposition is provided by
+              the child requirements SpdxTool-Spdx-SpdxHelpers and SpdxTool-Spdx-RelationshipDirection.
             children:
               - SpdxTool-Spdx-SpdxHelpers-LoadDocument
               - SpdxTool-Spdx-SpdxHelpers-SaveDocument
               - SpdxTool-Spdx-RelationshipDirection-Enumeration
               - SpdxTool-Spdx-RelationshipDirection-DirectionalMapping
+            tests:
+              - SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument
+              - SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator
+              - RelationshipDirectionExtensions_GetDirection_DescribesRelationship_ReturnsParent

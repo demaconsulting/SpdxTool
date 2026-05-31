@@ -26,6 +26,11 @@ namespace DemaConsulting.SpdxTool.Tests.SelfTest;
 /// <summary>
 ///     Unit tests for the ValidateAddPackage self-validation unit.
 /// </summary>
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
 [Collection("SelfTestValidation")]
 public class ValidateAddPackageTests
 {
@@ -92,6 +97,75 @@ public class ValidateAddPackageTests
         finally
         {
             ValidateAddPackage.PreRunSpdxToolHookForTest = null;
+            Directory.SetCurrentDirectory(originalDirectory);
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    /// <summary>
+    ///     Test that ValidateAddPackage.Run records TestOutcome.Failed when the output SPDX document
+    ///     does not match the expected package and relationship content.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateAddPackage.PostRunSpdxToolHookForTest"/> hook is set to overwrite
+    ///     <c>validate.tmp/test.spdx.json</c> with a valid SPDX document containing wrong package
+    ///     IDs after the add-package command succeeds. This causes the content-verification step in
+    ///     <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateAddPackage_Run_ContentMismatch_RecordsFailedOutcome()
+    {
+        var originalDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+
+            // Arrange: hook overwrites the output SPDX file after the command succeeds but before
+            // content verification, replacing correct package IDs with wrong ones
+            ValidateAddPackage.PostRunSpdxToolHookForTest = () =>
+                File.WriteAllText(
+                    "validate.tmp/test.spdx.json",
+                    """
+                    {
+                      "files": [],
+                      "packages": [
+                        {
+                          "SPDXID": "SPDXRef-Wrong-1",
+                          "name": "Wrong Package",
+                          "versionInfo": "1.0.0",
+                          "downloadLocation": "https://example.com",
+                          "licenseConcluded": "MIT"
+                        }
+                      ],
+                      "relationships": [],
+                      "spdxVersion": "SPDX-2.2",
+                      "dataLicense": "CC0-1.0",
+                      "SPDXID": "SPDXRef-DOCUMENT",
+                      "name": "Test Document",
+                      "documentNamespace": "https://sbom.spdx.org",
+                      "creationInfo": {
+                        "created": "2021-10-01T00:00:00Z",
+                        "creators": [ "Person: Malcolm Nixon" ]
+                      }
+                    }
+                    """);
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the add-package self-test step with the content-mismatch hook active
+            ValidateAddPackage.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateAddPackage.PostRunSpdxToolHookForTest = null;
             Directory.SetCurrentDirectory(originalDirectory);
             Directory.Delete(tempDirectory, true);
         }

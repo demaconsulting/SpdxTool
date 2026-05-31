@@ -11,7 +11,7 @@ end-to-end using a workflow resolved from a NuGet package.
 The test uses the standard xUnit v3 environment and requires either a populated NuGet cache or network
 access so the referenced package workflow can be resolved. No mocking of the NuGet resolution layer is
 used; the real `DemaConsulting.SpdxWorkflows` package is resolved from the local cache or configured
-feeds because end-to-end NuGet-to-workflow-execution behaviour is the subject of the test.
+feeds because end-to-end NuGet-to-workflow-execution behavior is the subject of the test.
 
 #### Acceptance Criteria
 

@@ -26,5 +26,6 @@ records `TestOutcome.Failed`. This scenario is tested by
 `ValidateBasic_Run_ValidationFails_RecordsFailedOutcome`.
 
 **IoExceptionPropagation**: when the working directory prevents `validate.tmp` from being created
-as a directory, the IOException propagates uncaught from Run and no TestResult is recorded. This
-scenario is tested by `ValidateBasic_Run_IoError_PropagatesException`.
+as a directory — achieved by pre-creating `validate.tmp` as a *file* so that
+`Directory.CreateDirectory` throws — the IOException propagates uncaught from Run and no TestResult
+is recorded. This scenario is tested by `ValidateBasic_Run_IoError_PropagatesException`.

@@ -99,6 +99,15 @@ public sealed class AddPackage : Command
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     Follows a parse-then-delegate flow: the inputs map is extracted from the step node,
+    ///     then the spdx file path, package map, and optional relationships sequence are parsed
+    ///     in order before delegating to <see cref="AddPackageToSpdxFile"/>. When the
+    ///     <c>inputs:</c> block is entirely absent from the workflow step, <c>GetMapMap</c>
+    ///     returns null; the subsequent <c>GetMapString</c> call on that null map also
+    ///     returns null, causing the null-coalescing guard to raise a <see cref="YamlException"/>
+    ///     with the expected error message.
+    /// </remarks>
     /// <exception cref="YamlException">Thrown when the spdx or package inputs are absent from the workflow step.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
@@ -167,8 +176,11 @@ public sealed class AddPackage : Command
     /// <remarks>
     ///     When an existing package with the same identity (as determined by <see cref="SpdxPackage.Same"/>
     ///     equality) is found, it is enhanced in place and its SPDX element ID is renamed to the supplied
-    ///     package ID so that any downstream references remain valid. When no matching package exists, a deep
-    ///     copy of the supplied package is appended to the document.
+    ///     package ID so that any downstream references remain valid. The existing package ID is captured
+    ///     before <c>Enhance</c> is called; <c>RenameId.Rename</c> receives the pre-enhance ID to guarantee
+    ///     all document references are correctly updated regardless of whether <c>Enhance</c> modifies the
+    ///     <c>Id</c> field. When no matching package exists, a deep copy of the supplied package is appended
+    ///     to the document.
     /// </remarks>
     /// <param name="doc">
     ///     The SPDX document to modify. Must not be null.
@@ -184,9 +196,12 @@ public sealed class AddPackage : Command
         var p = Array.Find(doc.Packages, p => SpdxPackage.Same.Equals(p, package));
         if (p != null)
         {
-            // Enhance the existing package and rename it
+            // Capture the old ID before Enhance can overwrite it, then rename all
+            // document-level references so any relationships pointing to the old ID
+            // are updated before the enhance merges in the new field values
+            var oldId = p.Id;
             p.Enhance(package);
-            RenameId.Rename(doc, p.Id, package.Id);
+            RenameId.Rename(doc, oldId, package.Id);
         }
         else
         {

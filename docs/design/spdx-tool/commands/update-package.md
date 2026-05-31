@@ -30,7 +30,7 @@ name, usage line, summary text, and extended help lines with the singleton Insta
 **Run(Context, YamlMappingNode, Dictionary)**: Reads spdx and package inputs, extracts the package
 ID, parses the update fields via ParseUpdates, and delegates to UpdatePackageInSpdxFile.
 
-- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+- *Parameters*: `Context context` — execution context (unused); `YamlMappingNode step` — YAML step node;
   `Dictionary<string, string> variables` — workflow variable map.
 - *Returns*: `void`
 - *Preconditions*: spdx, package, and package.id inputs are required.

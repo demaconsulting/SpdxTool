@@ -562,4 +562,34 @@ public class FindPackageTests
         Assert.Throws<CommandUsageException>(
             () => FindPackage.ParseCriteria(["=value"], criteria));
     }
+
+    /// <summary>
+    ///     Test that find-package command by wildcard name finds the package
+    /// </summary>
+    [Fact]
+    public void FindPackage_Run_ByNameWildcard_FindsPackage()
+    {
+        try
+        {
+            // Arrange: Write the SPDX file (SpdxContents has "Test Package" with id SPDXRef-Package-1)
+            File.WriteAllText("spdx.json", SpdxContents);
+
+            // Act: Run the command with a wildcard pattern that matches "Test Package"
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "find-package",
+                "spdx.json",
+                "name=Test*");
+
+            // Assert: Verify the correct package ID is returned
+            Assert.Equal(0, exitCode);
+            Assert.Contains("SPDXRef-Package-1", output);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+        }
+    }
 }

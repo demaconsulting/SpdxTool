@@ -59,7 +59,7 @@ internal static class ValidateRenameId
     ///     <see cref="TestResult"/> is recorded for this step.
     /// </remarks>
     /// <param name="context">The active Program context providing output and error streams. Must not be null.</param>
-    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to. Must not be null.</param>
     /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
@@ -100,10 +100,13 @@ internal static class ValidateRenameId
     /// <remarks>
     ///     <para>
     ///         Creates <c>validate.tmp</c>, writes an SPDX JSON document with a package using
-    ///         <c>SPDXRef-Package-1</c> and a workflow YAML that renames it to <c>SPDXRef-Package-2</c>.
-    ///         Invokes <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c>
-    ///         and <c>run-workflow</c> arguments, then reads the modified SPDX file and verifies
-    ///         that both the package ID and the relationship reference have been updated.
+    ///         <c>SPDXRef-Package-1</c>, a <c>DESCRIBES</c> relationship referencing that ID, and a
+    ///         <c>documentDescribes</c> entry referencing that ID, plus a workflow YAML that renames
+    ///         <c>SPDXRef-Package-1</c> to <c>SPDXRef-Package-2</c>. Invokes
+    ///         <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c> and
+    ///         <c>run-workflow</c> arguments, then reads the modified SPDX file and verifies that the
+    ///         package ID, relationship reference, and <c>documentDescribes</c> entry have all been
+    ///         updated to <c>SPDXRef-Package-2</c>.
     ///     </para>
     ///     <para>
     ///         <strong>Thread safety:</strong> <see cref="Validate.RunSpdxTool(string, string[])"/>

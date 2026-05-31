@@ -64,6 +64,28 @@ Decomposing a parent requirement is valid. Describing existing code is back-driv
 - **Tests MAY exist without a requirement** - corner-case, defensive, and regression
   tests are valid; never flag them as non-compliant
 
+## OTS CI-Pipeline Exception (ACCEPTED)
+
+Off-The-Shelf (OTS) requirements whose compliance can **only** be observed through CI
+pipeline artifact presence (for example, a tool's API-query or markdown-report capability
+that requires live credentials or network access and produces an artifact on every
+successful pipeline run) are formally excepted from the test-link rule, subject to all of
+the following conditions:
+
+1. The requirement is in `docs/reqstream/ots/` (OTS items only — not system, subsystem,
+   or unit requirements).
+2. The requirement is tagged `ci-pipeline-verified`.
+3. The `justification:` field explicitly describes the pipeline artifact that provides
+   compliance evidence (e.g., the build-notes document, SARIF report, or quality report
+   present in every release bundle).
+4. A parent requirement for the same OTS item DOES link to an in-process installation
+   test (e.g., `--help` or `--version`) confirming the tool is present and responsive.
+
+Requirements satisfying all four conditions MAY omit the `tests:` field. ReqStream
+enforcement should exclude these requirements (e.g., by removing the `ci-pipeline-verified`
+tag from the set of tags being enforced, or by using `--filter` to restrict enforcement
+to non-OTS requirements).
+
 # Quality Gates
 
 - [ ] All requirements describe observable behavior (WHAT), not implementation (HOW)

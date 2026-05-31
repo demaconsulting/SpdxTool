@@ -25,14 +25,21 @@ accumulated error count into a process exit code.
 
 **Create(string[])**: Parses the program argument array and constructs a Context. Opens the
 log file if `--log` was specified. Calls the private `ParseArgument` helper for each
-recognized flag to consume its required value from the argument sequence.
+recognized flag to consume its required value from the argument sequence. When the log file
+already exists at the given path, it is truncated and overwritten.
 
 - *Parameters*: `string[] args` — raw command-line arguments. Must not be null.
 - *Returns*: `Context`
 - *Preconditions*: args must not be null.
 - *Post-conditions*: Returns a fully initialized Context. Throws ArgumentNullException when args
   is null. Throws InvalidOperationException if a flag is missing its required value argument, or
-  if the depth value is not a valid integer, or if the depth value is a valid integer but is negative.
+  if the depth value is not a valid integer, or if the depth value is a valid integer but is negative,
+  or if the log file cannot be created.
+- *Note — greedy stop*: Flag processing halts at the first unrecognized argument. Once an
+  unrecognized token is encountered, it and all subsequent tokens are appended to `Arguments`
+  without further flag interpretation. Consequently, global flags (e.g., `--silent`, `--log`)
+  must appear before the command name on the command line; placing them after the command name
+  causes them to be treated as command arguments rather than global flags.
 
 **WriteLine(string)**: Writes a line to the console (unless Silent) and to the log (if open).
 

@@ -25,8 +25,13 @@ scenario is tested by `AddRelationship_Run_MissingArguments_ReportsError`.
 **MissingInputFile**: the unit reports an error when the target SPDX file does not exist. This
 scenario is tested by `AddRelationship_Run_MissingFile_ReportsError`.
 
-**CommandLineRelationshipAddition**: the unit adds a relationship when invoked from the command line
-with valid arguments. This scenario is tested by `AddRelationship_Run_OnCommandLine_AddsRelationship`.
+**CommandLineRelationshipAdditionWithoutComment**: the unit adds a relationship without a comment when
+invoked from the command line with the four-argument form (no optional comment argument). This scenario
+is tested by `AddRelationship_Run_OnCommandLine_WithoutComment_AddsRelationship`.
+
+**CommandLineRelationshipAddition**: the unit adds a relationship with a comment when invoked from the
+command line with the five-argument form. This scenario is tested by
+`AddRelationship_Run_OnCommandLine_AddsRelationship`.
 
 **WorkflowRelationshipAddition**: the unit adds a relationship when invoked from a workflow step.
 This scenario is tested by `AddRelationship_Run_InWorkflow_AddsRelationship`.

@@ -18,3 +18,26 @@ sections:
             tests:
               - SarifMark_Tool_IsInstalled
               - SarifMark_Tool_ReportsVersion
+
+          - id: SpdxTool-OTS-SarifMark-SarifReading
+            title: SarifMark shall parse the SARIF 2.1 JSON file to extract rule violations and source locations.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              SarifMark reads the CodeQL SARIF output and extracts rule violations and their source
+              locations. This capability is exercised on every pipeline run and verified by the presence
+              of the SARIF report artifact in the release bundle. See the OTS CI-Pipeline Exception in
+              requirements-principles.md.
+
+          - id: SpdxTool-OTS-SarifMark-MarkdownReport
+            title: SarifMark shall render extracted SARIF findings as a structured markdown document.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |-
+              SarifMark produces a markdown report grouping results by rule and severity. When no
+              violations are found it writes a document stating that no issues were detected. Full
+              functional verification occurs through CI pipeline execution, where the SARIF report
+              artifact in each release provides observable evidence of correct operation. See the OTS
+              CI-Pipeline Exception in requirements-principles.md.

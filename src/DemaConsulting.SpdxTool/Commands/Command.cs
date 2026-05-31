@@ -266,19 +266,24 @@ public abstract class Command
     /// </summary>
     /// <remarks>
     ///     Used by command subclasses to read positional parameters from a workflow step sequence.
-    ///     Returns null when the sequence is shorter than the requested index so callers can
-    ///     distinguish "not provided" from an empty string value.
+    ///     Returns null when the sequence is shorter than the requested index, when the sequence is
+    ///     null, or when the index is negative — so callers can distinguish "not provided" from an
+    ///     empty string value. A negative <paramref name="index"/> always returns null rather than
+    ///     throwing, because the null-conditional operator alone does not guard against negative indices
+    ///     on non-null sequences.
     /// </remarks>
     /// <param name="sequence">Sequence node to query. Null is accepted and produces a null return.</param>
-    /// <param name="index">Zero-based index of the element to retrieve.</param>
+    /// <param name="index">Zero-based index of the element to retrieve. Negative values produce a null return.</param>
     /// <param name="variables">Variable dictionary passed to <see cref="Expand"/>.</param>
     /// <returns>
-    ///     The expanded string element when the index is in range; null when
-    ///     <paramref name="sequence"/> is null or the index is out of range.
+    ///     The expanded string element when the index is non-negative and in range; null when
+    ///     <paramref name="sequence"/> is null, the index is negative, or the index is out of range.
     /// </returns>
     public static string? GetSequenceString(YamlSequenceNode? sequence, int index, Dictionary<string, string> variables)
     {
-        // Get the parameter
-        return sequence?.Children.Count > index ? Expand(sequence.Children[index].ToString(), variables) : null;
+        // Reject null sequence or negative index before checking bounds
+        return sequence != null && index >= 0 && sequence.Children.Count > index
+            ? Expand(sequence.Children[index].ToString(), variables)
+            : null;
     }
 }

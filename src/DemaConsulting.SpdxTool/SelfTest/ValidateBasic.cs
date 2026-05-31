@@ -68,7 +68,7 @@ internal static class ValidateBasic
     ///     Propagated from <see cref="DoValidate"/> when the current user lacks write access
     ///     to the working directory.
     /// </exception>
-    public static void Run(Context context, TestResults.TestResults results)
+    internal static void Run(Context context, TestResults.TestResults results)
     {
         // Perform the validation
         var passed = DoValidate();
@@ -261,7 +261,7 @@ internal static class ValidateBasic
         // Read the log file to verify error was reported
         var log = File.ReadAllText("validate.tmp/output.log");
 
-        // Verify log contains error about missing SPDXID
+        // Verify log references the invalid file, confirming validation ran and reported issues
         return log.Contains("Issues in test-invalid.spdx.json");
     }
 }

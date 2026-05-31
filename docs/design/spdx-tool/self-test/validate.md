@@ -37,7 +37,10 @@ counts after all steps complete, writing "Validation Passed" if Context.Errors i
   is written to the Context and no file is produced. IO exceptions from the file-write operation
   (e.g., disk full, invalid path, permission denied) propagate unhandled to the caller as fatal errors.
 
+Extension matching is case-insensitive; `.TRX` and `.XML` are also accepted.
+
 **RunSpdxTool** (args overload): runs Program in-process with the supplied argument array.
+Internal helper — only callable within the assembly.
 
 - *Parameters*: `args` — the command-line arguments to pass to SpdxTool.
 - *Returns*: `int` — the exit code from `context.ExitCode` after `Program.Run` completes.
@@ -46,6 +49,7 @@ counts after all steps complete, writing "Validation Passed" if Context.Errors i
   disposed.
 
 **RunSpdxTool** (workingFolder overload): changes the current directory then runs Program in-process.
+Internal helper — only callable within the assembly.
 
 - *Parameters*: `workingFolder` — directory to set as current before running; `args` — argument array.
 - *Returns*: `int` — the exit code returned by Program.Run.

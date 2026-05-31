@@ -73,9 +73,11 @@ internal static class Wildcard
     /// </exception>
     public static bool IsMatch(string input, string pattern)
     {
+        // Reject null arguments before regex evaluation — callers must provide non-null values.
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(pattern);
 
+        // Evaluate the wildcard pattern with a timeout to prevent catastrophic backtracking.
         try
         {
             return Regex.IsMatch(

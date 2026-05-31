@@ -12,6 +12,19 @@ document contains the expected package and relationship entries.
 delegate invoked immediately before `Validate.RunSpdxTool` is called. Allows tests to corrupt
 `validate.tmp/test.spdx.json` to exercise the CommandFailure path deterministically.
 
+`PostRunSpdxToolHookForTest` — an internal property, `null` in production, that tests may set to a
+delegate invoked immediately after `Validate.RunSpdxTool` returns exit code zero and before the
+content-verification step. Allows tests to replace the output SPDX document with content containing
+wrong package IDs to exercise the ContentMismatch path deterministically.
+
+> **Working-directory isolation**: the command-failure and content-mismatch tests change the
+> process-wide current directory to a unique temporary path via `Directory.SetCurrentDirectory`
+> before running. This is required because `DoValidate` creates and deletes `validate.tmp` relative
+> to the current directory; without isolation, concurrent or sequential test runs could collide on the
+> same `validate.tmp` path in the repository root. The success test omits this step because it relies
+> on the `SelfTestValidation` collection serializing test execution, but the failure tests additionally
+> need to guarantee a clean working directory that is not shared with other in-flight tests.
+
 #### Key Methods
 
 **Run**: executes the add-package self-test and records the result.

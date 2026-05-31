@@ -18,8 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using DemaConsulting.SpdxTool;
-
 namespace DemaConsulting.SpdxTool.Tests;
 
 /// <summary>
@@ -42,23 +40,23 @@ public class LogTests
                 out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "-l", "output.log",
+                "-l", "output-short-flag.log",
                 "-h");
 
             // Assert: Verify success
             Assert.Equal(0, exitCode);
 
             // Assert: Verify log file written
-            Assert.True(File.Exists("output.log"));
+            Assert.True(File.Exists("output-short-flag.log"));
 
             // Assert: Verify the log contains the usage information
-            var log = File.ReadAllText("output.log");
+            var log = File.ReadAllText("output-short-flag.log");
             Assert.Contains("Usage: spdx-tool", log);
         }
         finally
         {
             // Delete output file
-            File.Delete("output.log");
+            File.Delete("output-short-flag.log");
         }
     }
 
@@ -77,23 +75,23 @@ public class LogTests
                 out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "--log", "output.log",
+                "--log", "output-long-flag.log",
                 "--help");
 
             // Assert: Verify success
             Assert.Equal(0, exitCode);
 
             // Assert: Verify log file written
-            Assert.True(File.Exists("output.log"));
+            Assert.True(File.Exists("output-long-flag.log"));
 
             // Assert: Verify the log contains the usage information
-            var log = File.ReadAllText("output.log");
+            var log = File.ReadAllText("output-long-flag.log");
             Assert.Contains("Usage: spdx-tool", log);
         }
         finally
         {
             // Delete output file
-            File.Delete("output.log");
+            File.Delete("output-long-flag.log");
         }
     }
 
