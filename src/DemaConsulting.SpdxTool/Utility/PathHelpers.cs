@@ -87,10 +87,10 @@ internal static class PathHelpers
                 throw new ArgumentException($"Invalid path component: {relativePath}", nameof(relativePaths));
             }
 
-            // This call to Path.Combine is safe because we have validated that:
-            // 1. relativePath does not contain ".." (path traversal)
-            // 2. relativePath is not an absolute path (IsPathRooted check)
-            var combinedPath = Path.Combine(current, relativePath);
+            // Path.Join is used (not Path.Combine) because we have validated that relativePath
+            // is not an absolute path; Path.Join performs simple concatenation and will not
+            // silently discard current even if relativePath were somehow absolute.
+            var combinedPath = Path.Join(current, relativePath);
 
             // Defense-in-depth: ensure the combined path is still under the base path
             var fullBasePath = Path.GetFullPath(basePath);

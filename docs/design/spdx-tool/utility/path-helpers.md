@@ -30,9 +30,10 @@ caller-supplied relative path segments, validating each segment before appending
    `relativePaths`; a null argument is rejected immediately.
 2. **Per-segment loop** — for each segment: (a) null-check the segment; (b) upfront string
    check — `Contains("..")` rejects traversal sequences; `Path.IsPathRooted` rejects absolute
-   paths; (c) defense-in-depth check — `Path.GetFullPath` resolves both paths and
-   `Path.GetRelativePath` confirms the combined result stays under `basePath`; (d) the running
-   combined path is updated for the next iteration.
+   paths; (c) `Path.Join` combines the running path with the validated segment (using `Path.Join`
+   rather than `Path.Combine` so the base is never silently discarded); (d) defense-in-depth
+   check — `Path.GetFullPath` resolves both paths and `Path.GetRelativePath` confirms the
+   combined result stays under `basePath`; (e) the running combined path is updated.
 
 #### Error Handling
 

@@ -126,6 +126,7 @@ words:
   - withtools
   - wildcards
   - YamlDotNet
+  - yamlfix
   - yamllint
 # Exclude common build artifacts, dependencies, and vendored third-party code
 ignorePaths:
