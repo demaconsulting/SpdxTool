@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,70 +32,78 @@ namespace DemaConsulting.SpdxTool.Utility;
 internal static class PathHelpers
 {
     /// <summary>
-    ///     Safely combines a base path and a caller-supplied relative path, rejecting any input that
-    ///     could escape the base directory.
+    ///     Safely combines a base path with one or more caller-supplied relative path segments,
+    ///     rejecting any input that could escape the base directory.
     /// </summary>
     /// <remarks>
-    ///     Two validation layers are applied:
-    ///     1. An upfront string check rejects relative paths that contain ".." components or are
-    ///        already rooted — these are the most common forms of directory-traversal attack.
-    ///     2. A defense-in-depth check resolves both paths with <see cref="Path.GetFullPath(string)"/> and
-    ///        uses <see cref="Path.GetRelativePath"/> to confirm the combined result stays under
-    ///        <paramref name="basePath"/>. This guards against edge cases (e.g. platform-specific
-    ///        path normalization) that could bypass the string check.
+    ///     Each segment in <paramref name="relativePaths"/> is validated and appended to the
+    ///     running combined path in order. Two validation layers are applied per segment:
+    ///     1. An upfront string check rejects segments that contain ".." components or are already
+    ///        rooted — these are the most common forms of directory-traversal attack.
+    ///     2. A defense-in-depth check resolves both paths with <see cref="Path.GetFullPath(string)"/>
+    ///        and uses <see cref="Path.GetRelativePath"/> to confirm the combined result stays under
+    ///        the base. This guards against edge cases (e.g. platform-specific path normalization)
+    ///        that could bypass the string check.
     ///     This method is stateless and thread-safe.
     /// </remarks>
     /// <param name="basePath">
     ///     The base directory path. Must not be null. Any valid directory path is accepted; it need
     ///     not exist on disk because only string and normalized-path operations are performed.
     /// </param>
-    /// <param name="relativePath">
-    ///     The caller-supplied relative path to append. Must not be null, must not contain ".."
-    ///     components, and must not be an absolute (rooted) path.
+    /// <param name="relativePaths">
+    ///     One or more caller-supplied relative path segments to append in order. Must not be null.
+    ///     Each individual segment must not be null, must not contain ".." components, and must not
+    ///     be an absolute (rooted) path.
     /// </param>
     /// <returns>
-    ///     The result of <see cref="Path.Combine(string,string)"/> applied to
-    ///     <paramref name="basePath"/> and <paramref name="relativePath"/>. The returned path is
-    ///     always within <paramref name="basePath"/>.
+    ///     The result of combining <paramref name="basePath"/> with each segment in
+    ///     <paramref name="relativePaths"/> in order. The returned path is always within
+    ///     <paramref name="basePath"/>.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="basePath"/> or <paramref name="relativePath"/> is null.
+    ///     Thrown when <paramref name="basePath"/>, <paramref name="relativePaths"/>, or any
+    ///     individual segment within <paramref name="relativePaths"/> is null.
     /// </exception>
     /// <exception cref="ArgumentException">
-    ///     Thrown when <paramref name="relativePath"/> contains ".." components, is an absolute path,
-    ///     or resolves outside <paramref name="basePath"/> after normalization.
+    ///     Thrown when any segment contains ".." components, is an absolute path, or resolves
+    ///     outside the current combined path after normalization.
     /// </exception>
-    internal static string SafePathCombine(string basePath, string relativePath)
+    internal static string SafePathCombine(string basePath, params string[] relativePaths)
     {
-        // Validate that neither argument is null before performing any path operations
+        // Validate that basePath and the segments array are not null
         ArgumentNullException.ThrowIfNull(basePath);
-        ArgumentNullException.ThrowIfNull(relativePath);
+        ArgumentNullException.ThrowIfNull(relativePaths);
 
-        // Ensure the relative path does not contain path traversal sequences
-        if (relativePath.Contains("..") || Path.IsPathRooted(relativePath))
+        // Apply validation and combination for each segment in order
+        var current = basePath;
+        foreach (var relativePath in relativePaths)
         {
-            throw new ArgumentException($"Invalid path component: {relativePath}", nameof(relativePath));
+            // Validate the individual segment is not null
+            ArgumentNullException.ThrowIfNull(relativePath);
+
+            // Ensure the segment does not contain path traversal sequences
+            if (relativePath.Contains("..") || Path.IsPathRooted(relativePath))
+            {
+                throw new ArgumentException($"Invalid path component: {relativePath}", nameof(relativePaths));
+            }
+
+            // This call to Path.Combine is safe because we have validated that:
+            // 1. relativePath does not contain ".." (path traversal)
+            // 2. relativePath is not an absolute path (IsPathRooted check)
+            var combinedPath = Path.Combine(current, relativePath);
+
+            // Defense-in-depth: ensure the combined path is still under the base path
+            var fullBasePath = Path.GetFullPath(basePath);
+            var fullCombinedPath = Path.GetFullPath(combinedPath);
+            var relativeCheck = Path.GetRelativePath(fullBasePath, fullCombinedPath);
+            if (relativeCheck.StartsWith("..") || Path.IsPathRooted(relativeCheck))
+            {
+                throw new ArgumentException($"Invalid path component: {relativePath}", nameof(relativePaths));
+            }
+
+            current = combinedPath;
         }
 
-        // This call to Path.Combine is safe because we have validated that:
-        // 1. relativePath does not contain ".." (path traversal)
-        // 2. relativePath is not an absolute path (IsPathRooted check)
-        // This ensures the combined path will always be under basePath
-        var combinedPath = Path.Combine(basePath, relativePath);
-
-        // Additional security validation: ensure the combined path is still under the base path.
-        // This defense-in-depth approach protects against edge cases that might bypass the
-        // initial validation, ensuring the final path stays within the intended directory.
-        var fullBasePath = Path.GetFullPath(basePath);
-        var fullCombinedPath = Path.GetFullPath(combinedPath);
-
-        // Use GetRelativePath to verify the relationship between paths
-        var relativeCheck = Path.GetRelativePath(fullBasePath, fullCombinedPath);
-        if (relativeCheck.StartsWith("..") || Path.IsPathRooted(relativeCheck))
-        {
-            throw new ArgumentException($"Invalid path component: {relativePath}", nameof(relativePath));
-        }
-
-        return combinedPath;
+        return current;
     }
 }

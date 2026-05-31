@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -176,8 +176,41 @@ public class PathHelpersTests
     }
 
     /// <summary>
-    ///     Test that SafePathCombine throws ArgumentNullException when basePath is null.
+    ///     Test that SafePathCombine correctly combines multiple path segments in sequence.
     /// </summary>
+    /// <remarks>
+    ///     Verifies the params overload: each segment is validated and appended in order,
+    ///     producing the same result as nested single-segment calls.
+    /// </remarks>
+    [Fact]
+    public void PathHelpers_SafePathCombine_MultipleSegments_CombinesCorrectly()
+    {
+        // Arrange: base path and multiple valid relative segments
+        var basePath = "/home/user/project";
+
+        // Act: invoke SafePathCombine with multiple segments
+        var result = PathHelpers.SafePathCombine(basePath, "level1", "level2", "file.txt");
+
+        // Assert: result equals Path.Join output for the same segments
+        Assert.Equal(Path.Join(basePath, "level1", "level2", "file.txt"), result);
+    }
+
+    /// <summary>
+    ///     Test that SafePathCombine rejects traversal in a later segment of a multi-segment call.
+    /// </summary>
+    [Fact]
+    public void PathHelpers_SafePathCombine_TraversalInLaterSegment_ThrowsArgumentException()
+    {
+        // Arrange: valid first segment, traversal in second
+        var basePath = "/home/user/project";
+
+        // Act & Assert: traversal in any segment is rejected
+        var exception = Assert.Throws<ArgumentException>(() =>
+            PathHelpers.SafePathCombine(basePath, "level1", "../etc/passwd"));
+        Assert.Contains("Invalid path component", exception.Message);
+    }
+
+
     /// <remarks>
     ///     Verifies the documented null-argument contract: passing null for basePath must throw
     ///     ArgumentNullException before any path combination is attempted.

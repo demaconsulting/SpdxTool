@@ -2,20 +2,18 @@
 # ReviewMark Configuration File
 # This file defines which files require review, where the evidence store is located,
 # and how files are grouped into named review-sets following software unit boundaries.
-
 # Patterns identifying all files that require review.
 # Processed in order; prefix a pattern with '!' to exclude.
 needs-review:
-  - "README.md"                    # Root README
-  - "requirements.yaml"          # Root requirements file
-  - "docs/reqstream/**/*.yaml"   # Requirements files
-  - "docs/design/**/*.md"        # Design documentation
-  - "docs/verification/**/*.md"  # Verification documentation
-  - "docs/user_guide/**/*.md"    # User guide documentation
-  - "**/*.cs"                    # All C# source and test files
-  - "!**/obj/**"                 # Exclude build output
-  - "!**/bin/**"                 # Exclude build output
-
+  - README.md  # Root README
+  - requirements.yaml  # Root requirements file
+  - docs/reqstream/**/*.yaml  # Requirements files
+  - docs/design/**/*.md  # Design documentation
+  - docs/verification/**/*.md  # Verification documentation
+  - docs/user_guide/**/*.md  # User guide documentation
+  - '**/*.cs'  # All C# source and test files
+  - '!**/obj/**'  # Exclude build output
+  - '!**/bin/**'  # Exclude build output
 # Evidence source: review data and index.json are located in the 'reviews' branch
 # of this repository, accessed through the GitHub public HTTPS raw content access.
 # Note: The 'reviews' branch must be created and populated with review evidence PDFs
@@ -23,7 +21,6 @@ needs-review:
 evidence-source:
   type: url
   location: https://raw.githubusercontent.com/demaconsulting/SpdxTool/reviews/index.json
-
 # Review sets grouping files by logical unit of review.
 # Each review-set groups source and tests for a coherent software unit
 # so that an AI-assisted review can verify consistency across the full evidence chain.
@@ -32,460 +29,432 @@ reviews:
   - id: Purpose
     title: Review that Advertised Features Match System Design
     paths:
-      - "README.md"
-      - "docs/user_guide/**/*.md"
-      - "docs/reqstream/spdx-tool/spdx-tool.yaml"
-      - "docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml"
-      - "docs/design/introduction.md"
-      - "docs/design/spdx-tool.md"
-      - "docs/design/spdx-tool-targets.md"
+      - README.md
+      - docs/user_guide/**/*.md
+      - docs/reqstream/spdx-tool/spdx-tool.yaml
+      - docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml
+      - docs/design/introduction.md
+      - docs/design/spdx-tool.md
+      - docs/design/spdx-tool-targets.md
 
   # System architecture review for DemaConsulting.SpdxTool
   - id: SpdxTool-Architecture
     title: Review that SpdxTool Architecture Satisfies Requirements
     paths:
-      - "docs/reqstream/spdx-tool/spdx-tool.yaml"
-      - "docs/design/introduction.md"
-      - "docs/design/spdx-tool.md"
-      - "docs/verification/introduction.md"
-      - "docs/verification/spdx-tool.md"
-      - "src/DemaConsulting.SpdxTool/Program.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/IntegrationTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/ProgramTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/VersionTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/UsageTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SilentTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/LogTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Runner.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/AssemblyInfo.cs"
+      - docs/reqstream/spdx-tool/spdx-tool.yaml
+      - docs/design/introduction.md
+      - docs/design/spdx-tool.md
+      - docs/verification/introduction.md
+      - docs/verification/spdx-tool.md
+      - src/DemaConsulting.SpdxTool/Program.cs
+      - test/DemaConsulting.SpdxTool.Tests/IntegrationTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/ProgramTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/VersionTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/UsageTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/SilentTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/LogTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/Runner.cs
+      - test/DemaConsulting.SpdxTool.Tests/AssemblyInfo.cs
 
   # Design consistency review for DemaConsulting.SpdxTool
   - id: SpdxTool-Design
     title: Review that SpdxTool Design is Consistent and Complete
     paths:
-      - "docs/reqstream/spdx-tool/spdx-tool.yaml"
-      - "docs/reqstream/spdx-tool/platform-requirements.yaml"
-      - "docs/design/introduction.md"
-      - "docs/design/spdx-tool.md"
-      - "docs/design/spdx-tool/**/*.md"
+      - docs/reqstream/spdx-tool/spdx-tool.yaml
+      - docs/reqstream/spdx-tool/platform-requirements.yaml
+      - docs/design/introduction.md
+      - docs/design/spdx-tool.md
+      - docs/design/spdx-tool/**/*.md
 
   # Verification completeness review for DemaConsulting.SpdxTool
   - id: SpdxTool-Verification
     title: Review that SpdxTool Verification is Consistent and Complete
     paths:
-      - "docs/reqstream/spdx-tool/spdx-tool.yaml"
-      - "docs/verification/introduction.md"
-      - "docs/verification/spdx-tool.md"
-      - "docs/verification/spdx-tool/**/*.md"
+      - docs/reqstream/spdx-tool/spdx-tool.yaml
+      - docs/verification/introduction.md
+      - docs/verification/spdx-tool.md
+      - docs/verification/spdx-tool/**/*.md
 
   # All requirements review for DemaConsulting.SpdxTool
   - id: SpdxTool-AllRequirements
     title: Review that All SpdxTool Requirements are Complete
     paths:
-      - "requirements.yaml"
-      - "docs/reqstream/spdx-tool/**/*.yaml"
-      - "docs/reqstream/spdx-tool-targets/**/*.yaml"
-      - "docs/reqstream/ots/**/*.yaml"
+      - requirements.yaml
+      - docs/reqstream/spdx-tool/**/*.yaml
+      - docs/reqstream/spdx-tool-targets/**/*.yaml
+      - docs/reqstream/ots/**/*.yaml
 
   # System architecture review for DemaConsulting.SpdxTool.Targets
   - id: SpdxTargets-Architecture
     title: Review that SpdxTool.Targets Architecture Satisfies Requirements
     paths:
-      - "docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml"
-      - "docs/design/introduction.md"
-      - "docs/design/spdx-tool-targets.md"
-      - "docs/verification/introduction.md"
-      - "docs/verification/spdx-tool-targets.md"
-      - "src/DemaConsulting.SpdxTool.Targets/build/*.targets"
-      - "src/DemaConsulting.SpdxTool.Targets/buildMultiTargeting/*.targets"
-      - "test/DemaConsulting.SpdxTool.Targets.Tests/**"
+      - docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml
+      - docs/design/introduction.md
+      - docs/design/spdx-tool-targets.md
+      - docs/verification/introduction.md
+      - docs/verification/spdx-tool-targets.md
+      - src/DemaConsulting.SpdxTool.Targets/build/*.targets
+      - src/DemaConsulting.SpdxTool.Targets/buildMultiTargeting/*.targets
+      - test/DemaConsulting.SpdxTool.Targets.Tests/**
 
   # Verification completeness review for DemaConsulting.SpdxTool.Targets
   - id: SpdxTargets-Verification
     title: Review that SpdxTool.Targets Verification is Consistent and Complete
     paths:
-      - "docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml"
-      - "docs/verification/introduction.md"
-      - "docs/verification/spdx-tool-targets.md"
+      - docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml
+      - docs/verification/introduction.md
+      - docs/verification/spdx-tool-targets.md
 
   # Subsystem review for Commands
   - id: SpdxTool-Commands
     title: Review that SpdxTool Commands Subsystem Satisfies Requirements
     paths:
-      - "docs/reqstream/spdx-tool/commands/commands.yaml"
-      - "docs/design/spdx-tool/commands.md"
-      - "docs/verification/spdx-tool/commands.md"
-      - "src/DemaConsulting.SpdxTool/Commands/Command.cs"
-      - "src/DemaConsulting.SpdxTool/Commands/CommandEntry.cs"
-      - "src/DemaConsulting.SpdxTool/Commands/CommandErrorException.cs"
-      - "src/DemaConsulting.SpdxTool/Commands/CommandsRegistry.cs"
-      - "src/DemaConsulting.SpdxTool/Commands/CommandUsageException.cs"
-      - "docs/design/spdx-tool/commands/command.md"
-      - "docs/design/spdx-tool/commands/command-entry.md"
-      - "docs/design/spdx-tool/commands/commands-registry.md"
-      - "docs/design/spdx-tool/commands/command-error-exception.md"
-      - "docs/design/spdx-tool/commands/command-usage-exception.md"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/CommandTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/UnknownCommandTests.cs"
+      - docs/reqstream/spdx-tool/commands/commands.yaml
+      - docs/design/spdx-tool/commands.md
+      - docs/verification/spdx-tool/commands.md
+      - src/DemaConsulting.SpdxTool/Commands/Command.cs
+      - src/DemaConsulting.SpdxTool/Commands/CommandEntry.cs
+      - src/DemaConsulting.SpdxTool/Commands/CommandErrorException.cs
+      - src/DemaConsulting.SpdxTool/Commands/CommandsRegistry.cs
+      - src/DemaConsulting.SpdxTool/Commands/CommandUsageException.cs
+      - docs/design/spdx-tool/commands/command.md
+      - docs/design/spdx-tool/commands/command-entry.md
+      - docs/design/spdx-tool/commands/commands-registry.md
+      - docs/design/spdx-tool/commands/command-error-exception.md
+      - docs/design/spdx-tool/commands/command-usage-exception.md
+      - test/DemaConsulting.SpdxTool.Tests/Commands/CommandTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/UnknownCommandTests.cs
 
   # Subsystem review for SelfTest
   - id: SpdxTool-SelfTest
     title: Review that SpdxTool SelfTest Subsystem Satisfies Requirements
     paths:
-      - "docs/reqstream/spdx-tool/self-test/self-test.yaml"
-      - "docs/design/spdx-tool/self-test.md"
-      - "docs/verification/spdx-tool/self-test.md"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/SelfTestTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/SelfTestValidationCollection.cs"
+      - docs/reqstream/spdx-tool/self-test/self-test.yaml
+      - docs/design/spdx-tool/self-test.md
+      - docs/verification/spdx-tool/self-test.md
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/SelfTestTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/SelfTestValidationCollection.cs
 
   # Subsystem review for Utility
   - id: SpdxTool-Utility
     title: Review that SpdxTool Utility Subsystem Satisfies Requirements
     paths:
-      - "docs/reqstream/spdx-tool/utility/utility.yaml"
-      - "docs/reqstream/spdx-tool/utility/path-helpers.yaml"
-      - "docs/reqstream/spdx-tool/utility/wildcard.yaml"
-      - "docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml"
-      - "docs/reqstream/spdx-tool/spdx/relationship-direction.yaml"
-      - "docs/reqstream/spdx-tool/spdx/spdx.yaml"
-      - "docs/verification/spdx-tool/spdx.md"
-      - "docs/design/spdx-tool/utility.md"
-      - "docs/design/spdx-tool/spdx.md"
-      - "docs/design/spdx-tool/utility/path-helpers.md"
-      - "docs/design/spdx-tool/utility/wildcard.md"
-      - "docs/design/spdx-tool/spdx/spdx-helpers.md"
-      - "docs/design/spdx-tool/spdx/relationship-direction.md"
-      - "docs/verification/spdx-tool/utility.md"
-      - "docs/verification/spdx-tool/utility/path-helpers.md"
-      - "docs/verification/spdx-tool/utility/wildcard.md"
-      - "docs/verification/spdx-tool/spdx/spdx-helpers.md"
-      - "docs/verification/spdx-tool/spdx/relationship-direction.md"
-      - "src/DemaConsulting.SpdxTool/Utility/**"
-      - "src/DemaConsulting.SpdxTool/Spdx/**"
-      - "test/DemaConsulting.SpdxTool.Tests/Utility/**"
-      - "test/DemaConsulting.SpdxTool.Tests/Spdx/SpdxHelpersTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Spdx/RelationshipDirectionTests.cs"
+      - docs/reqstream/spdx-tool/utility/utility.yaml
+      - docs/reqstream/spdx-tool/utility/path-helpers.yaml
+      - docs/reqstream/spdx-tool/utility/wildcard.yaml
+      - docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml
+      - docs/reqstream/spdx-tool/spdx/relationship-direction.yaml
+      - docs/reqstream/spdx-tool/spdx/spdx.yaml
+      - docs/verification/spdx-tool/spdx.md
+      - docs/design/spdx-tool/utility.md
+      - docs/design/spdx-tool/spdx.md
+      - docs/design/spdx-tool/utility/path-helpers.md
+      - docs/design/spdx-tool/utility/wildcard.md
+      - docs/design/spdx-tool/spdx/spdx-helpers.md
+      - docs/design/spdx-tool/spdx/relationship-direction.md
+      - docs/verification/spdx-tool/utility.md
+      - docs/verification/spdx-tool/utility/path-helpers.md
+      - docs/verification/spdx-tool/utility/wildcard.md
+      - docs/verification/spdx-tool/spdx/spdx-helpers.md
+      - docs/verification/spdx-tool/spdx/relationship-direction.md
+      - src/DemaConsulting.SpdxTool/Utility/**
+      - src/DemaConsulting.SpdxTool/Spdx/**
+      - test/DemaConsulting.SpdxTool.Tests/Utility/**
+      - test/DemaConsulting.SpdxTool.Tests/Spdx/SpdxHelpersTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/Spdx/RelationshipDirectionTests.cs
 
   # OTS software review
   - id: SpdxTool-OTS
     title: Review that SpdxTool OTS Software Requirements are Complete
     paths:
-      - "docs/reqstream/ots/**/*.yaml"
-      - "docs/design/ots.md"
-      - "docs/design/ots/**/*.md"
-      - "docs/verification/introduction.md"
-      - "docs/verification/ots.md"
-      - "docs/verification/ots/**/*.md"
+      - docs/reqstream/ots/**/*.yaml
+      - docs/design/ots.md
+      - docs/design/ots/**/*.md
+      - docs/verification/introduction.md
+      - docs/verification/ots.md
+      - docs/verification/ots/**/*.md
 
   # Context unit review
   - id: SpdxTool-Context
     title: Review that SpdxTool Context Unit Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/context.yaml"
-      - "docs/design/spdx-tool/context.md"
-      - "docs/verification/spdx-tool/context.md"
-      - "src/**/Context.cs"
-      - "test/**/LogTests.cs"
-      - "test/**/ContextTests.cs"
+      - docs/reqstream/spdx-tool/context.yaml
+      - docs/design/spdx-tool/context.md
+      - docs/verification/spdx-tool/context.md
+      - src/**/Context.cs
+      - test/**/LogTests.cs
+      - test/**/ContextTests.cs
 
   # Commands unit reviews
   - id: SpdxTool-Commands-AddPackage
     title: Review that SpdxTool Commands AddPackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/add-package.yaml"
-      - "docs/design/spdx-tool/commands/add-package.md"
-      - "docs/verification/spdx-tool/commands/add-package.md"
-      - "src/DemaConsulting.SpdxTool/Commands/AddPackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/AddPackageTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/CommandSequentialCollection.cs"
-
+      - docs/reqstream/spdx-tool/commands/add-package.yaml
+      - docs/design/spdx-tool/commands/add-package.md
+      - docs/verification/spdx-tool/commands/add-package.md
+      - src/DemaConsulting.SpdxTool/Commands/AddPackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/AddPackageTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/CommandSequentialCollection.cs
   - id: SpdxTool-Commands-AddRelationship
     title: Review that SpdxTool Commands AddRelationship Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/add-relationship.yaml"
-      - "docs/design/spdx-tool/commands/add-relationship.md"
-      - "docs/verification/spdx-tool/commands/add-relationship.md"
-      - "src/DemaConsulting.SpdxTool/Commands/AddRelationship.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/AddRelationshipTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/CommandSequentialCollection.cs"
-
+      - docs/reqstream/spdx-tool/commands/add-relationship.yaml
+      - docs/design/spdx-tool/commands/add-relationship.md
+      - docs/verification/spdx-tool/commands/add-relationship.md
+      - src/DemaConsulting.SpdxTool/Commands/AddRelationship.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/AddRelationshipTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/CommandSequentialCollection.cs
   - id: SpdxTool-Commands-CopyPackage
     title: Review that SpdxTool Commands CopyPackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/copy-package.yaml"
-      - "docs/design/spdx-tool/commands/copy-package.md"
-      - "docs/verification/spdx-tool/commands/copy-package.md"
-      - "src/DemaConsulting.SpdxTool/Commands/CopyPackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/CopyPackageTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/copy-package.yaml
+      - docs/design/spdx-tool/commands/copy-package.md
+      - docs/verification/spdx-tool/commands/copy-package.md
+      - src/DemaConsulting.SpdxTool/Commands/CopyPackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/CopyPackageTests.cs
   - id: SpdxTool-Commands-Diagram
     title: Review that SpdxTool Commands Diagram Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/diagram.yaml"
-      - "docs/design/spdx-tool/commands/diagram.md"
-      - "docs/verification/spdx-tool/commands/diagram.md"
-      - "src/DemaConsulting.SpdxTool/Commands/Diagram.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/DiagramTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/diagram.yaml
+      - docs/design/spdx-tool/commands/diagram.md
+      - docs/verification/spdx-tool/commands/diagram.md
+      - src/DemaConsulting.SpdxTool/Commands/Diagram.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/DiagramTests.cs
   - id: SpdxTool-Commands-FindPackage
     title: Review that SpdxTool Commands FindPackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/find-package.yaml"
-      - "docs/design/spdx-tool/commands/find-package.md"
-      - "docs/verification/spdx-tool/commands/find-package.md"
-      - "src/DemaConsulting.SpdxTool/Commands/FindPackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/FindPackageTests.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/CommandSequentialCollection.cs"
-
+      - docs/reqstream/spdx-tool/commands/find-package.yaml
+      - docs/design/spdx-tool/commands/find-package.md
+      - docs/verification/spdx-tool/commands/find-package.md
+      - src/DemaConsulting.SpdxTool/Commands/FindPackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/FindPackageTests.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/CommandSequentialCollection.cs
   - id: SpdxTool-Commands-GetVersion
     title: Review that SpdxTool Commands GetVersion Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/get-version.yaml"
-      - "docs/design/spdx-tool/commands/get-version.md"
-      - "docs/verification/spdx-tool/commands/get-version.md"
-      - "src/DemaConsulting.SpdxTool/Commands/GetVersion.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/GetVersionTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/get-version.yaml
+      - docs/design/spdx-tool/commands/get-version.md
+      - docs/verification/spdx-tool/commands/get-version.md
+      - src/DemaConsulting.SpdxTool/Commands/GetVersion.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/GetVersionTests.cs
   - id: SpdxTool-Commands-Hash
     title: Review that SpdxTool Commands Hash Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/hash.yaml"
-      - "docs/design/spdx-tool/commands/hash.md"
-      - "docs/verification/spdx-tool/commands/hash.md"
-      - "src/DemaConsulting.SpdxTool/Commands/Hash.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/HashTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/hash.yaml
+      - docs/design/spdx-tool/commands/hash.md
+      - docs/verification/spdx-tool/commands/hash.md
+      - src/DemaConsulting.SpdxTool/Commands/Hash.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/HashTests.cs
   - id: SpdxTool-Commands-Help
     title: Review that SpdxTool Commands Help Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/help.yaml"
-      - "docs/design/spdx-tool/commands/help.md"
-      - "docs/verification/spdx-tool/commands/help.md"
-      - "src/DemaConsulting.SpdxTool/Commands/Help.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/HelpTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/help.yaml
+      - docs/design/spdx-tool/commands/help.md
+      - docs/verification/spdx-tool/commands/help.md
+      - src/DemaConsulting.SpdxTool/Commands/Help.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/HelpTests.cs
   - id: SpdxTool-Commands-Print
     title: Review that SpdxTool Commands Print Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/print.yaml"
-      - "docs/design/spdx-tool/commands/print.md"
-      - "docs/verification/spdx-tool/commands/print.md"
-      - "src/DemaConsulting.SpdxTool/Commands/Print.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/PrintTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/print.yaml
+      - docs/design/spdx-tool/commands/print.md
+      - docs/verification/spdx-tool/commands/print.md
+      - src/DemaConsulting.SpdxTool/Commands/Print.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/PrintTests.cs
   - id: SpdxTool-Commands-Query
     title: Review that SpdxTool Commands Query Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/query.yaml"
-      - "docs/design/spdx-tool/commands/query.md"
-      - "docs/verification/spdx-tool/commands/query.md"
-      - "src/DemaConsulting.SpdxTool/Commands/Query.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/QueryTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/query.yaml
+      - docs/design/spdx-tool/commands/query.md
+      - docs/verification/spdx-tool/commands/query.md
+      - src/DemaConsulting.SpdxTool/Commands/Query.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/QueryTests.cs
   - id: SpdxTool-Commands-RenameId
     title: Review that SpdxTool Commands RenameId Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/rename-id.yaml"
-      - "docs/design/spdx-tool/commands/rename-id.md"
-      - "docs/verification/spdx-tool/commands/rename-id.md"
-      - "src/DemaConsulting.SpdxTool/Commands/RenameId.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/RenameIdTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/rename-id.yaml
+      - docs/design/spdx-tool/commands/rename-id.md
+      - docs/verification/spdx-tool/commands/rename-id.md
+      - src/DemaConsulting.SpdxTool/Commands/RenameId.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/RenameIdTests.cs
   - id: SpdxTool-Commands-RunWorkflow
     title: Review that SpdxTool Commands RunWorkflow Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/run-workflow.yaml"
-      - "docs/design/spdx-tool/commands/run-workflow.md"
-      - "docs/verification/spdx-tool/commands/run-workflow.md"
-      - "src/DemaConsulting.SpdxTool/Commands/RunWorkflow.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/RunWorkflowTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/run-workflow.yaml
+      - docs/design/spdx-tool/commands/run-workflow.md
+      - docs/verification/spdx-tool/commands/run-workflow.md
+      - src/DemaConsulting.SpdxTool/Commands/RunWorkflow.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/RunWorkflowTests.cs
   - id: SpdxTool-Commands-SetVariable
     title: Review that SpdxTool Commands SetVariable Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/set-variable.yaml"
-      - "docs/design/spdx-tool/commands/set-variable.md"
-      - "docs/verification/spdx-tool/commands/set-variable.md"
-      - "src/DemaConsulting.SpdxTool/Commands/SetVariable.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/SetVariableTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/set-variable.yaml
+      - docs/design/spdx-tool/commands/set-variable.md
+      - docs/verification/spdx-tool/commands/set-variable.md
+      - src/DemaConsulting.SpdxTool/Commands/SetVariable.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/SetVariableTests.cs
   - id: SpdxTool-Commands-ToMarkdown
     title: Review that SpdxTool Commands ToMarkdown Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/to-markdown.yaml"
-      - "docs/design/spdx-tool/commands/to-markdown.md"
-      - "docs/verification/spdx-tool/commands/to-markdown.md"
-      - "src/DemaConsulting.SpdxTool/Commands/ToMarkdown.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/ToMarkdownTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/to-markdown.yaml
+      - docs/design/spdx-tool/commands/to-markdown.md
+      - docs/verification/spdx-tool/commands/to-markdown.md
+      - src/DemaConsulting.SpdxTool/Commands/ToMarkdown.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/ToMarkdownTests.cs
   - id: SpdxTool-Commands-UpdatePackage
     title: Review that SpdxTool Commands UpdatePackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/update-package.yaml"
-      - "docs/design/spdx-tool/commands/update-package.md"
-      - "docs/verification/spdx-tool/commands/update-package.md"
-      - "src/DemaConsulting.SpdxTool/Commands/UpdatePackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/UpdatePackageTests.cs"
-
+      - docs/reqstream/spdx-tool/commands/update-package.yaml
+      - docs/design/spdx-tool/commands/update-package.md
+      - docs/verification/spdx-tool/commands/update-package.md
+      - src/DemaConsulting.SpdxTool/Commands/UpdatePackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/UpdatePackageTests.cs
   - id: SpdxTool-Commands-Validate
     title: Review that SpdxTool Commands Validate Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/commands/validate.yaml"
-      - "docs/design/spdx-tool/commands/validate.md"
-      - "docs/verification/spdx-tool/commands/validate.md"
-      - "src/DemaConsulting.SpdxTool/Commands/Validate.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Commands/ValidateTests.cs"
+      - docs/reqstream/spdx-tool/commands/validate.yaml
+      - docs/design/spdx-tool/commands/validate.md
+      - docs/verification/spdx-tool/commands/validate.md
+      - src/DemaConsulting.SpdxTool/Commands/Validate.cs
+      - test/DemaConsulting.SpdxTool.Tests/Commands/ValidateTests.cs
 
   # SelfTest unit reviews
   - id: SpdxTool-SelfTest-Validate
     title: Review that SpdxTool SelfTest Validate Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate.yaml"
-      - "docs/design/spdx-tool/self-test/validate.md"
-      - "docs/verification/spdx-tool/self-test/validate.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/Validate.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate.yaml
+      - docs/design/spdx-tool/self-test/validate.md
+      - docs/verification/spdx-tool/self-test/validate.md
+      - src/DemaConsulting.SpdxTool/SelfTest/Validate.cs
   - id: SpdxTool-SelfTest-ValidateAddPackage
     title: Review that SpdxTool SelfTest ValidateAddPackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-add-package.yaml"
-      - "docs/design/spdx-tool/self-test/validate-add-package.md"
-      - "docs/verification/spdx-tool/self-test/validate-add-package.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateAddPackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateAddPackageTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-add-package.yaml
+      - docs/design/spdx-tool/self-test/validate-add-package.md
+      - docs/verification/spdx-tool/self-test/validate-add-package.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateAddPackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateAddPackageTests.cs
   - id: SpdxTool-SelfTest-ValidateAddRelationship
-    title: Review that SpdxTool SelfTest ValidateAddRelationship Implementation is Correct
+    title: Review that SpdxTool SelfTest ValidateAddRelationship Implementation is
+      Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-add-relationship.yaml"
-      - "docs/design/spdx-tool/self-test/validate-add-relationship.md"
-      - "docs/verification/spdx-tool/self-test/validate-add-relationship.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateAddRelationship.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateAddRelationshipTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-add-relationship.yaml
+      - docs/design/spdx-tool/self-test/validate-add-relationship.md
+      - docs/verification/spdx-tool/self-test/validate-add-relationship.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateAddRelationship.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateAddRelationshipTests.cs
   - id: SpdxTool-SelfTest-ValidateBasic
     title: Review that SpdxTool SelfTest ValidateBasic Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-basic.yaml"
-      - "docs/design/spdx-tool/self-test/validate-basic.md"
-      - "docs/verification/spdx-tool/self-test/validate-basic.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateBasic.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateBasicTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-basic.yaml
+      - docs/design/spdx-tool/self-test/validate-basic.md
+      - docs/verification/spdx-tool/self-test/validate-basic.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateBasic.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateBasicTests.cs
   - id: SpdxTool-SelfTest-ValidateCopyPackage
     title: Review that SpdxTool SelfTest ValidateCopyPackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-copy-package.yaml"
-      - "docs/design/spdx-tool/self-test/validate-copy-package.md"
-      - "docs/verification/spdx-tool/self-test/validate-copy-package.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateCopyPackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateCopyPackageTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-copy-package.yaml
+      - docs/design/spdx-tool/self-test/validate-copy-package.md
+      - docs/verification/spdx-tool/self-test/validate-copy-package.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateCopyPackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateCopyPackageTests.cs
   - id: SpdxTool-SelfTest-ValidateDiagram
     title: Review that SpdxTool SelfTest ValidateDiagram Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-diagram.yaml"
-      - "docs/design/spdx-tool/self-test/validate-diagram.md"
-      - "docs/verification/spdx-tool/self-test/validate-diagram.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateDiagram.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateDiagramTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-diagram.yaml
+      - docs/design/spdx-tool/self-test/validate-diagram.md
+      - docs/verification/spdx-tool/self-test/validate-diagram.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateDiagram.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateDiagramTests.cs
   - id: SpdxTool-SelfTest-ValidateFindPackage
     title: Review that SpdxTool SelfTest ValidateFindPackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-find-package.yaml"
-      - "docs/design/spdx-tool/self-test/validate-find-package.md"
-      - "docs/verification/spdx-tool/self-test/validate-find-package.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateFindPackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateFindPackageTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-find-package.yaml
+      - docs/design/spdx-tool/self-test/validate-find-package.md
+      - docs/verification/spdx-tool/self-test/validate-find-package.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateFindPackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateFindPackageTests.cs
   - id: SpdxTool-SelfTest-ValidateGetVersion
     title: Review that SpdxTool SelfTest ValidateGetVersion Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-get-version.yaml"
-      - "docs/design/spdx-tool/self-test/validate-get-version.md"
-      - "docs/verification/spdx-tool/self-test/validate-get-version.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateGetVersion.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateGetVersionTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-get-version.yaml
+      - docs/design/spdx-tool/self-test/validate-get-version.md
+      - docs/verification/spdx-tool/self-test/validate-get-version.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateGetVersion.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateGetVersionTests.cs
   - id: SpdxTool-SelfTest-ValidateHash
     title: Review that SpdxTool SelfTest ValidateHash Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-hash.yaml"
-      - "docs/design/spdx-tool/self-test/validate-hash.md"
-      - "docs/verification/spdx-tool/self-test/validate-hash.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateHash.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateHashTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-hash.yaml
+      - docs/design/spdx-tool/self-test/validate-hash.md
+      - docs/verification/spdx-tool/self-test/validate-hash.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateHash.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateHashTests.cs
   - id: SpdxTool-SelfTest-ValidateNtia
     title: Review that SpdxTool SelfTest ValidateNtia Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-ntia.yaml"
-      - "docs/design/spdx-tool/self-test/validate-ntia.md"
-      - "docs/verification/spdx-tool/self-test/validate-ntia.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateNtia.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateNtiaTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-ntia.yaml
+      - docs/design/spdx-tool/self-test/validate-ntia.md
+      - docs/verification/spdx-tool/self-test/validate-ntia.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateNtia.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateNtiaTests.cs
   - id: SpdxTool-SelfTest-ValidateQuery
     title: Review that SpdxTool SelfTest ValidateQuery Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-query.yaml"
-      - "docs/design/spdx-tool/self-test/validate-query.md"
-      - "docs/verification/spdx-tool/self-test/validate-query.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateQuery.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateQueryTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-query.yaml
+      - docs/design/spdx-tool/self-test/validate-query.md
+      - docs/verification/spdx-tool/self-test/validate-query.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateQuery.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateQueryTests.cs
   - id: SpdxTool-SelfTest-ValidateRenameId
     title: Review that SpdxTool SelfTest ValidateRenameId Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-rename-id.yaml"
-      - "docs/design/spdx-tool/self-test/validate-rename-id.md"
-      - "docs/verification/spdx-tool/self-test/validate-rename-id.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateRenameId.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRenameIdTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-rename-id.yaml
+      - docs/design/spdx-tool/self-test/validate-rename-id.md
+      - docs/verification/spdx-tool/self-test/validate-rename-id.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateRenameId.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRenameIdTests.cs
   - id: SpdxTool-SelfTest-ValidateRunNuGetWorkflow
-    title: Review that SpdxTool SelfTest ValidateRunNuGetWorkflow Implementation is Correct
+    title: Review that SpdxTool SelfTest ValidateRunNuGetWorkflow Implementation is
+      Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-run-nuget-workflow.yaml"
-      - "docs/design/spdx-tool/self-test/validate-run-nuget-workflow.md"
-      - "docs/verification/spdx-tool/self-test/validate-run-nuget-workflow.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateRunNuGetWorkflow.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRunNuGetWorkflowTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-run-nuget-workflow.yaml
+      - docs/design/spdx-tool/self-test/validate-run-nuget-workflow.md
+      - docs/verification/spdx-tool/self-test/validate-run-nuget-workflow.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateRunNuGetWorkflow.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRunNuGetWorkflowTests.cs
   - id: SpdxTool-SelfTest-ValidateToMarkdown
     title: Review that SpdxTool SelfTest ValidateToMarkdown Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-to-markdown.yaml"
-      - "docs/design/spdx-tool/self-test/validate-to-markdown.md"
-      - "docs/verification/spdx-tool/self-test/validate-to-markdown.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateToMarkdown.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateToMarkdownTests.cs"
-
+      - docs/reqstream/spdx-tool/self-test/validate-to-markdown.yaml
+      - docs/design/spdx-tool/self-test/validate-to-markdown.md
+      - docs/verification/spdx-tool/self-test/validate-to-markdown.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateToMarkdown.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateToMarkdownTests.cs
   - id: SpdxTool-SelfTest-ValidateUpdatePackage
     title: Review that SpdxTool SelfTest ValidateUpdatePackage Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/self-test/validate-update-package.yaml"
-      - "docs/design/spdx-tool/self-test/validate-update-package.md"
-      - "docs/verification/spdx-tool/self-test/validate-update-package.md"
-      - "src/DemaConsulting.SpdxTool/SelfTest/ValidateUpdatePackage.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateUpdatePackageTests.cs"
+      - docs/reqstream/spdx-tool/self-test/validate-update-package.yaml
+      - docs/design/spdx-tool/self-test/validate-update-package.md
+      - docs/verification/spdx-tool/self-test/validate-update-package.md
+      - src/DemaConsulting.SpdxTool/SelfTest/ValidateUpdatePackage.cs
+      - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateUpdatePackageTests.cs
 
   # Utility unit reviews
   - id: SpdxTool-Utility-PathHelpers
     title: Review that SpdxTool Utility PathHelpers Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/utility/path-helpers.yaml"
-      - "docs/design/spdx-tool/utility/path-helpers.md"
-      - "docs/verification/spdx-tool/utility/path-helpers.md"
-      - "src/DemaConsulting.SpdxTool/Utility/PathHelpers.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Utility/PathHelpersTests.cs"
-
+      - docs/reqstream/spdx-tool/utility/path-helpers.yaml
+      - docs/design/spdx-tool/utility/path-helpers.md
+      - docs/verification/spdx-tool/utility/path-helpers.md
+      - src/DemaConsulting.SpdxTool/Utility/PathHelpers.cs
+      - test/DemaConsulting.SpdxTool.Tests/Utility/PathHelpersTests.cs
   - id: SpdxTool-Utility-Wildcard
     title: Review that SpdxTool Utility Wildcard Implementation is Correct
     paths:
-      - "docs/reqstream/spdx-tool/utility/wildcard.yaml"
-      - "docs/design/spdx-tool/utility/wildcard.md"
-      - "docs/verification/spdx-tool/utility/wildcard.md"
-      - "src/DemaConsulting.SpdxTool/Utility/Wildcard.cs"
-      - "test/DemaConsulting.SpdxTool.Tests/Utility/WildcardTests.cs"
+      - docs/reqstream/spdx-tool/utility/wildcard.yaml
+      - docs/design/spdx-tool/utility/wildcard.md
+      - docs/verification/spdx-tool/utility/wildcard.md
+      - src/DemaConsulting.SpdxTool/Utility/Wildcard.cs
+      - test/DemaConsulting.SpdxTool.Tests/Utility/WildcardTests.cs

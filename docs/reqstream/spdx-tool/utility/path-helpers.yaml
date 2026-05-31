@@ -43,16 +43,22 @@ sections:
                   - PathHelpers_SafePathCombine_NullRelativePath_ThrowsArgumentNullException
 
               - id: SpdxTool-Utility-ValidPath
-                title: The PathHelpers unit shall correctly combine valid relative paths with a base path.
+                title: >-
+                  The PathHelpers unit shall correctly combine valid relative path segments
+                  with a base path, accepting one or more segments.
                 tags:
                   - utility
                 justification: |
                   Commands that resolve file paths need a reliable utility for combining
-                  base and relative paths in a safe manner. Paths containing `..` as a
-                  substring, including filenames, are excluded as a conservative security
-                  measure and are not considered 'valid' in this context.
+                  base and relative paths in a safe manner. The params overload allows
+                  callers to combine multiple segments in a single call without intermediate
+                  unsecured Path.Combine calls. Paths containing `..` as a substring,
+                  including filenames, are excluded as a conservative security measure
+                  and are not considered 'valid' in this context.
                 tests:
                   - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
                   - PathHelpers_SafePathCombine_CurrentDirectoryReference_CombinesCorrectly
                   - PathHelpers_SafePathCombine_NestedPaths_CombinesCorrectly
                   - PathHelpers_SafePathCombine_EmptyRelativePath_ReturnsBasePath
+                  - PathHelpers_SafePathCombine_MultipleSegments_CombinesCorrectly
+                  - PathHelpers_SafePathCombine_TraversalInLaterSegment_ThrowsArgumentException

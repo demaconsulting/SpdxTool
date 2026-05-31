@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ public class DecorateSbomTargetTests
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgPath = Path.Combine(fixtureDir, "bin", "Release", "TestFixtures.SingleTfmProject.1.0.0.nupkg");
+        var nupkgPath = Path.Join(fixtureDir, "bin", "Release", "TestFixtures.SingleTfmProject.1.0.0.nupkg");
         Assert.True(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
@@ -83,7 +83,7 @@ public class DecorateSbomTargetTests
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgPath = Path.Combine(fixtureDir, "bin", "Release", "TestFixtures.MultiTfmProject.1.0.0.nupkg");
+        var nupkgPath = Path.Join(fixtureDir, "bin", "Release", "TestFixtures.MultiTfmProject.1.0.0.nupkg");
         Assert.True(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
@@ -186,8 +186,8 @@ public class DecorateSbomTargetTests
     /// <param name="projectDir">Path to the project directory.</param>
     private static void CleanBinObj(string projectDir)
     {
-        var binDir = Path.Combine(projectDir, "bin");
-        var objDir = Path.Combine(projectDir, "obj");
+        var binDir = Path.Join(projectDir, "bin");
+        var objDir = Path.Join(projectDir, "obj");
 
         if (Directory.Exists(binDir))
         {

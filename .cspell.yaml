@@ -8,10 +8,8 @@
 # - NEVER add a misspelled word - fix the typo in the source instead
 # - NEVER add a British-English spelling - correct to US-English in the source
 # - PROPOSE only genuine technical terms/names as needed
-
-version: "0.2"
+version: '0.2'
 language: en
-
 # Project-specific technical terms and tool names
 words:
   - Anson
@@ -129,7 +127,6 @@ words:
   - wildcards
   - YamlDotNet
   - yamllint
-
 # Exclude common build artifacts, dependencies, and vendored third-party code
 ignorePaths:
   - '**/.git/**'
