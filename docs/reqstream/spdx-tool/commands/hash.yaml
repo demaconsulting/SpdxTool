@@ -28,8 +28,8 @@ sections:
                   - Hash_Run_VerifyOperation_FailsForInvalidHash
 
               - id: SpdxTool-Commands-Hash-VerifyCaseInsensitive
-                title: The tool shall accept sidecar hash files whose digest is stored
-                  in any combination of upper- and lowercase hexadecimal characters.
+                title: The tool shall accept sidecar hash files whose digest is stored in any combination of upper- and lowercase
+                  hexadecimal characters.
                 tags:
                   - spdx
                 justification: |

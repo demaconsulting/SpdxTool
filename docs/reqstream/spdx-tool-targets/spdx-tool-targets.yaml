@@ -78,8 +78,8 @@ sections:
           - SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
 
       - id: SpdxToolTargets-ConfigurableWorkflowFile
-        title: The system shall allow the path of the SBOM decoration workflow
-          file to be configured via the SpdxWorkflowFile MSBuild property.
+        title: The system shall allow the path of the SBOM decoration workflow file to be configured via the SpdxWorkflowFile
+          MSBuild property.
         tags:
           - msbuild
           - sbom
@@ -92,8 +92,7 @@ sections:
           - SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
 
       - id: SpdxToolTargets-ConfigurableToolCommand
-        title: The system shall allow the SpdxTool invocation command to be
-          configured via the SpdxToolCommand MSBuild property.
+        title: The system shall allow the SpdxTool invocation command to be configured via the SpdxToolCommand MSBuild property.
         tags:
           - msbuild
           - sbom

@@ -122,8 +122,7 @@ sections:
       - title: CommandExecution Requirements
         requirements:
           - id: SpdxTool-CommandExecution-SupportedCommands
-            title: The tool shall execute the corresponding command operation when invoked
-              with any supported command name.
+            title: The tool shall execute the corresponding command operation when invoked with any supported command name.
             tags:
               - commands
             justification: |

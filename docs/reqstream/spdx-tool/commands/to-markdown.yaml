@@ -68,8 +68,7 @@ sections:
                   - ToMarkdown_Run_YamlMissingSpdxInput_ThrowsException
 
               - id: SpdxTool-Commands-ToMarkdown-YamlMissingMarkdownInput
-                title: The to-markdown command shall report an error when the
-                  markdown input is absent from a workflow step.
+                title: The to-markdown command shall report an error when the markdown input is absent from a workflow step.
                 tags:
                   - spdx
                 justification: |

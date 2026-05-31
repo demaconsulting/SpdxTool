@@ -68,8 +68,7 @@ jobs:
       # Downstream projects: Add any additional quality checks here.
 
       - name: Run linters
-        shell: bash
-        run: bash ./lint.sh
+        run: pwsh ./lint.ps1
 
       - name: Upload quality artifacts
         uses: actions/upload-artifact@v7

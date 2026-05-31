@@ -64,8 +64,7 @@ sections:
                   - Print_Run_UndefinedVariable_ReportsError
 
               - id: SpdxTool-Commands-Print-EmptyVariableName
-                title: The tool shall report an error when a variable substitution
-                  token contains an empty variable name.
+                title: The tool shall report an error when a variable substitution token contains an empty variable name.
                 tags:
                   - workflow
                 justification: |
@@ -76,8 +75,7 @@ sections:
                   - Print_Run_EmptyVariableName_ReportsError
 
               - id: SpdxTool-Commands-Print-UnmatchedMacroDelimiter
-                title: The tool shall report an error when a variable substitution
-                  token has an unmatched opening delimiter.
+                title: The tool shall report an error when a variable substitution token has an unmatched opening delimiter.
                 tags:
                   - workflow
                 justification: |

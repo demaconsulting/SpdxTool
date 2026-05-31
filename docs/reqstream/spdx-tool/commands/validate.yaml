@@ -20,8 +20,7 @@ sections:
                   - Validate_Run_ValidYamlWorkflow_Succeeds
 
               - id: SpdxTool-Commands-Validate-MissingInput
-                title: The validate command shall report a YAML error when the
-                  spdx input is missing from a workflow step.
+                title: The validate command shall report a YAML error when the spdx input is missing from a workflow step.
                 tags:
                   - spdx
                 justification: |

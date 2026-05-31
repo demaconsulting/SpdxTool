@@ -123,10 +123,10 @@ public sealed class SetVariable : Command
 
         // Get the 'output' input (not expanded - used literally as the variable key).
         // GetMapString cannot be used here because it applies variable expansion; instead we
-        // access inputs.Children directly so the key is stored literally. A null inputs map
-        // has no Children to check, so an explicit null guard is required.
+        // access inputs.Children directly so the key is stored literally. If inputs were null,
+        // the GetMapString call above would have returned null and thrown before reaching here.
         string output;
-        if (inputs != null && inputs.Children.TryGetValue("output", out var rawOutput))
+        if (inputs!.Children.TryGetValue("output", out var rawOutput))
         {
             output = rawOutput.ToString();
         }

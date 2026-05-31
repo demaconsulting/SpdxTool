@@ -60,8 +60,7 @@ sections:
                   - Query_Run_PatternNotFound_ReportsError
 
               - id: SpdxTool-Commands-Query-MissingArguments
-                title: The tool shall report a usage error when the query command
-                  is invoked with fewer than two CLI arguments.
+                title: The tool shall report a usage error when the query command is invoked with fewer than two CLI arguments.
                 tags:
                   - cli
                 justification: |
@@ -72,8 +71,7 @@ sections:
                   - Query_Run_MissingArguments_ReportsError
 
               - id: SpdxTool-Commands-Query-InvalidProgram
-                title: The tool shall report an error when the external program
-                  specified in the query command cannot be started.
+                title: The tool shall report an error when the external program specified in the query command cannot be started.
                 tags:
                   - cli
                   - workflow
@@ -96,8 +94,8 @@ sections:
                   - Query_Run_InvalidRegexPattern_ReportsError
 
               - id: SpdxTool-Commands-Query-MissingWorkflowInputs
-                title: The tool shall report an error when a required workflow
-                  input (output, pattern, or program) is absent from a query step.
+                title: The tool shall report an error when a required workflow input (output, pattern, or program) is absent
+                  from a query step.
                 tags:
                   - workflow
                 justification: |

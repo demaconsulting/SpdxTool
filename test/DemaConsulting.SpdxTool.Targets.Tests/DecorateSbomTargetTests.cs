@@ -55,9 +55,7 @@ public class DecorateSbomTargetTests
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgDir = Path.Combine(fixtureDir, "bin");
-        nupkgDir = Path.Combine(nupkgDir, "Release");
-        var nupkgPath = Path.Combine(nupkgDir, "TestFixtures.SingleTfmProject.1.0.0.nupkg");
+        var nupkgPath = Path.Combine(fixtureDir, "bin", "Release", "TestFixtures.SingleTfmProject.1.0.0.nupkg");
         Assert.True(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
@@ -85,9 +83,7 @@ public class DecorateSbomTargetTests
         Assert.Contains("SpdxTool: SBOM decoration complete", output);
 
         // Assert: nupkg exists and contains the SBOM manifest
-        var nupkgDir = Path.Combine(fixtureDir, "bin");
-        nupkgDir = Path.Combine(nupkgDir, "Release");
-        var nupkgPath = Path.Combine(nupkgDir, "TestFixtures.MultiTfmProject.1.0.0.nupkg");
+        var nupkgPath = Path.Combine(fixtureDir, "bin", "Release", "TestFixtures.MultiTfmProject.1.0.0.nupkg");
         Assert.True(File.Exists(nupkgPath), $"NuPkg not found: {nupkgPath}");
         AssertNupkgContainsSbom(nupkgPath);
     }
