@@ -23,6 +23,8 @@ sections:
               Command implementations require access to their positional arguments. Context collects
               all tokens following the last recognized global flag and exposes them via the Arguments
               property, enabling the dispatch layer to forward the correct arguments to each command.
+            tests:
+              - Context_Create_PositionalArgsAfterFlags_ExposedAsArguments
           - id: SpdxTool-Context-OutputChannels
             title: >-
               Context shall route WriteLine, WriteWarning, and WriteError calls to the console and

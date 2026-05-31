@@ -15,4 +15,4 @@ sections:
                   structure ensures consistent command registration and prevents partial
                   initialization, making every registered command fully usable at dispatch time.
                 tests:
-                  - UnknownCommand_UnrecognizedCommand_ReportsError
+                  - Commands_Dispatch_UnknownCommand_ReportsError

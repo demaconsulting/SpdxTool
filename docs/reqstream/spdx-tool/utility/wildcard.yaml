@@ -31,6 +31,8 @@ sections:
                   blocking the caller indefinitely or surfacing an unhandled exception.
                   The timeout is an implementation quality constraint; callers observe
                   only the false result.
+                tests:
+                  - Wildcard_IsMatch_TimeoutProtection_ReturnsFalse
               - id: SpdxTool-Utility-Wildcard-NullArgs
                 title: >-
                   The Wildcard unit shall reject null pattern or input arguments with

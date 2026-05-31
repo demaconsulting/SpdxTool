@@ -30,6 +30,8 @@ sections:
               declared test links. This capability is verified on every pipeline run by the successful
               production of the requirements report artifacts. See the OTS CI-Pipeline Exception in
               requirements-principles.md.
+            tests:
+              - ReqStream_RequirementsProcessing
 
           - id: SpdxTool-OTS-ReqStream-TrxParsing
             title: ReqStream shall parse TRX result files to determine which tests passed.
@@ -41,6 +43,8 @@ sections:
               test names passed. This capability is verified on every pipeline run; a missing or malformed
               TRX file would cause pipeline enforcement to fail. See the OTS CI-Pipeline Exception in
               requirements-principles.md.
+            tests:
+              - ReqStream_TraceMatrix
 
           - id: SpdxTool-OTS-ReqStream-RequirementsReport
             title: ReqStream shall produce a requirements report document.
@@ -51,6 +55,8 @@ sections:
               ReqStream generates a requirements report included in the release artifacts. The presence of
               this document in each release provides observable evidence that requirements report generation
               operated correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - ReqStream_ReportExport
 
           - id: SpdxTool-OTS-ReqStream-JustificationsReport
             title: ReqStream shall produce a justifications document.
@@ -61,6 +67,8 @@ sections:
               ReqStream generates a justifications document included in the release artifacts. The presence of
               this document in each release provides observable evidence that justifications report generation
               operated correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - ReqStream_ReportExport
 
           - id: SpdxTool-OTS-ReqStream-TraceabilityMatrix
             title: ReqStream shall produce a traceability matrix document.
@@ -71,6 +79,8 @@ sections:
               ReqStream generates a traceability matrix document included in the release artifacts. The presence of
               this document in each release provides observable evidence that traceability matrix generation
               operated correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - ReqStream_TraceMatrix
 
           - id: SpdxTool-OTS-ReqStream-EnforcementMode
             title: ReqStream shall exit with a non-zero exit code when any requirement is uncovered.
@@ -82,3 +92,5 @@ sections:
               requirement lacks a linked passing test. A successful pipeline completion on every run
               is direct evidence that enforcement mode correctly detected no uncovered requirements.
               See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - ReqStream_EnforcementMode

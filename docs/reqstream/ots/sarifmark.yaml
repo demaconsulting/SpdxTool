@@ -29,6 +29,8 @@ sections:
               locations. This capability is exercised on every pipeline run and verified by the presence
               of the SARIF report artifact in the release bundle. See the OTS CI-Pipeline Exception in
               requirements-principles.md.
+            tests:
+              - SarifMark_SarifReading
 
           - id: SpdxTool-OTS-SarifMark-MarkdownReport
             title: SarifMark shall render extracted SARIF findings as a structured markdown document.
@@ -41,3 +43,5 @@ sections:
               functional verification occurs through CI pipeline execution, where the SARIF report
               artifact in each release provides observable evidence of correct operation. See the OTS
               CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - SarifMark_MarkdownReportGeneration

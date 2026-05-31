@@ -29,7 +29,7 @@ sections:
               and capture the resulting version string. This capability is verified on every pipeline run
               by the presence of the versions document in the release artifact archive.
             tests:
-              - VersionMark_Tool_ReportsVersion
+              - Captures Versions Test
 
           - id: SpdxTool-OTS-VersionMark-MarkdownReport
             title: VersionMark shall render captured version strings as a structured markdown table.
@@ -41,3 +41,5 @@ sections:
               the release artifact archive. Full functional verification occurs through CI pipeline
               execution, where the versions document in each release provides observable evidence of
               correct operation. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - Generates Markdown Report Test

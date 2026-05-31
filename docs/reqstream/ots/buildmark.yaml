@@ -29,6 +29,9 @@ sections:
               commit SHA, and timestamp from the GitHub REST API. This capability is exercised on
               every pipeline run and verified by the presence of the build-notes artifact in the
               release bundle. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - BuildMark_GitIntegration
+              - BuildMark_IssueTracking
 
           - id: SpdxTool-OTS-BuildMark-MarkdownReport
             title: BuildMark shall render retrieved workflow metadata as a structured markdown document.
@@ -40,3 +43,5 @@ sections:
               functional verification occurs through CI pipeline execution, where the build-notes
               artifact in each release provides observable evidence that markdown generation worked
               correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - BuildMark_MarkdownReportGeneration

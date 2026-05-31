@@ -4,7 +4,7 @@ sections:
     sections:
       - title: Commands Requirements
         sections:
-          - title: Validate Requirements
+          - title: Validate Command Requirements
             requirements:
               - id: SpdxTool-Commands-Validate-Validate
                 title: The tool shall validate SPDX documents using the validate command.

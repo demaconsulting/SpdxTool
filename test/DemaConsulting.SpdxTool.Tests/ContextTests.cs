@@ -181,6 +181,21 @@ public class ContextTests
     }
 
     /// <summary>
+    ///     Test that positional arguments after global flags are exposed via Context.Arguments.
+    /// </summary>
+    [Fact]
+    public void Context_Create_PositionalArgsAfterFlags_ExposedAsArguments()
+    {
+        // Arrange: N/A — no fixture required
+
+        // Act: create a context where a global flag precedes positional arguments
+        using var context = Context.Create(["--silent", "run-workflow", "workflow.yaml"]);
+
+        // Assert: Arguments contains exactly the positional tokens that follow the flag
+        Assert.Equal(["run-workflow", "workflow.yaml"], context.Arguments);
+    }
+
+    /// <summary>
     ///     Test that Context.Create with --depth 3 sets the Depth property to 3.
     /// </summary>
     [Fact]

@@ -28,6 +28,10 @@ sections:
               code duplications, and other metric values for the project. This capability is exercised on
               every pipeline run and verified by the presence of the quality report artifact in the release
               bundle. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - SonarMark_QualityGateRetrieval
+              - SonarMark_IssuesRetrieval
+              - SonarMark_HotSpotsRetrieval
 
           - id: SpdxTool-OTS-SonarMark-MarkdownReport
             title: SonarMark shall render retrieved metrics and quality-gate verdict as a structured markdown document.
@@ -39,3 +43,5 @@ sections:
               Full functional verification occurs through CI pipeline execution, where the quality report
               artifact in each release provides observable evidence that markdown generation operated
               correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - SonarMark_MarkdownReportGeneration

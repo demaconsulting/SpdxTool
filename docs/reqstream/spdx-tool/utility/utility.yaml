@@ -24,4 +24,4 @@ sections:
             tests:
               - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
               - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
-              - Wildcard_IsMatch_ExactMatch_ReturnsTrue
+              - Wildcard_IsMatch_ExactMatch_MatchesCorrectly

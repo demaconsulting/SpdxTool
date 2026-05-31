@@ -132,6 +132,28 @@ public class WildcardTests
     }
 
     /// <summary>
+    ///     Test that IsMatch returns false without throwing when pattern evaluation would be catastrophically slow.
+    /// </summary>
+    /// <remarks>
+    ///     Verifies the timeout-protection contract: a pathological input/pattern combination that would
+    ///     cause catastrophic backtracking in an unbounded regex engine causes IsMatch to return false
+    ///     rather than blocking or propagating a RegexMatchTimeoutException.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_TimeoutProtection_ReturnsFalse()
+    {
+        // Arrange: a long string of 'a' characters and a pattern that forces many backtrack states
+        var input = new string('a', 5000);
+        const string Pattern = "*a*a*a*a*a*a*a*a*a*a*b";
+
+        // Act: invoke IsMatch — must complete without throwing regardless of timeout behaviour
+        var result = Wildcard.IsMatch(input, Pattern);
+
+        // Assert: the call completed and returned false (no 'b' present in input)
+        Assert.False(result);
+    }
+
+    /// <summary>
     ///     Test that IsMatch handles empty strings and patterns correctly.
     /// </summary>
     /// <remarks>
