@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,20 +21,22 @@
 using DemaConsulting.SpdxModel;
 using DemaConsulting.SpdxModel.IO;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'copy-package' command.
 /// </summary>
-[TestClass]
+[Collection("CommandSequential")]
 public class CopyPackageTests
 {
     /// <summary>
     ///     Test that copy-package command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
-    public void CopyPackage_MissingArguments_ReportsError()
+    [Fact]
+    public void CopyPackage_Run_MissingArguments_ReportsError()
     {
+        // Arrange: No test data required - error is triggered by invoking the command without arguments
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -43,16 +45,18 @@ public class CopyPackageTests
             "copy-package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'copy-package' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that copy-package command with missing file reports an error
     /// </summary>
-    [TestMethod]
-    public void CopyPackage_MissingFile_ReportsError()
+    [Fact]
+    public void CopyPackage_Run_MissingFile_ReportsError()
     {
+        // Arrange: No test data required - error is triggered by referencing a non-existent file
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -64,15 +68,15 @@ public class CopyPackageTests
             "some-package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
-    ///     Test that copy-package command on command line reports workflow-only error
+    ///     Test that copy-package command on command line copies a package
     /// </summary>
-    [TestMethod]
-    public void CopyPackage_OnCommandLine_ReportsWorkflowOnlyError()
+    [Fact]
+    public void CopyPackage_Run_OnCommandLine_CopiesPackage()
     {
         const string toSpdxContents =
             """
@@ -155,16 +159,16 @@ public class CopyPackageTests
                 "SPDXRef-Package-2");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.HasCount(2, doc.Packages);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Packages[1].Id);
+            Assert.Equal(2, doc.Packages.Length);
+            Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Package-2", doc.Packages[1].Id);
         }
         finally
         {
@@ -176,8 +180,8 @@ public class CopyPackageTests
     /// <summary>
     ///     Test that copy-package command in workflow copies the package
     /// </summary>
-    [TestMethod]
-    public void CopyPackage_InWorkflow_CopiesPackage()
+    [Fact]
+    public void CopyPackage_Run_InWorkflow_CopiesPackage()
     {
         const string toSpdxContents =
             """
@@ -273,22 +277,22 @@ public class CopyPackageTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.HasCount(2, doc.Packages);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Packages[1].Id);
+            Assert.Equal(2, doc.Packages.Length);
+            Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Package-2", doc.Packages[1].Id);
 
             // Assert: Verify the relationship
-            Assert.HasCount(2, doc.Relationships);
-            Assert.AreEqual("SPDXRef-Package-2", doc.Relationships[1].Id);
-            Assert.AreEqual(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
-            Assert.AreEqual("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
+            Assert.Equal(2, doc.Relationships.Length);
+            Assert.Equal("SPDXRef-Package-2", doc.Relationships[1].Id);
+            Assert.Equal(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
+            Assert.Equal("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
         }
         finally
         {
@@ -301,8 +305,8 @@ public class CopyPackageTests
     /// <summary>
     ///     Test that copy-package command in workflow with recursive flag copies package recursively
     /// </summary>
-    [TestMethod]
-    public void CopyPackage_InWorkflowRecursive_CopiesPackageRecursively()
+    [Fact]
+    public void CopyPackage_Run_InWorkflowRecursive_CopiesPackageRecursively()
     {
         const string toSpdxContents =
             """
@@ -435,33 +439,33 @@ public class CopyPackageTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify expected packages
-            Assert.HasCount(4, doc.Packages);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Application", doc.Packages[1].Id);
-            Assert.AreEqual("SPDXRef-Library", doc.Packages[2].Id);
-            Assert.AreEqual("SPDXRef-Compiler", doc.Packages[3].Id);
+            Assert.Equal(4, doc.Packages.Length);
+            Assert.Equal("SPDXRef-MainPackage", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Application", doc.Packages[1].Id);
+            Assert.Equal("SPDXRef-Library", doc.Packages[2].Id);
+            Assert.Equal("SPDXRef-Compiler", doc.Packages[3].Id);
 
             // Assert: Verify expected relationships
-            Assert.HasCount(4, doc.Packages);
-            Assert.AreEqual("SPDXRef-DOCUMENT", doc.Relationships[0].Id);
-            Assert.AreEqual(SpdxRelationshipType.Describes, doc.Relationships[0].RelationshipType);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Relationships[0].RelatedSpdxElement);
-            Assert.AreEqual("SPDXRef-Application", doc.Relationships[1].Id);
-            Assert.AreEqual(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Relationships[1].RelatedSpdxElement);
-            Assert.AreEqual("SPDXRef-Application", doc.Relationships[2].Id);
-            Assert.AreEqual(SpdxRelationshipType.Contains, doc.Relationships[2].RelationshipType);
-            Assert.AreEqual("SPDXRef-Library", doc.Relationships[2].RelatedSpdxElement);
-            Assert.AreEqual("SPDXRef-Compiler", doc.Relationships[3].Id);
-            Assert.AreEqual(SpdxRelationshipType.BuildToolOf, doc.Relationships[3].RelationshipType);
-            Assert.AreEqual("SPDXRef-Application", doc.Relationships[3].RelatedSpdxElement);
+            Assert.Equal(4, doc.Relationships.Length);
+            Assert.Equal("SPDXRef-DOCUMENT", doc.Relationships[0].Id);
+            Assert.Equal(SpdxRelationshipType.Describes, doc.Relationships[0].RelationshipType);
+            Assert.Equal("SPDXRef-MainPackage", doc.Relationships[0].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Application", doc.Relationships[1].Id);
+            Assert.Equal(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
+            Assert.Equal("SPDXRef-MainPackage", doc.Relationships[1].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Application", doc.Relationships[2].Id);
+            Assert.Equal(SpdxRelationshipType.Contains, doc.Relationships[2].RelationshipType);
+            Assert.Equal("SPDXRef-Library", doc.Relationships[2].RelatedSpdxElement);
+            Assert.Equal("SPDXRef-Compiler", doc.Relationships[3].Id);
+            Assert.Equal(SpdxRelationshipType.BuildToolOf, doc.Relationships[3].RelationshipType);
+            Assert.Equal("SPDXRef-Application", doc.Relationships[3].RelatedSpdxElement);
         }
         finally
         {
@@ -474,8 +478,8 @@ public class CopyPackageTests
     /// <summary>
     ///     Test that copy-package command in workflow with files copies package and files
     /// </summary>
-    [TestMethod]
-    public void CopyPackage_InWorkflowWithFiles_CopiesPackageAndFiles()
+    [Fact]
+    public void CopyPackage_Run_InWorkflowWithFiles_CopiesPackageAndFiles()
     {
         const string toSpdxContents =
             """
@@ -591,27 +595,458 @@ public class CopyPackageTests
                 "workflow.yaml");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Read the SPDX document
-            Assert.IsTrue(File.Exists("to.spdx.json"));
+            Assert.True(File.Exists("to.spdx.json"));
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify expected packages
-            Assert.HasCount(2, doc.Packages);
-            Assert.AreEqual("SPDXRef-MainPackage", doc.Packages[0].Id);
-            Assert.AreEqual("SPDXRef-Application", doc.Packages[1].Id);
+            Assert.Equal(2, doc.Packages.Length);
+            Assert.Equal("SPDXRef-MainPackage", doc.Packages[0].Id);
+            Assert.Equal("SPDXRef-Application", doc.Packages[1].Id);
 
             // Assert: Verify expected files
-            Assert.HasCount(2, doc.Files);
-            Assert.AreEqual("SPDXRef-File1", doc.Files[0].Id);
-            Assert.AreEqual("SPDXRef-File2", doc.Files[1].Id);
+            Assert.Equal(2, doc.Files.Length);
+            Assert.Equal("SPDXRef-File1", doc.Files[0].Id);
+            Assert.Equal("SPDXRef-File2", doc.Files[1].Id);
+
+            // Assert: Verify the copied package has filesAnalyzed and the expected hasFiles entries
+            Assert.True(doc.Packages[1].FilesAnalyzed);
+            Assert.Contains("SPDXRef-File1", doc.Packages[1].HasFiles);
+            Assert.Contains("SPDXRef-File2", doc.Packages[1].HasFiles);
         }
         finally
         {
             File.Delete("to.spdx.json");
             File.Delete("from.spdx.json");
             File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command in workflow with missing 'from' input reports error
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_MissingFromInput_ReportsError()
+    {
+        // Workflow contents - missing 'from' input
+        const string workflowContents =
+            """
+            steps:
+            - command: copy-package
+              inputs:
+                to: to.spdx.json
+                package: SPDXRef-Package-1
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'copy-package' missing 'from' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command in workflow with missing 'to' input reports error
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_MissingToInput_ReportsError()
+    {
+        // Workflow contents - missing 'to' input
+        const string workflowContents =
+            """
+            steps:
+            - command: copy-package
+              inputs:
+                from: from.spdx.json
+                package: SPDXRef-Package-1
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'copy-package' missing 'to' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command in workflow with missing 'package' input reports error
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_MissingPackageInput_ReportsError()
+    {
+        // Workflow contents - missing 'package' input
+        const string workflowContents =
+            """
+            steps:
+            - command: copy-package
+              inputs:
+                from: from.spdx.json
+                to: to.spdx.json
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'copy-package' missing 'package' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command in workflow with invalid 'recursive' value reports error
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_InvalidRecursiveInput_ReportsError()
+    {
+        // Workflow contents - non-boolean value for 'recursive'
+        const string workflowContents =
+            """
+            steps:
+            - command: copy-package
+              inputs:
+                from: from.spdx.json
+                to: to.spdx.json
+                package: SPDXRef-Package-1
+                recursive: not-a-boolean
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'copy-package' invalid 'recursive' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command in workflow with invalid 'files' value reports error
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_InvalidFilesInput_ReportsError()
+    {
+        // Workflow contents - non-boolean value for 'files'
+        const string workflowContents =
+            """
+            steps:
+            - command: copy-package
+              inputs:
+                from: from.spdx.json
+                to: to.spdx.json
+                package: SPDXRef-Package-1
+                files: not-a-boolean
+            """;
+
+        try
+        {
+            // Arrange: Write the workflow file
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'copy-package' invalid 'files' input", output);
+        }
+        finally
+        {
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command in workflow with existing same-identity package enhances rather than duplicates
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_InWorkflowWithExistingPackage_EnhancesPackage()
+    {
+        const string toSpdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Package-Dest",
+                  "name": "Shared Package",
+                  "versionInfo": "2.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
+
+        const string fromSpdxContents =
+            """
+            {
+              "files": [],
+              "packages": [
+                {
+                  "SPDXID": "SPDXRef-Package-Src",
+                  "name": "Shared Package",
+                  "versionInfo": "2.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxModel",
+                  "licenseConcluded": "MIT",
+                  "supplier": "Organization: TestOrg"
+                }
+              ],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "From Document",
+              "documentNamespace": "https://sbom.spdx.org/from",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
+
+        // Workflow contents
+        const string workflowContents =
+            """
+            steps:
+            - command: copy-package
+              inputs:
+                from: from.spdx.json
+                to: to.spdx.json
+                package: SPDXRef-Package-Src
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX files
+            File.WriteAllText("to.spdx.json", toSpdxContents);
+            File.WriteAllText("from.spdx.json", fromSpdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out _,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+
+            // Read the SPDX document
+            Assert.True(File.Exists("to.spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
+
+            // Assert: Verify only one package (enhanced, not duplicated) and ID renamed
+            Assert.Single(doc.Packages);
+            Assert.Equal("SPDXRef-Package-Src", doc.Packages[0].Id);
+
+            // Assert: Verify a field from the source package was merged into the destination package
+            Assert.Equal("Organization: TestOrg", doc.Packages[0].Supplier);
+        }
+        finally
+        {
+            File.Delete("to.spdx.json");
+            File.Delete("from.spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that copy-package command with invalid package ID (empty or SPDXRef-DOCUMENT) reports error
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_InvalidPackageId_ReportsError()
+    {
+        // Arrange: No test data required — error is triggered before any file I/O
+
+        // Act: Run the command with an empty package ID
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "copy-package",
+            "from.spdx.json",
+            "to.spdx.json",
+            "SPDXRef-DOCUMENT");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'copy-package' package argument may not be empty or 'SPDXRef-DOCUMENT'", output);
+    }
+
+    /// <summary>
+    ///     Test that copy-package command with an empty package ID reports an error
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_EmptyPackageId_ReportsError()
+    {
+        // Arrange: No test data required — error is triggered before any file I/O
+
+        // Act: Run the command with an empty package ID argument
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "copy-package",
+            "from.spdx.json",
+            "to.spdx.json",
+            "");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'copy-package' package argument may not be empty or 'SPDXRef-DOCUMENT'", output);
+    }
+
+    /// <summary>
+    ///     Test that copy-package reports an error when the specified package identifier does not
+    ///     exist in the source document.
+    /// </summary>
+    [Fact]
+    public void CopyPackage_Run_PackageNotFound_ReportsError()
+    {
+        const string fromSpdxContents =
+            """
+            {
+              "files": [],
+              "packages": [],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "From Document",
+              "documentNamespace": "https://sbom.spdx.org/from",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
+
+        const string toSpdxContents =
+            """
+            {
+              "files": [],
+              "packages": [],
+              "relationships": [],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "To Document",
+              "documentNamespace": "https://sbom.spdx.org/to",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": []
+            }
+            """;
+
+        try
+        {
+            // Arrange: Write SPDX files with no packages in the source
+            File.WriteAllText("from.spdx.json", fromSpdxContents);
+            File.WriteAllText("to.spdx.json", toSpdxContents);
+
+            // Act: Run the command referencing a package that does not exist
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "copy-package",
+                "from.spdx.json",
+                "to.spdx.json",
+                "SPDXRef-MissingPackage");
+
+            // Assert: Verify error reported
+            Assert.Equal(1, exitCode);
+            Assert.Contains("SPDXRef-MissingPackage not found", output);
+        }
+        finally
+        {
+            File.Delete("from.spdx.json");
+            File.Delete("to.spdx.json");
         }
     }
 }

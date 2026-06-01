@@ -1,19 +1,45 @@
-# DemaConsulting.SpdxTool BuildMark OTS Requirements
-#
-# This file contains requirements for the BuildMark OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# BuildMark OTS requirements
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: BuildMark
+      - title: BuildMark Requirements
         requirements:
           - id: SpdxTool-OTS-BuildMark
-            title: BuildMark shall generate build-notes documentation from GitHub Actions metadata.
+            title: BuildMark shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.BuildMark queries the GitHub API to capture workflow run details and
-              renders them as a markdown build-notes document included in the release artifacts.
+              DemaConsulting.BuildMark is a CI pipeline tool that generates build-notes documentation
+              from GitHub Actions metadata. Installation is evidenced by the tool's own self-validation
+              test suite: the linked test exercises BuildMark's markdown report generation capability,
+              confirming the tool is installed and functional in the pipeline environment.
+            tests:
+              - BuildMark_MarkdownReportGeneration
+
+          - id: SpdxTool-OTS-BuildMark-ApiQuery
+            title: BuildMark shall query the GitHub Actions API to retrieve workflow run metadata.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              BuildMark's primary function is to read workflow run identifier, trigger event, branch,
+              commit SHA, and timestamp from the GitHub REST API. This capability is exercised on
+              every pipeline run and verified by the presence of the build-notes artifact in the
+              release bundle. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - BuildMark_GitIntegration
+              - BuildMark_IssueTracking
+
+          - id: SpdxTool-OTS-BuildMark-MarkdownReport
+            title: BuildMark shall render retrieved workflow metadata as a structured markdown document.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |-
+              BuildMark produces a markdown build-notes document from the metadata it retrieves. Full
+              functional verification occurs through CI pipeline execution, where the build-notes
+              artifact in each release provides observable evidence that markdown generation worked
+              correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
             tests:
               - BuildMark_MarkdownReportGeneration

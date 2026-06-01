@@ -1,20 +1,45 @@
-# DemaConsulting.SpdxTool SarifMark OTS Requirements
-#
-# This file contains requirements for the SarifMark OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# SarifMark OTS requirements
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: SarifMark
+      - title: SarifMark Requirements
         requirements:
           - id: SpdxTool-OTS-SarifMark
-            title: SarifMark shall convert CodeQL SARIF results into a markdown report.
+            title: SarifMark shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.SarifMark reads the SARIF output produced by CodeQL code scanning and
-              renders it as a human-readable markdown document included in the release artifacts.
+              DemaConsulting.SarifMark is a CI pipeline tool that converts CodeQL SARIF results into a
+              markdown report. Installation is evidenced by the tool's own self-validation test suite:
+              the linked test exercises SarifMark's SARIF reading capability, confirming the tool is
+              installed and functional in the pipeline environment.
             tests:
               - SarifMark_SarifReading
+
+          - id: SpdxTool-OTS-SarifMark-SarifReading
+            title: SarifMark shall parse the SARIF 2.1 JSON file to extract rule violations and source locations.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              SarifMark reads the CodeQL SARIF output and extracts rule violations and their source
+              locations. This capability is exercised on every pipeline run and verified by the presence
+              of the SARIF report artifact in the release bundle. See the OTS CI-Pipeline Exception in
+              requirements-principles.md.
+            tests:
+              - SarifMark_SarifReading
+
+          - id: SpdxTool-OTS-SarifMark-MarkdownReport
+            title: SarifMark shall render extracted SARIF findings as a structured markdown document.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |-
+              SarifMark produces a markdown report grouping results by rule and severity. When no
+              violations are found it writes a document stating that no issues were detected. Full
+              functional verification occurs through CI pipeline execution, where the SARIF report
+              artifact in each release provides observable evidence of correct operation. See the OTS
+              CI-Pipeline Exception in requirements-principles.md.
+            tests:
               - SarifMark_MarkdownReportGeneration

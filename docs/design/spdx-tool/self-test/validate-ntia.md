@@ -1,38 +1,82 @@
-# DemaConsulting.SpdxTool ValidateNtia SelfTest Design
+### ValidateNtia
 
-## Purpose
+#### Purpose
 
-`ValidateNtia.cs` exercises the NTIA minimum elements validation within the
-SelfTest subsystem. It verifies that the `validate` command correctly identifies
-NTIA compliance or non-compliance in SPDX documents.
+ValidateNtia exercises the NTIA minimum elements validation within the Self-Test subsystem. It
+verifies that the validate command correctly detects missing NTIA-required fields in a non-compliant
+SPDX document and accepts a fully compliant one.
 
-## Test: `SpdxTool_Ntia`
+#### Data Model
 
-### Setup
+The `PreRunSpdxToolHookForTest` property
+holds an optional `Action` delegate that is `null` in production. When set by a test, the delegate is
+invoked in `DoValidateMissingSupplier` immediately after the fixture file is written and before
+`Validate.RunSpdxTool` is called. This hook allows tests to corrupt the fixture so that the validate
+command returns a non-zero exit code, exercising the CommandFailure path without spawning an external
+process.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes SPDX JSON documents — one NTIA-compliant and one non-compliant.
+#### Key Methods
 
-### Execution
+**Run**: executes the NTIA self-test and records the result.
 
-1. Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "validate", "<compliant.spdx.json>", "ntia"])`.
-2. Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "validate", "<noncompliant.spdx.json>", "ntia"])`.
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
+- *Post-conditions*: A TestResult entry named SpdxTool_Ntia has been appended to results; a pass or
+  fail message has been written to the Context.
 
-### Verification
+**DoValidate**: orchestrates both sub-tests in a shared temporary directory.
 
-- Compliant document: exit code must be 0.
-- Non-compliant document: exit code must be non-zero.
+- *Parameters*: None.
+- *Returns*: `bool` — true if both DoValidateMissingSupplier and DoValidateCompliant succeed.
+- *Preconditions*: A writable working directory is available.
+- *Post-conditions*: The validate.tmp directory has been deleted regardless of outcome.
 
-### Teardown
+**DoValidateMissingSupplier**: verifies that a document missing the supplier field fails NTIA validation.
 
-Deletes the `validate.tmp` directory.
+- *Parameters*: None.
+- *Returns*: `bool` — true if basic validation passes (exit code zero) and NTIA validation fails
+  (non-zero exit code) with an appropriate error in the log.
+- *Preconditions*: validate.tmp exists.
+- *Post-conditions*: An SPDX document and log file have been written to validate.tmp.
 
-## Error Handling
+Writes an SPDX JSON document with a package that has no supplier field. Runs validate without the
+ntia flag (expects exit code zero) and then runs validate with the ntia flag (expects non-zero exit
+code). Reads the log file and verifies it contains the text "NTIA: Package 'Test Package' Missing
+Supplier".
 
-- Returns `false` if either sub-test produces an unexpected exit code.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
+**DoValidateCompliant**: verifies that a fully NTIA-compliant document passes NTIA validation.
 
-## Constraints
+- *Parameters*: None.
+- *Returns*: `bool` — true if RunSpdxTool returns exit code zero.
+- *Preconditions*: validate.tmp exists.
+- *Post-conditions*: An NTIA-compliant SPDX document has been written and validated.
 
-- The test is self-contained; all fixture data is embedded as string literals.
-- The temporary directory is always deleted in a `finally` block.
+Writes an SPDX JSON document with a package that includes the supplier field, then calls
+Validate.RunSpdxTool with --silent, validate, the SPDX file path, and the ntia flag. Expects exit
+code zero.
+
+#### Error Handling
+
+Returns false if basic validation of the non-compliant document returns a non-zero exit code, if NTIA
+validation of the non-compliant document returns exit code zero, if the log file is absent after the
+NTIA validation run, or if the log does not contain the expected "Missing Supplier" error text.
+Returns false if NTIA validation of the compliant document
+returns a non-zero exit code. Any exception thrown by DoValidate propagates uncaught from Run; no
+TestResult is recorded for this step if an exception is thrown — the exception surfaces to the
+Self-Test orchestrator. The finally block guards the Directory.Delete call with a Directory.Exists
+check to prevent a secondary DirectoryNotFoundException masking the original exception when
+Directory.CreateDirectory fails (e.g., because validate.tmp already exists as a file).
+
+#### Dependencies
+
+- **Validate** — provides the RunSpdxTool helper used to invoke the validate command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
+
+#### Callers
+
+- **Validate** — the Self-Test orchestrator invokes this step.

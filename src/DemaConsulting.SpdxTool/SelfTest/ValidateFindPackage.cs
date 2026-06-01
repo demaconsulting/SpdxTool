@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,133 +23,146 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of FindPackage
+///     Self-test step that exercises the <c>find-package</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that a package can be located in an SPDX document by name and that its SPDX ID
+///     is captured into a workflow variable and printed to the log output. Uses a temporary
+///     <c>validate.tmp</c> directory in the current working directory; callers must ensure
+///     sequential execution to avoid races on that directory and on the process-wide current
+///     directory set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateFindPackage
 {
     /// <summary>
-    ///     Run validation test
+    ///     Executes the find-package self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Runs <see cref="DoValidate"/> inside a temporary directory via
+    ///     <see cref="Validate.RunInTempDir"/> and records the outcome via
+    ///     <see cref="Validate.RecordResult"/>. If <see cref="DoValidate"/> throws an exception,
+    ///     the exception propagates uncaught from this method and no <see cref="TestResult"/> is
+    ///     recorded for this step.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = DoValidate();
-
-        // Report validation result
-        if (passed)
-        {
-            context.WriteLine($"✓ SpdxTool_FindPackage - Passed");
-        }
-        else
-        {
-            context.WriteError($"✗ SpdxTool_FindPackage - Failed");
-        }
-
-        results.Results.Add(
-            new TestResult
-            {
-                Name = "SpdxTool_FindPackage",
-                ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateFindPackage",
-                ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
-                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
-            });
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
+        Validate.RecordResult(context, results, "SpdxTool_FindPackage", "DemaConsulting.SpdxTool.SelfTest.ValidateFindPackage", passed);
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual find-package validation. Called by <see cref="Validate.RunInTempDir"/>,
+    ///     which creates and cleans up the temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if the command succeeded, the log file is present, and it contains the
+    ///     expected package identifier; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Writes an SPDX JSON document containing two packages, and a workflow YAML that executes
+    ///     <c>find-package</c> to locate "Test Package" by name, captures its ID into the
+    ///     <c>packageId</c> variable, and prints it via the <c>print</c> command. Invokes
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c>, <c>--log</c>,
+    ///     and <c>run-workflow</c> arguments, then reads the log file and verifies it contains
+    ///     "Found package SPDXRef-Package-1". Returns <c>false</c> if the log file is absent after
+    ///     a successful tool exit.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test files cannot be created or the log file cannot be read.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        try
-        {
-            // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+        const string tempDir = Validate.TempDir;
 
-            // Write test SPDX file
-            File.WriteAllText("validate.tmp/test.spdx.json",
-                """
-                {
-                  "files": [],
-                  "packages": [    {
-                      "SPDXID": "SPDXRef-Package-1",
-                      "name": "Test Package",
-                      "versionInfo": "1.0.0",
-                      "packageFileName": "package1.zip",
-                      "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                      "licenseConcluded": "MIT"
-                    },
-                    {
-                      "SPDXID": "SPDXRef-Package-2",
-                      "name": "Another Test Package",
-                      "versionInfo": "2.0.0",
-                      "packageFileName": "package2.tar",
-                      "downloadLocation": "https://github.com/demaconsulting/SpdxModel",
-                      "licenseConcluded": "MIT"
-                    }
-                  ],
-                  "relationships": [    {
-                      "spdxElementId": "SPDXRef-DOCUMENT",
-                      "relatedSpdxElement": "SPDXRef-Package-1",
-                      "relationshipType": "DESCRIBES"
-                    }
-                  ],
-                  "spdxVersion": "SPDX-2.2",
-                  "dataLicense": "CC0-1.0",
-                  "SPDXID": "SPDXRef-DOCUMENT",
-                  "name": "Test Document",
-                  "documentNamespace": "https://sbom.spdx.org",
-                  "creationInfo": {
-                    "created": "2021-10-01T00:00:00Z",
-                    "creators": [ "Person: Malcolm Nixon" ]
-                  },
-                  "documentDescribes": [ "SPDXRef-Package-1" ]
-                }
-                """);
-
-            // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
-                """
-                steps:
-                - command: find-package
-                  inputs:
-                    output: packageId
-                    spdx: test.spdx.json
-                    name: Test Package
-                - command: print
-                  inputs:
-                    text:
-                    - Found package ${{ packageId }}
-                """);
-
-            // Run the workflow file
-            var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
-                [
-                    "--silent",
-                    "--log", "output.log",
-                    "run-workflow",
-                    "workflow.yaml"
-                ]);
-
-            // Fail if SpdxTool reported an error
-            if (exitCode != 0)
+        // Write test SPDX file
+        File.WriteAllText($"{tempDir}/test.spdx.json",
+            """
             {
-                return false;
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "packageFileName": "package1.zip",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT",
+                  "licenseDeclared": "MIT",
+                  "copyrightText": "NOASSERTION"
+                },
+                {
+                  "SPDXID": "SPDXRef-Package-2",
+                  "name": "Another Test Package",
+                  "versionInfo": "2.0.0",
+                  "packageFileName": "package2.tar",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxModel",
+                  "licenseConcluded": "MIT",
+                  "licenseDeclared": "MIT",
+                  "copyrightText": "NOASSERTION"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
             }
+            """);
 
-            // Read the log file
-            var log = File.ReadAllText("validate.tmp/output.log");
+        // Write test workflow file
+        File.WriteAllText($"{tempDir}/workflow.yaml",
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: test.spdx.json
+                name: Test Package
+            - command: print
+              inputs:
+                text:
+                - Found package ${{ packageId }}
+            """);
 
-            // Verify expected output
-            return log.Contains("Found package SPDXRef-Package-1");
-        }
-        finally
+        // Run the workflow file
+        var exitCode = Validate.RunSpdxTool(
+            tempDir,
+            [
+                "--silent",
+                "--log", "output.log",
+                "run-workflow",
+                "workflow.yaml"
+            ]);
+
+        // Fail if SpdxTool reported an error
+        if (exitCode != 0)
         {
-            // Delete the temporary validation folder
-            Directory.Delete("validate.tmp", true);
+            return false;
         }
+
+        // Fail if log file is absent
+        if (!File.Exists($"{tempDir}/output.log"))
+        {
+            return false;
+        }
+
+        // Read the log file
+        var log = File.ReadAllText($"{tempDir}/output.log");
+
+        // Verify expected output
+        return log.Contains("Found package SPDXRef-Package-1");
     }
 }

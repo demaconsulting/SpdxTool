@@ -1,56 +1,72 @@
-# DemaConsulting.SpdxTool validate Command Design
+### Validate
 
-## Purpose
+#### Purpose
 
-The `validate` command validates an SPDX document for specification conformance
-issues. It optionally checks for NTIA (National Telecommunications and Information
-Administration) minimum elements compliance. It is available from the command-line
-and from workflow YAML files.
+Validate loads an SPDX document and checks it for specification compliance issues. Optionally it
+also checks for NTIA minimum-elements compliance. Validation issues are written as warnings to the
+context, and if any issues are found the command throws a CommandErrorException. It is available
+from both the CLI and workflow YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+Validate holds no mutable state; it is a stateless singleton.
 
-```text
-spdx-tool validate <spdx.json> [ntia]
-```
+**Instance**: `Validate` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record for Validate.
 
-- `spdx.json` — SPDX document to validate.
-- `ntia` — Optional flag; enables NTIA minimum elements checking.
+#### Key Methods
 
-### Workflow YAML usage
+**Run(Context, string[])**: Parses spdxFile from CLI arguments. Detects the "ntia" flag (case-sensitive
+exact match of the literal string "ntia") by scanning all arguments after args[0] — the flag may
+appear at any position after the SPDX file path. Calls DoValidate.
 
-```yaml
-- command: validate
-  inputs:
-    spdx: <spdx.json>             # SPDX file name (required)
-    ntia: true                    # Optional NTIA check (default: false)
-```
+- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, ...optional
+  flags including "ntia" at any position].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 1.
+- *Post-conditions*: The document is validated; issues are reported via context.WriteWarning.
 
-## Implementation
+**Run(Context, YamlMappingNode, Dictionary<string, string>)**: Reads spdx and ntia inputs from the YAML step node
+and calls DoValidate. The ntia input is evaluated case-insensitively via ToLowerInvariant(), so
+"true", "True", and "TRUE" all enable NTIA checking.
 
-1. Reads `spdx` and optionally `ntia` from inputs.
-2. Loads the SPDX document.
-3. Calls `doc.Validate(issues, ntia)` from the SPDX model to collect issues.
-4. If no issues are found, returns silently.
-5. If issues are found:
-   - Each issue is written as a warning via `context.WriteWarning`.
-   - A blank line is written.
-   - A `CommandErrorException` is raised with the count of issues.
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: spdx input is required.
+- *Post-conditions*: The document is validated; issues reported.
 
-## Error Handling
+**DoValidate(Context, string, bool)** (`public static`): Loads the SPDX document, calls doc.Validate to collect
+issues, writes each issue as a warning to context, writes a blank line to separate the warning list
+from the error summary, and throws CommandErrorException if any issues were found. Callable directly
+by external callers (e.g., self-test) without going through the CLI or workflow dispatch paths.
 
-| Condition | Exception |
-| :--- | :--- |
-| No arguments (CLI) | `CommandUsageException` |
-| Missing `spdx` input (workflow) | `YamlException` |
-| SPDX document has validation issues | `CommandErrorException` |
+- *Parameters*: `Context context` — execution context; `string spdxFile` — SPDX JSON file path;
+  `bool ntia` — whether to apply NTIA minimum-elements checking.
+- *Returns*: `void`
+- *Preconditions*: spdxFile must exist and be a valid SPDX JSON document.
+- *Post-conditions*: If no issues are found the method returns normally. If issues are found, each
+  is written as a warning and CommandErrorException is thrown.
 
-## Constraints
+#### Error Handling
 
-- The `ntia` flag is detected in CLI mode by searching for the string `"ntia"` in
-  the arguments after the first (case-sensitive).
-- In workflow mode, `ntia` is case-insensitively compared to `"true"`.
-- All validation issues are reported as warnings before the error is raised, so the
-  caller can inspect the full list of problems.
-- Variable expansion is applied to all string inputs via `GetMapString`.
+**CommandUsageException** — thrown by Run(Context, string[]) when no arguments are provided; also
+propagated from `DoValidate` via `SpdxHelpers.LoadJsonDocument` when `spdxFile` does not exist on disk.
+
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the spdx input is
+missing.
+
+**CommandErrorException** — thrown by DoValidate when the loaded document contains one or more
+validation issues; message indicates the count and file name.
+
+#### Dependencies
+
+- Command (abstract base class)
+- SpdxDocument (DemaConsulting.SpdxModel — Validate method)
+- SpdxHelpers (Spdx units)
+- YamlDotNet (YamlMappingNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — routes CLI and workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: validate

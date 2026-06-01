@@ -4,141 +4,122 @@ description: Follow these standards when managing requirements with ReqStream.
 globs: ["requirements.yaml", "docs/reqstream/**/*.yaml"]
 ---
 
-# ReqStream Requirements Management Standards
-
-This document defines DEMA Consulting standards for requirements management
-using ReqStream within Continuous Compliance environments.
-
-## Required Standards
+# Required Standards
 
 Read these standards first before applying this standard:
 
-- **`software-items.md`** - Software categorization (System/Subsystem/Unit/OTS)
-
-# Core Principles
-
-ReqStream implements Continuous Compliance methodology for automated evidence
-generation:
-
-- **Requirements Traceability**: Every requirement MUST link to passing tests
-- **Platform Evidence**: Source filters ensure correct testing environment
-  validation
-- **Quality Gate Enforcement**: CI/CD fails on requirements without test
-  coverage
-- **Audit Documentation**: Generated reports provide compliance evidence
-
-# Software Items Integration (CRITICAL)
-
-Before creating requirements files, agents MUST:
-
-1. **Read `.github/standards/software-items.md`** to understand System/Subsystem/Unit/OTS classifications
-2. **Apply proper categorization** when organizing requirements files
-3. **Mirror source code structure** in requirements folder organization
+- **`requirements-principles.md`** - Requirements principles and unidirectionality
+- **`software-items.md`** - Software categorization (System/Subsystem/Unit/OTS/Shared Package)
 
 # Requirements Organization
 
-Organize requirements into separate files under `docs/reqstream/` mirroring
-the source code structure because reviewers need clear navigation from
-requirements to design to implementation:
+Organize requirements under `docs/reqstream/` mirroring the source code structure
+because ReqStream discovers files via the includes chain in `requirements.yaml`
+and organizes report output by this hierarchy:
 
 ```text
-requirements.yaml                   # Root file (includes only)
+requirements.yaml                    # Root file (includes only)
 docs/reqstream/
-├── {system-name}/                  # System-level requirements folder (one per system)
-│   ├── {system-name}.yaml          # System-level requirements
+├── {system-name}.yaml               # System-level requirements
+├── {system-name}/                   # System folder (one per system)
 │   ├── platform-requirements.yaml  # Platform support requirements
-│   ├── {subsystem-name}/           # Subsystem requirements (kebab-case folders)
-│   │   ├── {subsystem-name}.yaml   # Requirements for this subsystem
-│   │   └── {unit-name}.yaml        # Requirements for units within this subsystem
-│   └── {unit-name}.yaml            # Requirements for top-level units (outside subsystems)
-└── ots/                            # OTS software items folder
-    └── {ots-name}.yaml             # Requirements for OTS components
+│   ├── {subsystem-name}.yaml        # Subsystem requirements
+│   ├── {subsystem-name}/            # Subsystem folder (kebab-case); may nest recursively
+│   │   ├── {subsystem-name}.yaml    # Child subsystem requirements
+│   │   ├── {subsystem-name}/        # Child subsystem folder
+│   │   └── {unit-name}.yaml         # Unit requirements
+│   └── {unit-name}.yaml             # System-level unit requirements
+├── ots/                             # OTS items appear as a distinct section in reports
+│   └── {ots-name}.yaml              # Requirements for OTS components
+└── shared/                          # Shared Packages appear as a distinct section in reports
+    └── {package-name}.yaml          # Requirements for Shared Package dependencies
 ```
 
-The folder structure MUST mirror the source code organization to maintain
-consistency with design documentation and enable automated tooling.
+Local items have matching relative paths across `docs/reqstream/`, `docs/design/`, and `docs/verification/`:
 
-# Requirement Hierarchies and Links
-
-Requirements link downward only - higher-level requirements reference lower-level
-ones they decompose into:
-
-- **System requirements** → may link to subsystem or unit requirements
-- **Subsystem requirements** → may link to unit requirements within that subsystem
-- **Unit requirements** → should NOT link upward to parent requirements
-
-This prevents circular dependencies and ensures clear hierarchical relationships
-for compliance auditing.
-
-# Test Linkage Hierarchy
-
-Requirements MUST link to tests at their own level to maintain proper test scope:
-
-- **System requirements** → link ONLY to system-level integration tests
-- **Subsystem requirements** → link ONLY to subsystem-level tests
-- **Unit requirements** → link ONLY to unit-level tests
-
-Lower-level tests validate implementation details, while higher-level requirements
-are validated through integration behavior at their architectural level.
+- Requirements: `{system-name}[/{subsystem-name}...]/{item-name}.yaml`
+- Design: `{system-name}[/{subsystem-name}...]/{item-name}.md`
+- Verification: `{system-name}[/{subsystem-name}...]/{item-name}.md`
 
 # Requirements File Format
 
-```yaml
-sections:
-  - title: Functional Requirements
-    requirements:
-      - id: System-Subsystem-Feature
-        title: The system shall perform the required function.
-        justification: |
-          Business rationale explaining why this requirement exists.
-          Include regulatory or standard references where applicable.
-        children:  # Downward links to decomposed requirements (optional)
-          - ChildSystem-Feature-Behavior
-        tests:     # Links to test methods (required)
-          - TestMethodName
-          - windows@PlatformSpecificTest  # Source filter for platform evidence
+Each file adds requirements at exactly one level of the hierarchy. The file spells out
+its full ancestry as nested `{ItemName} Requirements` sections down to that level, then
+places requirements there. ReqStream merges identical section title paths across included
+files automatically. Always determine item classification from `docs/design/introduction.md` -
+folder depth does not determine whether an item is a subsystem or unit.
+
+Valid section nestings (names in `{braces}` are placeholders):
+
+```text
+{SystemName} Requirements              # system-level requirements
+├── {SubsystemName} Requirements       # root subsystem requirements
+│   ├── {SubsystemName} Requirements   # nested subsystem (may recurse)
+│   │   └── {UnitName} Requirements    # unit under a nested subsystem
+│   └── {UnitName} Requirements        # unit under a root subsystem
+└── {UnitName} Requirements            # unit directly under the system
+OTS Software Requirements          # OTS root section (fixed title)
+└── {OtsName} Requirements         # requirements for one OTS item
+Shared Package Requirements        # shared package root section (fixed title)
+└── {PackageName} Requirements     # requirements for one shared package
 ```
 
-Requirements specify WHAT the system shall do, not HOW, because implementation
-details belong in design documentation while requirements focus on externally
-observable behavior with clear, testable acceptance criteria.
-
-# OTS Software Requirements
-
-Document third-party component requirements in the `docs/reqstream/ots/` folder
-with nested sections because auditors need clear separation between in-house
-and external component evidence:
+Each file implements one path through this tree:
 
 ```yaml
 sections:
-  - title: OTS Software Requirements
+  - title: '{SystemName} Requirements'
     sections:
-      - title: System.Text.Json
+      - title: '{SubsystemName} Requirements'
         requirements:
-          - id: TemplateTool-SystemTextJson-ReadJson
-            title: System.Text.Json shall be able to read JSON files.
-            tests:
-              - JsonReaderTests.TestReadValidJson
+          - id: System-Subsystem-Feature    # Used as-is in all reports - make it readable
+            title: The subsystem shall perform the required function.
+            justification: |              # ReqStream extracts this into the justifications report (--justifications)
+              Business rationale and any regulatory references.
+            tags:                         # Optional: categorize for filtering with --filter
+              - security
+            children:                     # Optional: ReqStream validates this decomposition chain
+              - System-Subsystem-Unit-Feat  # Downward links only (see requirements-principles.md)
+            tests:                        # ReqStream matches these by method name in test results
+              - TestMethodName
+              - windows@PlatformSpecificTest  # Only test runs on Windows count as evidence
+```
+
+# Tags (OPTIONAL)
+
+Tags are free-form - no mandatory vocabulary. Common tags: `security`, `safety`, `performance`,
+`compliance`, `reliability`, `critical`. Use `--filter` to selectively export or enforce subsets
+(OR logic across comma-separated tags):
+
+```bash
+dotnet reqstream --requirements requirements.yaml \
+  --filter security,critical \
+  --report docs/requirements_doc/generated/security_requirements.md
 ```
 
 # Semantic IDs (MANDATORY)
 
-Use meaningful IDs following `System-Section-ShortDesc` pattern because
-auditors need to understand requirements without cross-referencing:
+Use the `System-Component-Feature` pattern because ReqStream uses IDs as-is in
+all generated reports and the trace matrix - opaque IDs make those outputs
+unreadable without a separate lookup:
 
-- **Good**: `TemplateTool-Core-DisplayHelp`
-- **Bad**: `REQ-042` (requires lookup to understand)
+- **System-level**: `TemplateTool-Core-DisplayHelp`
+- **Subsystem-level**: `TemplateTool-Parser-ParseYaml`
+- **Unit-level**: `TemplateTool-Validator-CheckFormat`
+- **Bad**: `REQ-042` (meaningless in report output)
 
 # Source Filter Requirements (CRITICAL)
 
-Platform-specific requirements MUST use source filters for compliance evidence:
+Platform-specific requirements MUST use source filters because without them
+ReqStream accepts test results from any platform as evidence - a Windows-only
+requirement would incorrectly pass on Linux:
 
 ```yaml
 tests:
-  - "windows@TestMethodName"    # Windows platform evidence only
-  - "ubuntu@TestMethodName"     # Linux platform evidence only
-  - "net8.0@TestMethodName"     # .NET 8 runtime evidence only
-  - "TestMethodName"            # Any platform evidence acceptable
+  - "windows@TestMethodName"    # Only Windows test runs count as evidence
+  - "ubuntu@TestMethodName"     # Only Linux test runs count as evidence
+  - "net8.0@TestMethodName"     # Only .NET 8 runs count as evidence
+  - "TestMethodName"            # Any platform acceptable
 ```
 
 **WARNING**: Removing source filters invalidates platform-specific compliance
@@ -146,44 +127,31 @@ evidence.
 
 # ReqStream Commands
 
-Essential ReqStream commands for Continuous Compliance:
-
 ```bash
-# Lint requirement files for issues (run before use)
-dotnet reqstream \
-  --requirements requirements.yaml \
-  --lint
+# Validate YAML syntax and requirement IDs before generating any reports
+dotnet reqstream --requirements requirements.yaml --lint
 
-# Generate requirements report
-dotnet reqstream \
-  --requirements requirements.yaml \
-  --report docs/requirements_doc/requirements.md
+# Generate requirements document for compliance record
+dotnet reqstream --requirements requirements.yaml \
+  --report docs/requirements_doc/generated/requirements.md
 
-# Generate justifications report
-dotnet reqstream \
-  --requirements requirements.yaml \
-  --justifications docs/requirements_doc/justifications.md
+# Generate justifications document for compliance record
+dotnet reqstream --requirements requirements.yaml \
+  --justifications docs/requirements_doc/generated/justifications.md
 
-# Generate trace matrix
-dotnet reqstream \
-  --requirements requirements.yaml \
+# Generate trace matrix proving each requirement is covered by passing tests
+dotnet reqstream --requirements requirements.yaml \
   --tests "artifacts/**/*.trx" \
-  --matrix docs/requirements_report/trace_matrix.md
+  --matrix docs/requirements_report/generated/trace_matrix.md
 ```
 
 # Quality Checks
 
 Before submitting requirements, verify:
 
-- [ ] All requirements have semantic IDs (`System-Section-Feature` pattern)
-- [ ] Every requirement links to at least one passing test
+- [ ] All requirements have semantic IDs (`System-Component-Feature` pattern)
+- [ ] Every requirement has a justification explaining business/regulatory need
+- [ ] Every requirement links to at least one test
 - [ ] Platform-specific requirements use source filters (`platform@TestName`)
-- [ ] Requirements specify observable behavior (WHAT), not implementation (HOW)
-- [ ] Comprehensive justification explains business/regulatory need
-- [ ] Files organized under `docs/reqstream/` following folder structure patterns
-- [ ] Subsystem folders use kebab-case naming matching source code
-- [ ] OTS requirements placed in `ots/` subfolder
-- [ ] Every software unit has requirements file, design doc, and tests
-- [ ] Valid YAML syntax passes yamllint validation
-- [ ] ReqStream enforcement passes: `dotnet reqstream --enforce`
-- [ ] Test result formats compatible (TRX, JUnit XML)
+- [ ] All files and folders use kebab-case names matching source code structure
+- [ ] All files are organized under `docs/reqstream/` following the folder structure above

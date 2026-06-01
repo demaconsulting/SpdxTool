@@ -82,7 +82,7 @@ Commands follow a plugin-style architecture:
      - Workflow mode: `Run(Context, YamlMappingNode, Dictionary<string, string>)`
    - Provides utility methods for YAML processing and variable expansion
 
-2. **Command Registry** (`CommandRegistry.cs`)
+2. **Command Registry** (`CommandsRegistry.cs`)
    - Static registry of all available commands
    - Maps command names to `CommandEntry` objects
    - Provides command lookup and enumeration

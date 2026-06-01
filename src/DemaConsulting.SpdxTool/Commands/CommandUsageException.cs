@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,15 @@
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Exception thrown when a command is used incorrectly
+///     Exception thrown when a command is invoked with incorrect CLI arguments.
 /// </summary>
-/// <param name="message">Error message</param>
+/// <remarks>
+///     Distinct from <see cref="CommandErrorException"/>, which signals a runtime failure
+///     on a structurally valid invocation. <see cref="CommandUsageException"/> signals that
+///     the number of arguments is wrong, an option is unrecognized, or the command is
+///     workflow-only and cannot be called directly from the CLI.
+///     <c>Program</c> catches this exception, writes the usage message to standard error,
+///     and exits with a non-zero exit code.
+/// </remarks>
+/// <param name="message">Human-readable description of the usage error.</param>
 public class CommandUsageException(string message) : Exception(message);

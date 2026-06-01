@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,13 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Command to generate a Markdown summary of an SPDX document
 /// </summary>
+/// <remarks>
+///     ToMarkdown is a stateless singleton that implements the to-markdown command. It reads an SPDX
+///     document and writes a Markdown summary grouping packages into Root Packages, Packages, and
+///     Tools sections. Both CLI and workflow YAML invocation paths are supported. This class is
+///     thread-safe for concurrent calls on different files; concurrent calls writing to the same
+///     output file are not recommended.
+/// </remarks>
 public sealed class ToMarkdown : Command
 {
     /// <summary>
@@ -39,11 +46,19 @@ public sealed class ToMarkdown : Command
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that both
+    ///     CLI dispatch and workflow YAML dispatch route to the same instance.
+    /// </remarks>
     public static readonly ToMarkdown Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
         Command,
         "to-markdown <spdx.json> <out.md> [args]",
@@ -71,7 +86,19 @@ public sealed class ToMarkdown : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the to-markdown command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain at least two elements: the SPDX file path and the
+    ///     output Markdown file path. An optional third element is the document title and an
+    ///     optional fourth element is the heading depth.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when fewer than two arguments are supplied, when the title argument is empty or
+    ///     contains only whitespace, or when the depth argument is not a positive integer.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 2
@@ -102,7 +129,17 @@ public sealed class ToMarkdown : Command
         GenerateSummaryMarkdown(spdxFile, markdownFile, title, depth);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the to-markdown command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map used to expand input values.</param>
+    /// <exception cref="YamlException">
+    ///     Thrown when the <c>spdx</c> or <c>markdown</c> input is absent from the step, when
+    ///     the <c>title</c> input is empty or contains only whitespace, or when the <c>depth</c>
+    ///     input is not a positive integer.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -138,11 +175,26 @@ public sealed class ToMarkdown : Command
     /// <summary>
     ///     Generate the markdown description for an SPDX document
     /// </summary>
-    /// <param name="spdxFile">SPDX file</param>
-    /// <param name="markdownFile">Markdown file</param>
-    /// <param name="title">Markdown title</param>
-    /// <param name="depth">Depth of the Markdown headers</param>
-    /// <exception cref="CommandUsageException">On usage error</exception>
+    /// <remarks>
+    ///     Loads the SPDX document, classifies packages into root packages, dependency packages, and
+    ///     tool packages, then writes a Markdown summary to <paramref name="markdownFile"/>. Root
+    ///     packages are those directly described by the document. Tool packages are identified by
+    ///     BUILD_TOOL_OF, DEV_TOOL_OF, or TEST_TOOL_OF relationships. All remaining packages are
+    ///     rendered in the Packages section. Concluded license takes priority over declared license
+    ///     in each row; "NOASSERTION" is used when neither is set.
+    /// </remarks>
+    /// <param name="spdxFile">Path to the SPDX JSON file to load. Must not be null; the file must exist on disk.</param>
+    /// <param name="markdownFile">Path to the output Markdown file. Must not be null; any existing file is overwritten.</param>
+    /// <param name="title">Title text for the top-level Markdown heading. Must not be null. Defaults to <c>"SPDX Document"</c>.</param>
+    /// <param name="depth">Heading depth for the Markdown output (number of <c>#</c> characters). Must be a positive integer. Defaults to <c>2</c>.</param>
+    /// <exception cref="CommandUsageException">
+    ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when
+    ///     <paramref name="spdxFile"/> does not exist on disk.
+    /// </exception>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from <see cref="System.IO.File.WriteAllText(string,string)"/> when
+    ///     the output file cannot be written.
+    /// </exception>
     public static void GenerateSummaryMarkdown(string spdxFile, string markdownFile, string title = "SPDX Document",
         int depth = 2)
     {
@@ -192,6 +244,7 @@ public sealed class ToMarkdown : Command
         // Print the root packages
         if (rootPackages.Length > 0)
         {
+            // Sub-section headings are intentionally one level below the title heading (depth+1 hashes)
             markdown.AppendLine($"{header}# Root Packages");
             markdown.AppendLine();
             markdown.AppendLine("| Name | Version | License |");
@@ -247,6 +300,12 @@ public sealed class ToMarkdown : Command
     /// <summary>
     ///     Get a license for a package
     /// </summary>
+    /// <remarks>
+    ///     Concluded license represents the authoritative determination after analysis; declared
+    ///     license is the upstream assertion before review. Concluded license therefore takes
+    ///     priority. "NOASSERTION" is treated as absent for both fields so the fallback chain
+    ///     always produces a meaningful value where one exists.
+    /// </remarks>
     /// <param name="package">SPDX package</param>
     /// <returns>License</returns>
     private static string License(SpdxPackage package)

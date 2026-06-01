@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,20 +18,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for unknown command handling.
 /// </summary>
-[TestClass]
 public class UnknownCommandTests
 {
     /// <summary>
-    ///     Test that unrecognized commands report an error
+    ///     Test that dispatching an unknown command reports an error
     /// </summary>
-    [TestMethod]
-    public void UnknownCommand_UnrecognizedCommand_ReportsError()
+    [Fact]
+    public void Commands_Dispatch_UnknownCommand_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -40,7 +41,7 @@ public class UnknownCommandTests
             "unknown-command");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("Error: Unknown command 'unknown-command'", output);
     }
 }

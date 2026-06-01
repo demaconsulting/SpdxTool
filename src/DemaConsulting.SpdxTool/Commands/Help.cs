@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,13 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Command to display extended help about a command
 /// </summary>
+/// <remarks>
+///     Delegates to <see cref="ShowUsage"/> for both CLI and workflow invocations. The CLI overload requires
+///     exactly one argument (the target command name); the workflow overload reads the command name from the
+///     <c>about</c> input. Both paths throw on an unknown command so callers receive a clear error message.
+///     Thread-safe: the instance <c>Run</c> methods delegate exclusively to the static
+///     <see cref="ShowUsage"/> helper and carry no mutable instance state.
+/// </remarks>
 public sealed class Help : Command
 {
     /// <summary>
@@ -65,20 +72,31 @@ public sealed class Help : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the help command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">Command-line arguments; must contain exactly one element (the command name).</param>
+    /// <exception cref="CommandUsageException">Thrown when args does not contain exactly one argument.</exception>
     public override void Run(Context context, string[] args)
     {
-        // Report an error if the number of arguments is not 1
+        // Report an error if the number of arguments is not exactly 1
         if (args.Length != 1)
         {
-            throw new CommandUsageException("'help' command missing arguments");
+            throw new CommandUsageException("'help' command requires exactly one argument");
         }
 
-        // Generate the markdown
+        // Display the command's extended help text
         ShowUsage(context, args[0]);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the help command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map for input expansion.</param>
+    /// <exception cref="YamlException">Thrown when the about input is absent from the step inputs.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -88,16 +106,16 @@ public sealed class Help : Command
         var about = GetMapString(inputs, "about", variables) ??
                     throw new YamlException(step.Start, step.End, "'help' command missing 'about' input");
 
-        // Generate the markdown
+        // Display the command's extended help text
         ShowUsage(context, about);
     }
 
     /// <summary>
-    ///     Show the usage for the requested command
+    ///     Shows the usage for the requested command.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="command">Command to get help on</param>
-    /// <exception cref="CommandUsageException">On error</exception>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="command">Command to get help on.</param>
+    /// <exception cref="CommandUsageException">Thrown when the command name is not registered in <c>CommandsRegistry.Commands</c>.</exception>
     public static void ShowUsage(Context context, string command)
     {
         // Get the entry for the command

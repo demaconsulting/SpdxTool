@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,23 +28,39 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Rename an element ID in an SPDX document
 /// </summary>
+/// <remarks>
+///     RenameId is a stateless singleton that implements the rename-id command. It renames an SPDX
+///     element ID throughout an SPDX document, updating all packages, files, snippets, relationships,
+///     HasFiles arrays, and the Describes array. The static <see cref="Rename(SpdxDocument, string,
+///     string)"/> overload is also called directly by AddPackage and CopyPackage to reconcile IDs
+///     during package enhancement. This class is thread-safe for concurrent calls on different files;
+///     concurrent calls on the same file are not recommended.
+/// </remarks>
 public sealed class RenameId : Command
 {
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "rename-id";
+    private const string CommandName = "rename-id";
 
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that both
+    ///     CLI dispatch and workflow YAML dispatch route to the same instance.
+    /// </remarks>
     public static readonly RenameId Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "rename-id <arguments>",
         "Rename an element ID in an SPDX document.",
         [
@@ -57,8 +73,8 @@ public sealed class RenameId : Command
             "  - command: rename-id",
             "    inputs:",
             "      spdx: <spdx.json>             # SPDX file name",
-            "      old: <old-id>                 # Old element ID",
-            "      new: <new-id>                 # New element ID"
+            "      new: <new-id>                 # New element ID",
+            "      old: <old-id>                 # Old element ID"
         ],
         Instance);
 
@@ -69,7 +85,17 @@ public sealed class RenameId : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the rename-id command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain exactly three elements: the SPDX file path,
+    ///     the old element ID, and the new element ID.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when the argument count is not exactly 3.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is not 3
@@ -82,7 +108,15 @@ public sealed class RenameId : Command
         Rename(args[0], args[1], args[2]);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the rename-id command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map used to expand input values.</param>
+    /// <exception cref="YamlException">
+    ///     Thrown when the <c>spdx</c>, <c>new</c>, or <c>old</c> input is absent from the step.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -107,9 +141,26 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Rename an element ID in an SPDX document
     /// </summary>
+    /// <remarks>
+    ///     Loads the SPDX document from <paramref name="spdxFile"/>, delegates to
+    ///     <see cref="Rename(SpdxDocument, string, string)"/> for the in-memory rename, then saves
+    ///     the updated document back to the same path. If <paramref name="oldId"/> matches no element
+    ///     in the document the inner call returns silently with no changes applied, and the file is
+    ///     still rewritten to disk (no-op round-trip). <see cref="System.IO.FileNotFoundException"/>
+    ///     from the load step is propagated directly to the caller.
+    /// </remarks>
     /// <param name="spdxFile">SPDX file name</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>
+    /// <exception cref="CommandUsageException">
+    ///     When oldId or newId is empty or equals "SPDXRef-DOCUMENT"
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     When newId is already in use by an existing package, file, or snippet in the document
+    /// </exception>
+    /// <exception cref="System.IO.FileNotFoundException">
+    ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when the SPDX file does not exist
+    /// </exception>
     public static void Rename(string spdxFile, string oldId, string newId)
     {
         // Load the SPDX document
@@ -125,11 +176,24 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Rename an element ID in an SPDX document
     /// </summary>
+    /// <remarks>
+    ///     SPDXRef-DOCUMENT is the reserved element identifier for the document root and cannot be
+    ///     renamed; rejecting it as oldId or newId preserves document-level invariants. The
+    ///     distinction between <see cref="CommandUsageException"/> (invalid ID argument) and
+    ///     <see cref="CommandErrorException"/> (ID collision within the document) reflects whether
+    ///     the error is a caller contract violation or a document-state conflict. When oldId equals
+    ///     newId the method returns immediately so callers such as AddPackage and CopyPackage can
+    ///     pass the same ID without incurring an unnecessary document scan.
+    /// </remarks>
     /// <param name="doc">SPDX document</param>
     /// <param name="oldId">Old element ID</param>
     /// <param name="newId">New element ID</param>
-    /// <exception cref="CommandUsageException">On invalid usage</exception>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <exception cref="CommandUsageException">
+    ///     When oldId or newId is empty or equals "SPDXRef-DOCUMENT"
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     When newId is already used by an existing package, file, or snippet in doc
+    /// </exception>
     public static void Rename(SpdxDocument doc, string oldId, string newId)
     {
         // Skip if no rename
@@ -141,13 +205,13 @@ public sealed class RenameId : Command
         // Verify the old ID is valid
         if (oldId.Length == 0 || oldId == "SPDXRef-DOCUMENT")
         {
-            throw new CommandUsageException("Invalid old ID");
+            throw new CommandUsageException("Old ID must not be empty or 'SPDXRef-DOCUMENT'");
         }
 
         // Verify the new ID is valid
         if (newId.Length == 0 || newId == "SPDXRef-DOCUMENT")
         {
-            throw new CommandUsageException("Invalid new ID");
+            throw new CommandUsageException("New ID must not be empty or 'SPDXRef-DOCUMENT'");
         }
 
         // Verify ID is not in use
@@ -181,6 +245,7 @@ public sealed class RenameId : Command
         foreach (var snippet in doc.Snippets)
         {
             snippet.Id = UpdateId(snippet.Id, oldId, newId);
+            snippet.SnippetFromFile = UpdateId(snippet.SnippetFromFile, oldId, newId);
         }
 
         // Update relationships
@@ -203,6 +268,13 @@ public sealed class RenameId : Command
     /// <summary>
     ///     Updates an element ID by replacing the old ID with the new ID if they match.
     /// </summary>
+    /// <remarks>
+    ///     This is the single consistent replacement primitive called by all collection-update loops
+    ///     in <see cref="Rename(SpdxDocument, string, string)"/>. Centralising the comparison here
+    ///     ensures that every collection (packages, files, snippets, relationships, Describes) applies
+    ///     identical comparison semantics and reduces the risk of divergent behaviour across loops.
+    ///     Stateless and thread-safe.
+    /// </remarks>
     /// <param name="id">The current ID to be checked and potentially updated.</param>
     /// <param name="oldId">The old ID to be replaced.</param>
     /// <param name="newId">The new ID to replace the old ID.</param>

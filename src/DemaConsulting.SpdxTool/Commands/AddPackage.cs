@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -92,12 +92,23 @@ public sealed class AddPackage : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="CommandUsageException">Always thrown — the add-package command is only valid in a workflow.</exception>
     public override void Run(Context context, string[] args)
     {
         throw new CommandUsageException("'add-package' command is only valid in a workflow");
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     Follows a parse-then-delegate flow: the inputs map is extracted from the step node,
+    ///     then the spdx file path, package map, and optional relationships sequence are parsed
+    ///     in order before delegating to <see cref="AddPackageToSpdxFile"/>. When the
+    ///     <c>inputs:</c> block is entirely absent from the workflow step, <c>GetMapMap</c>
+    ///     returns null; the subsequent <c>GetMapString</c> call on that null map also
+    ///     returns null, causing the null-coalescing guard to raise a <see cref="YamlException"/>
+    ///     with the expected error message.
+    /// </remarks>
+    /// <exception cref="YamlException">Thrown when the spdx or package inputs are absent from the workflow step.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -123,10 +134,27 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Add a package to the SPDX document
     /// </summary>
-    /// <param name="spdxFile">SPDX file</param>
-    /// <param name="package">Package to add</param>
-    /// <param name="relationships">Relationships to add</param>
-    /// <exception cref="CommandUsageException">On usage error</exception>
+    /// <remarks>
+    ///     Loads the document from disk, applies Add and AddRelationship.Add in sequence, and
+    ///     saves the result back to disk. The two mutation calls are not wrapped in a transaction:
+    ///     if AddRelationship.Add fails after Add succeeds the file is not saved (the write only
+    ///     occurs after both calls succeed), so the on-disk file remains unchanged. However, the
+    ///     in-memory document is partially mutated in that case, which is why this method is
+    ///     considered non-atomic.
+    /// </remarks>
+    /// <param name="spdxFile">
+    ///     Path to an existing, valid SPDX JSON file. Must not be null or empty.
+    /// </param>
+    /// <param name="package">
+    ///     Package to add or enhance. Must not be null. The package identity (name and version) determines
+    ///     whether an existing entry is enhanced in place or a new entry is appended.
+    /// </param>
+    /// <param name="relationships">
+    ///     Relationships to add to the document alongside the package. Must not be null; pass an empty
+    ///     array when no relationships are required.
+    /// </param>
+    /// <exception cref="CommandUsageException">Thrown when <paramref name="spdxFile"/> does not exist on disk (propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/>).</exception>
+    /// <exception cref="CommandErrorException">Thrown when the relationships cannot be applied to the document.</exception>
     public static void AddPackageToSpdxFile(string spdxFile, SpdxPackage package, SpdxRelationship[] relationships)
     {
         // Load the SPDX document
@@ -145,17 +173,35 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Add SPDX package to document with optional enhance.
     /// </summary>
-    /// <param name="doc">SPDX document</param>
-    /// <param name="package">SPDX package to add</param>
+    /// <remarks>
+    ///     When an existing package with the same identity (as determined by <see cref="SpdxPackage.Same"/>
+    ///     equality) is found, it is enhanced in place and its SPDX element ID is renamed to the supplied
+    ///     package ID so that any downstream references remain valid. The existing package ID is captured
+    ///     before <c>Enhance</c> is called; <c>RenameId.Rename</c> receives the pre-enhance ID to guarantee
+    ///     all document references are correctly updated regardless of whether <c>Enhance</c> modifies the
+    ///     <c>Id</c> field. When no matching package exists, a deep copy of the supplied package is appended
+    ///     to the document.
+    /// </remarks>
+    /// <param name="doc">
+    ///     The SPDX document to modify. Must not be null.
+    /// </param>
+    /// <param name="package">
+    ///     SPDX package to add or merge. Must not be null. When a same-identity package already exists in
+    ///     <paramref name="doc"/>, this package's fields are used to enhance the existing entry rather than
+    ///     appending a duplicate.
+    /// </param>
     public static void Add(SpdxDocument doc, SpdxPackage package)
     {
         // Look for the same package
         var p = Array.Find(doc.Packages, p => SpdxPackage.Same.Equals(p, package));
         if (p != null)
         {
-            // Enhance the existing package and rename it
+            // Capture the old ID before Enhance can overwrite it, then rename all
+            // document-level references so any relationships pointing to the old ID
+            // are updated before the enhance merges in the new field values
+            var oldId = p.Id;
             p.Enhance(package);
-            RenameId.Rename(doc, p.Id, package.Id);
+            RenameId.Rename(doc, oldId, package.Id);
         }
         else
         {
@@ -168,11 +214,38 @@ public sealed class AddPackage : Command
     /// <summary>
     ///     Create an SPDX package from a YAML mapping node
     /// </summary>
-    /// <param name="command">Command to blame for errors</param>
-    /// <param name="packageMap">Package YAML mapping node</param>
-    /// <param name="variables">Variables for expansion</param>
+    /// <remarks>
+    ///     <c>CopyrightText</c> and both license fields default to <c>NOASSERTION</c> when absent
+    ///     because SPDX requires these fields to be populated; <c>NOASSERTION</c> is the standard
+    ///     sentinel value indicating that the information was not determined. The <c>license</c>
+    ///     input is mapped to both <c>ConcludedLicense</c> and <c>DeclaredLicense</c> because
+    ///     a workflow author supplying a single <c>license</c> field most commonly intends both
+    ///     the concluded and declared license to be identical; providing separate fields for each
+    ///     is not currently supported.
+    /// </remarks>
+    /// <param name="command">
+    ///     Command name used to prefix error messages so that callers can identify which command step
+    ///     triggered the error. Must not be null or empty.
+    /// </param>
+    /// <param name="packageMap">
+    ///     YAML mapping node containing the package fields. Must not be null and must include the
+    ///     required keys <c>id</c>, <c>name</c>, and <c>download</c>. Optional keys (<c>version</c>,
+    ///     <c>filename</c>, <c>supplier</c>, <c>originator</c>, <c>homepage</c>, <c>copyright</c>,
+    ///     <c>summary</c>, <c>description</c>, <c>license</c>, <c>purl</c>, <c>cpe23</c>) are silently
+    ///     omitted when absent.
+    /// </param>
+    /// <param name="variables">
+    ///     Variable map used to expand <c>${{ variable }}</c> tokens in field values. Must not be null;
+    ///     pass an empty dictionary when no expansion is required.
+    /// </param>
     /// <returns>New SPDX package</returns>
-    /// <exception cref="YamlException">On parse error</exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when a required field (id, name, or download) is absent from <paramref name="packageMap"/>.
+    /// </exception>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when the package ID in <paramref name="packageMap"/> is empty or equals the reserved
+    ///     value "SPDXRef-DOCUMENT".
+    /// </exception>
     public static SpdxPackage ParsePackage(string command, YamlMappingNode packageMap,
         Dictionary<string, string> variables)
     {
@@ -227,10 +300,10 @@ public sealed class AddPackage : Command
             // Get the package description (optional)
             Description = GetMapString(packageMap, "description", variables),
 
-            // Get the package license
-            ConcludedLicense = GetMapString(packageMap, "license", variables) ?? "NOASSERTION",
-            DeclaredLicense = GetMapString(packageMap, "license", variables) ?? "NOASSERTION"
+            // Get the package license (read once, assign to both fields)
+            ConcludedLicense = GetMapString(packageMap, "license", variables) ?? "NOASSERTION"
         };
+        package.DeclaredLicense = package.ConcludedLicense;
 
         // Append the PURL if specified
         var purl = GetMapString(packageMap, "purl", variables);

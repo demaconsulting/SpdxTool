@@ -1,27 +1,35 @@
-# DemaConsulting.SpdxTool Design Introduction
+# Introduction
+
+This repository contains two independent software systems: **DemaConsulting.SpdxTool**, a .NET
+command-line tool for creating, validating, and manipulating SPDX (Software Package Data Exchange)
+documents, and **DemaConsulting.SpdxTool.Targets**, an MSBuild targets extension that integrates
+SPDX document decoration into the standard `dotnet pack` workflow. Both systems are local items
+with full architectural and detailed design documentation. OTS integration and usage designs are
+also included in this document for all third-party components consumed by the program.
 
 ## Purpose
 
-This document introduces the design of two related but independent systems in this
-repository:
-
-- **DemaConsulting.SpdxTool** — a .NET tool for creating, validating, and
-  manipulating SPDX (Software Package Data Exchange) documents.
-- **DemaConsulting.SpdxTool.Targets** — an MSBuild targets extension that integrates
-  SPDX document decoration into the standard `dotnet pack` build workflow.
-
-This document serves as the entry point for design documentation supporting formal
-code review, compliance evidence, and maintenance activities.
+This document defines the design for each software item in SpdxTool — full architectural and
+detailed design for local items (systems, subsystems, and units). A reviewer should be able to
+understand how each item satisfies its requirements without reading source code. This documentation
+supports formal code review, compliance evidence, and maintenance activities.
 
 ## Scope
 
-This design documentation covers both systems and all their constituent subsystems
-and units. It applies to all source code under `src/`. Third-party (OTS) components
-are referenced but not designed in detail.
+Local items:
+
+- **DemaConsulting.SpdxTool**: system, subsystem, and unit design covering all source under
+  `src/DemaConsulting.SpdxTool/`.
+- **DemaConsulting.SpdxTool.Targets**: system and unit design covering all source under
+  `src/DemaConsulting.SpdxTool.Targets/`.
+
+OTS items: integration and usage design for all third-party components consumed by the program;
+see `docs/design/ots.md` and `docs/design/ots/`.
+
+Out of scope: test projects (`test/`), the internal design of third-party NuGet packages, and
+the internal design of CI pipeline tools.
 
 ## Software Structure
-
-### DemaConsulting.SpdxTool (System)
 
 ```text
 DemaConsulting.SpdxTool (System)
@@ -31,7 +39,7 @@ DemaConsulting.SpdxTool (System)
 │   ├── Command.cs (Unit)
 │   ├── CommandEntry.cs (Unit)
 │   ├── CommandErrorException.cs (Unit)
-│   ├── CommandRegistry.cs (Unit)
+│   ├── CommandsRegistry.cs (Unit)
 │   ├── CommandUsageException.cs (Unit)
 │   ├── CopyPackage.cs (Unit)
 │   ├── Diagram.cs (Unit)
@@ -63,22 +71,35 @@ DemaConsulting.SpdxTool (System)
 │   ├── ValidateRunNuGetWorkflow.cs (Unit)
 │   ├── ValidateToMarkdown.cs (Unit)
 │   └── ValidateUpdatePackage.cs (Unit)
-├── Spdx (Unit Group)
+├── Spdx (Subsystem)
 │   ├── RelationshipDirection.cs (Unit)
 │   └── SpdxHelpers.cs (Unit)
 ├── Utility (Subsystem)
+│   ├── TemporaryDirectory.cs (Unit)
 │   ├── PathHelpers.cs (Unit)
 │   └── Wildcard.cs (Unit)
 ├── Context.cs (Unit)
 └── Program.cs (Unit)
-```
 
-### DemaConsulting.SpdxTool.Targets (System)
-
-```text
 DemaConsulting.SpdxTool.Targets (System)
-├── build/DemaConsulting.SpdxTool.Targets.targets  (Unit)
-└── buildMultiTargeting/DemaConsulting.SpdxTool.Targets.targets  (Unit)
+├── build/DemaConsulting.SpdxTool.Targets.targets (Unit)
+└── buildMultiTargeting/DemaConsulting.SpdxTool.Targets.targets (Unit)
+
+OTS Software Items (runtime NuGet package dependencies)
+├── YamlDotNet (OTS)
+├── DemaConsulting.SpdxModel (OTS)
+├── DemaConsulting.NuGet.Caching (OTS)
+└── DemaConsulting.TestResults (OTS)
+
+OTS Software Items (test framework)
+└── xUnit (OTS)
+
+OTS Software Items (CI pipeline tools)
+├── DemaConsulting.BuildMark (OTS)
+├── DemaConsulting.ReqStream (OTS)
+├── DemaConsulting.VersionMark (OTS)
+├── DemaConsulting.SarifMark (OTS)
+└── DemaConsulting.SonarMark (OTS)
 ```
 
 ## Folder Layout
@@ -91,7 +112,7 @@ src/DemaConsulting.SpdxTool/
 │   ├── Command.cs                  — abstract base class for all commands
 │   ├── CommandEntry.cs             — command entry/dispatch logic
 │   ├── CommandErrorException.cs    — exception for command errors
-│   ├── CommandRegistry.cs          — registry of all available commands
+│   ├── CommandsRegistry.cs          — registry of all available commands
 │   ├── CommandUsageException.cs    — exception for command usage errors
 │   ├── CopyPackage.cs              — copy-package command implementation
 │   ├── Diagram.cs                  — diagram command implementation
@@ -127,6 +148,7 @@ src/DemaConsulting.SpdxTool/
 │   ├── RelationshipDirection.cs    — SPDX relationship direction enumeration
 │   └── SpdxHelpers.cs              — SPDX document utility helpers
 ├── Utility/
+│   ├── TemporaryDirectory.cs       — disposable temporary workspace helper
 │   ├── PathHelpers.cs              — file path utility helpers
 │   └── Wildcard.cs                 — wildcard pattern matching
 ├── Context.cs                      — execution context (output, logging)
@@ -139,14 +161,33 @@ src/DemaConsulting.SpdxTool.Targets/
     └── DemaConsulting.SpdxTool.Targets.targets  — multi-TFM MSBuild targets
 ```
 
-## Per-Unit Design Documentation
+## Companion Artifact Structure
 
-Per-unit design documentation is maintained for Commands and SelfTest subsystem units:
+Each local software item has corresponding artifacts in parallel directory trees:
 
-- `docs/design/spdx-tool/commands/<command>.md` — design doc for each command unit
-- `docs/design/spdx-tool/self-test/<unit>.md` — design doc for each SelfTest unit
+- Requirements: `docs/reqstream/{system-name}.yaml`,
+  `docs/reqstream/{system-name}[/{subsystem-name}...]/{item}.yaml`
 
-Per-unit requirements are maintained alongside the design docs:
+Note: `docs/reqstream/spdx-tool/platform-requirements.yaml` is an auxiliary requirements file for
+platform-specific decomposition. It sits outside the standard subsystem naming convention and does
+not follow the `{subsystem-name}.yaml` pattern; renaming it would break the ReqStream section-merge
+linkage with the parent `spdx-tool.yaml`.
 
-- `docs/reqstream/spdx-tool/commands/<command>.yaml` — requirements for each command unit
-- `docs/reqstream/spdx-tool/self-test/<unit>.yaml` — requirements for each SelfTest unit
+- Design: `docs/design/{system-name}.md`,
+  `docs/design/{system-name}[/{subsystem-name}...]/{item}.md`
+- Verification: `docs/verification/{system-name}.md`,
+  `docs/verification/{system-name}[/{subsystem-name}...]/{item}.md`
+- Source: `src/{SystemName}[/{SubsystemName}...]/{Item}.cs`
+- Tests: `test/{SystemName}.Tests[/{SubsystemName}...]/{Item}Tests.cs`
+
+OTS items: `docs/design/ots.md` and `docs/design/ots/{ots-name}.md` — integration and usage
+design; `docs/verification/ots.md` and `docs/verification/ots/{ots-name}.md` — verification
+evidence; `docs/reqstream/ots/{ots-name}.yaml` — requirements.
+
+Shared packages: N/A — no shared packages are consumed from other repositories in this program.
+
+Review-sets: defined in `.reviewmark.yaml`.
+
+## References
+
+- [REF-1] SPDX Specification, Version 2.3, SPDX Workgroup. <https://spdx.github.io/spdx-spec/v2.3/>

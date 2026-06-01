@@ -1,0 +1,17 @@
+---
+# SpdxToolTargets multi-TFM unit requirements
+sections:
+  - title: SpdxToolTargets Requirements
+    sections:
+      - title: TargetsMulti Requirements
+        requirements:
+          - id: SpdxToolTargets-MultiTfm-DecorateWhenEnabled
+            title: The targets shall decorate the SBOM for a multi-TFM project when DecorateSBOM is true.
+            tags:
+              - msbuild
+              - sbom
+            justification: |
+              Multi-TFM projects produce separate SBOMs per target framework. Verifying that
+              decoration is applied to each SBOM ensures multi-targeting scenarios work correctly.
+            tests:
+              - SpdxToolTargets_DecorateSbom_MultiTfm_True_DecoratesSbom

@@ -1,22 +1,46 @@
-# DemaConsulting.SpdxTool SonarMark OTS Requirements
-#
-# This file contains requirements for the SonarMark OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# SonarMark OTS requirements
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: SonarMark
+      - title: SonarMark Requirements
         requirements:
           - id: SpdxTool-OTS-SonarMark
-            title: SonarMark shall generate a SonarCloud quality report.
+            title: SonarMark shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.SonarMark retrieves quality-gate and metrics data from SonarCloud and
-              renders it as a markdown document included in the release artifacts.
+              DemaConsulting.SonarMark is a CI pipeline tool that generates a SonarCloud quality report.
+              Installation is evidenced by the tool's own self-validation test suite: the linked test
+              exercises SonarMark's quality-gate retrieval capability, confirming the tool is installed
+              and functional in the pipeline environment.
+            tests:
+              - SonarMark_QualityGateRetrieval
+
+          - id: SpdxTool-OTS-SonarMark-ApiQuery
+            title: SonarMark shall query the SonarCloud REST API to retrieve quality-gate and metrics data.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              SonarMark calls the SonarCloud REST API to retrieve quality-gate status, coverage percentage,
+              code duplications, and other metric values for the project. This capability is exercised on
+              every pipeline run and verified by the presence of the quality report artifact in the release
+              bundle. See the OTS CI-Pipeline Exception in requirements-principles.md.
             tests:
               - SonarMark_QualityGateRetrieval
               - SonarMark_IssuesRetrieval
               - SonarMark_HotSpotsRetrieval
+
+          - id: SpdxTool-OTS-SonarMark-MarkdownReport
+            title: SonarMark shall render retrieved metrics and quality-gate verdict as a structured markdown document.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |-
+              SonarMark produces a markdown quality report from the data it retrieves from SonarCloud.
+              Full functional verification occurs through CI pipeline execution, where the quality report
+              artifact in each release provides observable evidence that markdown generation operated
+              correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
               - SonarMark_MarkdownReportGeneration

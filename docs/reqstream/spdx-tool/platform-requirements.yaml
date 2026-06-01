@@ -1,13 +1,8 @@
-# DemaConsulting.SpdxTool Platform Requirements
-#
-# This file contains platform support requirements for the SpdxTool system,
-# covering Windows, Linux, macOS, and .NET runtime version support.
-# It is included by the root requirements.yaml file.
 ---
 sections:
   - title: SpdxTool Requirements
     sections:
-      - title: Platform Support
+      - title: PlatformSupport Requirements
         requirements:
           - id: SpdxTool-Platform-Windows
             title: The tool shall run successfully on Windows platforms.
@@ -20,11 +15,11 @@ sections:
               correctly on Windows to support a broad user base.
             tests:
               - windows@SpdxTool_Basic
-              - windows@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
-              - windows@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
-              - windows@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
-              - windows@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
-              - windows@SingleTfmProject_MissingWorkflow_ReportsError
+              - windows@SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom
+              - windows@SpdxToolTargets_DecorateSbom_MultiTfm_True_DecoratesSbom
+              - windows@SpdxToolTargets_DecorateSbom_SingleTfm_False_SkipsDecoration
+              - windows@SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely
+              - windows@SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
 
           - id: SpdxTool-Platform-Linux
             title: The tool shall run successfully on Linux platforms.
@@ -38,11 +33,11 @@ sections:
               a broad user base.
             tests:
               - ubuntu@SpdxTool_Basic
-              - ubuntu@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
-              - ubuntu@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
-              - ubuntu@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
-              - ubuntu@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
-              - ubuntu@SingleTfmProject_MissingWorkflow_ReportsError
+              - ubuntu@SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom
+              - ubuntu@SpdxToolTargets_DecorateSbom_MultiTfm_True_DecoratesSbom
+              - ubuntu@SpdxToolTargets_DecorateSbom_SingleTfm_False_SkipsDecoration
+              - ubuntu@SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely
+              - ubuntu@SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
 
           - id: SpdxTool-Platform-MacOS
             title: The tool shall run successfully on macOS platforms.
@@ -56,11 +51,11 @@ sections:
               support a broad user base.
             tests:
               - macos@SpdxTool_Basic
-              - macos@SingleTfmProject_DecorateSbomTrue_DecoratesSbom
-              - macos@MultiTfmProject_DecorateSbomTrue_DecoratesSbom
-              - macos@SingleTfmProject_DecorateSbomFalse_SkipsDecoration
-              - macos@SingleTfmProject_GenerateSbomFalse_SkipsEntirely
-              - macos@SingleTfmProject_MissingWorkflow_ReportsError
+              - macos@SpdxToolTargets_DecorateSbom_SingleTfm_True_DecoratesSbom
+              - macos@SpdxToolTargets_DecorateSbom_MultiTfm_True_DecoratesSbom
+              - macos@SpdxToolTargets_DecorateSbom_SingleTfm_False_SkipsDecoration
+              - macos@SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely
+              - macos@SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
 
           - id: SpdxTool-Platform-Net8
             title: The tool shall run successfully on .NET 8.x.

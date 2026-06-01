@@ -1,0 +1,47 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Utility Requirements
+        sections:
+          - title: Wildcard Requirements
+            requirements:
+              - id: SpdxTool-Utility-Wildcard
+                title: The Wildcard unit shall match strings against glob-style wildcard patterns case-insensitively.
+                tags:
+                  - utility
+                justification: |
+                  Commands that filter SPDX content by name require wildcard matching that
+                  is consistent across case-sensitive (Linux) and case-insensitive (Windows,
+                  macOS) file systems.
+                tests:
+                  - Wildcard_IsMatch_ExactMatch_MatchesCorrectly
+                  - Wildcard_IsMatch_AsteriskPattern_MatchesMultipleChars
+                  - Wildcard_IsMatch_QuestionMarkPattern_MatchesSingleChar
+                  - Wildcard_IsMatch_EmptyInputs_BehavesCorrectly
+              - id: SpdxTool-Utility-Wildcard-Timeout
+                title: >-
+                  The Wildcard unit shall return false, rather than propagating an
+                  exception, when pattern evaluation exceeds the configured timeout
+                  threshold.
+                tags:
+                  - utility
+                justification: |
+                  Returning false on timeout prevents a pathological pattern from
+                  blocking the caller indefinitely or surfacing an unhandled exception.
+                  The timeout is an implementation quality constraint; callers observe
+                  only the false result.
+                tests:
+                  - Wildcard_IsMatch_TimeoutProtection_ReturnsFalse
+              - id: SpdxTool-Utility-Wildcard-NullArgs
+                title: >-
+                  The Wildcard unit shall reject null pattern or input arguments with
+                  an appropriate argument error.
+                tags:
+                  - utility
+                justification: |
+                  Defensive null-checking prevents unexpected failures from propagating to
+                  callers and makes argument contract violations immediately visible.
+                tests:
+                  - Wildcard_IsMatch_NullInput_ThrowsArgumentNullException
+                  - Wildcard_IsMatch_NullPattern_ThrowsArgumentNullException

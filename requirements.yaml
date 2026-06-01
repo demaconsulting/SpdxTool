@@ -1,35 +1,8 @@
-# DemaConsulting.SpdxTool Requirements
-#
-# This project uses three categories of tests to verify requirements:
-#
-# 1. Unit Tests - Run locally via "dotnet test"
-# 2. Self-Validation Tests - Run locally via "--validate"
-# 3. Platform Tests - Run via CI/CD across OS/runtime matrix
-#
-# NOTE: Running "reqstream --enforce" with only local test results (unit tests
-# and local self-validation) is expected to show some unsatisfied requirements.
-# Platform-specific requirements require test results from CI/CD runs across
-# the full OS and runtime matrix.
-#
-# Test links can include a source filter prefix (e.g. "windows@", "ubuntu@", "net8.0@",
-# "dotnet8.x@") to restrict which test results count as evidence for a requirement. This
-# is critical for platform and framework requirements - removing these filters invalidates
-# the evidence-based proof.
-#
-# Source filter prefixes:
-#   windows@TestName    - proves the test passed on a Windows platform
-#   ubuntu@TestName     - proves the test passed on a Linux (Ubuntu) platform
-#   macos@TestName      - proves the test passed on a macOS platform
-#   net8.0@TestName     - proves the test passed under the .NET 8 target framework
-#   net9.0@TestName     - proves the test passed under the .NET 9 target framework
-#   net10.0@TestName    - proves the test passed under the .NET 10 target framework
-#   dotnet8.x@TestName  - proves the self-validation test ran with .NET 8.x runtime
-#   dotnet9.x@TestName  - proves the self-validation test ran with .NET 9.x runtime
-#   dotnet10.x@TestName - proves the self-validation test ran with .NET 10.x runtime
-#
 ---
 includes:
   - docs/reqstream/spdx-tool/spdx-tool.yaml
+  - docs/reqstream/spdx-tool/context.yaml
+  - docs/reqstream/spdx-tool/program.yaml
   - docs/reqstream/spdx-tool/self-test/self-test.yaml
   - docs/reqstream/spdx-tool/self-test/validate.yaml
   - docs/reqstream/spdx-tool/self-test/validate-basic.yaml
@@ -47,6 +20,11 @@ includes:
   - docs/reqstream/spdx-tool/self-test/validate-to-markdown.yaml
   - docs/reqstream/spdx-tool/self-test/validate-update-package.yaml
   - docs/reqstream/spdx-tool/commands/commands.yaml
+  - docs/reqstream/spdx-tool/commands/command.yaml
+  - docs/reqstream/spdx-tool/commands/command-entry.yaml
+  - docs/reqstream/spdx-tool/commands/command-error-exception.yaml
+  - docs/reqstream/spdx-tool/commands/commands-registry.yaml
+  - docs/reqstream/spdx-tool/commands/command-usage-exception.yaml
   - docs/reqstream/spdx-tool/commands/add-package.yaml
   - docs/reqstream/spdx-tool/commands/add-relationship.yaml
   - docs/reqstream/spdx-tool/commands/copy-package.yaml
@@ -63,12 +41,24 @@ includes:
   - docs/reqstream/spdx-tool/commands/to-markdown.yaml
   - docs/reqstream/spdx-tool/commands/update-package.yaml
   - docs/reqstream/spdx-tool/commands/validate.yaml
+  - docs/reqstream/spdx-tool/spdx/spdx.yaml
+  - docs/reqstream/spdx-tool/spdx/relationship-direction.yaml
+  - docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml
   - docs/reqstream/spdx-tool/utility/utility.yaml
+  - docs/reqstream/spdx-tool/utility/temporary-directory.yaml
+  - docs/reqstream/spdx-tool/utility/path-helpers.yaml
+  - docs/reqstream/spdx-tool/utility/wildcard.yaml
   - docs/reqstream/spdx-tool/platform-requirements.yaml
   - docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml
-  - docs/reqstream/ots/mstest.yaml
+  - docs/reqstream/spdx-tool-targets/targets-single.yaml
+  - docs/reqstream/spdx-tool-targets/targets-multi.yaml
+  - docs/reqstream/ots/xunit.yaml
   - docs/reqstream/ots/reqstream.yaml
   - docs/reqstream/ots/buildmark.yaml
   - docs/reqstream/ots/versionmark.yaml
   - docs/reqstream/ots/sarifmark.yaml
   - docs/reqstream/ots/sonarmark.yaml
+  - docs/reqstream/ots/yamldotnet.yaml
+  - docs/reqstream/ots/spdx-model.yaml
+  - docs/reqstream/ots/nuget-caching.yaml
+  - docs/reqstream/ots/test-results.yaml

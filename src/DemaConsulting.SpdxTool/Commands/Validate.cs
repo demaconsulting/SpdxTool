@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,23 +27,37 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Command to validate SPDX documents
 /// </summary>
+/// <remarks>
+///     Stateless sealed singleton registered with <see cref="CommandsRegistry"/> for CLI and YAML
+///     workflow dispatch. Because there is no instance state, the singleton is safe to call from any
+///     thread without synchronization.
+/// </remarks>
 public sealed class Validate : Command
 {
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "validate";
+    private const string CommandName = "validate";
 
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     Consumed by <see cref="CommandsRegistry"/> to dispatch CLI and YAML workflow invocations.
+    ///     Do not create additional instances; use this field exclusively.
+    /// </remarks>
     public static readonly Validate Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     Provides the command name, usage syntax, multi-line help text, and the linked
+    ///     <see cref="Instance"/> to <see cref="CommandsRegistry"/> for both CLI and workflow
+    ///     dispatch and help-text generation.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "validate <spdx.json> [ntia]",
         "Validate SPDX document for issues",
         [
@@ -67,10 +81,19 @@ public sealed class Validate : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Run the validate command from CLI arguments.
+    /// </summary>
+    /// <param name="context">Program context</param>
+    /// <param name="args">CLI arguments: args[0] is the SPDX file path; optional subsequent args may include "ntia".</param>
+    /// <remarks>
+    ///     Parses the SPDX file path from the first argument and detects the case-sensitive literal
+    ///     "ntia" in any subsequent argument to enable NTIA minimum-elements checking.
+    /// </remarks>
+    /// <exception cref="CommandUsageException">Thrown when no arguments are provided.</exception>
     public override void Run(Context context, string[] args)
     {
-        // Report an error if for missing arguments
+        // Report an error for missing arguments
         if (args.Length == 0)
         {
             throw new CommandUsageException("'validate' command missing arguments");
@@ -84,7 +107,18 @@ public sealed class Validate : Command
         DoValidate(context, spdxFile, ntia);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Run the validate command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context</param>
+    /// <param name="step">The YAML mapping node representing the workflow step.</param>
+    /// <param name="variables">Variable map for substitution in input values.</param>
+    /// <remarks>
+    ///     Reads the required <c>spdx</c> input and the optional <c>ntia</c> input from the YAML step.
+    ///     The <c>ntia</c> input is evaluated case-insensitively (via <c>ToLowerInvariant()</c>),
+    ///     so "true", "True", and "TRUE" all enable NTIA checking.
+    /// </remarks>
+    /// <exception cref="YamlException">Thrown when the required <c>spdx</c> input is missing.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -103,12 +137,25 @@ public sealed class Validate : Command
     }
 
     /// <summary>
-    ///     Validate SPDX document for issues
+    ///     Loads and validates an SPDX document, reporting any issues as warnings.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="spdxFile">SPDX document file name</param>
-    /// <param name="ntia">NTIA flag</param>
-    /// <exception cref="CommandErrorException">on issues</exception>
+    /// <remarks>
+    ///     Extracted as a public static method so that other callers (e.g., self-test) can invoke core
+    ///     validation logic directly without going through the CLI or workflow dispatch paths. Issues are
+    ///     written as warnings before throwing so the user sees them even when the tool exits with an error
+    ///     code.
+    /// </remarks>
+    /// <param name="context">Execution context used to write warning messages for each issue found.</param>
+    /// <param name="spdxFile">Path to the SPDX JSON document to validate. Must exist and be a valid SPDX JSON file.</param>
+    /// <param name="ntia">When <c>true</c>, NTIA minimum-elements checks are applied in addition to SPDX specification validation.</param>
+    /// <exception cref="CommandUsageException">
+    ///     Propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when
+    ///     <paramref name="spdxFile"/> does not exist on disk.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the document contains one or more validation issues; the message includes the
+    ///     issue count and the file path.
+    /// </exception>
     public static void DoValidate(Context context, string spdxFile, bool ntia)
     {
         // Load the SPDX document
@@ -130,6 +177,7 @@ public sealed class Validate : Command
             context.WriteWarning(issue);
         }
 
+        // Write a blank line to visually separate the warning list from the error summary in user output
         context.WriteLine("");
 
         // Throw error

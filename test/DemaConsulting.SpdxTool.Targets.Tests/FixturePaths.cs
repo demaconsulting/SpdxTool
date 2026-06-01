@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ internal static class FixturePaths
         var dir = AppContext.BaseDirectory;
         while (dir != null)
         {
-            if (File.Exists(Utility.PathHelpers.SafePathCombine(dir, "DemaConsulting.SpdxTool.slnx")))
+            if (File.Exists(Path.Join(dir, "DemaConsulting.SpdxTool.slnx")))
             {
                 return dir;
             }
@@ -54,9 +54,7 @@ internal static class FixturePaths
     /// <returns>Absolute path to the SingleTfmProject fixture.</returns>
     public static string GetSingleTfmProjectPath()
     {
-        var testDir = Utility.PathHelpers.SafePathCombine(GetRepoRoot(), "test");
-        var fixturesDir = Utility.PathHelpers.SafePathCombine(testDir, "TestFixtures");
-        return Utility.PathHelpers.SafePathCombine(fixturesDir, "SingleTfmProject");
+        return Path.Join(GetRepoRoot(), "test", "TestFixtures", "SingleTfmProject");
     }
 
     /// <summary>
@@ -65,8 +63,6 @@ internal static class FixturePaths
     /// <returns>Absolute path to the MultiTfmProject fixture.</returns>
     public static string GetMultiTfmProjectPath()
     {
-        var testDir = Utility.PathHelpers.SafePathCombine(GetRepoRoot(), "test");
-        var fixturesDir = Utility.PathHelpers.SafePathCombine(testDir, "TestFixtures");
-        return Utility.PathHelpers.SafePathCombine(fixturesDir, "MultiTfmProject");
+        return Path.Join(GetRepoRoot(), "test", "TestFixtures", "MultiTfmProject");
     }
 }

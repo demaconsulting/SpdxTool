@@ -1,101 +1,116 @@
-# DemaConsulting.SpdxTool add-relationship Command Design
+### AddRelationship
 
-## Purpose
+#### Purpose
 
-The `add-relationship` command adds one or more SPDX relationships between
-elements in an SPDX document. Relationships can be added directly from the
-command-line or from a workflow YAML file.
+AddRelationship adds one or more relationships between SPDX elements in a document. It is available
+from both the CLI and from workflow YAML files. It also exposes static helper methods (Parse and Add)
+that are used by AddPackage and CopyPackage when they need to attach relationships as part of their
+own operations.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+AddRelationship carries no mutable instance state; all state is carried via method parameters.
+The following static fields serve as registry entries:
 
-```text
-spdx-tool add-relationship <spdx.json> <id> <type> <element> [comment]
-```
+**Instance**: `AddRelationship` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record advertising name, summary, usage details, and the
+  singleton instance to CommandsRegistry.
 
-- `spdx.json` — SPDX document to modify
-- `id` — Source element ID
-- `type` — Relationship type (e.g. `DESCRIBES`, `CONTAINS`, `BUILD_TOOL_OF`)
-- `element` — Related (target) element ID
-- `comment` — Optional relationship comment
+#### Key Methods
 
-### Workflow YAML usage
+**Run(Context, string[])**: Parses four or five positional CLI arguments and calls
+Add(string, SpdxRelationship[]).
 
-```yaml
+- *Parameters*: `Context context` — execution context; `string[] args` — [spdxFile, id, type,
+  element, optional comment].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 4.
+- *Post-conditions*: One relationship is added to the specified SPDX file.
+- *Note*: CLI invocation always adds without replacing (replace is fixed to `false` when calling `Add`).
 
-- command: add-relationship
+**Run(Context, YamlMappingNode, Dictionary)**: Parses spdx, id, replace, and relationships inputs
+from the step node and calls Add(string, SpdxRelationship[], bool).
 
-  inputs:
-    spdx: <spdx.json>             # SPDX file name (required)
-    id: <id>                      # Source element ID (required)
-    replace: false                # Replace existing relationships (default: true)
-    relationships:
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — current workflow variable map.
+- *Returns*: `void`
+- *Preconditions*: step inputs must contain spdx, id, and relationships keys. When present, the
+  `replace` input must be a valid boolean value.
+- *Post-conditions*: The specified relationships are added (or replace existing relationships) in the
+  SPDX file.
+- *Note*: The workflow `replace` input defaults to `true` when omitted.
 
-    - type: <relationship>        # Relationship type (required)
+**Add(string, SpdxRelationship[], bool)**: Loads the SPDX document, delegates to
+Add(SpdxDocument, SpdxRelationship[], bool), and saves the document.
 
-      element: <element>          # Related element ID (required)
-      comment: <comment>          # Optional comment
-```
+- *Parameters*: `string spdxFile` — SPDX document file path; `SpdxRelationship[] relationships`
+  — relationships to add; `bool replace` — whether to replace existing matching relationships.
+- *Returns*: `void`
+- *Preconditions*: spdxFile must exist and be a valid SPDX JSON document.
+- *Post-conditions*: The file is updated in place.
 
-## Implementation
+**Add(SpdxDocument, SpdxRelationship[], bool)**: Delegates to SpdxRelationships.Add, wrapping any
+exception in a CommandErrorException.
 
-### Command-line path
+- *Parameters*: `SpdxDocument doc` — in-memory SPDX document; `SpdxRelationship[] relationships`
+  — relationships to add; `bool replace` — replace flag.
+- *Returns*: `void`
+- *Preconditions*: doc must not be null.
+- *Post-conditions*: doc.Relationships contains the new relationships.
 
-1. Requires at least 4 arguments; fewer raises `CommandUsageException`.
-2. Builds a single `SpdxRelationship` from the positional arguments.
-3. Calls `Add(spdxFile, relationships)` with `replace = false`.
+**Parse(string, string, YamlSequenceNode?, Dictionary)**: Parses a YAML sequence of relationship
+mappings into an array of SpdxRelationship instances. Returns an empty array when the sequence
+node is null.
 
-### Workflow path
+- *Parameters*: `string command` — command name for error messages; `string packageId` — the source
+  element ID; `YamlSequenceNode? relationships` — optional YAML sequence;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `SpdxRelationship[]`
+- *Preconditions*: Each child node must be a YamlMappingNode containing type and element keys.
+- *Post-conditions*: Returns one SpdxRelationship per sequence entry.
 
-1. Reads `spdx`, `id`, `replace`, and `relationships` from inputs.
-2. `replace` defaults to `"true"` and is parsed as a boolean.
-3. Each entry in `relationships` is parsed by `Parse(command, id, node, variables)`,
+**Parse(string, string, YamlMappingNode, Dictionary)**: Parses a single relationship mapping node
+into an SpdxRelationship.
 
-   which constructs an `SpdxRelationship` using `type`, `element`, and optional
-   `comment` fields.
+- *Parameters*: `string command` — command name; `string packageId` — source element ID;
+  `YamlMappingNode relationshipMap` — YAML map with type, element, and optional comment keys;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `SpdxRelationship`
+- *Preconditions*: relationshipMap must contain type and element keys.
+- *Post-conditions*: Returns an SpdxRelationship with Id set to packageId.
 
-4. Calls `Add(spdxFile, relationships, replace)`.
+#### Error Handling
 
-### Internal helpers
+**CommandUsageException** — thrown by Run(Context, string[]) when fewer than four arguments are
+provided.
 
-- `Add(string, SpdxRelationship[], bool)` — loads the SPDX document, delegates to
+**InvalidOperationException** — thrown by Run(Context, string[]) when the relationship type
+argument (args[2]) is not a recognized SPDX relationship type string (propagated from
+SpdxRelationshipTypeExtensions.FromText); also thrown by Parse(string, string, YamlMappingNode,
+Dictionary) when the type field value is not a recognized SPDX relationship type string.
 
-  `SpdxRelationships.Add`, and saves the result.
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when spdx, id, or
+relationships inputs are missing or the replace value is not a valid boolean; thrown by the Parse
+methods when a relationship node is not a mapping or is missing type or element keys.
 
-- `Add(SpdxDocument, SpdxRelationship[], bool)` — wraps `SpdxRelationships.Add`
+**System.IO.IOException** — propagated by Add(string, SpdxRelationship[], bool) when the SPDX file
+cannot be read or written (for example, access denied or other I/O failure).
 
-  and converts any exception to `CommandErrorException`.
+**CommandErrorException** — thrown by Add(SpdxDocument, SpdxRelationship[], bool) when
+SpdxRelationships.Add raises an exception (for example duplicate relationships when replace is false).
 
-- `Parse(command, packageId, YamlSequenceNode?, variables)` — iterates nodes and
+#### Dependencies
 
-  calls the single-node overload for each.
+- Command (abstract base class)
+- SpdxDocument, SpdxRelationship, SpdxRelationshipTypeExtensions (DemaConsulting.SpdxModel)
+- SpdxRelationships (DemaConsulting.SpdxModel.Transform)
+- SpdxHelpers (Spdx units)
+- YamlDotNet (YamlMappingNode, YamlSequenceNode, YamlException)
 
-- `Parse(command, packageId, YamlMappingNode, variables)` — reads `type`, `element`,
+#### Callers
 
-  and `comment` from a mapping node.
-
-## Error Handling
-
-| Condition | Exception |
-| :--- | :--- |
-| Fewer than 4 CLI arguments | `CommandUsageException` |
-| Missing `spdx` input (workflow) | `YamlException` |
-| Missing `id` input (workflow) | `YamlException` |
-| Invalid `replace` value (workflow) | `YamlException` |
-| Missing `relationships` input (workflow) | `YamlException` |
-| Relationship node not a mapping | `YamlException` |
-| Missing relationship `type` | `YamlException` |
-| Missing relationship `element` | `YamlException` |
-| Error from `SpdxRelationships.Add` | `CommandErrorException` |
-
-## Constraints
-
-- The `replace` flag controls whether existing relationships of the same type from
-
-  the same source element are replaced or supplemented.
-
-- Variable expansion is applied to all string inputs via `GetMapString`.
-- Relationship types must be valid SPDX relationship type strings as defined by
-
-  `SpdxRelationshipTypeExtensions.FromText`.
+- CommandsRegistry — routes CLI and workflow steps
+- AddPackage — calls Parse to parse relationships from the add-package step, and calls
+  Add(SpdxDocument, SpdxRelationship[], bool replace = false) to persist them
+- CopyPackage — calls Parse to parse relationships, and calls Add(SpdxDocument, SpdxRelationship[], bool replace = false)
+  to add root relationships to the destination document

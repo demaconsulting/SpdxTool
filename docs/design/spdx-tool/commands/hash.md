@@ -1,76 +1,93 @@
-# DemaConsulting.SpdxTool hash Command Design
+### Hash
 
-## Purpose
+#### Purpose
 
-The `hash` command generates or verifies SHA-256 hash files. It is available from
-the command-line and from workflow YAML files.
+Hash generates or verifies a SHA-256 hash for a file. In generate mode it computes the SHA-256
+digest and writes it to a sidecar file with the ".sha256" extension. In verify mode it reads the
+sidecar file and compares its stored digest against the freshly computed one. It is available from
+both the CLI and workflow YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+**Command**: `private const string` — the registered command name `"hash"`.
 
-```text
-spdx-tool hash generate sha256 <file>
-spdx-tool hash verify sha256 <file>
-```
+**Instance**: `Hash` — the singleton instance registered with CommandsRegistry.
 
-- `generate` — Computes the SHA-256 hash of `<file>` and writes it to `<file>.sha256`.
-- `verify` — Reads the expected hash from `<file>.sha256`, recomputes, and compares.
+**Entry**: `CommandEntry` — the CommandEntry record for Hash.
 
-### Workflow YAML usage
+#### Key Methods
 
-```yaml
+**Run(Context, string[])**: Validates that exactly three arguments are provided and calls
+DoHashOperation.
 
-- command: hash
+- *Parameters*: `Context context` — execution context; `string[] args` — [operation, algorithm,
+  file].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be exactly 3.
+- *Post-conditions*: The hash operation is performed.
 
-  inputs:
-    operation: generate | verify  # Required
-    algorithm: sha256             # Required (currently only sha256 supported)
-    file: <file>                  # Required: file to hash or verify
-```
+**Run(Context, YamlMappingNode, Dictionary&lt;string, string&gt;)**: Parses operation, algorithm, and file inputs from
+the YAML step node and calls DoHashOperation.
 
-## Implementation
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: operation, algorithm, and file inputs are required.
+- *Post-conditions*: The hash operation is performed.
 
-1. Reads `operation`, `algorithm`, and `file` inputs.
-2. Validates `algorithm`; only `"sha256"` is currently accepted.
-3. Dispatches to `GenerateSha256` or `VerifySha256` based on `operation`.
+**DoHashOperation(Context, string, string, string)**: Validates the algorithm (only "sha256" is
+supported), then dispatches to GenerateSha256 or VerifySha256 based on the operation.
 
-### `GenerateSha256(file)`
+- *Parameters*: `Context context` — execution context; `string operation` — "generate" or "verify";
+  `string algorithm` — hash algorithm name; `string file` — target file path.
+- *Returns*: `void`
+- *Preconditions*: algorithm must be "sha256"; operation must be "generate" or "verify".
+- *Post-conditions*: The sidecar .sha256 file is written (generate) or verified (verify).
 
-1. Calls `CalculateSha256(file)` to compute the digest.
-2. Writes the hex digest to `file + ".sha256"`.
+**GenerateSha256(string)**: Computes the SHA-256 digest of the file and writes it to file + ".sha256".
 
-### `VerifySha256(context, file)`
+- *Parameters*: `string file` — path to the file to hash.
+- *Returns*: `void`
+- *Preconditions*: file must exist.
+- *Post-conditions*: A sidecar file (file + ".sha256") is written containing the lowercase hex digest.
 
-1. Checks that `file.sha256` exists; raises `CommandErrorException` if not.
-2. Reads the stored digest (trimmed).
-3. Calls `CalculateSha256(file)` to recompute.
-4. Compares digests; raises `CommandErrorException` on mismatch.
-5. Writes a success message to the context on match.
+**VerifySha256(Context, string)**: Reads the sidecar .sha256 file, computes the current digest, and
+compares them. Writes a confirmation message to context on success.
 
-### `CalculateSha256(file)`
+- *Parameters*: `Context context` — execution context; `string file` — path to the file to verify.
+- *Returns*: `void`
+- *Preconditions*: file must exist. A sidecar file (file + ".sha256") must exist.
+- *Post-conditions*: Confirms or rejects the file integrity. The sidecar content is trimmed of
+  leading/trailing whitespace and converted to lowercase via `ToLowerInvariant()` before comparison
+  so that digests produced by external tools in any case or with trailing newlines are accepted.
 
-1. Verifies the file exists; raises `CommandErrorException` if not.
-2. Opens a `FileStream` and uses `SHA256.ComputeHash` to compute the digest.
-3. Returns the lowercase hex string.
+**CalculateSha256(string)**: Opens the file as a stream and computes its SHA-256 digest using
+System.Security.Cryptography.SHA256. Returns the digest as a lowercase hex string.
 
-## Error Handling
+- *Parameters*: `string file` — file path.
+- *Returns*: `string` — lowercase hexadecimal SHA-256 digest.
+- *Preconditions*: file must exist.
+- *Post-conditions*: Returns the digest string without side effects.
 
-| Condition | Exception |
-| :--- | :--- |
-| Not exactly 3 CLI arguments | `CommandUsageException` |
-| Missing `operation` input (workflow) | `YamlException` |
-| Missing `algorithm` input (workflow) | `YamlException` |
-| Missing `file` input (workflow) | `YamlException` |
-| Unsupported algorithm | `CommandUsageException` |
-| Unknown operation | `CommandUsageException` |
-| File not found | `CommandErrorException` |
-| Hash file not found (verify) | `CommandErrorException` |
-| Hash mismatch | `CommandErrorException` |
-| I/O error computing hash | `CommandErrorException` |
+#### Error Handling
 
-## Constraints
+**CommandUsageException** — thrown by Run(Context, string[]) when the argument count is not exactly
+3; thrown by DoHashOperation for an unsupported algorithm or unrecognized operation.
 
-- Currently only `sha256` is supported as an algorithm.
-- The hash file is always `<filename>.sha256` (appended, not replaced).
-- Variable expansion is applied to all string inputs via `GetMapString`.
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when operation, algorithm,
+or file inputs are missing.
+
+**CommandErrorException** — thrown by VerifySha256 when the sidecar file does not exist or the
+digest does not match; thrown by CalculateSha256 when the file does not exist or an IO exception
+occurs during hashing; thrown by GenerateSha256 indirectly via CalculateSha256.
+
+#### Dependencies
+
+- Command (abstract base class)
+- System.Security.Cryptography.SHA256
+- YamlDotNet (YamlMappingNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — routes CLI and workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: hash

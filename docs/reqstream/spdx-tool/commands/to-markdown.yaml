@@ -1,18 +1,88 @@
-# DemaConsulting.SpdxTool to-markdown Command Requirements
-#
-# This file contains requirements for the to-markdown command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: to-markdown Command
-    requirements:
-      - id: SpdxTool-Transform-ToMarkdown
-        title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
-        tags:
-          - spdx
-        justification: |
-          Users need human-readable representations of SPDX documents for
-          documentation, reporting, and review purposes. Markdown is a widely
-          supported format for documentation.
-        tests:
-          - ToMarkdown_ValidSpdxFile_GeneratesMarkdown
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: ToMarkdown Requirements
+            requirements:
+              - id: SpdxTool-Commands-ToMarkdown
+                title: The tool shall convert SPDX documents to Markdown format using the to-markdown command.
+                tags:
+                  - spdx
+                justification: |
+                  Users need human-readable representations of SPDX documents for
+                  documentation, reporting, and review purposes. Markdown is a widely
+                  supported format for documentation.
+                tests:
+                  - ToMarkdown_Run_ValidSpdxFile_GeneratesMarkdown
+
+              - id: SpdxTool-Commands-ToMarkdown-MissingArguments
+                title: The to-markdown command shall report a usage error when required CLI arguments are missing.
+                tags:
+                  - spdx
+                justification: |
+                  Missing arguments indicate incorrect invocation. A clear error message
+                  guides users to the correct command syntax.
+                tests:
+                  - ToMarkdown_Run_MissingArguments_ReportsError
+
+              - id: SpdxTool-Commands-ToMarkdown-MissingSpdxFile
+                title: The to-markdown command shall report an error when the specified SPDX file does not exist.
+                tags:
+                  - spdx
+                justification: |
+                  A missing input file cannot be processed. A clear error prevents confusing
+                  output or silent failures.
+                tests:
+                  - ToMarkdown_Run_MissingSpdxFile_ReportsError
+
+              - id: SpdxTool-Commands-ToMarkdown-WhitespaceTitle
+                title: The to-markdown command shall reject a title that is empty or contains only whitespace.
+                tags:
+                  - spdx
+                justification: |
+                  A whitespace-only title produces a meaningless Markdown heading. Rejecting
+                  it early provides a clear diagnostic and prevents invalid output.
+                tests:
+                  - ToMarkdown_Run_InvalidTitle_ReportsError
+
+              - id: SpdxTool-Commands-ToMarkdown-NonPositiveDepth
+                title: The to-markdown command shall reject a depth value that is not a positive integer.
+                tags:
+                  - spdx
+                justification: |
+                  A non-positive heading depth cannot produce valid Markdown headings.
+                  Rejecting it prevents structurally invalid output.
+                tests:
+                  - ToMarkdown_Run_InvalidDepth_ReportsError
+
+              - id: SpdxTool-Commands-ToMarkdown-YamlMissingSpdxInput
+                title: The to-markdown command shall report an error when the spdx input is absent from a workflow step.
+                tags:
+                  - spdx
+                justification: |
+                  The spdx input is required for workflow invocation. Reporting a clear error
+                  when it is missing guides users to correct their workflow configuration.
+                tests:
+                  - ToMarkdown_Run_YamlMissingSpdxInput_ThrowsException
+
+              - id: SpdxTool-Commands-ToMarkdown-YamlMissingMarkdownInput
+                title: The to-markdown command shall report an error when the markdown input is absent from a workflow step.
+                tags:
+                  - spdx
+                justification: |
+                  The markdown input is required for workflow invocation. Reporting a clear error
+                  when it is missing guides users to correct their workflow configuration.
+                tests:
+                  - ToMarkdown_Run_YamlMissingMarkdownInput_ThrowsException
+
+              - id: SpdxTool-Commands-ToMarkdown-WorkflowInvocation
+                title: The to-markdown command shall generate a Markdown summary when invoked from a workflow YAML step.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow YAML invocation is a primary usage pattern. Verifying it works
+                  end-to-end ensures the command integrates correctly with the workflow engine.
+                tests:
+                  - ToMarkdown_Run_InWorkflow_GeneratesMarkdown

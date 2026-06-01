@@ -1,42 +1,68 @@
-# DemaConsulting.SpdxTool ValidateCopyPackage SelfTest Design
+### ValidateCopyPackage
 
-## Purpose
+#### Purpose
 
-`ValidateCopyPackage.cs` exercises the `copy-package` command end-to-end within
-the SelfTest subsystem. It verifies that a package can be copied from one SPDX
-document to another, with the destination document updated correctly.
+ValidateCopyPackage exercises the copy-package command end-to-end within the Self-Test subsystem. It
+verifies that a package can be copied from one SPDX document to another via a workflow file and that
+the destination document contains the copied package with the expected relationship.
 
-## Test: `SpdxTool_CopyPackage`
+#### Data Model
 
-### Setup
+`PreRunSpdxToolHookForTest` — an internal property, `null` in production, that tests may set to a
+delegate invoked immediately before `Validate.RunSpdxTool` is called. Allows tests to corrupt
+`validate.tmp/from.spdx.json` to exercise the CommandFailure path deterministically.
 
-1. Creates a `validate.tmp` working directory.
-2. Writes two SPDX JSON documents: a source document containing the package to
+#### Key Methods
 
-   copy, and a destination document to receive the copy.
+**Run**: executes the copy-package self-test and records the result.
 
-3. Writes a workflow YAML that executes the `copy-package` command.
+- *Parameters*: `context` — the active Program Context; `results` — the TestResults collection to
+  append to.
+- *Returns*: void.
+- *Preconditions*: Sequential invocation is required; concurrent calls race on the process-wide
+  current directory mutated by `Validate.RunSpdxTool`.
+- *Post-conditions*: A TestResult entry named SpdxTool_CopyPackage has been appended to results; a
+  pass or fail message has been written to the Context.
 
-### Execution
+**DoValidate**: performs the actual copy-package validation in a temporary directory.
 
-Calls `Validate.RunSpdxTool("validate.tmp", ["--silent", "run-workflow", "workflow.yaml"])`.
+- *Parameters*: None.
+- *Returns*: `bool` — true if the command succeeded and the destination SPDX document matches
+  expectations.
+- *Preconditions*: A writable working directory is available. Callers must execute serially because
+  Validate.RunSpdxTool temporarily mutates the process-wide current working directory.
+- *Post-conditions*: The validate.tmp directory has been deleted if it exists; if
+  `Directory.CreateDirectory` throws before the directory is created (e.g., because `validate.tmp`
+  already exists as a file), `Directory.Exists` returns `false` and the delete is skipped, preventing
+  a secondary `DirectoryNotFoundException` from masking the original exception.
 
-### Verification
+Creates a validate.tmp directory and writes two SPDX JSON documents: a destination document
+(to.spdx.json) containing SPDXRef-Package-1, and a source document (from.spdx.json) containing
+SPDXRef-Package-2. Writes a workflow YAML that executes copy-package to copy SPDXRef-Package-2 from
+the source into the destination with a CONTAINED_BY relationship to SPDXRef-Package-1. Calls
+Validate.RunSpdxTool with --silent and run-workflow arguments, then reads the destination document
+and verifies using order-insensitive LINQ checks that: SPDXRef-Package-1 exists in the packages
+collection; SPDXRef-Package-2 exists in the packages collection; and a CONTAINED_BY relationship
+from SPDXRef-Package-2 to SPDXRef-Package-1 exists in the relationships collection.
 
-Reads the destination SPDX document and verifies that the copied package is present
-with the expected ID and metadata.
+#### Error Handling
 
-### Teardown
+Returns false if Validate.RunSpdxTool returns a non-zero exit code. Returns false if the deserialized
+destination SPDX document does not contain both packages or does not contain the expected CONTAINED_BY
+relationship. The finally block guards the Directory.Delete call with a Directory.Exists check to
+prevent a secondary DirectoryNotFoundException masking the original exception when
+Directory.CreateDirectory fails (e.g., because validate.tmp already exists as a file).
 
-Deletes the `validate.tmp` directory.
+#### Dependencies
 
-## Error Handling
+- **Validate** — provides the RunSpdxTool helper used to invoke the copy-package command.
+- **Context** — provides output and error streams for pass/fail reporting.
+- **TestResults / TestResult / TestOutcome** — from DemaConsulting.TestResults; used to record the
+  step outcome.
+- **Spdx2JsonDeserializer** — from DemaConsulting.SpdxModel.IO; deserializes the destination SPDX
+  document for structural verification.
+- **SpdxRelationshipType** — from DemaConsulting.SpdxModel; used in LINQ verification of the relationship type.
 
-- Returns `false` if `RunSpdxTool` returns a non-zero exit code.
-- Returns `false` if the destination document does not contain the expected package.
-- The result is recorded in the `TestResults` collection as `Passed` or `Failed`.
+#### Callers
 
-## Constraints
-
-- The test is self-contained; all fixture data is embedded as string literals.
-- The temporary directory is always deleted in a `finally` block.
+- **Validate** — the Self-Test orchestrator invokes this step.

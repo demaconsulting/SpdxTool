@@ -1,50 +1,30 @@
-# DemaConsulting.SpdxTool Utility Subsystem Requirements
-#
-# This file contains requirements for the DemaConsulting.SpdxTool Utility subsystem,
-# covering path safety and wildcard pattern matching.
-# It is included by the root requirements.yaml file.
 ---
 sections:
   - title: SpdxTool Requirements
     sections:
-      - title: Utility
+      - title: Utility Requirements
         requirements:
-          - id: SpdxTool-Utility-SafePath
-            title: The PathHelpers unit shall reject path components containing traversal sequences or absolute paths.
-            tags:
-              - utility
-              - security
+          - id: SpdxTool-Utility-SharedHelpers
+            title: >-
+              The Utility subsystem shall provide shared cross-cutting utilities for
+              temporary directories, safe path operations, and wildcard matching.
             justification: |
-              Commands that accept user-supplied file paths must prevent directory
-              traversal attacks. SafePathCombine ensures that combined paths remain
-              within the intended base directory.
+              Command implementations, self-validation steps, and tests need shared utility
+              functions. Centralizing these in the Utility subsystem ensures consistent temporary
+              folder management, path-traversal protection, and pattern-matching behavior across
+              the tool. This is an intentional rollup requirement; full decomposition is provided by
+              the child requirements SpdxTool-Utility-TemporaryDirectory,
+              SpdxTool-Utility-PathHelpers, and SpdxTool-Utility-Wildcard.
+            children:
+              - SpdxTool-Utility-TemporaryDirectory
+              - SpdxTool-Utility-RejectTraversal
+              - SpdxTool-Utility-RejectAbsolutePath
+              - SpdxTool-Utility-RejectNullArguments
+              - SpdxTool-Utility-ValidPath
+              - SpdxTool-Utility-Wildcard
+              - SpdxTool-Utility-Wildcard-NullArgs
             tests:
-              - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
-              - PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException
-              - PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException
-
-          - id: SpdxTool-Utility-ValidPath
-            title: The PathHelpers unit shall correctly combine valid relative paths with a base path.
-            tags:
-              - utility
-            justification: |
-              Commands that resolve file paths need a reliable utility for combining
-              base and relative paths in a safe manner.
-            tests:
+              - TemporaryDirectory_Constructor_CreatesDirectory
               - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
-              - PathHelpers_SafePathCombine_CurrentDirectoryReference_CombinesCorrectly
-              - PathHelpers_SafePathCombine_NestedPaths_CombinesCorrectly
-              - PathHelpers_SafePathCombine_EmptyRelativePath_ReturnsBasePath
-
-          - id: SpdxTool-Utility-Wildcard
-            title: The Wildcard unit shall match strings against glob-style wildcard patterns case-insensitively.
-            tags:
-              - utility
-            justification: |
-              Commands that filter SPDX content by name require wildcard matching that
-              is consistent across case-sensitive (Linux) and case-insensitive (Windows,
-              macOS) file systems.
-            tests:
-              - Wildcard_ExactMatch_ReturnsTrue
-              - Wildcard_AsteriskPattern_MatchesMultipleChars
-              - Wildcard_QuestionMarkPattern_MatchesSingleChar
+              - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
+              - Wildcard_IsMatch_ExactMatch_MatchesCorrectly

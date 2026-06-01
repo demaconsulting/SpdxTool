@@ -1,0 +1,15 @@
+---
+title: "SpdxTool Verification Design Document"
+subtitle: ".NET tool for manipulating SPDX SBOM files"
+author: "DEMA Consulting"
+description: "Verification Design Document for SpdxTool"
+lang: en-US
+keywords:
+  - Verification
+  - Testing
+  - SPDX
+  - SBOM
+  - .NET
+  - MSBuild
+  - NuGet
+---

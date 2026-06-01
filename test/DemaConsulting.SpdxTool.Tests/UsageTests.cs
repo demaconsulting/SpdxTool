@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for usage information.
 /// </summary>
-[TestClass]
 public class UsageTests
 {
     /// <summary>
     ///     Test that running with no arguments displays an error message
     /// </summary>
-    [TestMethod]
-    public void Usage_NoArguments_DisplaysError()
+    [Fact]
+    public void SpdxTool_Usage_NoArguments_DisplaysError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -39,7 +40,7 @@ public class UsageTests
             "DemaConsulting.SpdxTool.dll");
 
         // Assert: Verify an error was reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
 
         // Assert: Verify the output contains the usage information
         Assert.Contains("Error: Missing arguments", output);
@@ -49,9 +50,11 @@ public class UsageTests
     /// <summary>
     ///     Test that the short help flag displays usage information
     /// </summary>
-    [TestMethod]
-    public void Usage_ShortHelpFlag_DisplaysUsage()
+    [Fact]
+    public void SpdxTool_Usage_ShortHelpFlag_DisplaysUsage()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -60,7 +63,7 @@ public class UsageTests
             "-h");
 
         // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify the output contains the usage information
         Assert.Contains("Usage: spdx-tool", output);
@@ -69,9 +72,11 @@ public class UsageTests
     /// <summary>
     ///     Test that the long help flag displays usage information
     /// </summary>
-    [TestMethod]
-    public void Usage_LongHelpFlag_DisplaysUsage()
+    [Fact]
+    public void SpdxTool_Usage_LongHelpFlag_DisplaysUsage()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -80,7 +85,29 @@ public class UsageTests
             "--help");
 
         // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
+
+        // Assert: Verify the output contains the usage information
+        Assert.Contains("Usage: spdx-tool", output);
+    }
+
+    /// <summary>
+    ///     Test that the question mark help flag displays usage information
+    /// </summary>
+    [Fact]
+    public void SpdxTool_Usage_QuestionMarkHelpFlag_DisplaysUsage()
+    {
+        // Arrange: no setup required
+
+        // Act: Run the command
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "-?");
+
+        // Assert: Verify success
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify the output contains the usage information
         Assert.Contains("Usage: spdx-tool", output);

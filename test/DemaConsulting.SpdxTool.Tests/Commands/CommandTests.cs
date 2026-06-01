@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,86 +21,333 @@
 using DemaConsulting.SpdxTool.Commands;
 using YamlDotNet.RepresentationModel;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the <see cref="Command" /> class.
 /// </summary>
-[TestClass]
+[Collection("CommandSequential")]
 public class CommandTests
 {
     /// <summary>
-    ///     Test that Command.Expand with missing variable returns missing token
+    ///     Test that Command.Expand with missing variable throws InvalidOperationException
     /// </summary>
-    [TestMethod]
-    public void Command_Expand_MissingVariable_ReturnsMissingToken()
+    [Fact]
+    public void Command_Expand_MissingVariable_ThrowsInvalidOperationException()
     {
-        // Test expanding a missing variable
+        // Arrange: prepare text with an undefined variable
         const string text = "Hello, ${{ name }}!";
         var variables = new Dictionary<string, string>();
-        Assert.ThrowsExactly<InvalidOperationException>(() => Command.Expand(text, variables));
+        // Act/Assert: expanding the undefined variable throws
+        Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
     }
 
     /// <summary>
     ///     Test that Command.Expand with no variables returns the original string
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_Expand_NoVariables_ReturnsOriginal()
     {
-        // Test expanding nothing
+        // Arrange: Expand text with no variable references
         const string text = "Hello, world!";
         var variables = new Dictionary<string, string>();
+
+        // Act:
         var result = Command.Expand(text, variables);
-        Assert.AreEqual(text, result);
+
+        // Assert:
+        Assert.Equal(text, result);
     }
 
     /// <summary>
     ///     Test that Command.Expand with basic variable returns expanded string
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_Expand_BasicVariable_ReturnsExpanded()
     {
-        // Test expanding a basic variable
+        // Arrange:
         const string text = "Hello, ${{ name }}!";
         var variables = new Dictionary<string, string> { { "name", "world" } };
+
+        // Act:
         var result = Command.Expand(text, variables);
-        Assert.AreEqual("Hello, world!", result);
+
+        // Assert:
+        Assert.Equal("Hello, world!", result);
     }
 
     /// <summary>
     ///     Test that Command.Expand with nested variable returns fully expanded string
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_Expand_NestedVariable_ReturnsFullyExpanded()
     {
-        // Test expanding a nested variable
+        // Arrange:
         const string text = "Hello, ${{ variable_${{ test }} }}!";
         var variables = new Dictionary<string, string> { { "variable_foo", "world" }, { "test", "foo" } };
+
+        // Act:
         var result = Command.Expand(text, variables);
-        Assert.AreEqual("Hello, world!", result);
+
+        // Assert:
+        Assert.Equal("Hello, world!", result);
+    }
+
+    /// <summary>
+    ///     Test that Command.GetMapString with null map returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetMapString_NullMap_ReturnsNull()
+    {
+        // Arrange: no setup required — null map is passed directly
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        Assert.Null(Command.GetMapString(null, "any-key", variables));
     }
 
     /// <summary>
     ///     Test that Command.GetMapString with missing entry returns null
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_GetMapString_MissingEntry_ReturnsNull()
     {
-        // Test getting a missing parameter
+        // Arrange:
         var map = new YamlMappingNode();
         var variables = new Dictionary<string, string>();
-        Assert.IsNull(Command.GetMapString(map, "parameter", variables));
+
+        // Act/Assert:
+        Assert.Null(Command.GetMapString(map, "parameter", variables));
     }
 
     /// <summary>
     ///     Test that Command.GetMapString with variable expansion returns expanded value
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void Command_GetMapString_WithVariableExpansion_ReturnsExpanded()
     {
-        // Test getting a parameter
+        // Arrange:
         var map = new YamlMappingNode { { "parameter", "Hello, ${{ name }}!" } };
         var variables = new Dictionary<string, string> { { "name", "world" } };
-        Assert.AreEqual("Hello, world!", Command.GetMapString(map, "parameter", variables));
+
+        // Act/Assert:
+        Assert.Equal("Hello, world!", Command.GetMapString(map, "parameter", variables));
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with environment variable returns environment value
+    /// </summary>
+    [Fact]
+    public void Command_Expand_EnvironmentVariable_ReturnsEnvironmentValue()
+    {
+        // Arrange: Set an environment variable
+        const string varName = "SPDXTOOL_TEST_VAR";
+        const string varValue = "test-env-value";
+        Environment.SetEnvironmentVariable(varName, varValue);
+
+        try
+        {
+            // Act: Expand a template referencing the environment variable
+            const string text = "Value: ${{ environment.SPDXTOOL_TEST_VAR }}";
+            var variables = new Dictionary<string, string>();
+            var result = Command.Expand(text, variables);
+
+            // Assert: Verify environment variable was expanded
+            Assert.Equal("Value: test-env-value", result);
+        }
+        finally
+        {
+            // Cleanup: Remove the test environment variable
+            Environment.SetEnvironmentVariable(varName, null);
+        }
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with undefined environment variable throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_UndefinedEnvironmentVariable_ThrowsInvalidOperationException()
+    {
+        // Arrange: ensure the environment variable is not set
+        Environment.SetEnvironmentVariable("SPDXTOOL_TEST_NONEXISTENT", null);
+        const string text = "${{ environment.SPDXTOOL_TEST_NONEXISTENT }}";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert: expanding an undefined environment variable throws
+        Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
+    }
+
+    /// <summary>
+    ///     Test that CommandsRegistry.Commands all expected command names are present in the registry
+    /// </summary>
+    [Fact]
+    public void CommandsRegistry_Commands_AllExpectedNames_ArePresent()
+    {
+        // Arrange: Expected command names (from CommandsRegistry)
+        var expectedCommands = new[]
+        {
+            "help", "add-package", "add-relationship", "copy-package", "diagram",
+            "find-package", "get-version", "hash", "print", "query", "rename-id",
+            "run-workflow", "set-variable", "to-markdown", "update-package", "validate"
+        };
+
+        // Act: Get the actual registry
+        var commands = CommandsRegistry.Commands;
+
+        // Assert: All expected commands are present
+        foreach (var name in expectedCommands)
+        {
+            Assert.True(commands.ContainsKey(name), $"Expected command '{name}' not found in registry");
+        }
+    }
+
+    /// <summary>
+    ///     Test that CommandsRegistry.Commands with a known command name resolves to a valid entry
+    /// </summary>
+    [Fact]
+    public void CommandsRegistry_Commands_KnownCommandName_ResolvesEntry()
+    {
+        // Arrange:
+        const string commandName = "validate";
+
+        // Act:
+        var found = CommandsRegistry.Commands.TryGetValue(commandName, out var entry);
+
+        // Assert:
+        Assert.True(found);
+        Assert.NotNull(entry);
+        Assert.NotNull(entry.Instance);
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with unmatched '}}' throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_UnmatchedClose_ThrowsInvalidOperationException()
+    {
+        // Arrange:
+        const string text = "Hello, }} world!";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        var ex = Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
+        Assert.Contains("Unmatched '}}'", ex.Message);
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with unmatched '${{' throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_UnmatchedOpen_ThrowsInvalidOperationException()
+    {
+        // Arrange:
+        const string text = "Hello, ${{ world!";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        var ex = Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
+        Assert.Contains("Unmatched '${{", ex.Message);
+    }
+
+    /// <summary>
+    ///     Test that Command.Expand with an empty variable name throws InvalidOperationException
+    /// </summary>
+    [Fact]
+    public void Command_Expand_EmptyVariableName_ThrowsInvalidOperationException()
+    {
+        // Arrange:
+        const string text = "Hello, ${{  }} world!";
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        var ex = Assert.Throws<InvalidOperationException>(() => Command.Expand(text, variables));
+        Assert.Contains("Empty variable name", ex.Message);
+    }
+
+    /// <summary>
+    ///     Integration test that verifies the Commands subsystem expands environment variables in
+    ///     workflow arguments when dispatched through the full run-workflow path.
+    /// </summary>
+    /// <remarks>
+    ///     This is a subsystem-level test: it runs the tool as an external process, creates a
+    ///     workflow file that references an environment variable via the ${{ environment.NAME }}
+    ///     syntax, and confirms the expanded value appears in the output. It provides compliance
+    ///     evidence for SpdxTool-Commands-EnvironmentVariableExpansion at the subsystem boundary.
+    /// </remarks>
+    [Fact]
+    public void Commands_EnvironmentVariableExpansion_WorkflowWithEnvVar_ExpandsCorrectly()
+    {
+        // Arrange: set a known environment variable and build a workflow that reads it
+        const string varName = "SPDXTOOL_SUBSYSTEM_TEST_VAR";
+        const string varValue = "subsystem-env-expansion-ok";
+        Environment.SetEnvironmentVariable(varName, varValue);
+
+        const string workflowContents =
+            """
+            steps:
+            - command: print
+              inputs:
+                text:
+                - ${{ environment.SPDXTOOL_SUBSYSTEM_TEST_VAR }}
+            """;
+
+        try
+        {
+            // Arrange: write the workflow file
+            File.WriteAllText("env-test.yaml", workflowContents);
+
+            // Act: run the workflow via the full subsystem dispatch path
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "env-test.yaml");
+
+            // Assert: verify the environment variable was expanded and printed
+            Assert.Equal(0, exitCode);
+            Assert.Contains(varValue, output);
+        }
+        finally
+        {
+            // Cleanup: remove test artifacts
+            File.Delete("env-test.yaml");
+            Environment.SetEnvironmentVariable(varName, null);
+        }
+    }
+
+    /// <summary>
+    ///     Test that Command.GetMapMap with null map returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetMapMap_NullMap_ReturnsNull()
+    {
+        // Arrange: no setup required — null map is passed directly
+        // Act/Assert:
+        Assert.Null(Command.GetMapMap(null, "any-key"));
+    }
+
+    /// <summary>
+    ///     Test that Command.GetMapSequence with null map returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetMapSequence_NullMap_ReturnsNull()
+    {
+        // Arrange: no setup required — null map is passed directly
+        // Act/Assert:
+        Assert.Null(Command.GetMapSequence(null, "any-key"));
+    }
+
+    /// <summary>
+    ///     Test that Command.GetSequenceString with null sequence returns null
+    /// </summary>
+    [Fact]
+    public void Command_GetSequenceString_NullSequence_ReturnsNull()
+    {
+        // Arrange:
+        var variables = new Dictionary<string, string>();
+
+        // Act/Assert:
+        Assert.Null(Command.GetSequenceString(null, 0, variables));
     }
 }

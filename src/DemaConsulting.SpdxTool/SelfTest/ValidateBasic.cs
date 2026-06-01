@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,104 +23,101 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of basic SPDX validation
+///     Self-test step that exercises the <c>validate</c> command with both a well-formed and a
+///     malformed SPDX document.
 /// </summary>
+/// <remarks>
+///     Verifies that the tool correctly accepts a conformant SPDX document and rejects a malformed
+///     one, confirming that basic validation logic functions correctly after installation. Uses a
+///     temporary <c>validate.tmp</c> directory in the current working directory; callers must ensure
+///     sequential execution to avoid races on that directory and on the process-wide current
+///     directory set by <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static class ValidateBasic
 {
     /// <summary>
-    ///     Run validation test
+    ///     Optional test hook invoked after <c>validate.tmp/test-valid.spdx.json</c> is written
+    ///     and immediately before <see cref="Validate.RunSpdxTool(string, string[])"/> is called
+    ///     in the valid-document sub-test.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
-    public static void Run(Context context, TestResults.TestResults results)
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that
+    ///     corrupts the fixture so that the validate command fails with a non-zero exit code,
+    ///     exercising the CommandFailure path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PreRunSpdxToolHookForTest { get; set; }
+
+    /// <summary>
+    ///     Executes the basic SPDX validation self-test and records the result.
+    /// </summary>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <remarks>
+    ///     Runs <see cref="DoValidate"/> inside a temporary directory via
+    ///     <see cref="Validate.RunInTempDir"/> and records the outcome via
+    ///     <see cref="Validate.RecordResult"/>. If <see cref="DoValidate"/> throws an exception,
+    ///     the exception propagates uncaught from this method and no <see cref="TestResult"/> is
+    ///     recorded for this step.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from <see cref="DoValidate"/> when the temporary directory or files
+    ///     cannot be created or deleted.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Propagated from <see cref="DoValidate"/> when the current user lacks write access
+    ///     to the working directory.
+    /// </exception>
+    internal static void Run(Context context, TestResults.TestResults results)
     {
-        // Perform the validation
-        var passed = DoValidate();
-
-        // Report validation result to console
-        if (passed)
-        {
-            context.WriteLine($"✓ SpdxTool_Basic - Passed");
-        }
-        else
-        {
-            context.WriteError($"✗ SpdxTool_Basic - Failed");
-        }
-
-        // Add validation result to test results collection
-        results.Results.Add(
-            new TestResult
-            {
-                Name = "SpdxTool_Basic",
-                ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateBasic",
-                ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
-                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
-            });
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
+        Validate.RecordResult(context, results, "SpdxTool_Basic", "DemaConsulting.SpdxTool.SelfTest.ValidateBasic", passed);
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Runs both the valid-document and invalid-document sub-tests. Called by
+    ///     <see cref="Validate.RunInTempDir"/>, which creates and cleans up the temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if both <see cref="DoValidateValid"/> and <see cref="DoValidateInvalid"/>
+    ///     succeed; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Uses short-circuit evaluation: <see cref="DoValidateInvalid"/> is not called if
+    ///     <see cref="DoValidateValid"/> returns <c>false</c>.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test files cannot be created or deleted.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        try
-        {
-            // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
-
-            // Run validation tests for both valid and invalid documents
-            return DoValidateValid() && DoValidateInvalid();
-        }
-        finally
-        {
-            // Delete the temporary validation folder
-            Directory.Delete("validate.tmp", true);
-        }
+        // Run validation tests for both valid and invalid documents
+        return DoValidateValid() && DoValidateInvalid();
     }
 
     /// <summary>
-    ///     Validate that basic validation passes for valid document
+    ///     Verifies that a well-formed SPDX document is accepted by the <c>validate</c> command.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns><c>true</c> if RunSpdxTool returns exit code zero; otherwise <c>false</c>.</returns>
+    /// <remarks>
+    ///     Writes a minimal valid SPDX document to <c>validate.tmp/test-valid.spdx.json</c> and
+    ///     invokes <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c> and
+    ///     <c>validate</c> arguments. Expects a zero exit code as evidence that no issues were found.
+    ///     Depends on <c>validate.tmp</c> already existing; must be called after
+    ///     <see cref="DoValidate"/> creates the directory.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test file cannot be written.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to <c>validate.tmp</c>.</exception>
     private static bool DoValidateValid()
     {
         // Write test SPDX file that is valid
-        File.WriteAllText("validate.tmp/test-valid.spdx.json",
-            """
-            {
-              "files": [],
-              "packages": [    {
-                  "SPDXID": "SPDXRef-Package",
-                  "name": "Test Package",
-                  "versionInfo": "1.0.0",
-                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                  "filesAnalyzed": false,
-                  "licenseConcluded": "MIT"
-                }
-              ],
-              "relationships": [    {
-                  "spdxElementId": "SPDXRef-DOCUMENT",
-                  "relatedSpdxElement": "SPDXRef-Package",
-                  "relationshipType": "DESCRIBES"
-                }
-              ],
-              "spdxVersion": "SPDX-2.2",
-              "dataLicense": "CC0-1.0",
-              "SPDXID": "SPDXRef-DOCUMENT",
-              "name": "Test Document",
-              "documentNamespace": "https://sbom.spdx.org",
-              "creationInfo": {
-                "created": "2021-10-01T00:00:00Z",
-                "creators": [ "Person: Malcolm Nixon" ]
-              }
-            }
-            """);
+        Validate.WriteTestSpdxJsonMinimal(Validate.TempDir, "test-valid.spdx.json");
+
+        // Allow tests to corrupt the fixture immediately before the command runs
+        PreRunSpdxToolHookForTest?.Invoke();
 
         // Run validation without NTIA flag on valid document
         var exitCode = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "validate",
@@ -132,13 +129,26 @@ internal static class ValidateBasic
     }
 
     /// <summary>
-    ///     Validate that basic validation detects invalid document
+    ///     Verifies that a malformed SPDX document is rejected by the <c>validate</c> command.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if RunSpdxTool returns a non-zero exit code and the log contains the expected
+    ///     error text referencing the filename; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Writes an SPDX document with a package missing the required SPDXID field to
+    ///     <c>validate.tmp/test-invalid.spdx.json</c> and invokes
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> with <c>--silent</c>, <c>--log</c>,
+    ///     and <c>validate</c> arguments. Expects a non-zero exit code and verifies that the log file
+    ///     contains error text referencing the validation issue. Depends on <c>validate.tmp</c> already
+    ///     existing; must be called after <see cref="DoValidate"/> creates the directory.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test file cannot be written or the log file cannot be read.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to <c>validate.tmp</c>.</exception>
     private static bool DoValidateInvalid()
     {
         // Write test SPDX file that is invalid (missing required SPDXID)
-        File.WriteAllText("validate.tmp/test-invalid.spdx.json",
+        File.WriteAllText($"{Validate.TempDir}/test-invalid.spdx.json",
             """
             {
               "files": [],
@@ -165,7 +175,7 @@ internal static class ValidateBasic
 
         // Run validation on invalid document
         var exitCode = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "--log", "output.log",
@@ -180,9 +190,9 @@ internal static class ValidateBasic
         }
 
         // Read the log file to verify error was reported
-        var log = File.ReadAllText("validate.tmp/output.log");
+        var log = File.ReadAllText($"{Validate.TempDir}/output.log");
 
-        // Verify log contains error about missing SPDXID
-        return log.Contains("Issues in test-invalid.spdx.json") || log.Contains("Package") || log.Contains("SPDXID");
+        // Verify log references the invalid file, confirming validation ran and reported issues
+        return log.Contains("Issues in test-invalid.spdx.json");
     }
 }

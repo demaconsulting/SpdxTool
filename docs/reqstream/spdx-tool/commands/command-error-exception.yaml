@@ -1,0 +1,15 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: CommandErrorException Requirements
+            requirements:
+              - id: SpdxTool-CommandErrorException-RuntimeFailure
+                title: CommandErrorException shall signal a command runtime failure distinct from incorrect usage.
+                justification: |
+                  Separating operational errors from usage errors allows Program to apply the
+                  correct response: report the error without printing usage information.
+                tests:
+                  - GetVersion_Run_MissingFile_ReportsError

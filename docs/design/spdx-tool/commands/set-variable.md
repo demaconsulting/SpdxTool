@@ -1,41 +1,51 @@
-# DemaConsulting.SpdxTool set-variable Command Design
+### SetVariable
 
-## Purpose
+#### Purpose
 
-The `set-variable` command sets a workflow variable to a specified value. It is
-only valid inside a workflow YAML file; direct command-line invocation is rejected.
+SetVariable assigns a value to a named variable in the current workflow variable dictionary. It
+is available in workflow mode only; direct CLI invocation is rejected.
 
-## Arguments / Inputs
+#### Data Model
 
-This command is only valid inside a workflow YAML file:
+**Instance**: `SetVariable` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record for SetVariable.
 
-```yaml
-- command: set-variable
-  inputs:
-    value: <value>                # New value (required)
-    output: <variable>            # Variable name to set (required)
-```
+#### Key Methods
 
-- `value` — The new value to assign; supports variable expansion.
-- `output` — Name of the variable in the workflow's variables map to set.
+**Run(Context, string[])**: Rejects CLI invocation with a usage error.
 
-## Implementation
+- *Parameters*: `Context context` — execution context; `string[] args` — CLI arguments (unused).
+- *Returns*: `void`
+- *Preconditions*: None.
+- *Post-conditions*: Throws CommandUsageException unconditionally.
 
-1. Reads `value` and `output` from the `inputs` map.
-2. Applies variable expansion to `value` via `GetMapString`.
-3. Assigns `variables[output] = value`.
+**Run(Context, YamlMappingNode, Dictionary)**: Reads the value and output inputs from the YAML
+step, then sets variables[output] = value. The output key is read without variable expansion so
+that the literal key name is used as the variable name.
 
-## Error Handling
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — workflow variable map (mutated).
+- *Returns*: `void`
+- *Preconditions*: value and output inputs are required in the step.
+- *Post-conditions*: variables[output] is set to the expanded value.
 
-| Condition | Exception |
-| :--- | :--- |
-| Invoked from command line (not workflow) | `CommandUsageException` |
-| Missing `value` input | `YamlException` |
-| Missing `output` input | `YamlException` |
+#### Error Handling
 
-## Constraints
+**CommandUsageException** — thrown by Run(Context, string[]) unconditionally (workflow-only
+command).
 
-- Available in workflow mode only; direct CLI invocation raises `CommandUsageException`.
-- Variable expansion is applied to `value` before assignment, so the value can
-  reference other variables already set in the workflow.
-- The `output` variable name is not expanded; it is used literally as the key.
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the value or output
+inputs are missing. An absent `inputs` map node (i.e. the step has no `inputs:` key at all) is
+treated as a missing-input error: `GetMapString` returns null for value, and the null guard for
+output fires, causing a `YamlException` in both cases.
+
+#### Dependencies
+
+- Command (abstract base class)
+- Context (execution context)
+- YamlDotNet (YamlMappingNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — holds the CommandEntry.Instance reference and routes workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: set-variable

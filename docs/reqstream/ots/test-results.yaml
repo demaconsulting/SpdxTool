@@ -1,0 +1,27 @@
+---
+# DemaConsulting.TestResults OTS requirements
+sections:
+  - title: OTS Software Requirements
+    sections:
+      - title: TestResults Requirements
+        requirements:
+          - id: SpdxTool-OTS-TestResults-Trx
+            title: DemaConsulting.TestResults shall provide test result serialization in TRX format.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.TestResults provides TrxSerializer used by the SelfTest subsystem
+              to write validation results in TRX format consumed by CI/CD systems for test reporting.
+            tests:
+              - SelfTest_Validate_WithTrxResult_GeneratesTrxFile
+
+          - id: SpdxTool-OTS-TestResults-JUnit
+            title: DemaConsulting.TestResults shall provide test result serialization in JUnit XML format.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.TestResults provides JUnitSerializer used by the SelfTest subsystem
+              to write validation results in JUnit XML format, enabling CI/CD integration for
+              systems that consume JUnit XML test reports.
+            tests:
+              - SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile

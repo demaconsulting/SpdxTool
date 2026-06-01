@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +19,119 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxTool.SelfTest;
+using DemaConsulting.SpdxTool.Utility;
 using DemaConsulting.TestResults;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.SelfTest;
+
 /// <summary>
 ///     Unit tests for the ValidateRenameId self-validation unit.
 /// </summary>
-[TestClass]
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
+[Collection("SelfTestValidation")]
 public class ValidateRenameIdTests
 {
     /// <summary>
     ///     Test that ValidateRenameId validation passes.
     /// </summary>
-    [TestMethod]
+    /// <remarks>
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_RenameId</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateRenameId.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
+    /// </remarks>
+    [Fact]
     public void SpdxTool_RenameId()
     {
-        // Arrange
+        // Arrange: create a context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the rename-id self-test step
         ValidateRenameId.Run(context, results);
 
-        // Assert
-        Assert.AreEqual(1, results.Results.Count);
-        Assert.AreEqual(TestOutcome.Passed, results.Results[0].Outcome);
+        // Assert: single passing result recorded
+        Assert.Single(results.Results);
+        Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_RenameId", results.Results[0].Name);
+    }
+
+    /// <summary>
+    ///     Test that ValidateRenameId.Run records TestOutcome.Failed when the rename-id command
+    ///     exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateRenameId.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>test.spdx.json</c> with invalid content immediately before the in-process rename-id
+    ///     command reads it. This causes the command to fail with a non-zero exit code, which
+    ///     causes <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateRenameId_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        try
+        {
+            // Arrange: hook corrupts test.spdx.json immediately before the rename-id command
+            // reads it, causing the command to fail with a non-zero exit code
+            ValidateRenameId.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/test.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the rename-id self-test step with the poisoned hook active
+            ValidateRenameId.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateRenameId.PreRunSpdxToolHookForTest = null;
+        }
+    }
+
+    /// <summary>
+    ///     Verifies that an I/O error in DoValidate propagates as an uncaught exception from Run.
+    /// </summary>
+    /// <remarks>
+    ///     Pre-creates <c>validate.tmp</c> as a file in a temporary directory and sets that as the
+    ///     working directory before calling <see cref="ValidateRenameId.Run"/>. When
+    ///     <see cref="Directory.CreateDirectory(string)"/> encounters the blocking file it throws
+    ///     <see cref="IOException"/>, which propagates uncaught from <c>Run</c>. The test asserts
+    ///     both that the exception propagates and that no <see cref="DemaConsulting.TestResults.TestResult"/>
+    ///     is recorded in the results collection. This exercises the failure path documented in the
+    ///     design: exceptions thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </remarks>
+    [Fact]
+    public void ValidateRenameId_Run_IoError_PropagatesException()
+    {
+        // Arrange: inject a temporary directory that already contains validate.tmp as a file,
+        // blocking Directory.CreateDirectory("validate.tmp")
+        var originalFactory = Validate.TemporaryDirectoryFactory;
+        using var tempDirectory = new TemporaryDirectory();
+        Validate.TemporaryDirectoryFactory = () => tempDirectory;
+        try
+        {
+            // Create validate.tmp as a FILE (not a directory) to block DoValidate
+            File.WriteAllText(tempDirectory.GetFilePath("validate.tmp"), "blocking file");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act + Assert: Run() propagates the IOException — no TestResult is recorded
+            Assert.Throws<IOException>(() => ValidateRenameId.Run(context, results));
+            Assert.Empty(results.Results);
+        }
+        finally
+        {
+            Validate.TemporaryDirectoryFactory = originalFactory;
+        }
     }
 }

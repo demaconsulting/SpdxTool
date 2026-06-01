@@ -1,79 +1,108 @@
-# DemaConsulting.SpdxTool add-package Command Design
+### AddPackage
 
-## Purpose
+#### Purpose
 
-The `add-package` command adds a new SPDX package to an existing SPDX document.
-It supports optional relationships between the new package and other elements in
-the document. If a package with the same identity already exists, the command
-enhances (merges) that package rather than adding a duplicate.
+AddPackage adds a new package to an existing SPDX JSON document or enhances (merges) an existing
+package that shares the same identity, then optionally adds relationships between that package and
+other elements in the document. The command is available in workflow mode only; direct CLI
+invocation is rejected.
 
-## Arguments / Inputs
+#### Data Model
 
-This command is only valid inside a workflow YAML file:
+AddPackage carries no instance state; all state is method-local. The following static fields serve
+as registry entries:
 
-```yaml
-- command: add-package
-  inputs:
-    spdx: <spdx.json>             # SPDX file name (required)
-    package:                      # New package information (required)
-      id: <id>                    # New package ID (required)
-      name: <name>                # New package name (required)
-      download: <download-url>    # New package download URL (required)
-      version: <version>          # Optional package version
-      filename: <filename>        # Optional package filename
-      supplier: <supplier>        # Optional package supplier
-      originator: <originator>    # Optional package originator
-      homepage: <homepage>        # Optional package homepage
-      copyright: <copyright>      # Optional package copyright
-      summary: <summary>          # Optional package summary
-      description: <description>  # Optional package description
-      license: <license>          # Optional package license
-      purl: <package-url>         # Optional package URL (appended as external reference)
-      cpe23: <cpe-identifier>     # Optional CPE 2.3 identifier (appended as external reference)
-    relationships:                # Optional relationships
-    - type: <relationship>        # Relationship type (e.g. DESCRIBES, CONTAINS)
-      element: <element>          # Related element ID
-      comment: <comment>          # Optional comment
-```
+**Instance**: `AddPackage` — the singleton instance registered with CommandsRegistry.
+**Entry**: `CommandEntry` — the CommandEntry record advertising name, summary, usage details, and the
+  singleton instance to CommandsRegistry.
 
-If invoked directly from the command-line (not in a workflow), the command raises
-a `CommandUsageException` with an explanatory message.
+#### Key Methods
 
-## Implementation
+**Run(Context, string[])**: Rejects CLI invocation with a usage error.
 
-1. The `Run(Context, YamlMappingNode, Dictionary)` override reads the `inputs` map.
-2. The `spdx` input is required; its absence raises a `YamlException`.
-3. The `package` sub-map is parsed by `ParsePackage`, which constructs an
-   `SpdxPackage` from the YAML fields. Required fields are `id`, `name`, and
-   `download`; all others default to `null` or `"NOASSERTION"` where appropriate.
-4. Package ID must not be empty or `"SPDXRef-DOCUMENT"`; violation raises
-   `CommandUsageException`.
-5. Optional `purl` and `cpe23` inputs are appended as `SpdxExternalReference`
-   entries on the package.
-6. `relationships` is an optional sequence; each entry is parsed by
-   `AddRelationship.Parse`.
-7. `AddPackageToSpdxFile` loads the document, calls `Add` (which either enhances
-   an existing same-identity package and renames it, or appends a deep copy),
-   then calls `AddRelationship.Add` for each relationship, and saves the document.
+- *Parameters*: `Context context` — execution context; `string[] args` — CLI arguments (unused).
+- *Returns*: `void`
+- *Preconditions*: None.
+- *Post-conditions*: Throws CommandUsageException unconditionally.
 
-## Error Handling
+**Run(Context, YamlMappingNode, Dictionary<string, string>)**: Parses workflow inputs, builds the package and
+relationships, and delegates to AddPackageToSpdxFile.
 
-| Condition | Exception |
-| :--- | :--- |
-| Invoked from command line (not workflow) | `CommandUsageException` |
-| Missing `spdx` input | `YamlException` |
-| Missing `package` input | `YamlException` |
-| Missing package `id` | `YamlException` |
-| Empty or `SPDXRef-DOCUMENT` package ID | `CommandUsageException` |
-| Missing package `name` | `YamlException` |
-| Missing package `download` | `YamlException` |
-| Relationship parse errors | `YamlException` (propagated from `AddRelationship.Parse`) |
+- *Parameters*: `Context context` — execution context; `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — current workflow variable map.
+- *Returns*: `void`
+- *Preconditions*: step must contain an inputs map with spdx and package keys.
+- *Post-conditions*: The named SPDX file is updated with the new or enhanced package and any
+  specified relationships.
 
-## Constraints
+**ParsePackage(string, YamlMappingNode, Dictionary<string, string>)**: Constructs an SpdxPackage from a YAML
+mapping node, appending optional purl and cpe23 entries as SpdxExternalReference instances.
 
-- Available in workflow mode only; direct CLI invocation is rejected.
-- Package identity comparison uses `SpdxPackage.Same` (by name and download location).
-- When enhancing an existing package, the existing package ID is renamed to the
-  new ID via `RenameId.Rename` so all existing references remain consistent.
-- The `relationships` sequence is optional; omitting it results in no new relationships.
-- Variable expansion is applied to all string inputs via `GetMapString`.
+- *Parameters*: `string command` — command name for error messages; `YamlMappingNode packageMap`
+  — YAML node containing package fields; `Dictionary<string, string> variables` — variable map.
+- *Returns*: `SpdxPackage`
+- *Preconditions*: packageMap must contain id, name, and download keys. id must not be empty or
+  "SPDXRef-DOCUMENT".
+- *Post-conditions*: Returns a fully constructed SpdxPackage with optional external references.
+- *Defaults*: When `copyright` is absent, `CopyrightText` defaults to `NOASSERTION`. The `license`
+  input is mapped to both `ConcludedLicense` and `DeclaredLicense`; both default to `NOASSERTION`
+  when `license` is absent.
+
+**AddPackageToSpdxFile(string, SpdxPackage, SpdxRelationship[])**: Loads the SPDX document, calls
+Add and AddRelationship.Add, and saves the document.
+
+- *Parameters*: `string spdxFile` — path to the SPDX JSON file; `SpdxPackage package` — package to
+  add or merge; `SpdxRelationship[] relationships` — relationships to add.
+- *Returns*: `void`
+- *Preconditions*: spdxFile must exist and be a valid SPDX JSON document.
+- *Post-conditions*: The file is updated in place with the package and relationships applied.
+- *Note*: This method is non-atomic. If `AddRelationship.Add` fails after `Add` has already merged
+  the package into the in-memory document, the file on disk is not written (preserving the on-disk
+  state), but the in-memory document is left partially mutated. Callers must not reuse the in-memory
+  document after a failure from this method.
+
+**Add(SpdxDocument, SpdxPackage)**: Adds or enhances a package in memory. If an existing package
+with the same identity (by SpdxPackage.Same equality) is found, it is enhanced and renamed;
+otherwise a deep copy of the package is appended.
+
+- *Parameters*: `SpdxDocument doc` — in-memory SPDX document; `SpdxPackage package` — package to
+  add or merge.
+- *Returns*: `void`
+- *Preconditions*: doc must not be null.
+- *Post-conditions*: doc.Packages contains the package; if an existing same-identity package was found
+  its ID is updated to match the supplied package ID via RenameId.Rename. The existing package ID is
+  captured before `Enhance` is called; `RenameId.Rename` receives the pre-enhance ID to guarantee all
+  document references are correctly updated regardless of whether `Enhance` modifies the `Id` field.
+  If the existing package's ID already matches `package.Id`, the rename is a no-op; the enhance still
+  runs.
+
+#### Error Handling
+
+**CommandUsageException** — thrown by Run(Context, string[]) unconditionally (workflow-only command);
+also thrown by ParsePackage when the package ID is empty or equals "SPDXRef-DOCUMENT";
+also thrown by AddPackageToSpdxFile when the SPDX file does not exist on disk
+(propagated from SpdxHelpers.LoadJsonDocument).
+
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the spdx or package
+inputs are missing; thrown by ParsePackage when the id, name, or download fields are absent from
+the packageMap. When the `inputs:` block is entirely absent from a workflow step, `GetMapMap`
+returns null; the subsequent `GetMapString` call on that null map also returns null, causing the
+`?? throw` guard to throw a YamlException with the expected message.
+
+**CommandErrorException** — thrown by AddPackageToSpdxFile when the relationships cannot be applied
+to the document (propagated from AddRelationship.Add).
+
+#### Dependencies
+
+- Command (abstract base class providing YAML helper methods and Expand)
+- SpdxDocument, SpdxPackage, SpdxExternalReference, SpdxReferenceCategory (DemaConsulting.SpdxModel)
+- SpdxHelpers (Spdx units — LoadJsonDocument, SaveJsonDocument)
+- AddRelationship (sibling command — Parse and Add static methods)
+- RenameId (sibling command — Rename static method for package ID update on enhance)
+- YamlDotNet (YamlMappingNode, YamlSequenceNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — holds the CommandEntry.Instance reference and routes workflow steps to this
+  command
+- RunWorkflow — dispatches this command when a workflow step specifies command: add-package

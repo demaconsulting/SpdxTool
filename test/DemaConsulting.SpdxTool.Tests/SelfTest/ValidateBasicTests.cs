@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +19,117 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxTool.SelfTest;
+using DemaConsulting.SpdxTool.Utility;
 using DemaConsulting.TestResults;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.SelfTest;
+
 /// <summary>
 ///     Unit tests for the ValidateBasic self-validation unit.
 /// </summary>
-[TestClass]
+/// <remarks>
+///     Tests belong to the <c>SelfTestValidation</c> xUnit collection, which serializes their
+///     execution to prevent races on the process-wide current directory and on the shared
+///     <c>validate.tmp</c> temporary directory used by the self-test step.
+/// </remarks>
+[Collection("SelfTestValidation")]
 public class ValidateBasicTests
 {
     /// <summary>
     ///     Test that ValidateBasic validation passes.
     /// </summary>
-    [TestMethod]
+    /// <remarks>
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_Basic</c>
+    ///     matches the <c>TestResult.Name</c> identifier recorded by
+    ///     <see cref="ValidateBasic.Run"/> so that ReqStream can trace this xUnit test to the
+    ///     self-test result it exercises. This method name is therefore exempt from the
+    ///     4-segment naming rule per the csharp-testing.md standard.
+    /// </remarks>
+    [Fact]
     public void SpdxTool_Basic()
     {
-        // Arrange
+        // No temp-directory setup is needed here: ValidateBasic creates and deletes its own
+        // validate.tmp subdirectory relative to the current directory and does not mutate the
+        // current directory itself, so the default working directory is sufficient for this test.
+
+        // Arrange: create a validation context and empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the ValidateBasic self-test step
         ValidateBasic.Run(context, results);
 
-        // Assert
-        Assert.AreEqual(1, results.Results.Count);
-        Assert.AreEqual(TestOutcome.Passed, results.Results[0].Outcome);
+        // Assert: one result recorded with Passed outcome
+        Assert.Single(results.Results);
+        Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+    }
+
+    /// <summary>
+    ///     Test that ValidateBasic.Run records TestOutcome.Failed when the validate command exits
+    ///     with a non-zero exit code on the valid-document sub-test.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateBasic.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>test-valid.spdx.json</c> with invalid JSON immediately before the in-process
+    ///     validate command reads it. This causes the validate command to fail with a non-zero exit
+    ///     code, causing <c>DoValidateValid</c> to return <c>false</c>, <c>DoValidate</c> to return
+    ///     <c>false</c>, and <c>Run</c> to record <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateBasic_Run_ValidationFails_RecordsFailedOutcome()
+    {
+        try
+        {
+            // Arrange: hook corrupts test-valid.spdx.json immediately before the validate command
+            // reads it, causing the validate command to fail with a non-zero exit code
+            ValidateBasic.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/test-valid.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the ValidateBasic self-test step with the poisoned hook active
+            ValidateBasic.Run(context, results);
+
+            // Assert: one result recorded with Failed outcome
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateBasic.PreRunSpdxToolHookForTest = null;
+        }
+    }
+
+    /// <summary>
+    ///     Test that ValidateBasic.Run propagates an I/O exception when the working
+    ///     directory prevents validate.tmp from being used correctly.
+    ///     This exercises the failure path of Run() as documented in the design: exceptions
+    ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </summary>
+    [Fact]
+    public void ValidateBasic_Run_IoError_PropagatesException()
+    {
+        // Arrange: inject a temporary directory that already contains validate.tmp as a file,
+        // blocking Directory.CreateDirectory("validate.tmp")
+        var originalFactory = Validate.TemporaryDirectoryFactory;
+        using var tempDirectory = new TemporaryDirectory();
+        Validate.TemporaryDirectoryFactory = () => tempDirectory;
+        try
+        {
+            // Create validate.tmp as a FILE (not a directory) to block DoValidate
+            File.WriteAllText(tempDirectory.GetFilePath("validate.tmp"), "blocking file");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act + Assert: Run() propagates the IOException — no TestResult is recorded
+            Assert.Throws<IOException>(() => ValidateBasic.Run(context, results));
+            Assert.Empty(results.Results);
+        }
+        finally
+        {
+            Validate.TemporaryDirectoryFactory = originalFactory;
+        }
     }
 }

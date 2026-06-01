@@ -1,18 +1,47 @@
-# DemaConsulting.SpdxTool SelfTest ValidateBasic Requirements
-#
-# This file contains requirements for the ValidateBasic self-test step.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: SelfTest ValidateBasic
-    requirements:
-      - id: SpdxTool-SelfTest-Basic
-        title: The SelfTest shall exercise the validate command with basic CLI flags (silent, log).
-        tags:
-          - self-test
-        justification: |
-          Self-validation of basic tool functionality ensures the core CLI flags
-          (silent mode, logging) work correctly with the validate command
-          after installation or deployment.
-        tests:
-          - SpdxTool_Basic
+  - title: SpdxTool Requirements
+    sections:
+      - title: SelfTest Requirements
+        sections:
+          - title: ValidateBasic Requirements
+            requirements:
+              - id: SpdxTool-SelfTest-Basic
+                title: The SelfTest shall verify basic SpdxTool validation behavior.
+                tags:
+                  - self-test
+                justification: |
+                  Self-validation of basic tool functionality ensures the core CLI flags
+                  (silent mode, logging) work correctly with the validate command
+                  after installation or deployment.
+                children:
+                  - SpdxTool-SelfTest-Basic-ValidAccepted
+                  - SpdxTool-SelfTest-Basic-InvalidRejected
+                tests:
+                  - SpdxTool_Basic
+
+              - id: SpdxTool-SelfTest-Basic-ValidAccepted
+                title: >-
+                  The SelfTest shall verify that the validate command accepts a
+                  well-formed SPDX document.
+                tags:
+                  - self-test
+                justification: |
+                  Verifies that the validate workflow accepts a well-formed SPDX document without
+                  raising errors, confirming the happy-path execution is not broken by
+                  negative-case changes.
+                tests:
+                  - SpdxTool_Basic
+
+              - id: SpdxTool-SelfTest-Basic-InvalidRejected
+                title: >-
+                  The SelfTest shall verify that the validate command rejects a
+                  malformed SPDX document.
+                tags:
+                  - self-test
+                justification: |
+                  Confirming that the validate command correctly reports errors for invalid
+                  SPDX content ensures that users can trust validation results when building
+                  compliance workflows.
+                tests:
+                  - SpdxTool_Basic

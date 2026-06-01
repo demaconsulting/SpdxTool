@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,27 +20,28 @@
 
 using System.Text.RegularExpressions;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'query' command
 /// </summary>
-[TestClass]
 public partial class QueryTests
 {
     /// <summary>
     ///     Regular expression to check for version
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Compiled regular expression matching a three-part version number (e.g. 8.0.1).</returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+")]
     private static partial Regex VersionRegex();
 
     /// <summary>
     ///     Test that query command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
-    public void Query_MissingArguments_ReportsError()
+    [Fact]
+    public void Query_Run_MissingArguments_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -49,16 +50,18 @@ public partial class QueryTests
             "query");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("'query' command missing arguments", output);
     }
 
     /// <summary>
-    ///     Test that query command with bad regex pattern reports an error
+    ///     Test that query command with a regex pattern missing the value capture group reports an error
     /// </summary>
-    [TestMethod]
-    public void Query_BadRegexPattern_ReportsError()
+    [Fact]
+    public void Query_Run_PatternMissingValueGroup_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -70,16 +73,18 @@ public partial class QueryTests
             "--version");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("Pattern must contain a 'value' capture group", output);
     }
 
     /// <summary>
     ///     Test that query command with invalid program reports an error
     /// </summary>
-    [TestMethod]
-    public void Query_InvalidProgram_ReportsError()
+    [Fact]
+    public void Query_Run_InvalidProgram_ReportsError()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -90,16 +95,18 @@ public partial class QueryTests
             "does-not-exist");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("Unable to start program 'does-not-exist'", output);
     }
 
     /// <summary>
     ///     Test that query command for dotnet version on command line returns the version
     /// </summary>
-    [TestMethod]
-    public void Query_DotNetVersion_OnCommandLine_ReturnsVersion()
+    [Fact]
+    public void Query_Run_DotNetVersionOnCommandLine_ReturnsVersion()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -110,18 +117,18 @@ public partial class QueryTests
             "dotnet",
             "--version");
 
-        // Assert: Verify error reported
-        Assert.AreEqual(0, exitCode);
-        Assert.MatchesRegex(VersionRegex(), output);
+        // Assert: Verify version returned
+        Assert.Equal(0, exitCode);
+        Assert.Matches(VersionRegex(), output);
     }
 
     /// <summary>
     ///     Test that query command for dotnet version in workflow stores the version
     /// </summary>
-    [TestMethod]
-    public void Query_DotNetVersion_InWorkflow_StoresVersion()
+    [Fact]
+    public void Query_Run_DotNetVersionInWorkflow_StoresVersion()
     {
-        // Workflow contents
+        // Arrange: define workflow content and write it to a temp file
         const string workflowContents =
             """
             parameters:
@@ -142,10 +149,10 @@ public partial class QueryTests
                 - ${{ version }}
             """;
 
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
-            // Arrange: Write the SPDX files
-            File.WriteAllText("workflow.yaml", workflowContents);
+            File.WriteAllText(workflowFile, workflowContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -153,15 +160,97 @@ public partial class QueryTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "run-workflow",
-                "workflow.yaml");
+                workflowFile);
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
-            Assert.MatchesRegex(VersionRegex(), output);
+            Assert.Equal(0, exitCode);
+            Assert.Matches(VersionRegex(), output);
         }
         finally
         {
-            File.Delete("workflow.yaml");
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
+    ///     Test that query command with an invalid regex pattern reports an error
+    /// </summary>
+    [Fact]
+    public void Query_Run_InvalidRegexPattern_ReportsError()
+    {
+        // Arrange: no setup required
+
+        // Act: Run the command
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "query",
+            "[unclosed",
+            "dotnet",
+            "--version");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("Invalid regular expression pattern", output);
+    }
+
+    /// <summary>
+    ///     Test that query command with a pattern not found in output reports an error
+    /// </summary>
+    [Fact]
+    public void Query_Run_PatternNotFound_ReportsError()
+    {
+        // Arrange: no setup required
+
+        // Act: Run the command
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "query",
+            @"(?<value>THIS_WILL_NEVER_MATCH)",
+            "dotnet",
+            "--version");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
+        Assert.Contains("not found in program output", output);
+    }
+
+    /// <summary>
+    ///     Test that query command in workflow with missing required inputs reports an error
+    /// </summary>
+    [Fact]
+    public void Query_Run_MissingWorkflowInputs_ReportsError()
+    {
+        const string workflowContents =
+            """
+            steps:
+            - command: query
+            """;
+
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: Write a workflow with a query step that has no inputs
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: Verify error reported for missing required input
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'query' command missing 'output' input", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,35 +25,37 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Unit tests for the Program class.
 /// </summary>
-[TestClass]
 public partial class ProgramTests
 {
     /// <summary>
     ///     Regular expression to match a semantic version string.
     /// </summary>
+    /// <returns>A compiled Regex that matches a semantic version string (e.g., 1.2.3 or 1.2.3-preview).</returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
     private static partial Regex VersionRegex();
 
     /// <summary>
     ///     Test that Program.Version is a valid version string.
     /// </summary>
-    [TestMethod]
-    public void Program_Version_IsValidVersionString()
+    [Fact]
+    public void SpdxTool_Program_Version_IsValidVersionString()
     {
+        // Arrange: no setup required
+
         // Act
         var version = Program.Version;
 
         // Assert
-        Assert.IsNotNull(version);
-        Assert.IsFalse(string.IsNullOrWhiteSpace(version));
-        Assert.MatchesRegex(VersionRegex(), version);
+        Assert.NotNull(version);
+        Assert.False(string.IsNullOrWhiteSpace(version));
+        Assert.Matches(VersionRegex(), version);
     }
 
     /// <summary>
     ///     Test that Program.Run with version context writes version to output.
     /// </summary>
-    [TestMethod]
-    public void Program_Run_VersionContext_WritesVersion()
+    [Fact]
+    public void SpdxTool_Program_Run_VersionContext_WritesVersion()
     {
         // Arrange
         using var context = Context.Create(["-v"]);
@@ -72,15 +74,15 @@ public partial class ProgramTests
         }
 
         // Assert
-        Assert.AreEqual(0, context.ExitCode);
-        Assert.MatchesRegex(VersionRegex(), writer.ToString());
+        Assert.Equal(0, context.ExitCode);
+        Assert.Matches(VersionRegex(), writer.ToString());
     }
 
     /// <summary>
     ///     Test that Program.Run with help context writes usage to output.
     /// </summary>
-    [TestMethod]
-    public void Program_Run_HelpContext_WritesUsage()
+    [Fact]
+    public void SpdxTool_Program_Run_HelpContext_WritesUsage()
     {
         // Arrange
         using var context = Context.Create(["--help"]);
@@ -99,15 +101,15 @@ public partial class ProgramTests
         }
 
         // Assert
-        Assert.AreEqual(0, context.ExitCode);
+        Assert.Equal(0, context.ExitCode);
         Assert.Contains("Usage: spdx-tool", writer.ToString());
     }
 
     /// <summary>
     ///     Test that Program.Run with no arguments writes error and usage.
     /// </summary>
-    [TestMethod]
-    public void Program_Run_NoArguments_WritesErrorAndUsage()
+    [Fact]
+    public void SpdxTool_Program_Run_NoArguments_WritesErrorAndUsage()
     {
         // Arrange
         using var context = Context.Create([]);
@@ -126,7 +128,7 @@ public partial class ProgramTests
         }
 
         // Assert
-        Assert.AreEqual(1, context.ExitCode);
+        Assert.Equal(1, context.ExitCode);
         var output = writer.ToString();
         Assert.Contains("Error: Missing arguments", output);
         Assert.Contains("Usage: spdx-tool", output);

@@ -1,17 +1,17 @@
-# DemaConsulting.SpdxTool SelfTest ValidateUpdatePackage Requirements
-#
-# This file contains requirements for the ValidateUpdatePackage self-test step.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: SelfTest ValidateUpdatePackage
-    requirements:
-      - id: SpdxTool-SelfTest-UpdatePackage
-        title: The SelfTest shall exercise the update-package command.
-        tags:
-          - self-test
-        justification: |
-          Self-validation of the update-package command ensures it correctly updates
-          package metadata in SPDX documents after installation or deployment.
-        tests:
-          - SpdxTool_UpdatePackage
+  - title: SpdxTool Requirements
+    sections:
+      - title: SelfTest Requirements
+        sections:
+          - title: ValidateUpdatePackage Requirements
+            requirements:
+              - id: SpdxTool-SelfTest-UpdatePackage
+                title: The SelfTest shall exercise the update-package command.
+                tags:
+                  - self-test
+                justification: |
+                  Self-validation of the update-package command ensures it correctly updates
+                  package metadata in SPDX documents after installation or deployment.
+                tests:
+                  - SpdxTool_UpdatePackage

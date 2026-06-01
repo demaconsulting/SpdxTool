@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +19,115 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxTool.SelfTest;
+using DemaConsulting.SpdxTool.Utility;
 using DemaConsulting.TestResults;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.SelfTest;
+
 /// <summary>
 ///     Unit tests for the ValidateCopyPackage self-validation unit.
 /// </summary>
-[TestClass]
+/// <remarks>
+///     All tests in this class belong to the <c>SelfTestValidation</c> collection to serialize
+///     execution, preventing races on the current working directory and the <c>validate.tmp</c>
+///     temporary directory used by the self-test step.
+/// </remarks>
+[Collection("SelfTestValidation")]
 public class ValidateCopyPackageTests
 {
     /// <summary>
     ///     Test that ValidateCopyPackage validation passes.
     /// </summary>
-    [TestMethod]
+    /// <remarks>
+    ///     This is a deliberate formal deviation: the method name <c>SpdxTool_CopyPackage</c> matches
+    ///     the <c>TestResult.Name</c> identifier recorded by <see cref="ValidateCopyPackage.Run"/> so
+    ///     that ReqStream can trace this xUnit test to the self-test result it exercises. This method
+    ///     name is therefore exempt from the 4-segment naming rule per the csharp-testing.md standard.
+    /// </remarks>
+    [Fact]
     public void SpdxTool_CopyPackage()
     {
-        // Arrange
+        // Arrange: create a context in validate mode and an empty results collection
         using var context = Context.Create(["--validate"]);
         var results = new DemaConsulting.TestResults.TestResults();
 
-        // Act
+        // Act: run the copy-package self-test step
         ValidateCopyPackage.Run(context, results);
 
-        // Assert
-        Assert.AreEqual(1, results.Results.Count);
-        Assert.AreEqual(TestOutcome.Passed, results.Results[0].Outcome);
+        // Assert: a single passing result is recorded with the correct name
+        Assert.Single(results.Results);
+        Assert.Equal(TestOutcome.Passed, results.Results[0].Outcome);
+        Assert.Equal("SpdxTool_CopyPackage", results.Results[0].Name);
+    }
+
+    /// <summary>
+    ///     Test that ValidateCopyPackage.Run records TestOutcome.Failed when the copy-package command
+    ///     exits with a non-zero exit code.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="ValidateCopyPackage.PreRunSpdxToolHookForTest"/> hook is set to corrupt
+    ///     <c>from.spdx.json</c> with invalid JSON immediately before the in-process copy-package
+    ///     command reads it. This causes copy-package to fail with a non-zero exit code, which causes
+    ///     <c>DoValidate</c> to return <c>false</c> and <c>Run</c> to record
+    ///     <see cref="TestOutcome.Failed"/>.
+    /// </remarks>
+    [Fact]
+    public void ValidateCopyPackage_Run_CommandFailure_RecordsFailedOutcome()
+    {
+        try
+        {
+            // Arrange: hook corrupts from.spdx.json immediately before copy-package reads it,
+            // causing the command to fail with a non-zero exit code
+            ValidateCopyPackage.PreRunSpdxToolHookForTest = () =>
+                File.WriteAllText("validate.tmp/from.spdx.json", "{}");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act: run the copy-package self-test step with the poisoned hook active
+            ValidateCopyPackage.Run(context, results);
+
+            // Assert: single failing result recorded
+            Assert.Single(results.Results);
+            Assert.Equal(TestOutcome.Failed, results.Results[0].Outcome);
+        }
+        finally
+        {
+            ValidateCopyPackage.PreRunSpdxToolHookForTest = null;
+        }
+    }
+
+    /// <summary>
+    ///     Test that ValidateCopyPackage.Run propagates an I/O exception when the working
+    ///     directory prevents validate.tmp from being used correctly.
+    /// </summary>
+    /// <remarks>
+    ///     This exercises the failure path of Run() as documented in the design: exceptions
+    ///     thrown by DoValidate propagate uncaught and no TestResult is recorded.
+    /// </remarks>
+    [Fact]
+    public void ValidateCopyPackage_Run_IoError_PropagatesException()
+    {
+        // Arrange: inject a temporary directory that already contains validate.tmp as a file,
+        // blocking Directory.CreateDirectory("validate.tmp")
+        var originalFactory = Validate.TemporaryDirectoryFactory;
+        using var tempDirectory = new TemporaryDirectory();
+        Validate.TemporaryDirectoryFactory = () => tempDirectory;
+        try
+        {
+            // Create validate.tmp as a FILE (not a directory) to block DoValidate
+            File.WriteAllText(tempDirectory.GetFilePath("validate.tmp"), "blocking file");
+
+            using var context = Context.Create(["--validate"]);
+            var results = new DemaConsulting.TestResults.TestResults();
+
+            // Act + Assert: Run() propagates the IOException — no TestResult is recorded
+            Assert.Throws<IOException>(() => ValidateCopyPackage.Run(context, results));
+            Assert.Empty(results.Results);
+        }
+        finally
+        {
+            Validate.TemporaryDirectoryFactory = originalFactory;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,15 @@
 namespace DemaConsulting.SpdxTool;
 
 /// <summary>
-///     Program Context class
+///     Single mutable execution-state holder for one SpdxTool invocation.
 /// </summary>
+/// <remarks>
+///     Created once per invocation by <see cref="Create"/>, passed to every command and
+///     subsystem, and disposed by <see cref="Program"/> after the command completes.
+///     Encapsulates the parsed global flag values, the remaining command arguments,
+///     an optional log-file writer, and an error counter. Implements
+///     <see cref="IDisposable"/> to close the log file when the invocation ends.
+/// </remarks>
 public sealed class Context : IDisposable
 {
     /// <summary>
@@ -44,60 +51,98 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Gets a value indicating the version has been requested
     /// </summary>
+    /// <remarks>Set to <see langword="true"/> when <c>-v</c> or <c>--version</c> appears on the command line.</remarks>
     public bool Version { get; private init; }
 
     /// <summary>
     ///     Gets a value indicating help has been requested
     /// </summary>
+    /// <remarks>Set to <see langword="true"/> when <c>-h</c>, <c>-?</c>, or <c>--help</c> appears on the command line.</remarks>
     public bool Help { get; private init; }
 
     /// <summary>
     ///     Gets a value indicating silent-output has been requested
     /// </summary>
+    /// <remarks>When <see langword="true"/>, <see cref="WriteLine"/>, <see cref="WriteWarning"/>, and <see cref="WriteError"/> suppress console output but still write to the log file.</remarks>
     public bool Silent { get; private init; }
 
     /// <summary>
     ///     Gets a value indicating whether to perform self-validation
     /// </summary>
+    /// <remarks>Set to <see langword="true"/> when <c>--validate</c> appears on the command line. Program routes to the SelfTest subsystem when this is true.</remarks>
     public bool Validate { get; private init; }
 
     /// <summary>
     ///     Gets the name of the validation results file
     /// </summary>
+    /// <remarks>
+    ///     Set by the <c>-r</c>/<c>--result</c> command-line flag. Empty string when
+    ///     <c>--result</c> is not specified. Used by the SelfTest subsystem when
+    ///     <see cref="Validate"/> is <see langword="true"/> to write the TRX-style
+    ///     self-test results to a file.
+    /// </remarks>
     public string ValidationFile { get; private init; } = "";
 
     /// <summary>
     ///     Gets the depth of the validation report
     /// </summary>
+    /// <remarks>
+    ///     Set by the <c>--depth</c> command-line flag. Defaults to 1 when <c>--depth</c> is
+    ///     not specified. Must be a non-negative integer; non-integer or negative values cause
+    ///     <see cref="Create"/> to throw <see cref="InvalidOperationException"/>.
+    /// </remarks>
     public int Depth { get; private init; }
 
     /// <summary>
-    ///     Gets the arguments
+    ///     Gets the positional command-line arguments
     /// </summary>
+    /// <remarks>
+    ///     Contains the arguments remaining after all global flags have been consumed
+    ///     by <see cref="Create"/>. The first element is typically the command name
+    ///     (e.g., <c>validate</c>, <c>query</c>) followed by command-specific operands.
+    ///     Empty when no positional arguments appear after the global flags.
+    /// </remarks>
     public IReadOnlyCollection<string> Arguments { get; private init; }
 
     /// <summary>
     ///     Gets the number of errors reported
     /// </summary>
+    /// <remarks>Incremented by each call to <see cref="WriteError"/>. Read by <see cref="ExitCode"/> to determine the process exit code.</remarks>
     public int Errors { get; private set; }
 
     /// <summary>
     ///     Gets the proposed exit code
     /// </summary>
+    /// <value>
+    ///     0 when no errors have been recorded (<see cref="Errors"/> is zero);
+    ///     1 when one or more errors have been recorded.
+    /// </value>
     public int ExitCode => Errors > 0 ? 1 : 0;
 
     /// <summary>
     ///     Dispose of this context
     /// </summary>
+    /// <remarks>
+    ///     Closes and disposes the log-file writer if one was opened. After disposal,
+    ///     calls to <see cref="WriteLine"/>, <see cref="WriteWarning"/>, and
+    ///     <see cref="WriteError"/> continue to write to the console (if
+    ///     <see cref="Silent"/> is <see langword="false"/>) but no longer write to
+    ///     the log file. <c>Dispose</c> must be the final operation on the
+    ///     <c>Context</c> instance; calling it concurrently with active output
+    ///     calls from another thread is not supported.
+    /// </remarks>
     public void Dispose()
     {
         _log?.Dispose();
     }
 
     /// <summary>
-    ///     Write text to output
+    ///     Writes a line of text to the console (when not silent) and to the log file (when configured).
     /// </summary>
     /// <param name="text">Text to write</param>
+    /// <remarks>
+    ///     Not thread-safe; do not call concurrently from multiple threads.
+    /// </remarks>
     public void WriteLine(string text)
     {
         // Write to the console unless silent
@@ -111,9 +156,12 @@ public sealed class Context : IDisposable
     }
 
     /// <summary>
-    ///     Write warning message to output
+    ///     Writes a warning message in dark yellow to the console (when not silent) and to the log file (when configured).
     /// </summary>
     /// <param name="message">Warning message to write</param>
+    /// <remarks>
+    ///     Not thread-safe; do not call concurrently from multiple threads.
+    /// </remarks>
     public void WriteWarning(string message)
     {
         // Write to the console unless silent
@@ -129,9 +177,15 @@ public sealed class Context : IDisposable
     }
 
     /// <summary>
-    ///     Write an error message to output
+    ///     Writes an error message in red to the console (when not silent) and to the log file (when configured), and increments <see cref="Errors"/>, causing <see cref="ExitCode"/> to return 1.
     /// </summary>
     /// <param name="message">Error message to write</param>
+    /// <remarks>
+    ///     Each call to this method increments the <see cref="Errors"/> counter by one.
+    ///     Because <see cref="ExitCode"/> returns 1 whenever <see cref="Errors"/> is greater
+    ///     than zero, a single call to <see cref="WriteError"/> is sufficient to cause the
+    ///     process to exit with a non-zero code.
+    /// </remarks>
     public void WriteError(string message)
     {
         // Write to the console unless silent
@@ -152,11 +206,23 @@ public sealed class Context : IDisposable
     /// <summary>
     ///     Create a program context
     /// </summary>
-    /// <param name="args">Program arguments</param>
+    /// <param name="args">Program arguments. Must not be null.</param>
     /// <returns>Program context</returns>
-    /// <exception cref="InvalidOperationException">Thrown on invalid arguments</exception>
+    /// <exception cref="ArgumentNullException">Thrown when args is null.</exception>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when a flag is missing its required value argument; when <c>--depth</c> is
+    ///     followed by a non-integer string; when <c>--depth</c> is followed by a negative
+    ///     integer; or when the log file path is inaccessible or invalid.
+    /// </exception>
+    /// <remarks>
+    ///     Creates or opens a log file (I/O side effect) when the <c>--log</c> flag is present.
+    ///     Not thread-safe; do not call concurrently from multiple threads.
+    /// </remarks>
     public static Context Create(string[] args)
     {
+        // Validate arguments
+        ArgumentNullException.ThrowIfNull(args);
+
         // Process arguments
         var version = false;
         var help = false;
@@ -209,6 +275,11 @@ public sealed class Context : IDisposable
                         throw new InvalidOperationException($"Invalid depth value '{depthStr}': must be an integer");
                     }
 
+                    if (depth < 0)
+                    {
+                        throw new InvalidOperationException($"Invalid depth value '{depth}': must be a non-negative integer");
+                    }
+
                     break;
 
                 case "-l":
@@ -234,7 +305,7 @@ public sealed class Context : IDisposable
         {
             try
             {
-                logWriter = new StreamWriter(logFile);
+                logWriter = new StreamWriter(logFile) { AutoFlush = true };
             }
             catch (UnauthorizedAccessException e)
             {

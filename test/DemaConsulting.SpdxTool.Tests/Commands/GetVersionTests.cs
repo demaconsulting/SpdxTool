@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,12 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'get-version' command
 /// </summary>
-[TestClass]
 public class GetVersionTests
 {
     /// <summary>
@@ -72,9 +71,11 @@ public class GetVersionTests
     /// <summary>
     ///     Test that get-version command with missing arguments reports an error
     /// </summary>
-    [TestMethod]
-    public void GetVersion_MissingArguments_ReportsError()
+    [Fact]
+    public void GetVersion_Run_MissingArguments_ReportsError()
     {
+        // Arrange: N/A — no test fixture required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -83,16 +84,39 @@ public class GetVersionTests
             "get-version");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
+        Assert.Contains("'get-version' command missing arguments", output);
+    }
+
+    /// <summary>
+    ///     Test that get-version command with one argument (missing criteria) reports an error
+    /// </summary>
+    [Fact]
+    public void GetVersion_Run_OneArgument_ReportsError()
+    {
+        // Arrange: N/A — no test fixture required
+
+        // Act: Run the command with a file path but no criteria
+        var exitCode = Runner.Run(
+            out var output,
+            "dotnet",
+            "DemaConsulting.SpdxTool.dll",
+            "get-version",
+            "some.spdx.json");
+
+        // Assert: Verify error reported
+        Assert.Equal(1, exitCode);
         Assert.Contains("'get-version' command missing arguments", output);
     }
 
     /// <summary>
     ///     Test that get-version command with missing file reports an error
     /// </summary>
-    [TestMethod]
-    public void GetVersion_MissingFile_ReportsError()
+    [Fact]
+    public void GetVersion_Run_MissingFile_ReportsError()
     {
+        // Arrange: N/A — no test fixture required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -103,20 +127,21 @@ public class GetVersionTests
             "id=SPDXRef-Package");
 
         // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
+        Assert.Equal(1, exitCode);
         Assert.Contains("File not found: missing.spdx.json", output);
     }
 
     /// <summary>
-    ///     Test that get-version command on command line reports workflow-only error
+    ///     Test that get-version command on command line returns the package version
     /// </summary>
-    [TestMethod]
-    public void GetVersion_OnCommandLine_ReportsWorkflowOnlyError()
+    [Fact]
+    public void GetVersion_Run_OnCommandLine_ReturnsPackageVersion()
     {
+        var spdxFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the SPDX files
-            File.WriteAllText("spdx.json", SpdxContents);
+            File.WriteAllText(spdxFile, SpdxContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -124,45 +149,47 @@ public class GetVersionTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "get-version",
-                "spdx.json",
+                spdxFile,
                 "id=SPDXRef-Package-2");
 
-            // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            // Assert: Verify package version is written to output
+            Assert.Equal(0, exitCode);
             Assert.Contains("2.0.0", output);
         }
         finally
         {
-            File.Delete("spdx.json");
+            File.Delete(spdxFile);
         }
     }
 
     /// <summary>
     ///     Test that get-version command in workflow returns the package version
     /// </summary>
-    [TestMethod]
-    public void GetVersion_InWorkflow_ReturnsPackageVersion()
+    [Fact]
+    public void GetVersion_Run_InWorkflow_ReturnsPackageVersion()
     {
-        // Workflow contents
-        const string workflowContents =
-            """
+        var spdxFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        const string versionRef = "${{ version }}";
+        var workflowContents =
+            $"""
             steps:
             - command: get-version
               inputs:
-                spdx: spdx.json
+                spdx: {spdxFile}
                 id: SPDXRef-Package-2
                 output: version
             - command: print
               inputs:
                 text:
-                - Found version ${{ version }}
+                - Found version {versionRef}
             """;
 
         try
         {
             // Arrange: Write the SPDX files
-            File.WriteAllText("spdx.json", SpdxContents);
-            File.WriteAllText("workflow.yaml", workflowContents);
+            File.WriteAllText(spdxFile, SpdxContents);
+            File.WriteAllText(workflowFile, workflowContents);
 
             // Act: Run the command
             var exitCode = Runner.Run(
@@ -170,16 +197,125 @@ public class GetVersionTests
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
                 "run-workflow",
-                "workflow.yaml");
+                workflowFile);
 
-            // Assert: Verify package ID
-            Assert.AreEqual(0, exitCode);
+            // Assert: Verify package version
+            Assert.Equal(0, exitCode);
             Assert.Contains("Found version 2.0.0", output);
         }
         finally
         {
-            File.Delete("spdx.json");
-            File.Delete("workflow.yaml");
+            File.Delete(spdxFile);
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
+    ///     Test that get-version command in a workflow step reports an error when the required 'output' input is absent
+    /// </summary>
+    [Fact]
+    public void GetVersion_Run_MissingWorkflowOutput_ReportsError()
+    {
+        // Arrange: workflow step has 'spdx' but omits the required 'output' input
+        const string workflowContents =
+            """
+            steps:
+            - command: get-version
+              inputs:
+                spdx: some.spdx.json
+            """;
+
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: write the workflow file
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: error reported for the specific missing 'output' input
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'get-version' command missing 'output' input", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
+    ///     Test that get-version command in a workflow step reports an error when required inputs are absent
+    /// </summary>
+    [Fact]
+    public void GetVersion_Run_MissingWorkflowInputs_ReportsError()
+    {
+        // Arrange: workflow step omits the required 'spdx' input
+        const string workflowContents =
+            """
+            steps:
+            - command: get-version
+              inputs:
+                output: version
+            """;
+
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: write the workflow file
+            File.WriteAllText(workflowFile, workflowContents);
+
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
+
+            // Assert: error reported for the specific missing 'spdx' input
+            Assert.Equal(1, exitCode);
+            Assert.Contains("'get-version' command missing 'spdx' input", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
+    }
+
+    /// <summary>
+    ///     Test that get-version command reports an error when no package matches the supplied criteria
+    /// </summary>
+    [Fact]
+    public void GetVersion_Run_PackageNotFound_ReportsError()
+    {
+        var spdxFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: Write the SPDX file
+            File.WriteAllText(spdxFile, SpdxContents);
+
+            // Act: Run the command with an ID that does not exist in the document
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "get-version",
+                spdxFile,
+                "id=SPDXRef-DoesNotExist");
+
+            // Assert: error reported and exit code is non-zero
+            Assert.Equal(1, exitCode);
+            Assert.Contains("not found", output);
+        }
+        finally
+        {
+            File.Delete(spdxFile);
         }
     }
 }

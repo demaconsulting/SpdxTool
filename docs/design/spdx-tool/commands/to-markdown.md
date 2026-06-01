@@ -1,80 +1,102 @@
-# DemaConsulting.SpdxTool to-markdown Command Design
+### ToMarkdown
 
-## Purpose
+#### Purpose
 
-The `to-markdown` command generates a Markdown summary of an SPDX document. The
-summary includes document metadata, root packages, non-root packages, and tool
-packages, each in a formatted table. It is available from the command-line and
-from workflow YAML files.
+ToMarkdown generates a Markdown summary of an SPDX document and writes it to an output file. The
+summary includes document metadata, root packages, non-root packages, and tool packages, each in
+its own section with a configurable heading depth and title. It is available from both the CLI and
+workflow YAML files.
 
-## Arguments / Inputs
+#### Data Model
 
-### Command-line usage
+ToMarkdown carries no per-instance state; all meaningful data members are static.
 
-```text
-spdx-tool to-markdown <spdx.json> <out.md> [title] [depth]
-```
+**Command** (`string`, `const`): The command name string `"to-markdown"` used for registration and
+error messages.
 
-- `spdx.json` — SPDX document to summarize.
-- `out.md` — Output Markdown file.
-- `title` — Optional section title (default: `"SPDX Document"`).
-- `depth` — Optional heading depth (integer ≥ 1, default: `2`).
+**Instance** (`ToMarkdown`, `static readonly`): The singleton instance registered with
+CommandsRegistry.
 
-### Workflow YAML usage
+**Entry** (`CommandEntry`, `static readonly`): The CommandEntry record for ToMarkdown, containing
+the command name, usage string, description, help lines string array, and reference to Instance.
 
-```yaml
+#### Key Methods
 
-- command: to-markdown
+**Run(Context, string[])**: Parses spdxFile, markdownFile, optional title (default "SPDX
+Document"), and optional depth (default 2) from CLI arguments and calls
+GenerateSummaryMarkdown.
 
-  inputs:
-    spdx: <spdx.json>             # SPDX file name (required)
-    markdown: <out.md>            # Output Markdown file (required)
-    title: <title>                # Optional title (default: "SPDX Document")
-    depth: <depth>                # Optional heading depth (default: 2)
-```
+- *Parameters*: `Context context` — execution context (currently unused by this unit);
+  `string[] args` — [spdxFile, markdownFile,
+  optional title, optional depth].
+- *Returns*: `void`
+- *Preconditions*: args.Length must be at least 2. depth must be a positive integer if provided.
+  title must not be whitespace.
+- *Post-conditions*: The markdown file is written.
 
-## Implementation
+**Run(Context, YamlMappingNode, Dictionary)**: Reads spdx, markdown, title, and depth inputs from
+the YAML step node and calls GenerateSummaryMarkdown.
 
-1. Loads the SPDX document.
-2. Constructs the Markdown in a `StringBuilder`:
-   - A document summary table (file name, name, file/package/relationship counts,
+- *Parameters*: `Context context` — execution context (currently unused by this unit);
+  `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — variable map.
+- *Returns*: `void`
+- *Preconditions*: spdx and markdown inputs are required. depth must parse to a positive integer.
+  title must not be whitespace or empty.
+- *Post-conditions*: The markdown file is written.
 
-     creation info).
+**GenerateSummaryMarkdown(string, string, string, int)**: Loads the SPDX document, builds a
+Markdown string using StringBuilder, and writes it to the output file. The document section lists
+metadata in a two-column table. Packages are classified into root packages (from
+SpdxDocument.GetRootPackages), tool packages (having BuildToolOf, DevToolOf, or TestToolOf
+relationships), and remaining packages. The title heading is rendered at `depth` hash marks.
+Each group (Root Packages, Packages, Tools) is rendered as a three-column table under a
+sub-section heading at `depth+1` hash marks.
 
-   - Root packages table (packages returned by `doc.GetRootPackages()`).
-   - Non-root, non-tool packages table.
-   - Tools table (packages involved in `BUILD_TOOL_OF`, `DEV_TOOL_OF`,
+Root packages are identified by `SpdxDocument.GetRootPackages()`, which resolves the document's
+`DESCRIBES` relationships to find the top-level described elements. The `documentDescribes` field
+in the SPDX JSON is a legacy shorthand that some serializers emit alongside the `DESCRIBES`
+relationships; the model normalizes both into the same set of root packages.
 
-     or `TEST_TOOL_OF` relationships).
+- *Parameters*: `string spdxFile` — SPDX JSON file path; `string markdownFile` — output file path;
+  `string title` — heading title (default "SPDX Document"); `int depth` — heading level (default 2).
+- *Returns*: `void`
+- *Preconditions*: spdxFile must be a valid SPDX JSON document. depth must be at least 1.
+- *Post-conditions*: markdownFile is written.
 
-3. Writes the result to the output file via `File.WriteAllText`.
+**License(SpdxPackage)**: Determines the display license for a package. Returns the concluded
+license if it is non-empty and not "NOASSERTION". Falls back to the declared license under the
+same condition. Returns "NOASSERTION" when neither field provides a usable value. Concluded
+license takes priority because it represents the authoritative determination after analysis,
+while declared license is the upstream assertion before review.
 
-### License helper
+- *Parameters*: `SpdxPackage package` — the package whose license to resolve.
+- *Returns*: `string` — the concluded license, declared license, or "NOASSERTION".
+- *Preconditions*: None.
+- *Post-conditions*: None — the method is read-only.
 
-`License(package)` returns `ConcludedLicense` if non-empty and not `"NOASSERTION"`,
-then `DeclaredLicense`, then `"NOASSERTION"` as a fallback.
+#### Error Handling
 
-## Error Handling
+**CommandUsageException** — thrown by Run(Context, string[]) when fewer than two arguments are
+provided, when the title is whitespace, or when depth is not a positive integer; also propagated
+from SpdxHelpers.LoadJsonDocument when the specified SPDX input file does not exist on disk.
 
-| Condition | Exception |
-| :--- | :--- |
-| Fewer than 2 CLI arguments | `CommandUsageException` |
-| Empty or whitespace `title` argument (CLI) | `CommandUsageException` |
-| Invalid or non-positive `depth` argument (CLI) | `CommandUsageException` |
-| Missing `spdx` input (workflow) | `YamlException` |
-| Missing `markdown` input (workflow) | `YamlException` |
-| Empty or whitespace `title` input (workflow) | `YamlException` |
-| Invalid or non-positive `depth` input (workflow) | `YamlException` |
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when spdx or markdown
+inputs are missing, when the title is whitespace, or when the depth value is not a positive
+integer.
 
-## Constraints
+**System.IO.IOException** — propagated from File.WriteAllText in GenerateSummaryMarkdown when the
+output Markdown file cannot be written.
 
-- The output file is overwritten unconditionally.
-- Heading depth controls the number of `#` characters in section headers
+#### Dependencies
 
-  (`depth = 2` → `##`, `depth = 3` → `###`, etc.).
+- Command (abstract base class)
+- SpdxDocument, SpdxPackage, SpdxRelationshipType (DemaConsulting.SpdxModel)
+- SpdxHelpers (Spdx units)
+- System.Text.StringBuilder
+- YamlDotNet (YamlMappingNode, YamlException)
 
-- Sub-section headings use one extra `#` relative to the document heading
+#### Callers
 
-  (i.e. `depth + 1`).
-
-- Variable expansion is applied to all string inputs via `GetMapString`.
+- CommandsRegistry — routes CLI and workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: to-markdown

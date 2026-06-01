@@ -1,21 +1,102 @@
-# DemaConsulting.SpdxTool SelfTest Orchestrator Requirements
-#
-# This file contains requirements for the SelfTest orchestrator (Validate.cs).
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: SelfTest Orchestrator
-    requirements:
-      - id: SpdxTool-SelfTest-Orchestrate
-        title: The SelfTest orchestrator shall execute all validation steps and collect results.
-        tags:
-          - self-test
-        justification: |
-          The orchestrator is responsible for running all individual self-test steps
-          in sequence, collecting pass/fail results, and reporting a summary. This
-          ensures complete coverage of all commands during self-validation.
-        tests:
-          - SelfTest_Validate_Succeeds
-          - SelfTest_ValidateWithDepth_Succeeds
-          - SelfTest_ValidateWithTrxResult_GeneratesTrxFile
-          - SelfTest_ValidateWithJUnitResult_GeneratesJUnitFile
+  - title: SpdxTool Requirements
+    sections:
+      - title: SelfTest Requirements
+        sections:
+          - title: Validate Requirements
+            requirements:
+              - id: SpdxTool-SelfTest-Orchestrate
+                title: >-
+                  The SelfTest orchestrator shall run all self-test validation steps in sequence
+                  and collect the pass/fail result from each step.
+                tags:
+                  - self-test
+                justification: |
+                  The orchestrator is responsible for running all individual self-test steps
+                  in sequence and collecting pass/fail results, ensuring complete coverage of
+                  all commands during self-validation.
+                children:
+                  - SpdxTool-SelfTest-AddPackage
+                  - SpdxTool-SelfTest-AddRelationship
+                  - SpdxTool-SelfTest-Basic
+                  - SpdxTool-SelfTest-CopyPackage
+                  - SpdxTool-SelfTest-Diagram
+                  - SpdxTool-SelfTest-FindPackage
+                  - SpdxTool-SelfTest-GetVersion
+                  - SpdxTool-SelfTest-Hash
+                  - SpdxTool-SelfTest-Ntia
+                  - SpdxTool-SelfTest-Query
+                  - SpdxTool-SelfTest-RenameId
+                  - SpdxTool-SelfTest-RunNuGetWorkflow
+                  - SpdxTool-SelfTest-ToMarkdown
+                  - SpdxTool-SelfTest-UpdatePackage
+                tests:
+                  - SelfTest_Validate_ValidContext_Succeeds
+                  - SelfTest_Validate_WithDepth_Succeeds
+
+              - id: SpdxTool-SelfTest-Orchestrate-SummaryReport
+                title: >-
+                  The SelfTest orchestrator shall report a pass/fail summary including total,
+                  passed, and failed counts after all steps complete.
+                tags:
+                  - self-test
+                justification: |
+                  Reporting a summary gives users and CI pipelines an at-a-glance view of
+                  overall self-test health without requiring them to inspect individual step
+                  results.
+                tests:
+                  - SelfTest_Validate_ValidContext_Succeeds
+                  - SelfTest_Validate_WithDepth_Succeeds
+
+              - id: SpdxTool-SelfTest-Orchestrate-SerializeResults
+                title: >-
+                  The SelfTest orchestrator shall serialize results to a TRX or JUnit XML file
+                  when a result file path is provided.
+                tags:
+                  - self-test
+                justification: |
+                  Producing machine-readable result files enables CI pipelines and reporting
+                  tools to consume self-test outcomes.
+                tests:
+                  - SelfTest_Validate_WithTrxResult_GeneratesTrxFile
+                  - SelfTest_Validate_WithJUnitResult_GeneratesJUnitFile
+
+              - id: SpdxTool-SelfTest-Orchestrate-UnsupportedExtension
+                title: >-
+                  The SelfTest orchestrator shall report an error for unsupported result file
+                  extensions.
+                tags:
+                  - self-test
+                justification: |
+                  Reporting an error for unsupported extensions prevents silent data loss when
+                  a caller provides an unrecognized file extension for the results file.
+                tests:
+                  - SelfTest_Validate_UnsupportedResultExtension_ReportsError
+
+              - id: SpdxTool-SelfTest-Orchestrate-SystemInfoHeader
+                title: >-
+                  The SelfTest orchestrator shall write a system-information header (including
+                  tool version, machine name, OS description, .NET runtime version, and UTC
+                  timestamp) before executing any validation steps.
+                tags:
+                  - self-test
+                justification: |
+                  Including system information in the validation header ensures that results
+                  can be correlated with specific tool versions and execution environments,
+                  supporting effective debugging and compliance evidence.
+                tests:
+                  - SelfTest_Validate_ValidContext_Succeeds
+
+              - id: SpdxTool-SelfTest-Orchestrate-DepthHeading
+                title: >-
+                  The SelfTest orchestrator shall use the context depth setting to control the
+                  heading level of the system-information header in the output.
+                tags:
+                  - self-test
+                justification: |
+                  Depth-controlled heading output enables embedding the self-test report at an
+                  appropriate heading level within a larger document, supporting hierarchical
+                  report composition.
+                tests:
+                  - SelfTest_Validate_WithDepth_Succeeds

@@ -1,20 +1,33 @@
-# DemaConsulting.SpdxTool help Command Requirements
-#
-# This file contains requirements for the help command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: help Command
-    requirements:
-      - id: SpdxTool-Command-HelpCommand
-        title: The help command shall display extended usage information for a specified command.
-        tags:
-          - cli
-        justification: |
-          Users need access to detailed usage information for each command to
-          understand arguments, options, and workflow YAML syntax without consulting
-          external documentation.
-        tests:
-          - Help_NoArguments_ReportsError
-          - Help_UnknownCommand_ReportsError
-          - Help_RunWorkflowCommand_DisplaysHelp
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: Help Requirements
+            requirements:
+              - id: SpdxTool-Commands-Help-DisplayHelp
+                title: The help command shall display extended usage information for a specified command.
+                tags:
+                  - cli
+                justification: |
+                  Users need access to detailed usage information for each command to
+                  understand arguments, options, and workflow YAML syntax without consulting
+                  external documentation.
+                tests:
+                  - Help_Run_NoArguments_ReportsError
+                  - Help_Run_UnknownCommand_ReportsError
+                  - Help_Run_RunWorkflowCommand_DisplaysHelp
+
+              - id: SpdxTool-Commands-Help-YamlInvocation
+                title: >-
+                  The help command shall be invocable from a YAML workflow step using
+                  the about input to specify the target command.
+                tags:
+                  - cli
+                justification: |
+                  Users running automated workflows need to retrieve help text programmatically
+                  via the about input in YAML steps, not only from the command line.
+                tests:
+                  - Help_Run_YamlInvocation_DisplaysHelp
+                  - Help_Run_YamlInvocation_MissingAbout_ReportsError

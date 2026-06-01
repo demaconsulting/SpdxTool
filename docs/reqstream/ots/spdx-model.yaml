@@ -1,0 +1,51 @@
+---
+# DemaConsulting.SpdxModel OTS requirements
+sections:
+  - title: OTS Software Requirements
+    sections:
+      - title: SpdxModel Requirements
+        requirements:
+          - id: SpdxTool-OTS-SpdxModel-ObjectModel
+            title: DemaConsulting.SpdxModel shall provide the SPDX document object model.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SpdxModel provides the SpdxDocument, SpdxPackage, SpdxRelationship,
+              and related model types that SpdxTool depends on for all SPDX document operations.
+            tests:
+              - SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument
+              - Diagram_Run_ValidSpdxFile_GeneratesDiagram
+
+          - id: SpdxTool-OTS-SpdxModel-Serialization
+            title: DemaConsulting.SpdxModel shall provide JSON serialization for SPDX 2.3 documents.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SpdxModel provides Spdx2JsonDeserializer and Spdx2JsonSerializer
+              for reading and writing SPDX 2.3 JSON files, used by SpdxHelpers for all file
+              operations.
+            tests:
+              - SpdxHelpers_SaveJsonDocument_ValidDocument_StampsCreator
+
+          - id: SpdxTool-OTS-SpdxModel-NtiaValidation
+            title: DemaConsulting.SpdxModel shall provide NTIA minimum-element validation for SPDX documents.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SpdxModel exposes NTIA minimum-element validation helpers that the Validate
+              command uses to enforce NTIA compliance, ensuring the tool can report conformance errors
+              without implementing the validation logic itself.
+            tests:
+              - Validate_Run_NtiaValidDocument_Succeeds
+              - Validate_Run_NtiaInvalidDocument_ReportsNtiaErrors
+
+          - id: SpdxTool-OTS-SpdxModel-SchemaValidation
+            title: DemaConsulting.SpdxModel shall provide SPDX-schema validation for SPDX documents.
+            tags:
+              - ots
+            justification: |
+              DemaConsulting.SpdxModel exposes SPDX-schema validation helpers that the Validate command
+              uses to enforce schema compliance, ensuring the tool can report standards-conformance errors
+              without implementing the validation logic itself.
+            tests:
+              - Validate_Run_ValidSpdxDocument_Succeeds

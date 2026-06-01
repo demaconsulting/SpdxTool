@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,11 +21,18 @@
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Command Entry record
+///     Immutable descriptor for a single registered command.
 /// </summary>
-/// <param name="Name">Command name</param>
-/// <param name="CommandLine">Command line example</param>
-/// <param name="Summary">Command summary</param>
-/// <param name="Details">Command detailed description</param>
-/// <param name="Instance">Command instance</param>
+/// <remarks>
+///     Each <see cref="CommandEntry"/> bundles the metadata that <c>Program</c> needs to
+///     display help and dispatch commands, together with the <see cref="Command"/> instance
+///     used to execute the command. All entries are created once at static-initialization
+///     time by their respective command classes (e.g., <c>Help.Entry</c>) and stored in
+///     <see cref="CommandsRegistry"/>.
+/// </remarks>
+/// <param name="Name">CLI-visible command name (e.g., <c>"validate"</c>, <c>"add-package"</c>).</param>
+/// <param name="CommandLine">One-line example showing typical CLI usage.</param>
+/// <param name="Summary">Short description used in the main help listing.</param>
+/// <param name="Details">Multi-line extended help text shown by the <c>help</c> command.</param>
+/// <param name="Instance">Singleton <see cref="Command"/> instance used to execute this command.</param>
 public sealed record CommandEntry(string Name, string CommandLine, string Summary, string[] Details, Command Instance);

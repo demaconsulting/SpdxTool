@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,12 +29,19 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Add a relationship between SPDX elements
 /// </summary>
+/// <remarks>
+///     Stateless singleton registered with CommandsRegistry and exposed as a static helper reused by
+///     AddPackage and CopyPackage. Callers that only have a file path use the
+///     <see cref="Add(string, SpdxRelationship[], bool)"/> overload; callers that already hold an
+///     in-memory document use the <see cref="Add(SpdxDocument, SpdxRelationship[], bool)"/> overload
+///     to avoid redundant file I/O. Stateless and thread-safe; all state is passed via parameters.
+/// </remarks>
 public sealed class AddRelationship : Command
 {
     /// <summary>
     ///     Command name
     /// </summary>
-    private const string Command = "add-relationship";
+    private const string CommandName = "add-relationship";
 
     /// <summary>
     ///     Singleton instance of this command
@@ -45,7 +52,7 @@ public sealed class AddRelationship : Command
     ///     Entry information for this command
     /// </summary>
     public static readonly CommandEntry Entry = new(
-        Command,
+        CommandName,
         "add-relationship <spdx.json> <args>",
         "Add relationship between elements.",
         [
@@ -59,7 +66,7 @@ public sealed class AddRelationship : Command
             "    inputs:",
             "      spdx: <spdx.json>             # SPDX file name",
             "      id: <id>                      # Element ID",
-            "      replace: false                # Replace existing relationships (default: true)",
+            "      replace: true                 # Replace existing relationships (default: true)",
             "      relationships:",
             "      - type: <relationship>        # Relationship type",
             "        element: <element>          # Related element",
@@ -83,6 +90,8 @@ public sealed class AddRelationship : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="CommandUsageException">Thrown when fewer than four arguments are provided.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the relationship type argument is not a recognized SPDX relationship type string.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 4
@@ -105,6 +114,7 @@ public sealed class AddRelationship : Command
     }
 
     /// <inheritdoc />
+    /// <exception cref="YamlException">Thrown when the spdx, id, or relationships inputs are absent from the workflow step, or when the replace input cannot be parsed as a boolean.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -129,18 +139,26 @@ public sealed class AddRelationship : Command
         var relationshipsSequence = GetMapSequence(inputs, "relationships") ??
                                     throw new YamlException(step.Start, step.End,
                                         "'add-relationship' missing 'relationships' input");
-        var relationships = Parse(Command, id, relationshipsSequence, variables);
+        var relationships = Parse(CommandName, id, relationshipsSequence, variables);
 
         // Add the relationship
         Add(spdxFile, relationships, replace);
     }
 
     /// <summary>
-    ///     Add the SPDX relationship to the SPDX document
+    ///     Add the SPDX relationships to the SPDX document
     /// </summary>
+    /// <remarks>
+    ///     File-path entry point that loads the document from disk, delegates to
+    ///     <see cref="Add(SpdxDocument, SpdxRelationship[], bool)"/>, and saves the result.
+    ///     Use this overload when the caller holds only a file path; use the document overload when
+    ///     the document is already in memory to avoid redundant I/O.
+    /// </remarks>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="relationships">SPDX relationships</param>
     /// <param name="replace">Replace existing relationships</param>
+    /// <exception cref="System.IO.IOException">Thrown when the SPDX file cannot be read or written.</exception>
+    /// <exception cref="CommandErrorException">Thrown when SpdxRelationships.Add raises an error (for example, duplicate relationships when replace is false).</exception>
     public static void Add(string spdxFile, SpdxRelationship[] relationships, bool replace = false)
     {
         // Load the SPDX document
@@ -155,9 +173,16 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Add the SPDX relationships to the SPDX document
     /// </summary>
-    /// <param name="doc">SPDX document</param>
+    /// <remarks>
+    ///     Shared document-level integration point reused by AddPackage and CopyPackage to attach
+    ///     relationships without incurring additional file I/O. Wraps any exception from
+    ///     <c>SpdxRelationships.Add</c> in a <see cref="CommandErrorException"/> so that all
+    ///     command-layer callers receive a consistent exception type.
+    /// </remarks>
+    /// <param name="doc">SPDX document. Must not be null.</param>
     /// <param name="relationships">SPDX relationships</param>
     /// <param name="replace">Replace existing relationships</param>
+    /// <exception cref="CommandErrorException">Thrown when SpdxRelationships.Add raises an error (for example, duplicate relationships when replace is false).</exception>
     public static void Add(SpdxDocument doc, SpdxRelationship[] relationships, bool replace = false)
     {
         try
@@ -173,12 +198,19 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Parse SPDX relationships from a YAML sequence node
     /// </summary>
+    /// <remarks>
+    ///     Sequence-level entry point called by workflow callers that hold a
+    ///     <see cref="YamlSequenceNode"/>. Returns an empty array when <paramref name="relationships"/>
+    ///     is null so that callers with an optional relationships block do not need a null guard before
+    ///     calling this method.
+    /// </remarks>
     /// <param name="command">Command to blame for errors</param>
     /// <param name="packageId">Package ID</param>
     /// <param name="relationships">Relationships YAML sequence node</param>
     /// <param name="variables">Variables for expansion</param>
     /// <returns>Array of SPDX relationships</returns>
-    /// <exception cref="YamlException">On error</exception>
+    /// <exception cref="YamlException">Thrown when a relationship entry is not a mapping node, or
+    /// when the 'type' or 'element' field is absent or unrecognized.</exception>
     public static SpdxRelationship[] Parse(
         string command,
         string packageId,
@@ -191,13 +223,16 @@ public sealed class AddRelationship : Command
             return [];
         }
 
-        // Parse each relationship
+        // Project each YAML child node to an SpdxRelationship, throwing YamlException for any invalid entry
         return
         [
             ..relationships.Children.Select(node =>
             {
                 // Get the relationship map
-                if (node is not YamlMappingNode relationshipMap) { throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping"); }
+                if (node is not YamlMappingNode relationshipMap)
+                {
+                    throw new YamlException(node.Start, node.End, $"'{command}' relationship must be a mapping");
+                }
 
                 // Parse the relationship
                 return Parse(command, packageId, relationshipMap, variables);
@@ -208,12 +243,18 @@ public sealed class AddRelationship : Command
     /// <summary>
     ///     Parse an SPDX relationship from a YAML mapping node
     /// </summary>
+    /// <remarks>
+    ///     Mapping-level entry point called by the sequence overload for each child node and directly
+    ///     by callers that already hold a <see cref="YamlMappingNode"/> for a single relationship entry.
+    /// </remarks>
     /// <param name="command">Command to blame for errors</param>
     /// <param name="packageId">Package ID</param>
     /// <param name="relationshipMap">Relationship YAML mapping node</param>
     /// <param name="variables">Variables for expansion</param>
     /// <returns>SPDX relationship</returns>
-    /// <exception cref="YamlException">On error</exception>
+    /// <exception cref="YamlException">Thrown when the 'type' or 'element' field is absent
+    /// from the relationship mapping, or when 'type' is not a recognized SPDX relationship
+    /// type.</exception>
     public static SpdxRelationship Parse(
         string command,
         string packageId,

@@ -1,18 +1,126 @@
-# DemaConsulting.SpdxTool rename-id Command Requirements
-#
-# This file contains requirements for the rename-id command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: rename-id Command
-    requirements:
-      - id: SpdxTool-Manage-RenameId
-        title: The tool shall rename SPDX element IDs using the rename-id command.
-        tags:
-          - spdx
-        justification: |
-          Users need to modify element IDs to resolve conflicts, follow naming
-          conventions, or reorganize SPDX documents while maintaining referential
-          integrity.
-        tests:
-          - RenameId_ValidSpdxFile_RenamesId
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: RenameId Requirements
+            requirements:
+              - id: SpdxTool-Commands-RenameId
+                title: The tool shall rename SPDX element IDs using the rename-id command.
+                tags:
+                  - spdx
+                justification: |
+                  Users need to modify element IDs to resolve conflicts, follow naming
+                  conventions, or reorganize SPDX documents while maintaining referential
+                  integrity.
+                tests:
+                  - RenameId_Run_ValidSpdxFile_RenamesId
+
+              - id: SpdxTool-Commands-RenameId-MissingArguments
+                title: The rename-id command shall report a usage error when required CLI arguments are missing.
+                tags:
+                  - spdx
+                justification: |
+                  Missing arguments indicate incorrect invocation. A clear error message
+                  guides users to the correct command syntax.
+                tests:
+                  - RenameId_Run_MissingArguments_ReportsError
+
+              - id: SpdxTool-Commands-RenameId-MissingFile
+                title: The rename-id command shall report an error when the specified SPDX file does not exist.
+                tags:
+                  - spdx
+                justification: |
+                  A missing input file cannot be processed. A clear error prevents confusing
+                  output or silent failures.
+                tests:
+                  - RenameId_Run_MissingFile_ReportsError
+
+              - id: SpdxTool-Commands-RenameId-WorkflowInvocation
+                title: >-
+                  The rename-id command shall be invocable from a workflow YAML step
+                  using the spdx, old, and new inputs.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow YAML invocation is required so that users can embed rename-id as
+                  part of multi-step automated workflows, which is the primary use-case for
+                  scripted SPDX document manipulation.
+                tests:
+                  - RenameId_Run_WorkflowInvocation_RenamesId
+
+              - id: SpdxTool-Commands-RenameId-AllCollectionsRename
+                title: >-
+                  The rename-id command shall update all element collections throughout the
+                  document when renaming an ID.
+                tags:
+                  - spdx
+                justification: |
+                  SPDX element IDs are referenced across multiple collections in a document.
+                  Renaming only some of those references would produce an inconsistent document
+                  that fails validation and causes downstream tooling errors.
+
+                  Non-normative detail: the collections updated are file IDs, snippet
+                  SnippetFromFile references, package HasFiles arrays, relationship
+                  from-element IDs, relationship to-element IDs (RelatedSpdxElement),
+                  and the document Describes array.
+                tests:
+                  - RenameId_Run_ValidSpdxFile_RenamesAllCollections
+
+              - id: SpdxTool-Commands-RenameId-ValidateEmptyOldId
+                title: The rename-id command shall reject an empty old ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  An empty old ID is not a valid SPDX element identifier. Rejecting it
+                  early with a clear usage error prevents silent failures and guides users
+                  to supply a well-formed identifier.
+                tests:
+                  - RenameId_Rename_EmptyOldId_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateEmptyNewId
+                title: The rename-id command shall reject an empty new ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  An empty new ID is not a valid SPDX element identifier. Rejecting it
+                  early with a clear usage error prevents the document from being written
+                  with an invalid element identifier.
+                tests:
+                  - RenameId_Rename_EmptyNewId_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateSpdxDocumentOldId
+                title: The rename-id command shall reject SPDXRef-DOCUMENT as the old ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  SPDXRef-DOCUMENT is a reserved identifier that identifies the document
+                  itself. Renaming it would invalidate the document structure, so the
+                  command must reject it as a source ID.
+                tests:
+                  - RenameId_Rename_OldIdIsDocument_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateSpdxDocumentNewId
+                title: The rename-id command shall reject SPDXRef-DOCUMENT as the new ID with a usage error.
+                tags:
+                  - spdx
+                justification: |
+                  SPDXRef-DOCUMENT is a reserved identifier that identifies the document
+                  itself. Renaming another element to this identifier would cause an ID
+                  collision and invalidate the document structure.
+                tests:
+                  - RenameId_Rename_NewIdIsDocument_ThrowsException
+
+              - id: SpdxTool-Commands-RenameId-ValidateDuplicateNewId
+                title: >-
+                  The rename-id command shall reject a new ID that is already in use by another
+                  element with an error.
+                tags:
+                  - spdx
+                justification: |
+                  SPDX element IDs must be unique within a document. Renaming an element
+                  to an ID already used by another element would introduce a duplicate
+                  identifier, producing an invalid document.
+                tests:
+                  - RenameId_Rename_NewIdAlreadyInUse_ThrowsException

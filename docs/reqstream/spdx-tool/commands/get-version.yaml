@@ -1,18 +1,66 @@
-# DemaConsulting.SpdxTool get-version Command Requirements
-#
-# This file contains requirements for the get-version command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: get-version Command
-    requirements:
-      - id: SpdxTool-Package-GetVersion
-        title: The tool shall retrieve package versions from SPDX documents using the get-version command.
-        tags:
-          - spdx
-        justification: |
-          Users need to extract version information from packages for reporting,
-          dependency management, and compatibility checking.
-        tests:
-          - GetVersion_OnCommandLine_ReportsWorkflowOnlyError
-          - GetVersion_InWorkflow_ReturnsPackageVersion
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: GetVersion Requirements
+            requirements:
+              - id: SpdxTool-Commands-GetVersion-RetrievePackageVersion
+                title: The tool shall retrieve package versions from SPDX documents using the get-version command.
+                tags:
+                  - spdx
+                justification: |
+                  Users need to extract version information from packages for reporting,
+                  dependency management, and compatibility checking.
+                tests:
+                  - GetVersion_Run_OnCommandLine_ReturnsPackageVersion
+                  - GetVersion_Run_InWorkflow_ReturnsPackageVersion
+              - id: SpdxTool-Commands-GetVersion-MissingArguments
+                title: The get-version command shall report an error when invoked with fewer than two arguments.
+                tags:
+                  - spdx
+                justification: |
+                  Providing a clear error message when required arguments are absent guides users
+                  to correct usage and prevents undefined behavior.
+                tests:
+                  - GetVersion_Run_MissingArguments_ReportsError
+                  - GetVersion_Run_OneArgument_ReportsError
+              - id: SpdxTool-Commands-GetVersion-FileNotFound
+                title: The get-version command shall report an error when the specified SPDX file does not exist.
+                tags:
+                  - spdx
+                justification: |
+                  Reporting a clear file-not-found error allows users to diagnose missing or
+                  misnamed input files without reading internal error output.
+                tests:
+                  - GetVersion_Run_MissingFile_ReportsError
+              - id: SpdxTool-Commands-GetVersion-PackageNotFound
+                title: The get-version command shall report an error when no package matches the supplied criteria.
+                tags:
+                  - spdx
+                justification: |
+                  When criteria match no package the command must fail clearly so users
+                  can diagnose incorrect search criteria rather than receiving an empty result.
+                tests:
+                  - GetVersion_Run_PackageNotFound_ReportsError
+              - id: SpdxTool-Commands-GetVersion-MissingWorkflowSpdx
+                title: The get-version command shall report a usage error when the required workflow input `spdx` is absent.
+                tags:
+                  - workflow
+                justification: |
+                  The spdx input is required for workflow invocation; its absence must be reported
+                  clearly so workflow authors can diagnose misconfigured steps without reading
+                  internal error output.
+                tests:
+                  - GetVersion_Run_MissingWorkflowInputs_ReportsError
+              - id: SpdxTool-Commands-GetVersion-MissingWorkflowOutput
+                title: The get-version command shall report a usage error when the required workflow input `output` is absent.
+                tags:
+                  - workflow
+                justification: |
+                  The output input is required for workflow invocation; its absence must be reported
+                  clearly so workflow authors can diagnose misconfigured steps without reading
+                  internal error output.
+                tests:
+                  - GetVersion_Run_MissingWorkflowOutput_ReportsError

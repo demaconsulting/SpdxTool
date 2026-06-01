@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,16 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for silencing output.
 /// </summary>
-[TestClass]
 public class SilentTests
 {
     /// <summary>
     ///     Test that the short silent flag suppresses output
     /// </summary>
-    [TestMethod]
-    public void Silent_ShortFlag_SuppressesOutput()
+    [Fact]
+    public void SpdxTool_Silent_ShortFlag_SuppressesOutput()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -41,18 +42,20 @@ public class SilentTests
             "-h");
 
         // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify the output is empty
-        Assert.AreEqual(0, output.Length);
+        Assert.Empty(output);
     }
 
     /// <summary>
     ///     Test that the long silent flag suppresses output
     /// </summary>
-    [TestMethod]
-    public void Silent_LongFlag_SuppressesOutput()
+    [Fact]
+    public void SpdxTool_Silent_LongFlag_SuppressesOutput()
     {
+        // Arrange: no setup required
+
         // Act: Run the command
         var exitCode = Runner.Run(
             out var output,
@@ -62,9 +65,9 @@ public class SilentTests
             "--help");
 
         // Assert: Verify success
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify the output is empty
-        Assert.AreEqual(0, output.Length);
+        Assert.Empty(output);
     }
 }

@@ -1,21 +1,94 @@
-# DemaConsulting.SpdxTool find-package Command Requirements
-#
-# This file contains requirements for the find-package command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: find-package Command
-    requirements:
-      - id: SpdxTool-Package-FindPackage
-        title: The tool shall find packages in SPDX documents using the find-package command.
-        tags:
-          - spdx
-        justification: |
-          Users need to locate specific packages within SPDX documents based on
-          criteria such as name, version, or other attributes to query or modify them.
-        tests:
-          - FindPackage_OnCommandLine_ReportsWorkflowOnlyError
-          - FindPackage_ByName_FindsPackage
-          - FindPackage_ByVersion_FindsPackage
-          - FindPackage_ByFileName_FindsPackage
-          - FindPackage_ByDownloadUrl_FindsPackage
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: FindPackage Requirements
+            requirements:
+              - id: SpdxTool-Commands-FindPackage
+                title: The tool shall find packages in SPDX documents using the find-package command.
+                tags:
+                  - spdx
+                justification: |
+                  Users need to locate specific packages within SPDX documents based on
+                  criteria such as name, version, or other attributes to query or modify them.
+                tests:
+                  - FindPackage_Run_ByNameOnCommandLine_FindsPackage
+                  - FindPackage_Run_ByName_FindsPackage
+                  - FindPackage_Run_ByVersion_FindsPackage
+                  - FindPackage_Run_ByFileName_FindsPackage
+                  - FindPackage_Run_ByDownloadUrl_FindsPackage
+                  - FindPackage_Run_ById_FindsPackage
+
+              - id: SpdxTool-Commands-FindPackage-ValidateMissingInput
+                title: >-
+                  The find-package command shall report a usage error when required inputs are absent.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that users can
+                  diagnose configuration mistakes quickly.
+                tests:
+                  - FindPackage_Run_MissingArguments_ReportsError
+                  - FindPackage_Run_MissingOutputInput_ReportsError
+                  - FindPackage_Run_MissingSpdxInput_ReportsError
+
+              - id: SpdxTool-Commands-FindPackage-ValidateMalformedCriteria
+                title: >-
+                  The find-package command shall report a usage error when criterion arguments are malformed.
+                tags:
+                  - spdx
+                justification: |
+                  Criterion strings that cannot be parsed must be rejected so that users receive
+                  actionable feedback instead of silent incorrect behavior.
+                tests:
+                  - FindPackage_Run_InvalidCriteria_ReportsError
+                  - FindPackage_ParseCriteria_EmptyKey_ThrowsCommandUsageException
+
+              - id: SpdxTool-Commands-FindPackage-LoadError
+                title: >-
+                  The find-package command shall report an error when the SPDX file cannot be loaded.
+                tags:
+                  - spdx
+                justification: |
+                  Users may supply a file path that does not exist. The command must detect
+                  this condition and report a clear error.
+                tests:
+                  - FindPackage_Run_MissingFile_ReportsError
+
+              - id: SpdxTool-Commands-FindPackage-NoMatch
+                title: >-
+                  The find-package command shall report an error when no package in the SPDX document
+                  matches the supplied search criteria.
+                tags:
+                  - spdx
+                justification: |
+                  Users may supply criteria that do not match any package in the document. The command
+                  must detect this condition and report a clear error rather than silently producing no
+                  output.
+                tests:
+                  - FindPackage_Run_NoPackageFound_ReportsError
+
+              - id: SpdxTool-Commands-FindPackage-MultipleMatch
+                title: >-
+                  The find-package command shall report an error when more than one package in the SPDX
+                  document matches the supplied search criteria.
+                tags:
+                  - spdx
+                justification: |
+                  When multiple packages satisfy the criteria the result is ambiguous. The command must
+                  detect this condition and report a clear error so that users can refine their criteria.
+                tests:
+                  - FindPackage_Run_MultiplePackagesFound_ReportsError
+
+              - id: SpdxTool-Commands-FindPackage-WildcardCriteria
+                title: The find-package command shall support wildcard pattern matching in all search criteria.
+                tags:
+                  - spdx
+                justification: |
+                  Users need to locate packages using partial or pattern-based criteria when the exact
+                  attribute value is not known. Wildcard support enables flexible querying without
+                  requiring an exact string match.
+                tests:
+                  - FindPackage_Run_ByNameWildcard_FindsPackage

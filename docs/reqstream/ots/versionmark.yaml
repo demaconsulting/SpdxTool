@@ -1,20 +1,42 @@
-# DemaConsulting.SpdxTool VersionMark OTS Requirements
-#
-# This file contains requirements for the VersionMark OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# VersionMark OTS requirements
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: VersionMark
+      - title: VersionMark Requirements
         requirements:
           - id: SpdxTool-OTS-VersionMark
-            title: VersionMark shall publish captured tool-version information.
+            title: VersionMark shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.VersionMark reads version metadata for each dotnet tool used in the
-              pipeline and writes a versions markdown document included in the release artifacts.
+              DemaConsulting.VersionMark is a CI pipeline tool that captures and publishes tool-version
+              information as a markdown document. Installation is evidenced by the tool's own
+              self-validation test suite: the linked test exercises VersionMark's version-capture
+              capability, confirming the tool is installed and functional in the pipeline environment.
             tests:
               - VersionMark_CapturesVersions
+
+          - id: SpdxTool-OTS-VersionMark-VersionReading
+            title: VersionMark shall query installed dotnet tool versions by invoking each tool with --version.
+            tags:
+              - ots
+            justification: |
+              VersionMark's primary function is to invoke each configured tool with its --version flag
+              and capture the resulting version string. This capability is verified on every pipeline run
+              by the presence of the versions document in the release artifact archive.
+            tests:
+              - VersionMark_CapturesVersions
+
+          - id: SpdxTool-OTS-VersionMark-MarkdownReport
+            title: VersionMark shall render captured version strings as a structured markdown table.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |-
+              VersionMark renders the captured tool version strings as a markdown document included in
+              the release artifact archive. Full functional verification occurs through CI pipeline
+              execution, where the versions document in each release provides observable evidence of
+              correct operation. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
               - VersionMark_GeneratesMarkdownReport

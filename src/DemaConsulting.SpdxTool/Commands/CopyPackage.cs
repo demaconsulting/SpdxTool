@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -87,6 +87,14 @@ public sealed class CopyPackage : Command
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     Parses positional arguments: fromFile, toFile, packageId, and optional flags "recursive"
+    ///     and "files". Delegates to <see cref="CopyPackageBetweenSpdxFiles"/> after parsing.
+    /// </remarks>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when fewer than three arguments are provided, an unrecognized option token is
+    ///     encountered, or <paramref name="args"/>[2] is empty or equals "SPDXRef-DOCUMENT".
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 3
@@ -125,6 +133,16 @@ public sealed class CopyPackage : Command
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     Reads required inputs: <c>from</c>, <c>to</c>, and <c>package</c>. Optional inputs:
+    ///     <c>recursive</c> (boolean, default false), <c>files</c> (boolean, default false), and
+    ///     <c>relationships</c> (sequence of relationship mappings). Delegates to
+    ///     <see cref="CopyPackageBetweenSpdxFiles"/> after parsing.
+    /// </remarks>
+    /// <exception cref="YamlException">
+    ///     Thrown when the <c>from</c>, <c>to</c>, or <c>package</c> inputs are absent from the
+    ///     workflow step, or when <c>recursive</c> or <c>files</c> cannot be parsed as a boolean.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -173,13 +191,24 @@ public sealed class CopyPackage : Command
     /// <param name="relationships">Relationships of package to elements in destination</param>
     /// <param name="recursive">Recursive copy option</param>
     /// <param name="files">Copy files option</param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when <paramref name="packageId"/> is empty or equal to "SPDXRef-DOCUMENT"; also
+    ///     thrown by <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/> when either
+    ///     <paramref name="fromFile"/> or <paramref name="toFile"/> does not exist on disk.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the package identified by <paramref name="packageId"/> is not found in
+    ///     <paramref name="fromFile"/>, or when the <paramref name="files"/> flag is set and a file
+    ///     listed in the package's HasFiles is absent from the source document.
+    /// </exception>
     public static void CopyPackageBetweenSpdxFiles(string fromFile, string toFile, string packageId,
         SpdxRelationship[] relationships, bool recursive, bool files)
     {
         // Verify package name
         if (packageId.Length == 0 || packageId == "SPDXRef-DOCUMENT")
         {
-            throw new CommandUsageException("Invalid package name");
+            throw new CommandUsageException(
+                "'copy-package' package argument may not be empty or 'SPDXRef-DOCUMENT'");
         }
 
         // Read the SPDX documents
@@ -210,7 +239,16 @@ public sealed class CopyPackage : Command
     /// <param name="toDoc">SPDX document to copy to</param>
     /// <param name="packageId">ID of the SPDX package to copy</param>
     /// <param name="files">Copy files option</param>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the package identified by <paramref name="packageId"/> does not exist in
+    ///     <paramref name="fromDoc"/>, or when the <paramref name="files"/> flag is set and a file
+    ///     listed in the package's HasFiles is absent from <paramref name="fromDoc"/>.
+    /// </exception>
+    /// <remarks>
+    ///     New copies have <see cref="SpdxPackage.FilesAnalyzed"/> reset to <see langword="false"/> because the
+    ///     destination document does not carry the source file entries unless the <paramref name="files"/> flag
+    ///     is set. This prevents the destination SPDX document from advertising unverifiable file data.
+    /// </remarks>
     public static void Copy(SpdxDocument fromDoc, SpdxDocument toDoc, string packageId, bool files)
     {
         // Verify the package exists in the source
@@ -285,6 +323,15 @@ public sealed class CopyPackage : Command
     /// <param name="parentId">ID of the parent package</param>
     /// <param name="copied">Packages already copied</param>
     /// <param name="files">Copy files option</param>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when a child package or one of its associated files cannot be found in
+    ///     <paramref name="fromDoc"/>; propagated from <see cref="Copy"/>.
+    /// </exception>
+    /// <remarks>
+    ///     The <paramref name="copied"/> set guards against infinite recursion in graphs that contain cycles.
+    ///     A package ID is added to the set before its children are processed, so any back-edge to an
+    ///     already-visited package is skipped without re-entering the recursive call.
+    /// </remarks>
     public static void CopyChildren(SpdxDocument fromDoc, SpdxDocument toDoc, string parentId, HashSet<string> copied,
         bool files)
     {
@@ -303,13 +350,16 @@ public sealed class CopyPackage : Command
                 continue;
             }
 
-            // Copy/enhance the child-package
+            // Copy/enhance the child-package (Copy and SpdxRelationships.Add are both idempotent,
+            // so repeated calls for the same child in a diamond-shaped graph are safe)
             Copy(fromDoc, toDoc, childId, files);
 
-            // Add/enhance the relationship
+            // Add/enhance the relationship (idempotent — safe to call multiple times)
             SpdxRelationships.Add(toDoc, relationship);
 
-            // Report copied, and process children if not already processed
+            // Add the child to the visited set after copy/add operations, then recurse into
+            // its children. The Add check skips recursion for already-visited IDs, guarding
+            // against infinite loops in cyclic graphs.
             if (copied.Add(childId))
             {
                 CopyChildren(fromDoc, toDoc, childId, copied, files);
@@ -320,6 +370,7 @@ public sealed class CopyPackage : Command
     /// <summary>
     ///     Test if a relationship indicates a child package
     /// </summary>
+    /// <remarks>Stateless and thread-safe; reads only its parameters and has no side effects.</remarks>
     /// <param name="relationship">SPDX relationship</param>
     /// <param name="parentId">Parent package ID</param>
     /// <returns>Child package ID or null</returns>

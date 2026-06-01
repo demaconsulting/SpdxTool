@@ -1,20 +1,97 @@
-# DemaConsulting.SpdxTool ReqStream OTS Requirements
-#
-# This file contains requirements for the ReqStream OTS component used by SpdxTool.
-# It is included by the root requirements.yaml file.
 ---
+# ReqStream OTS requirements
 sections:
-  - title: SpdxTool Requirements
+  - title: OTS Software Requirements
     sections:
-      - title: ReqStream
+      - title: ReqStream Requirements
         requirements:
           - id: SpdxTool-OTS-ReqStream
-            title: ReqStream shall enforce that every requirement is linked to passing test evidence.
+            title: ReqStream shall be installed and invocable in the pipeline environment.
             tags:
               - ots
             justification: |
-              DemaConsulting.ReqStream processes requirements.yaml and the TRX test-result files to
-              produce a requirements report, justifications document, and traceability matrix. When
-              run with --enforce, it exits with a non-zero code if any requirement lacks test evidence.
+              DemaConsulting.ReqStream is a CI pipeline tool that enforces requirements traceability by
+              processing requirements.yaml and TRX test-result files. Installation is evidenced by the
+              tool's own self-validation test suite: the linked test exercises ReqStream's requirements
+              processing capability, confirming the tool is installed and functional in the pipeline
+              environment. Full functional verification — including requirements YAML processing, TRX
+              result parsing, report generation, and enforcement mode — occurs on every pipeline run,
+              where a successful pipeline completion with all requirements covered is direct evidence
+              that enforcement mode worked correctly.
+            tests:
+              - ReqStream_RequirementsProcessing
+
+          - id: SpdxTool-OTS-ReqStream-RequirementsProcessing
+            title: ReqStream shall read and resolve the hierarchical requirements YAML file.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              ReqStream processes the requirements YAML file to resolve all requirement IDs and their
+              declared test links. This capability is verified on every pipeline run by the successful
+              production of the requirements report artifacts. See the OTS CI-Pipeline Exception in
+              requirements-principles.md.
+            tests:
+              - ReqStream_RequirementsProcessing
+
+          - id: SpdxTool-OTS-ReqStream-TrxParsing
+            title: ReqStream shall parse TRX result files to determine which tests passed.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              ReqStream parses TRX files produced by xUnit and the SelfTest subsystem to determine which
+              test names passed. This capability is verified on every pipeline run; a missing or malformed
+              TRX file would cause pipeline enforcement to fail. See the OTS CI-Pipeline Exception in
+              requirements-principles.md.
+            tests:
+              - ReqStream_TraceMatrix
+
+          - id: SpdxTool-OTS-ReqStream-RequirementsReport
+            title: ReqStream shall produce a requirements report document.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              ReqStream generates a requirements report included in the release artifacts. The presence of
+              this document in each release provides observable evidence that requirements report generation
+              operated correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - ReqStream_ReportExport
+
+          - id: SpdxTool-OTS-ReqStream-JustificationsReport
+            title: ReqStream shall produce a justifications document.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              ReqStream generates a justifications document included in the release artifacts. The presence of
+              this document in each release provides observable evidence that justifications report generation
+              operated correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - ReqStream_ReportExport
+
+          - id: SpdxTool-OTS-ReqStream-TraceabilityMatrix
+            title: ReqStream shall produce a traceability matrix document.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |
+              ReqStream generates a traceability matrix document included in the release artifacts. The presence of
+              this document in each release provides observable evidence that traceability matrix generation
+              operated correctly. See the OTS CI-Pipeline Exception in requirements-principles.md.
+            tests:
+              - ReqStream_TraceMatrix
+
+          - id: SpdxTool-OTS-ReqStream-EnforcementMode
+            title: ReqStream shall exit with a non-zero exit code when any requirement is uncovered.
+            tags:
+              - ots
+              - ci-pipeline-verified
+            justification: |-
+              When invoked with the --enforce flag, ReqStream causes the pipeline to fail if any
+              requirement lacks a linked passing test. A successful pipeline completion on every run
+              is direct evidence that enforcement mode correctly detected no uncovered requirements.
+              See the OTS CI-Pipeline Exception in requirements-principles.md.
             tests:
               - ReqStream_EnforcementMode

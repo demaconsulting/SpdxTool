@@ -1,35 +1,17 @@
 # Introduction
 
-This document contains the code quality analysis report for the SpdxTool project.
+This document records the static analysis results for SpdxTool.
 
 ## Purpose
 
-This report serves as evidence that the SpdxTool codebase maintains good quality
-standards. It provides a comprehensive analysis of code quality metrics, including
-quality gate status, code issues, security hotspots, technical debt, and code coverage.
+To provide evidence that SpdxTool has been analyzed for code quality issues
+and that any findings have been reviewed and resolved or accepted.
 
 ## Scope
 
-This code quality report covers:
+Covers static analysis of all source code in `src/` for SpdxTool.
+Test code is excluded from static analysis requirements.
 
-- Quality gate status and conditions
-- Code issues categorized by type and severity
-- Security hotspots requiring review
-- Technical debt assessment
-- Code coverage and duplication metrics
+## References
 
-## Analysis Source
-
-This report contains quality analysis results captured at the time this version of SpdxTool
-was built. It serves as evidence that the code maintains good quality standards and provides
-transparency about the project's code health. The analysis includes results from various
-quality tools run during the build process.
-
-## Audience
-
-This document is intended for:
-
-- Software developers working on SpdxTool
-- Quality assurance teams reviewing code quality
-- Project stakeholders evaluating project health
-- Contributors understanding quality standards
+- [SonarCloud SpdxTool Analysis](https://sonarcloud.io/summary/new_code?id=demaconsulting_SpdxTool)

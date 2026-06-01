@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -67,6 +67,11 @@ public sealed class Diagram : Command
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     The <paramref name="context"/> parameter is not used by this command because all output is written
+    ///     directly to the mermaid file via <see cref="File.WriteAllText(string, string?)"/>.
+    /// </remarks>
+    /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are provided, or when an unrecognized option token is encountered.</exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 2
@@ -91,6 +96,11 @@ public sealed class Diagram : Command
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     The <paramref name="context"/> parameter is not used by this command because all output is written
+    ///     directly to the mermaid file via <see cref="File.WriteAllText(string, string?)"/>.
+    /// </remarks>
+    /// <exception cref="YamlException">Thrown when the spdx or mermaid inputs are absent from the workflow step, or when the tools input cannot be parsed as a boolean.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -118,9 +128,18 @@ public sealed class Diagram : Command
     /// <summary>
     ///     Generate mermaid entity-relationship diagram from SPDX document
     /// </summary>
+    /// <remarks>
+    ///     Loads the SPDX document, filters to package-to-package relationships only, optionally
+    ///     excludes BuildToolOf/DevToolOf/TestToolOf relationships, and writes an erDiagram block to
+    ///     the output file. Each relationship line uses "Name / Version" ||--|| "Name / Version" format.
+    ///     Writes the mermaid file to disk as a side effect; not thread-safe on the same output file.
+    /// </remarks>
     /// <param name="spdxFile">SPDX document file name</param>
     /// <param name="mermaidFile">Mermaid diagram file name</param>
-    /// <param name="tools">True to include tools</param>
+    /// <param name="tools">True to include build/dev/test tool relationships; false (default) to exclude them</param>
+    /// <exception cref="CommandUsageException">Thrown when <paramref name="spdxFile"/> does not exist on disk (propagated from <see cref="Spdx.SpdxHelpers.LoadJsonDocument"/>).</exception>
+    /// <exception cref="System.IO.IOException">Thrown when <paramref name="spdxFile"/> cannot be read or <paramref name="mermaidFile"/> cannot be written.</exception>
+    /// <exception cref="System.Text.Json.JsonException">Thrown when <paramref name="spdxFile"/> is not valid JSON.</exception>
     public static void GenerateDiagram(string spdxFile, string mermaidFile, bool tools = false)
     {
         // Load the SPDX document
@@ -148,6 +167,10 @@ public sealed class Diagram : Command
 
             // Get the relationship direction
             var direction = relationship.RelationshipType.GetDirection();
+
+            // Defensive guard: the _ arm is permanently unreachable because GetDirection()
+            // always returns Parent, Child, or Sibling. Retained to guard against future
+            // changes to the RelationshipDirection enum.
             var from = direction switch
             {
                 RelationshipDirection.Parent => a,
@@ -165,7 +188,9 @@ public sealed class Diagram : Command
 
             // Write the relationship to the diagram
             var type = relationship.RelationshipType.ToText();
-            diagram.AppendLine($"  \"{from.Name} / {from.Version}\" ||--|| \"{to.Name} / {to.Version}\" : \"{type}\"");
+            var fromVersion = from.Version ?? "unspecified";
+            var toVersion = to.Version ?? "unspecified";
+            diagram.AppendLine($"  \"{from.Name} / {fromVersion}\" ||--|| \"{to.Name} / {toVersion}\" : \"{type}\"");
         }
 
         // Write the diagram to the file

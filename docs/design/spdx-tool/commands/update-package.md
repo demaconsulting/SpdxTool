@@ -1,73 +1,85 @@
-# DemaConsulting.SpdxTool update-package Command Design
+### UpdatePackage
 
-## Purpose
+#### Purpose
 
-The `update-package` command updates the metadata of an existing package in an
-SPDX document. It is only valid inside a workflow YAML file; direct command-line
-invocation is rejected.
+UpdatePackage updates named metadata fields of an existing package in an SPDX JSON document. The
+package is identified by its ID. Only the fields present in the inputs are updated; absent fields
+leave the existing values unchanged. It is available in workflow mode only; direct CLI invocation
+is rejected.
 
-## Arguments / Inputs
+#### Data Model
 
-This command is only valid inside a workflow YAML file:
+UpdatePackage carries no mutable instance state; all fields are static constants or readonly
+singletons initialized once at class load.
 
-```yaml
+**Instance** (`public static readonly UpdatePackage`): The singleton instance registered with
+CommandsRegistry. Created once via the private constructor.
 
-- command: update-package
+**Entry** (`public static readonly CommandEntry`): The CommandEntry record that pairs the command
+name, usage line, summary text, and extended help lines with the singleton Instance for dispatch.
 
-  inputs:
-    spdx: <spdx.json>             # SPDX file name (required)
-    package:                      # Package identification and updates
-      id: <id>                    # Package ID to update (required)
-      name: <name>                # Optional new name
-      download: <download-url>    # Optional new download URL
-      version: <version>          # Optional new version
-      filename: <filename>        # Optional new filename
-      supplier: <supplier>        # Optional new supplier
-      originator: <originator>    # Optional new originator
-      homepage: <homepage>        # Optional new homepage
-      copyright: <copyright>      # Optional new copyright text
-      summary: <summary>          # Optional new summary
-      description: <description>  # Optional new description
-      license: <license>          # Optional new license (sets both concluded and declared)
-```
+#### Key Methods
 
-## Implementation
+**Run(Context, string[])**: Rejects CLI invocation with a usage error.
 
-1. Reads `spdx` and `package` inputs.
-2. Reads `id` from the `package` sub-map.
-3. `ParseUpdates` reads each optional field from the map into an
+- *Parameters*: `Context context` — execution context; `string[] args` — CLI arguments (unused).
+- *Returns*: `void`
+- *Preconditions*: None.
+- *Post-conditions*: Throws CommandUsageException unconditionally.
 
-   `updates` dictionary, skipping absent keys.
+**Run(Context, YamlMappingNode, Dictionary)**: Reads spdx and package inputs, extracts the package
+ID, parses the update fields via ParseUpdates, and delegates to UpdatePackageInSpdxFile.
 
-4. `UpdatePackageInSpdxFile` loads the document, finds the package by ID
+- *Parameters*: `Context context` — execution context (unused); `YamlMappingNode step` — YAML step node;
+  `Dictionary<string, string> variables` — workflow variable map.
+- *Returns*: `void`
+- *Preconditions*: spdx, package, and package.id inputs are required.
+- *Post-conditions*: The named package in the SPDX file has its specified fields updated.
 
-   (raises `CommandErrorException` if not found), applies each update by
-   setting the corresponding property, and saves the document.
+**UpdatePackageInSpdxFile(string, string, Dictionary)**: Loads the SPDX document, locates the
+package by ID, applies each key-value pair in the updates dictionary to the corresponding package
+field, and saves the document.
 
-### Supported update keys
+- *Parameters*: `string spdxFile` — SPDX file path; `string packageId` — ID of the package to
+  update; `Dictionary<string, string> updates` — field-name to new-value map.
+- *Returns*: `void`
+- *Preconditions*: spdxFile must exist. A package with packageId must be present.
+- *Post-conditions*: The package fields listed in updates are updated and the file is saved.
+  Supported field names: name, download, version, filename, supplier, originator, homepage,
+  copyright, summary, description, license (sets both ConcludedLicense and DeclaredLicense).
 
-`name`, `download`, `version`, `filename`, `supplier`, `originator`, `homepage`,
-`copyright`, `summary`, `description`, `license`.
-Any other key raises `CommandErrorException`.
+**ParseUpdates(YamlMappingNode?, Dictionary, Dictionary)**: Reads optional name, download,
+version, filename, supplier, originator, homepage, copyright, summary, description, and license
+fields from the YAML map and populates the updates dictionary.
 
-When `license` is updated, both `ConcludedLicense` and `DeclaredLicense` are set.
+- *Parameters*: `YamlMappingNode? map` — YAML package sub-map;
+  `Dictionary<string, string> variables` — variable map;
+  `Dictionary<string, string> updates` — output updates dictionary.
+- *Returns*: `void`
+- *Preconditions*: None.
+- *Post-conditions*: updates contains recognized fields present in the map; unrecognized keys are
+  also injected with an empty-string value so that `UpdatePackageInSpdxFile` can reject them via
+  its `default` switch branch.
 
-## Error Handling
+#### Error Handling
 
-| Condition | Exception |
-| :--- | :--- |
-| Invoked from command line (not workflow) | `CommandUsageException` |
-| Missing `spdx` input | `YamlException` |
-| Missing `package` input | `YamlException` |
-| Missing `package.id` input | `YamlException` |
-| Package ID not found in document | `CommandErrorException` |
-| Invalid update key | `CommandErrorException` |
+**CommandUsageException** — thrown by Run(Context, string[]) unconditionally (workflow-only
+command).
 
-## Constraints
+**YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the spdx, package, or
+package.id inputs are missing.
 
-- Available in workflow mode only; direct CLI invocation raises `CommandUsageException`.
-- Only the fields present in the `package` map are updated; absent fields leave
+**CommandErrorException** — thrown by UpdatePackageInSpdxFile when the package ID is not found in
+the document; also thrown when an unrecognized field name is encountered in the updates dictionary.
 
-  the existing values unchanged.
+#### Dependencies
 
-- Variable expansion is applied to all string inputs via `GetMapString`.
+- Command (abstract base class)
+- SpdxDocument, SpdxPackage (DemaConsulting.SpdxModel)
+- SpdxHelpers (Spdx units)
+- YamlDotNet (YamlMappingNode, YamlException)
+
+#### Callers
+
+- CommandsRegistry — holds the CommandEntry.Instance reference and routes workflow steps
+- RunWorkflow — dispatches this command when a workflow step specifies command: update-package

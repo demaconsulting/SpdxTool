@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,72 +23,114 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for logging output.
 /// </summary>
-[TestClass]
 public class LogTests
 {
     /// <summary>
     ///     Test that the short log flag writes output to a file
     /// </summary>
-    [TestMethod]
-    public void Log_ShortFlag_WritesOutputToFile()
+    [Fact]
+    public void SpdxTool_Log_ShortFlag_WritesOutputToFile()
     {
         try
         {
+            // Arrange: no setup required
+
             // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "-l", "output.log",
+                "-l", "output-short-flag.log",
                 "-h");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Assert: Verify log file written
-            Assert.IsTrue(File.Exists("output.log"));
+            Assert.True(File.Exists("output-short-flag.log"));
 
             // Assert: Verify the log contains the usage information
-            var log = File.ReadAllText("output.log");
+            var log = File.ReadAllText("output-short-flag.log");
             Assert.Contains("Usage: spdx-tool", log);
         }
         finally
         {
             // Delete output file
-            File.Delete("output.log");
+            File.Delete("output-short-flag.log");
         }
     }
 
     /// <summary>
     ///     Test that the long log flag writes output to a file
     /// </summary>
-    [TestMethod]
-    public void Log_LongFlag_WritesOutputToFile()
+    [Fact]
+    public void SpdxTool_Log_LongFlag_WritesOutputToFile()
     {
         try
         {
+            // Arrange: no setup required
+
             // Act: Run the command
             var exitCode = Runner.Run(
                 out _,
                 "dotnet",
                 "DemaConsulting.SpdxTool.dll",
-                "--log", "output.log",
+                "--log", "output-long-flag.log",
                 "--help");
 
             // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
+            Assert.Equal(0, exitCode);
 
             // Assert: Verify log file written
-            Assert.IsTrue(File.Exists("output.log"));
+            Assert.True(File.Exists("output-long-flag.log"));
 
             // Assert: Verify the log contains the usage information
-            var log = File.ReadAllText("output.log");
+            var log = File.ReadAllText("output-long-flag.log");
             Assert.Contains("Usage: spdx-tool", log);
         }
         finally
         {
             // Delete output file
-            File.Delete("output.log");
+            File.Delete("output-long-flag.log");
+        }
+    }
+
+    /// <summary>
+    ///     Test that --silent --log combination writes to log but suppresses console output
+    /// </summary>
+    [Fact]
+    public void SpdxTool_Log_SilentFlag_WritesToLogButNotConsole()
+    {
+        try
+        {
+            // Arrange: no setup required
+
+            // Act: Run the command with --silent and --log
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "--silent",
+                "-l", "output-silent.log",
+                "-h");
+
+            // Assert: Verify success
+            Assert.Equal(0, exitCode);
+
+            // Assert: Verify console output was suppressed
+            Assert.Empty(output.Trim());
+
+            // Assert: Verify log file was written
+            Assert.True(File.Exists("output-silent.log"));
+
+            // Assert: Verify the log contains the usage information
+            var log = File.ReadAllText("output-silent.log");
+            Assert.Contains("Usage: spdx-tool", log);
+        }
+        finally
+        {
+            // Delete output file
+            File.Delete("output-silent.log");
         }
     }
 }

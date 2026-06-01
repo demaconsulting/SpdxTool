@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,76 +18,109 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace DemaConsulting.SpdxTool.Tests;
+using DemaConsulting.SpdxTool;
+using DemaConsulting.SpdxTool.Commands;
+using YamlDotNet.Core;
+using YamlDotNet.RepresentationModel;
+
+namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
 ///     Tests for the 'set-variable' command.
 /// </summary>
-[TestClass]
+[Collection("CommandSequential")]
 public class SetVariableTests
 {
     /// <summary>
     ///     Test that set-variable command on command line reports workflow-only error
     /// </summary>
-    [TestMethod]
-    public void SetVariable_OnCommandLine_ReportsWorkflowOnlyError()
+    [Fact]
+    public void SetVariable_Run_OnCommandLine_ReportsWorkflowOnlyError()
     {
-        // Act: Run the command
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "set-variable");
+        // Arrange: create a minimal execution context
+        using var context = Context.Create([]);
 
-        // Assert: Verify error reported
-        Assert.AreEqual(1, exitCode);
-        Assert.Contains("'set-variable' command is only valid in a workflow", output);
+        // Act / Assert: CLI invocation always throws because the command is workflow-only
+        Assert.Throws<CommandUsageException>(() => SetVariable.Instance.Run(context, []));
     }
 
     /// <summary>
     ///     Test that set-variable command in workflow sets the variable
     /// </summary>
-    [TestMethod]
-    public void SetVariable_InWorkflow_SetsVariable()
+    [Fact]
+    public void SetVariable_Run_InWorkflow_SetsVariable()
     {
-        // Workflow contents
-        const string workflowContents =
-            """
-            parameters:
-              p1: Hello
-              p2: World
-            steps:
-            - command: set-variable
-              inputs:
-                value: ${{ p1 }} and ${{ p2 }}
-                output: p1p2
-
-            - command: print
-              inputs:
-                text:
-                - p1p2 is ${{ p1p2 }}
-            """;
-
-        try
+        // Arrange: context, pre-populated variable map, and a YAML step node
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string> { ["p1"] = "Hello", ["p2"] = "World" };
+        var inputs = new YamlMappingNode
         {
-            // Arrange: Write the SPDX files
-            File.WriteAllText("workflow.yaml", workflowContents);
+            { "value", "${{ p1 }} and ${{ p2 }}" },
+            { "output", "p1p2" }
+        };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
-            // Act: Run the command
-            var exitCode = Runner.Run(
-                out var output,
-                "dotnet",
-                "DemaConsulting.SpdxTool.dll",
-                "run-workflow",
-                "workflow.yaml");
+        // Act: run the command directly
+        SetVariable.Instance.Run(context, step, variables);
 
-            // Assert: Verify success
-            Assert.AreEqual(0, exitCode);
-            Assert.Contains("p1p2 is Hello and World", output);
-        }
-        finally
+        // Assert: the expanded value is stored under the output key
+        Assert.Equal("Hello and World", variables["p1p2"]);
+    }
+
+    /// <summary>
+    ///     Test that set-variable command throws when the value input is missing
+    /// </summary>
+    [Fact]
+    public void SetVariable_Run_MissingValue_ThrowsException()
+    {
+        // Arrange: step node with output but no value
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string>();
+        var inputs = new YamlMappingNode { { "output", "my-var" } };
+        var step = new YamlMappingNode { { "inputs", inputs } };
+
+        // Act / Assert: absent value input must produce a YamlException
+        Assert.Throws<YamlException>(() => SetVariable.Instance.Run(context, step, variables));
+    }
+
+    /// <summary>
+    ///     Test that set-variable command throws when the output input is missing
+    /// </summary>
+    [Fact]
+    public void SetVariable_Run_MissingOutput_ThrowsException()
+    {
+        // Arrange: step node with value but no output
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string>();
+        var inputs = new YamlMappingNode { { "value", "hello" } };
+        var step = new YamlMappingNode { { "inputs", inputs } };
+
+        // Act / Assert: absent output input must produce a YamlException
+        Assert.Throws<YamlException>(() => SetVariable.Instance.Run(context, step, variables));
+    }
+
+    /// <summary>
+    ///     Test that set-variable command stores the output key as the literal YAML string
+    ///     without applying workflow variable expansion to it
+    /// </summary>
+    [Fact]
+    public void SetVariable_Run_OutputWithVariableSyntax_StoredLiterally()
+    {
+        // Arrange: context, variable map with some_var defined, and a step whose output key
+        //          contains ${{ }} syntax that would resolve if expansion were applied
+        using var context = Context.Create([]);
+        var variables = new Dictionary<string, string> { ["some_var"] = "expanded_key" };
+        var inputs = new YamlMappingNode
         {
-            File.Delete("workflow.yaml");
-        }
+            { "output", "${{ some_var }}" },
+            { "value", "test_value" }
+        };
+        var step = new YamlMappingNode { { "inputs", inputs } };
+
+        // Act: run the command directly
+        SetVariable.Instance.Run(context, step, variables);
+
+        // Assert: the literal key "${{ some_var }}" was used, not the expanded "expanded_key"
+        Assert.Equal("test_value", variables["${{ some_var }}"]);
     }
 }

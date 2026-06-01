@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,32 +23,84 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Command base class
+///     Abstract base class for all SpdxTool commands.
 /// </summary>
+/// <remarks>
+///     Each concrete command subclass implements two overloads of <c>Run</c>:
+///     one for CLI invocation (receives a <c>string[]</c> arguments array) and one for
+///     workflow step invocation (receives a <see cref="YamlDotNet.RepresentationModel.YamlMappingNode"/>
+///     and a variables dictionary). Helper methods such as <see cref="Expand"/>,
+///     <see cref="GetMapString"/>, <see cref="GetMapMap"/>, <see cref="GetMapSequence"/>,
+///     and <see cref="GetSequenceString"/> are provided for consistent YAML node extraction
+///     and variable substitution across all commands.
+/// </remarks>
 public abstract class Command
 {
     /// <summary>
-    ///     Run the command
+    ///     Executes the command from the CLI entry point.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="args">Command arguments</param>
+    /// <remarks>
+    ///     Called by <c>Program</c> after resolving the command name in
+    ///     <see cref="CommandsRegistry"/>. Subclasses parse <paramref name="args"/> directly
+    ///     and perform the requested SPDX operation. Workflow-only commands throw
+    ///     <see cref="CommandUsageException"/> immediately from this overload.
+    /// </remarks>
+    /// <param name="context">Execution context providing output and logging services. Must not be null.</param>
+    /// <param name="args">CLI argument tokens following the command name. May be empty.</param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when <paramref name="args"/> has the wrong count, contains invalid options,
+    ///     or the command is workflow-only and cannot be invoked from the CLI.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the command encounters a runtime failure (e.g., file not found,
+    ///     invalid SPDX content).
+    /// </exception>
     public abstract void Run(Context context, string[] args);
 
     /// <summary>
-    ///     Run the command
+    ///     Executes the command as a step in a YAML workflow file.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="step">Command step</param>
-    /// <param name="variables">Workflow variables</param>
+    /// <remarks>
+    ///     Called by <c>RunWorkflow</c> for each step in the workflow YAML document. Subclasses
+    ///     read their parameters from <paramref name="step"/> using the helper methods on this
+    ///     base class (<see cref="GetMapString"/>, <see cref="GetMapMap"/>, etc.), apply variable
+    ///     expansion via <see cref="Expand"/>, and perform the requested SPDX operation.
+    ///     Commands that mutate <paramref name="variables"/> (such as <c>SetVariable</c>) do so
+    ///     through this overload.
+    /// </remarks>
+    /// <param name="context">Execution context providing output and logging services. Must not be null.</param>
+    /// <param name="step">YAML mapping node for this workflow step. Must not be null.</param>
+    /// <param name="variables">Current workflow variable dictionary; may be mutated by the command.</param>
+    /// <exception cref="YamlDotNet.Core.YamlException">
+    ///     Thrown when required YAML keys are missing or have the wrong node type.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the command encounters a runtime failure.
+    /// </exception>
     public abstract void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables);
 
     /// <summary>
-    ///     Expand variables in text
+    ///     Expands all <c>${{ variable }}</c> references in a text string.
     /// </summary>
-    /// <param name="text">Text to expand</param>
-    /// <param name="variables">Variables</param>
-    /// <returns>Expanded text</returns>
-    /// <exception cref="InvalidOperationException">on error</exception>
+    /// <remarks>
+    ///     Uses a stack to support nested expansions — an inner <c>${{ ... }}</c> token can produce
+    ///     the key used by the outer token, enabling indirect variable references. Environment variables
+    ///     are supported via the <c>environment.</c> prefix: <c>${{ environment.NAME }}</c> resolves
+    ///     to <c>Environment.GetEnvironmentVariable("NAME")</c>. Stateless and thread-safe as long as
+    ///     the caller does not mutate <paramref name="variables"/> concurrently.
+    /// </remarks>
+    /// <param name="text">Input text that may contain <c>${{ variable }}</c> tokens. Must not be null.</param>
+    /// <param name="variables">
+    ///     Variable name-to-value map used for token resolution. Must not be null. Keys are compared
+    ///     case-sensitively. The dictionary is read but never modified.
+    /// </param>
+    /// <returns>The input text with all <c>${{ variable }}</c> references replaced by their values.</returns>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when a referenced variable is not present in <paramref name="variables"/>
+    ///     and does not resolve as an environment variable, when a variable name is empty,
+    ///     when <c>}}</c> appears without a matching <c>${{</c>, or when a <c>${{</c> is
+    ///     not closed by <c>}}</c>.
+    /// </exception>
     public static string Expand(string text, Dictionary<string, string> variables)
     {
         // Use a StringBuilder to assemble the expanded string
@@ -96,7 +148,7 @@ public abstract class Command
                 string? value;
                 if (name.StartsWith("environment."))
                 {
-                    value = Environment.GetEnvironmentVariable(name[12..]);
+                    value = Environment.GetEnvironmentVariable(name["environment.".Length..]); // Skip "environment." prefix
                 }
                 else
                 {
@@ -133,11 +185,18 @@ public abstract class Command
     }
 
     /// <summary>
-    ///     Get a map from a map
+    ///     Retrieves a nested mapping node from a parent YAML mapping, returning null when absent.
     /// </summary>
-    /// <param name="map">Parent map node</param>
-    /// <param name="name">Entry name</param>
-    /// <returns>Child map node or null</returns>
+    /// <remarks>
+    ///     Used by command subclasses to safely read optional or required sub-maps from a
+    ///     workflow step node without throwing on missing keys.
+    /// </remarks>
+    /// <param name="map">Parent map node. Null is accepted and produces a null return.</param>
+    /// <param name="name">Key to look up in <paramref name="map"/>.</param>
+    /// <returns>
+    ///     The child <see cref="YamlMappingNode"/> if the key exists and its value is a mapping;
+    ///     otherwise null.
+    /// </returns>
     public static YamlMappingNode? GetMapMap(YamlMappingNode? map, string name)
     {
         // Handle null map
@@ -151,11 +210,18 @@ public abstract class Command
     }
 
     /// <summary>
-    ///     Get a sequence from a map
+    ///     Retrieves a nested sequence node from a parent YAML mapping, returning null when absent.
     /// </summary>
-    /// <param name="map">Parent map node</param>
-    /// <param name="name">Entry name</param>
-    /// <returns>Child sequence node or null</returns>
+    /// <remarks>
+    ///     Used by command subclasses to safely read optional or required list values from a
+    ///     workflow step node without throwing on missing keys.
+    /// </remarks>
+    /// <param name="map">Parent map node. Null is accepted and produces a null return.</param>
+    /// <param name="name">Key to look up in <paramref name="map"/>.</param>
+    /// <returns>
+    ///     The child <see cref="YamlSequenceNode"/> if the key exists and its value is a sequence;
+    ///     otherwise null.
+    /// </returns>
     public static YamlSequenceNode? GetMapSequence(YamlMappingNode? map, string name)
     {
         // Handle null map
@@ -169,12 +235,20 @@ public abstract class Command
     }
 
     /// <summary>
-    ///     Get a map value from a map
+    ///     Retrieves a string value from a YAML mapping node with variable expansion applied.
     /// </summary>
-    /// <param name="map">Map node</param>
-    /// <param name="key">Map key</param>
-    /// <param name="variables">Variables for expansion</param>
-    /// <returns>Map value or null</returns>
+    /// <remarks>
+    ///     Used by command subclasses to read named parameters from a workflow step YAML node.
+    ///     Returns null for absent keys so callers can distinguish "not provided" from an
+    ///     empty string value.
+    /// </remarks>
+    /// <param name="map">Map node to query. Null is accepted and produces a null return.</param>
+    /// <param name="key">Key to look up in <paramref name="map"/>.</param>
+    /// <param name="variables">Variable dictionary passed to <see cref="Expand"/>.</param>
+    /// <returns>
+    ///     The expanded string value when the key exists; null when the key is absent or
+    ///     <paramref name="map"/> is null.
+    /// </returns>
     public static string? GetMapString(YamlMappingNode? map, string key, Dictionary<string, string> variables)
     {
         // Handle null map
@@ -188,15 +262,28 @@ public abstract class Command
     }
 
     /// <summary>
-    ///     Get a sequence value from a sequence
+    ///     Retrieves a string element from a YAML sequence node by index with variable expansion applied.
     /// </summary>
-    /// <param name="sequence">Sequence node</param>
-    /// <param name="index">Sequence index</param>
-    /// <param name="variables">Variables for expansion</param>
-    /// <returns>Sequence value or null</returns>
+    /// <remarks>
+    ///     Used by command subclasses to read positional parameters from a workflow step sequence.
+    ///     Returns null when the sequence is shorter than the requested index, when the sequence is
+    ///     null, or when the index is negative — so callers can distinguish "not provided" from an
+    ///     empty string value. A negative <paramref name="index"/> always returns null rather than
+    ///     throwing, because the null-conditional operator alone does not guard against negative indices
+    ///     on non-null sequences.
+    /// </remarks>
+    /// <param name="sequence">Sequence node to query. Null is accepted and produces a null return.</param>
+    /// <param name="index">Zero-based index of the element to retrieve. Negative values produce a null return.</param>
+    /// <param name="variables">Variable dictionary passed to <see cref="Expand"/>.</param>
+    /// <returns>
+    ///     The expanded string element when the index is non-negative and in range; null when
+    ///     <paramref name="sequence"/> is null, the index is negative, or the index is out of range.
+    /// </returns>
     public static string? GetSequenceString(YamlSequenceNode? sequence, int index, Dictionary<string, string> variables)
     {
-        // Get the parameter
-        return sequence?.Children.Count > index ? Expand(sequence.Children[index].ToString(), variables) : null;
+        // Reject null sequence or negative index before checking bounds
+        return sequence != null && index >= 0 && sequence.Children.Count > index
+            ? Expand(sequence.Children[index].ToString(), variables)
+            : null;
     }
 }

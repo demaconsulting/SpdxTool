@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,59 +20,154 @@
 
 using DemaConsulting.SpdxTool.Utility;
 
-namespace DemaConsulting.SpdxTool.Tests;
+namespace DemaConsulting.SpdxTool.Tests.Utility;
 
 /// <summary>
 ///     Test for wildcard pattern matching
 /// </summary>
-[TestClass]
+/// <remarks>
+///     Unit tests for <see cref="Wildcard"/>. Each test exercises a distinct matching scenario
+///     for <see cref="Wildcard.IsMatch"/>: exact matching, asterisk wildcards, question mark
+///     wildcards, null argument handling, and empty-string boundary conditions.
+/// </remarks>
 public class WildcardTests
 {
     /// <summary>
-    ///     Test that exact pattern matching returns true for matching strings
+    ///     Test that exact pattern matching behaves correctly for matching and non-matching strings
     /// </summary>
-    [TestMethod]
-    public void Wildcard_ExactMatch_ReturnsTrue()
+    /// <remarks>
+    ///     Verifies that IsMatch returns true for case-insensitive exact matches and false when
+    ///     the input differs in content, length, or separator from the pattern.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_ExactMatch_MatchesCorrectly()
     {
-        Assert.IsTrue(Wildcard.IsMatch("Hello", "Hello"));
-        Assert.IsTrue(Wildcard.IsMatch("HELLO", "Hello"));
-        Assert.IsTrue(Wildcard.IsMatch("hello.WORLD", "Hello.World"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "42"));
-        Assert.IsFalse(Wildcard.IsMatch("Hello_World", "Hello.World"));
-        Assert.IsFalse(Wildcard.IsMatch("Hello", "....."));
-        Assert.IsFalse(Wildcard.IsMatch("_Test", "Test"));
-        Assert.IsFalse(Wildcard.IsMatch("Test_", "Test"));
+        // Arrange: no setup required
+        // Act / Assert: verify exact matching behavior across multiple inputs
+        Assert.Multiple(
+            () => Assert.True(Wildcard.IsMatch("Hello", "Hello")),
+            () => Assert.True(Wildcard.IsMatch("HELLO", "Hello")),
+            () => Assert.True(Wildcard.IsMatch("hello.WORLD", "Hello.World")),
+            () => Assert.False(Wildcard.IsMatch("Test", "42")),
+            () => Assert.False(Wildcard.IsMatch("Hello_World", "Hello.World")),
+            () => Assert.False(Wildcard.IsMatch("Hello", ".....")),
+            () => Assert.False(Wildcard.IsMatch("_Test", "Test")),
+            () => Assert.False(Wildcard.IsMatch("Test_", "Test")));
     }
 
     /// <summary>
     ///     Test that asterisk pattern matching matches multiple characters
     /// </summary>
-    [TestMethod]
-    public void Wildcard_AsteriskPattern_MatchesMultipleChars()
+    /// <remarks>
+    ///     Verifies that the <c>*</c> wildcard matches zero or more characters anywhere in the
+    ///     pattern, and that non-matching positions are correctly rejected.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_AsteriskPattern_MatchesMultipleChars()
     {
-        Assert.IsTrue(Wildcard.IsMatch("Test.This.String", "Test.*.String"));
-        Assert.IsTrue(Wildcard.IsMatch("Test String", "*Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("This is a test", "*Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("This tests for a string", "*Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("Test", "Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("Testing", "Test*"));
-        Assert.IsTrue(Wildcard.IsMatch("Test", "*Test"));
-        Assert.IsTrue(Wildcard.IsMatch("Some Test", "*Test"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "*i*"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "*s"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "e*"));
+        // Arrange: no setup required
+        // Act / Assert: verify asterisk wildcard matching behavior across multiple inputs
+        Assert.Multiple(
+            () => Assert.True(Wildcard.IsMatch("Test.This.String", "Test.*.String")),
+            () => Assert.True(Wildcard.IsMatch("Test String", "*Test*")),
+            () => Assert.True(Wildcard.IsMatch("This is a test", "*Test*")),
+            () => Assert.True(Wildcard.IsMatch("This tests for a string", "*Test*")),
+            () => Assert.True(Wildcard.IsMatch("Test", "Test*")),
+            () => Assert.True(Wildcard.IsMatch("Testing", "Test*")),
+            () => Assert.True(Wildcard.IsMatch("Test", "*Test")),
+            () => Assert.True(Wildcard.IsMatch("Some Test", "*Test")),
+            () => Assert.False(Wildcard.IsMatch("Test", "*i*")),
+            () => Assert.False(Wildcard.IsMatch("Test", "*s")),
+            () => Assert.False(Wildcard.IsMatch("Test", "e*")));
     }
 
     /// <summary>
     ///     Test that question mark pattern matching matches a single character
     /// </summary>
-    [TestMethod]
-    public void Wildcard_QuestionMarkPattern_MatchesSingleChar()
+    /// <remarks>
+    ///     Verifies that the <c>?</c> wildcard matches exactly one character, and that inputs
+    ///     with too few or too many characters are rejected.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_QuestionMarkPattern_MatchesSingleChar()
     {
-        Assert.IsTrue(Wildcard.IsMatch("Test", "Te?t"));
-        Assert.IsTrue(Wildcard.IsMatch("Test", "????"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "?Test"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "Test?"));
-        Assert.IsFalse(Wildcard.IsMatch("Test", "?"));
+        // Arrange: no setup required
+        // Act / Assert: verify question mark wildcard matching behavior across multiple inputs
+        Assert.Multiple(
+            () => Assert.True(Wildcard.IsMatch("Test", "Te?t")),
+            () => Assert.True(Wildcard.IsMatch("Test", "????")),
+            () => Assert.False(Wildcard.IsMatch("Test", "?Test")),
+            () => Assert.False(Wildcard.IsMatch("Test", "Test?")),
+            () => Assert.False(Wildcard.IsMatch("Test", "?")));
+    }
+
+    /// <summary>
+    ///     Test that IsMatch throws ArgumentNullException when input is null.
+    /// </summary>
+    /// <remarks>
+    ///     Verifies the documented null-argument contract: passing null for the input parameter
+    ///     must throw ArgumentNullException.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_NullInput_ThrowsArgumentNullException()
+    {
+        // Arrange: no setup required
+        // Act / Assert: null input argument causes ArgumentNullException
+        Assert.Throws<ArgumentNullException>(() => Wildcard.IsMatch(null!, "pattern"));
+    }
+
+    /// <summary>
+    ///     Test that IsMatch throws ArgumentNullException when pattern is null.
+    /// </summary>
+    /// <remarks>
+    ///     Verifies the documented null-argument contract: passing null for the pattern parameter
+    ///     must throw ArgumentNullException.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_NullPattern_ThrowsArgumentNullException()
+    {
+        // Arrange: no setup required
+        // Act / Assert: null pattern argument causes ArgumentNullException
+        Assert.Throws<ArgumentNullException>(() => Wildcard.IsMatch("input", null!));
+    }
+
+    /// <summary>
+    ///     Test that IsMatch returns false without throwing when pattern evaluation would be catastrophically slow.
+    /// </summary>
+    /// <remarks>
+    ///     Verifies the timeout-protection contract: a pathological input/pattern combination that would
+    ///     cause catastrophic backtracking in an unbounded regex engine causes IsMatch to return false
+    ///     rather than blocking or propagating a RegexMatchTimeoutException.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_TimeoutProtection_ReturnsFalse()
+    {
+        // Arrange: a long string of 'a' characters and a pattern that forces many backtrack states
+        var input = new string('a', 5000);
+        const string Pattern = "*a*a*a*a*a*a*a*a*a*a*b";
+
+        // Act: invoke IsMatch — must complete without throwing regardless of timeout behaviour
+        var result = Wildcard.IsMatch(input, Pattern);
+
+        // Assert: the call completed and returned false (no 'b' present in input)
+        Assert.False(result);
+    }
+
+    /// <summary>
+    ///     Test that IsMatch handles empty strings and patterns correctly.
+    /// </summary>
+    /// <remarks>
+    ///     Verifies boundary conditions: an empty input matches an empty pattern, a non-empty
+    ///     input does not match an empty pattern, and an asterisk pattern matches the empty string.
+    /// </remarks>
+    [Fact]
+    public void Wildcard_IsMatch_EmptyInputs_BehavesCorrectly()
+    {
+        // Arrange: no setup required
+        // Act / Assert: verify empty string and empty pattern boundary behavior
+        Assert.Multiple(
+            () => Assert.True(Wildcard.IsMatch("", "")),
+            () => Assert.False(Wildcard.IsMatch("Test", "")),
+            () => Assert.True(Wildcard.IsMatch("", "*")));
     }
 }

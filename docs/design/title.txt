@@ -1,0 +1,14 @@
+---
+title: "SpdxTool Software Design Document"
+subtitle: ".NET tool for manipulating SPDX SBOM files"
+author: "DEMA Consulting"
+description: "Software Design Document for SpdxTool"
+lang: en-US
+keywords:
+  - Design
+  - Software Design Document
+  - SPDX
+  - SBOM
+  - .NET
+  - MSBuild
+---

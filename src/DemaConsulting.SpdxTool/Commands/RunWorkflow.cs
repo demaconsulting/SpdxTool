@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,16 @@ using YamlDotNet.RepresentationModel;
 namespace DemaConsulting.SpdxTool.Commands;
 
 /// <summary>
-///     Command to run a workflow YAML file
+///     Command to run a workflow YAML file, URL, or NuGet package workflow
 /// </summary>
+/// <remarks>
+///     RunWorkflow is a stateless singleton that implements the run-workflow command. It supports
+///     three workflow sources: a local file path, an HTTP/HTTPS URL, and a NuGet package. The
+///     optional <c>integrity</c> input performs a SHA-256 hash check before execution. Workflow
+///     parameters flow in via the <c>parameters</c> map and outputs are captured from the returned
+///     variable dictionary. This class is thread-safe for concurrent calls on independent workflow
+///     files or URLs; concurrent calls sharing a mutable <see cref="Context"/> are not recommended.
+/// </remarks>
 public sealed class RunWorkflow : Command
 {
     /// <summary>
@@ -40,11 +48,19 @@ public sealed class RunWorkflow : Command
     /// <summary>
     ///     Singleton instance of this command
     /// </summary>
+    /// <remarks>
+    ///     The singleton is registered with <see cref="CommandsRegistry"/> at startup so that both
+    ///     CLI dispatch and workflow YAML dispatch route to the same instance.
+    /// </remarks>
     public static readonly RunWorkflow Instance = new();
 
     /// <summary>
     ///     Entry information for this command
     /// </summary>
+    /// <remarks>
+    ///     The entry record associates the command name, usage string, help lines, and singleton
+    ///     instance for registration with <see cref="CommandsRegistry"/>.
+    /// </remarks>
     public static readonly CommandEntry Entry = new(
         Command,
         "run-workflow <workflow.yaml>",
@@ -78,7 +94,19 @@ public sealed class RunWorkflow : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the run-workflow command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain at least one element: the workflow file path or
+    ///     URL. Remaining elements may be <c>key=value</c> parameter pairs or the <c>--verbose</c>
+    ///     flag.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when no arguments are supplied, or when a parameter argument does not contain
+    ///     the <c>=</c> separator.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
         // Report an error if the number of arguments is less than 1
@@ -115,7 +143,8 @@ public sealed class RunWorkflow : Command
         }
 
         // Execute the workflow
-        var outputs = name.StartsWith("http")
+        var outputs = name.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                      name.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
             ? RunUrl(context, name, null, parameters)
             : RunFile(context, name, null, parameters);
 
@@ -133,7 +162,25 @@ public sealed class RunWorkflow : Command
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the run-workflow command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">
+    ///     Caller's workflow variable map; any declared output variables are written back into
+    ///     this dictionary after execution.
+    /// </param>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when a declared output variable is not present in the workflow's output map
+    ///     after execution.
+    /// </exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when both <c>file</c> and <c>url</c> inputs are specified, when neither is
+    ///     specified, when both <c>nuget</c> and <c>url</c> are specified, when <c>nuget</c> is
+    ///     used without a <c>file</c> input, or when the <c>nuget</c> value is not in
+    ///     <c>PackageName:version</c> format.
+    /// </exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -193,14 +240,39 @@ public sealed class RunWorkflow : Command
     /// <summary>
     ///     Execute the workflow
     /// </summary>
+    /// <remarks>
+    ///     Throws <see cref="YamlDotNet.Core.YamlException"/> (rather than
+    ///     <see cref="CommandErrorException"/>) for source-specification validation errors (both
+    ///     <c>file</c> and <c>url</c> specified, or neither) because these represent structural
+    ///     workflow configuration errors rather than runtime command failures. This is consistent
+    ///     with how other YAML-dispatch methods signal misconfigured step inputs.
+    /// </remarks>
     /// <param name="context">Program context</param>
     /// <param name="step">Step for reporting errors</param>
-    /// <param name="file">Optional file</param>
-    /// <param name="url">Optional URL</param>
+    /// <param name="file">
+    ///     Local file path of the workflow to execute. Exactly one of <paramref name="file"/> or
+    ///     <paramref name="url"/> must be non-null, unless the caller has already resolved a NuGet
+    ///     source into a file path (in which case <paramref name="url"/> is null and this provides
+    ///     the resolved path). Pass <see langword="null"/> when specifying a URL source.
+    /// </param>
+    /// <param name="url">
+    ///     HTTP or HTTPS URL of the workflow to execute. Exactly one of <paramref name="file"/> or
+    ///     <paramref name="url"/> must be non-null. Pass <see langword="null"/> when specifying a
+    ///     local file source. Providing both a non-null <paramref name="file"/> and a non-null
+    ///     <paramref name="url"/> is an error.
+    /// </param>
     /// <param name="integrity">Optional integrity</param>
-    /// <param name="parameters">Workflow parameters</param>
+    /// <param name="parameters">
+    ///     Workflow parameter values to pass into the sub-workflow. May be an empty dictionary
+    ///     but must not be <see langword="null"/>. Each key must match a parameter name declared
+    ///     in the target workflow's <c>parameters</c> section; undeclared keys cause a
+    ///     <see cref="CommandErrorException"/>.
+    /// </param>
     /// <returns>Workflow outputs</returns>
-    /// <exception cref="YamlException">on error</exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when both <paramref name="file"/> and <paramref name="url"/> are non-null
+    ///     (ambiguous source), or when both are null (no source provided).
+    /// </exception>
     public static Dictionary<string, string> Run(Context context, YamlMappingNode step, string? file, string? url,
         string? integrity, Dictionary<string, string> parameters)
     {
@@ -229,15 +301,27 @@ public sealed class RunWorkflow : Command
     }
 
     /// <summary>
-    ///     Execute the workflow
+    ///     Reads the workflow YAML file from disk and executes it.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="workflowFile">Workflow file</param>
-    /// <param name="integrity">Optional integrity hash</param>
-    /// <param name="parameters">Workflow parameters</param>
-    /// <returns>Workflow outputs</returns>
-    /// <exception cref="CommandUsageException">On usage error</exception>
-    /// <exception cref="YamlException">On workflow error</exception>
+    /// <param name="context">Program context used for output. Must not be null.</param>
+    /// <param name="workflowFile">
+    ///     Local file path of the workflow to execute. Must not be null; must exist on disk.
+    /// </param>
+    /// <param name="integrity">
+    ///     Optional SHA-256 hex string for integrity verification. Pass null to skip integrity checking.
+    /// </param>
+    /// <param name="parameters">
+    ///     Workflow parameter values. May be empty but must not be null. Each key must match a
+    ///     parameter declared in the workflow's <c>parameters</c> section.
+    /// </param>
+    /// <returns>Workflow outputs as a variable dictionary after all steps execute.</returns>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when the file specified by <paramref name="workflowFile"/> does not exist on disk.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Propagated from <see cref="RunBytes"/> when the integrity check fails, the YAML
+    ///     structure is invalid, or a workflow step references an unknown command.
+    /// </exception>
     public static Dictionary<string, string> RunFile(Context context, string workflowFile, string? integrity,
         Dictionary<string, string> parameters)
     {
@@ -256,14 +340,31 @@ public sealed class RunWorkflow : Command
     }
 
     /// <summary>
-    ///     Run workflow from URL
+    ///     Downloads the workflow YAML from an HTTP/HTTPS URL and executes it.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="url">Workflow URL</param>
-    /// <param name="integrity">Optional integrity hash</param>
-    /// <param name="parameters">Workflow parameters</param>
-    /// <returns>Workflow outputs</returns>
-    /// <exception cref="CommandErrorException">on error</exception>
+    /// <remarks>
+    ///     Blocks on the async HTTP operations using <c>.Result</c>. This is safe because
+    ///     SpdxTool runs as a console application without a synchronization context that could
+    ///     cause a deadlock.
+    /// </remarks>
+    /// <param name="context">Program context used for output. Must not be null.</param>
+    /// <param name="url">
+    ///     HTTP or HTTPS URL of the workflow to download. Must not be null; must be reachable
+    ///     and return HTTP 200 OK.
+    /// </param>
+    /// <param name="integrity">
+    ///     Optional SHA-256 hex string for integrity verification. Pass null to skip integrity checking.
+    /// </param>
+    /// <param name="parameters">
+    ///     Workflow parameter values. May be empty but must not be null. Each key must match a
+    ///     parameter declared in the workflow's <c>parameters</c> section.
+    /// </param>
+    /// <returns>Workflow outputs as a variable dictionary after all steps execute.</returns>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the HTTP response for <paramref name="url"/> is not HTTP 200 OK; also
+    ///     propagated from <see cref="RunBytes"/> when the integrity check fails or the workflow
+    ///     structure is invalid.
+    /// </exception>
     public static Dictionary<string, string> RunUrl(Context context, string url, string? integrity,
         Dictionary<string, string> parameters)
     {
@@ -297,14 +398,32 @@ public sealed class RunWorkflow : Command
     }
 
     /// <summary>
-    ///     Execute the workflow from Yaml bytes (from file, url, etc.)
+    ///     Parses and executes a workflow from its raw YAML byte content.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="source">Yaml source</param>
-    /// <param name="bytes">Yaml bytes</param>
-    /// <param name="integrity">Optional integrity hash</param>
-    /// <param name="parameters">Parameters</param>
-    /// <returns>Workflow outputs</returns>
+    /// <param name="context">Program context used for output. Must not be null.</param>
+    /// <param name="source">
+    ///     Display name for the workflow source used in error messages (e.g., a file path or URL).
+    ///     Must not be null.
+    /// </param>
+    /// <param name="bytes">
+    ///     Raw YAML content to parse and execute. Must not be null; must be valid YAML with a
+    ///     root mapping node containing a <c>steps</c> sequence.
+    /// </param>
+    /// <param name="integrity">
+    ///     Optional SHA-256 hex string for integrity verification. Pass null to skip integrity checking.
+    /// </param>
+    /// <param name="parameters">
+    ///     Workflow parameter values. May be empty but must not be null. Each key must match a
+    ///     parameter declared in the workflow's <c>parameters</c> section.
+    /// </param>
+    /// <returns>The local variables map after all steps execute, representing workflow outputs.</returns>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when the integrity hash does not match the computed SHA-256 hash of
+    ///     <paramref name="bytes"/>, when the YAML root node is not a mapping node, when the
+    ///     <c>steps</c> key is absent from the root mapping, when a step node is not a mapping
+    ///     node, when a provided parameter name is not declared in the workflow's
+    ///     <c>parameters</c> section, or when the YAML is structurally invalid.
+    /// </exception>
     public static Dictionary<string, string> RunBytes(Context context, string source, byte[] bytes, string? integrity,
         Dictionary<string, string> parameters)
     {
@@ -312,8 +431,8 @@ public sealed class RunWorkflow : Command
         if (integrity != null)
         {
             var hashBytes = SHA256.HashData(bytes);
-            var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-            if (hash != integrity)
+            var hash = Convert.ToHexString(hashBytes);
+            if (!string.Equals(hash, integrity, StringComparison.OrdinalIgnoreCase))
             {
                 throw new CommandErrorException($"Integrity check of {source} failed");
             }
@@ -407,12 +526,24 @@ public sealed class RunWorkflow : Command
     /// <summary>
     ///     Resolve a workflow file path from a NuGet package
     /// </summary>
+    /// <remarks>
+    ///     Uses <see cref="Utility.PathHelpers.SafePathCombine"/> deliberately to prevent
+    ///     path-traversal attacks; the resolved path is always constrained to a subdirectory of
+    ///     the base directory. This mirrors the security rationale documented in the design
+    ///     documentation.
+    /// </remarks>
     /// <param name="step">Step for reporting errors</param>
     /// <param name="nuget">NuGet package specification (PackageName:version)</param>
     /// <param name="file">File path within the NuGet package</param>
     /// <param name="url">URL (must be null when nuget is specified)</param>
     /// <returns>Resolved file path</returns>
-    /// <exception cref="YamlException">On invalid inputs</exception>
+    /// <exception cref="YamlException">
+    ///     Thrown when <paramref name="url"/> is non-null while <paramref name="nuget"/> is
+    ///     specified (the two source types are mutually exclusive); thrown when
+    ///     <paramref name="file"/> is null while <paramref name="nuget"/> is specified (a relative
+    ///     path within the package is required); thrown when <paramref name="nuget"/> does not
+    ///     contain the <c>:</c> separator expected by the <c>PackageName:version</c> format.
+    /// </exception>
     private static string ResolveNuGetFile(YamlMappingNode step, string nuget, string? file, string? url)
     {
         // Cannot specify both nuget and url

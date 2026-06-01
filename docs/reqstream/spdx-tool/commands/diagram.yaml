@@ -1,19 +1,81 @@
-# DemaConsulting.SpdxTool diagram Command Requirements
-#
-# This file contains requirements for the diagram command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: diagram Command
-    requirements:
-      - id: SpdxTool-Transform-Diagram
-        title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
-        tags:
-          - spdx
-        justification: |
-          Visual representations of SPDX relationships and package hierarchies
-          help users understand complex dependency graphs. Mermaid is a popular
-          text-based diagramming language.
-        tests:
-          - Diagram_ValidSpdxFile_GeneratesDiagram
-          - Diagram_WithToolsOption_GeneratesDiagramWithTools
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: Diagram Requirements
+            requirements:
+              - id: SpdxTool-Commands-Diagram
+                title: The tool shall generate Mermaid diagrams from SPDX documents using the diagram command.
+                tags:
+                  - spdx
+                justification: |
+                  Visual representations of SPDX relationships and package hierarchies
+                  help users understand complex dependency graphs. Mermaid is a popular
+                  text-based diagramming language.
+                tests:
+                  - Diagram_Run_ValidSpdxFile_GeneratesDiagram
+                  - Diagram_Run_WithToolsOption_GeneratesDiagramWithTools
+
+              - id: SpdxTool-Commands-Diagram-Workflow
+                title: >-
+                  The diagram command shall accept spdx, mermaid, and optional tools inputs when invoked
+                  from a workflow step.
+                tags:
+                  - spdx
+                justification: |
+                  Workflow users need to generate Mermaid diagrams as part of automated
+                  pipelines using structured YAML inputs rather than positional CLI arguments.
+                tests:
+                  - Diagram_Run_InWorkflow_GeneratesDiagram
+
+              - id: SpdxTool-Commands-Diagram-ToolsFilter
+                title: >-
+                  The diagram command shall exclude tool-related relationships when the tools option is
+                  not specified, and shall include them when the tools option is specified.
+                tags:
+                  - spdx
+                justification: |
+                  Tool relationships (BUILD_TOOL_OF, DEV_TOOL_OF, and TEST_TOOL_OF) are implementation
+                  details that clutter diagrams when not requested. Excluding them by default
+                  produces cleaner, more readable diagrams; the tools option allows users to include
+                  them explicitly when full tool visibility is needed.
+                tests:
+                  - Diagram_Run_WithoutToolsOption_ExcludesToolRelationships
+                  - Diagram_Run_WithDevToolOfRelationship_ExcludedFromDefaultDiagram
+                  - Diagram_Run_WithDevToolOfRelationship_IncludedInToolsDiagram
+                  - Diagram_Run_WithTestToolOfRelationship_ExcludedFromDefaultDiagram
+                  - Diagram_Run_WithTestToolOfRelationship_IncludedInToolsDiagram
+
+              - id: SpdxTool-Commands-Diagram-UnspecifiedVersion
+                title: >-
+                  When a package has no version information, the diagram command shall use
+                  "unspecified" as the version label in the generated diagram.
+                tags:
+                  - spdx
+                justification: |
+                  SPDX packages are not required to declare a version. The diagram command
+                  must handle this gracefully to avoid crashes or empty labels, and
+                  "unspecified" communicates clearly to the diagram reader that no version
+                  was declared.
+                tests:
+                  - Diagram_Run_PackageWithoutVersion_UsesUnspecifiedFallback
+
+              - id: SpdxTool-Commands-Diagram-Validate
+                title: >-
+                  The diagram command shall validate its inputs and report an error for missing or
+                  invalid values.
+                tags:
+                  - spdx
+                justification: |
+                  Invalid inputs must be detected early and reported clearly so that users can
+                  diagnose configuration mistakes quickly.
+                tests:
+                  - Diagram_Run_MissingArguments_ReportsError
+                  - Diagram_Run_InsufficientArguments_ReportsError
+                  - Diagram_Run_MissingSpdxFile_ReportsError
+                  - Diagram_Run_InvalidOption_ReportsError
+                  - Diagram_Run_MissingSpdxInput_ReportsError
+                  - Diagram_Run_MissingMermaidInput_ReportsError
+                  - Diagram_Run_InvalidToolsInput_ReportsError

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -28,12 +30,24 @@ namespace DemaConsulting.SpdxTool.Commands;
 /// <summary>
 ///     Query a program output for a value
 /// </summary>
+/// <remarks>
+///     Executes an external program, captures its combined stdout and stderr, and matches each output line
+///     against a caller-supplied regular expression containing a named <c>value</c> capture group. In CLI mode
+///     the captured value is written to stdout; in workflow mode it is stored in a named variable. The regex
+///     is compiled with a 100 ms match timeout to prevent catastrophic backtracking on untrusted patterns.
+///     Thread-safe: all public methods on this singleton operate only on method-local state and the shared <see cref="Context"/>.
+/// </remarks>
 public sealed class Query : Command
 {
     /// <summary>
     ///     Command name
     /// </summary>
     private const string Command = "query";
+
+    /// <summary>
+    ///     Timeout in milliseconds for each regular expression match, guarding against catastrophic backtracking
+    /// </summary>
+    private const int RegexMatchTimeoutMs = 100;
 
     /// <summary>
     ///     Singleton instance of this command
@@ -73,23 +87,40 @@ public sealed class Query : Command
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the query command from the CLI.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="args">
+    ///     Command-line arguments. Must contain at least two elements: the regex pattern (with a <c>value</c>
+    ///     capture group) followed by the program name; any additional elements are forwarded as program arguments.
+    /// </param>
+    /// <exception cref="CommandUsageException">Thrown when fewer than two arguments are supplied, the pattern is syntactically invalid, or it lacks a <c>value</c> capture group.</exception>
+    /// <exception cref="CommandErrorException">Thrown when the external program cannot be started or the pattern is not matched in any output line.</exception>
     public override void Run(Context context, string[] args)
     {
-        // Report an error if the number of arguments is not 1
+        // Report an error if fewer than 2 arguments are provided
         if (args.Length < 2)
         {
-            throw new CommandUsageException("'query' command missing arguments");
+            throw new CommandUsageException($"'{Command}' command missing arguments");
         }
 
-        // Generate the markdown
+        // Query the program output
         var found = QueryProgramOutput(args[0], args[1], [.. args.Skip(2)]);
 
         // Write the found value
         context.WriteLine(found);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Runs the query command from a YAML workflow step.
+    /// </summary>
+    /// <param name="context">Program context used for output.</param>
+    /// <param name="step">YAML step node containing the inputs.</param>
+    /// <param name="variables">Workflow variable map; the captured value is stored under the key given by the <c>output</c> input.</param>
+    /// <exception cref="YamlException">Thrown when the <c>output</c>, <c>pattern</c>, or <c>program</c> input is absent from the step.</exception>
+    /// <exception cref="CommandUsageException">Thrown when the pattern is syntactically invalid or lacks a <c>value</c> capture group.</exception>
+    /// <exception cref="CommandErrorException">Thrown when the external program cannot be started or the pattern is not matched in any output line.</exception>
     public override void Run(Context context, YamlMappingNode step, Dictionary<string, string> variables)
     {
         // Get the step inputs
@@ -97,22 +128,22 @@ public sealed class Query : Command
 
         // Get the 'output' input
         var output = GetMapString(inputs, "output", variables) ??
-                     throw new YamlException(step.Start, step.End, "'query' command missing 'output' input");
+                     throw new YamlException(step.Start, step.End, $"'{Command}' command missing 'output' input");
 
         // Get the 'pattern' input
         var pattern = GetMapString(inputs, "pattern", variables) ??
-                      throw new YamlException(step.Start, step.End, "'query' command missing 'pattern' input");
+                      throw new YamlException(step.Start, step.End, $"'{Command}' command missing 'pattern' input");
 
         // Get the 'program' input
         var program = GetMapString(inputs, "program", variables) ??
-                      throw new YamlException(step.Start, step.End, "'query' command missing 'program' input");
+                      throw new YamlException(step.Start, step.End, $"'{Command}' command missing 'program' input");
 
         // Get the arguments
         var argumentsSequence = GetMapSequence(inputs, "arguments");
         var arguments = argumentsSequence?.Children.Select(c => Expand(c.ToString(), variables)).ToArray() ??
                         [];
 
-        // Generate the markdown
+        // Query the program output
         var found = QueryProgramOutput(pattern, program, arguments);
 
         // Save the output to the variables
@@ -122,16 +153,49 @@ public sealed class Query : Command
     /// <summary>
     ///     Run a program and query the output for a value
     /// </summary>
-    /// <param name="pattern">Regular expression pattern to capture 'value'</param>
-    /// <param name="program">Program to execute</param>
-    /// <param name="arguments">Program arguments</param>
+    /// <remarks>
+    ///     Both stdout and stderr are read concurrently before waiting for process exit to prevent the
+    ///     deadlock that occurs when a child process fills its output buffer and blocks waiting for the
+    ///     reader, while the caller blocks in WaitForExit waiting for the process to terminate. The
+    ///     regular expression is compiled with a 100 ms match timeout to guard against catastrophic
+    ///     backtracking on untrusted patterns.
+    /// </remarks>
+    /// <param name="pattern">
+    ///     Regular expression pattern used to capture the output value. Must be non-null and
+    ///     syntactically valid; must contain a named <c>value</c> capture group. A syntactically
+    ///     invalid pattern or a pattern without the <c>value</c> group throws
+    ///     <see cref="CommandUsageException"/>.
+    /// </param>
+    /// <param name="program">
+    ///     Name or full path of the program to execute. Must be non-null and non-empty. If the
+    ///     program cannot be found or launched a <see cref="CommandErrorException"/> is thrown.
+    /// </param>
+    /// <param name="arguments">
+    ///     Arguments forwarded to the program. Must be non-null; an empty array is valid and
+    ///     results in the program being invoked with no arguments.
+    /// </param>
     /// <returns>Captured value</returns>
-    /// <exception cref="CommandUsageException">On bad usage</exception>
-    /// <exception cref="CommandErrorException">On error</exception>
+    /// <exception cref="CommandUsageException">
+    ///     Thrown when <paramref name="pattern"/> is syntactically invalid or does not contain a
+    ///     named "value" capture group.
+    /// </exception>
+    /// <exception cref="CommandErrorException">
+    ///     Thrown when <paramref name="program"/> cannot be started, or when the pattern does not
+    ///     match any line of the combined program output.
+    /// </exception>
     public static string QueryProgramOutput(string pattern, string program, string[] arguments)
     {
         // Construct the regular expression
-        var regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+        Regex regex;
+        try
+        {
+            regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(RegexMatchTimeoutMs));
+        }
+        catch (RegexParseException ex)
+        {
+            throw new CommandUsageException($"Invalid regular expression pattern: {ex.Message}");
+        }
+
         if (!regex.GetGroupNames().Contains("value"))
         {
             throw new CommandUsageException("Pattern must contain a 'value' capture group");
@@ -158,7 +222,7 @@ public sealed class Query : Command
         {
             process.Start();
         }
-        catch
+        catch (Exception ex) when (ex is Win32Exception or IOException)
         {
             throw new CommandErrorException($"Unable to start program '{program}'");
         }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,24 @@ using Validate = DemaConsulting.SpdxTool.SelfTest.Validate;
 namespace DemaConsulting.SpdxTool;
 
 /// <summary>
-///     Program class
+///     Entry point and top-level dispatcher for the SPDX tool command-line application.
 /// </summary>
+/// <remarks>
+///     Constructs a Context from the command-line arguments and dispatches execution to the version
+///     reporter, help printer, self-validation suite, or the matching registered command. All mutable
+///     runtime state is held in Context so Program methods are stateless and independently testable.
+/// </remarks>
 public static class Program
 {
     /// <summary>
     ///     Gets the version of this assembly.
     /// </summary>
+    /// <remarks>
+    ///     Reads <see cref="AssemblyInformationalVersionAttribute"/> from the entry assembly at
+    ///     startup. Falls back to <c>"Unknown"</c> when the attribute is absent (e.g., in unit-test
+    ///     host processes). The value is determined once at class initialization and is read-only
+    ///     thereafter.
+    /// </remarks>
     public static readonly string Version =
         typeof(Program)
             .Assembly
@@ -41,7 +52,13 @@ public static class Program
     /// <summary>
     ///     Application entry point
     /// </summary>
-    /// <param name="args">Program arguments</param>
+    /// <param name="args">Command-line arguments. May be empty (triggers error and usage output); must not be null.</param>
+    /// <remarks>
+    ///     InvalidOperationException from Context.Create (e.g., missing argument, invalid depth,
+    ///     negative depth) is caught and reported as 'Error: {message}' with exit code 1. All other
+    ///     unhandled exceptions are reported (message only, no stack trace) and re-thrown.
+    ///     Environment.ExitCode is set from context.ExitCode (1 if any errors were recorded, 0 otherwise).
+    /// </remarks>
     public static void Main(string[] args)
     {
         try
@@ -61,7 +78,7 @@ public static class Program
         catch (Exception e)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Error: {e}");
+            Console.WriteLine($"Error: {e.Message}");
             Console.ResetColor();
             throw;
         }
@@ -71,6 +88,16 @@ public static class Program
     ///     Run the program context
     /// </summary>
     /// <param name="context">Program context</param>
+    /// <remarks>
+    ///     Each call to context.WriteError increments the error counter; the caller should check
+    ///     context.ExitCode after Run returns to determine whether any errors occurred.
+    ///     CommandUsageException is caught, reported as <c>Error: {message}</c>, and usage
+    ///     information is printed; CommandErrorException is caught and reported as
+    ///     <c>Error: {message}</c> without printing usage. Any other exception is caught and reported via
+    ///     context.WriteError using ex.ToString() — which includes the full stack trace — so
+    ///     that unexpected failures during command execution produce diagnostic output useful
+    ///     for debugging in CI environments.
+    /// </remarks>
     public static void Run(Context context)
     {
         // Handle version query
@@ -142,6 +169,10 @@ public static class Program
     ///     Print usage information
     /// </summary>
     /// <param name="context">Program context</param>
+    /// <remarks>
+    ///     Shared by multiple error paths (missing arguments, unknown command, usage exception)
+    ///     and the help flag handler so that usage output is consistent regardless of the trigger.
+    /// </remarks>
     public static void PrintUsage(Context context)
     {
         context.WriteLine(

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,22 +25,23 @@ namespace DemaConsulting.SpdxTool.Tests;
 /// <summary>
 ///     Tests for version information.
 /// </summary>
-[TestClass]
 public partial class VersionTests
 {
     /// <summary>
     ///     Regular expression to check for version
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A compiled Regex that matches a semantic version string (e.g., 1.2.3 or 1.2.3-preview).</returns>
     [GeneratedRegex(@"\d+\.\d+\.\d+.*")]
     private static partial Regex VersionRegex();
 
     /// <summary>
     ///     Test that the short version flag displays the version information
     /// </summary>
-    [TestMethod]
-    public void Version_ShortFlag_DisplaysVersion()
+    [Fact]
+    public void SpdxTool_Version_ShortFlag_DisplaysVersion()
     {
+        // Arrange: no setup required
+
         // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
@@ -49,18 +50,20 @@ public partial class VersionTests
             "-v");
 
         // Assert: Check the output
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify version response
-        Assert.MatchesRegex(VersionRegex(), output);
+        Assert.Matches(VersionRegex(), output);
     }
 
     /// <summary>
     ///     Test that the long version flag displays the version information
     /// </summary>
-    [TestMethod]
-    public void Version_LongFlag_DisplaysVersion()
+    [Fact]
+    public void SpdxTool_Version_LongFlag_DisplaysVersion()
     {
+        // Arrange: no setup required
+
         // Act: Run the SPDX tool
         var exitCode = Runner.Run(
             out var output,
@@ -69,9 +72,9 @@ public partial class VersionTests
             "--version");
 
         // Assert: Check the output
-        Assert.AreEqual(0, exitCode);
+        Assert.Equal(0, exitCode);
 
         // Assert: Verify version response
-        Assert.MatchesRegex(VersionRegex(), output);
+        Assert.Matches(VersionRegex(), output);
     }
 }

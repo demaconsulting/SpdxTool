@@ -1,13 +1,13 @@
 ---
-title: SpdxTool Review Report
-subtitle: File Review Report for the DemaConsulting SpdxTool
-author: DEMA Consulting
-description: File Review Report for the DemaConsulting SpdxTool
+title: "SpdxTool Code Review Report"
+subtitle: ".NET tool for manipulating SPDX SBOM files"
+author: "DEMA Consulting"
+description: "Code Review Report for SpdxTool"
 lang: en-US
 keywords:
+  - Code Review
   - SpdxTool
-  - Review Report
-  - File Reviews
   - .NET
-  - Tool
+  - SPDX
+  - SBOM
 ---

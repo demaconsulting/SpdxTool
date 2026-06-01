@@ -1,7 +1,18 @@
 ---
-title: 'SpdxTool User Guide'
-subtitle: 'SPDX SBOM Manipulation Tool'
-author: 'DEMA Consulting'
-description: 'Comprehensive guide for installing, configuring, and using SpdxTool to manipulate SPDX SBOM files'
-keywords: [SPDX, SBOM, software bill of materials, security, compliance, licensing]
+title: "SpdxTool User Guide"
+subtitle: ".NET tool for manipulating SPDX SBOM files"
+author: "DEMA Consulting"
+description: "User Guide for SpdxTool"
+lang: en-US
+keywords:
+  - User Guide
+  - SpdxTool
+  - SPDX
+  - SBOM
+  - Software Bill of Materials
+  - .NET
+  - MSBuild
+  - Compliance
+  - Licensing
 ---
+...

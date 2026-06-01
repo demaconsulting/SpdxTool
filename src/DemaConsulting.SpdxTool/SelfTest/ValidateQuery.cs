@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 DEMA Consulting
+// Copyright (c) 2024 DEMA Consulting
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,102 +24,132 @@ using DemaConsulting.TestResults;
 namespace DemaConsulting.SpdxTool.SelfTest;
 
 /// <summary>
-///     Self-validation of GetVersion
+///     Self-test step that exercises the <c>query</c> command end-to-end.
 /// </summary>
+/// <remarks>
+///     Verifies that an external program can be queried and a version string extracted from its
+///     output using a regular expression pattern, with the result captured into a workflow variable
+///     and subsequently printed to the log output. Uses a temporary <c>validate.tmp</c> directory
+///     in the current working directory; callers must ensure sequential execution to avoid races on
+///     that directory and on the process-wide current directory set by
+///     <see cref="Validate.RunSpdxTool(string, string[])"/>.
+/// </remarks>
 internal static partial class ValidateQuery
 {
     /// <summary>
-    ///     Regular expression to check for version
+    ///     Optional test hook invoked after fixture files are written and immediately before
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
-    /// <returns></returns>
-    [GeneratedRegex(@"Dotnet version \d+\.\d+\.\d+")]
-    private static partial Regex VersionRegex();
+    /// <remarks>
+    ///     This property is <c>null</c> in production. Tests may set it to a delegate that
+    ///     writes an invalid workflow YAML so that the query command fails with a non-zero exit
+    ///     code, exercising the CommandFailure path.
+    ///     Callers must reset this property to <c>null</c> after the test completes.
+    /// </remarks>
+    internal static Action? PreRunSpdxToolHookForTest { get; set; }
 
     /// <summary>
-    ///     Run validation test
+    ///     Executes the query self-test and records the result.
     /// </summary>
-    /// <param name="context">Program context</param>
-    /// <param name="results">Test results</param>
+    /// <remarks>
+    ///     Runs <see cref="DoValidate"/> inside a temporary directory via
+    ///     <see cref="Validate.RunInTempDir"/> and records the outcome via
+    ///     <see cref="Validate.RecordResult"/>. If <see cref="DoValidate"/> throws an exception,
+    ///     the exception propagates uncaught from this method and no <see cref="TestResult"/> is
+    ///     recorded for this step.
+    /// </remarks>
+    /// <param name="context">The active Program context providing output and error streams. Must not be null.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = DoValidate();
-
-        // Report validation result
-        if (passed)
-        {
-            context.WriteLine($"✓ SpdxTool_Query - Passed");
-        }
-        else
-        {
-            context.WriteError($"✗ SpdxTool_Query - Failed");
-        }
-
-        results.Results.Add(
-            new TestResult
-            {
-                Name = "SpdxTool_Query",
-                ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateQuery",
-                ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
-                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
-            });
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
+        Validate.RecordResult(context, results, "SpdxTool_Query", "DemaConsulting.SpdxTool.SelfTest.ValidateQuery", passed);
     }
 
     /// <summary>
-    ///     Do the validation
+    ///     Performs the actual query validation. Called by <see cref="Validate.RunInTempDir"/>,
+    ///     which creates and cleans up the temporary directory.
     /// </summary>
-    /// <returns>True on success</returns>
+    /// <returns>
+    ///     <c>true</c> if the command succeeded and the log matches the version pattern;
+    ///     otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    ///     Writes a workflow YAML that executes <c>query</c> against <c>dotnet --version</c>,
+    ///     extracts the version using a regex pattern into the <c>version</c> variable, and prints
+    ///     it via the <c>print</c> command. Invokes <see cref="Validate.RunSpdxTool(string, string[])"/>
+    ///     with <c>--silent</c>, <c>--log</c>, and <c>run-workflow</c> arguments, then reads the
+    ///     log file and verifies it matches the <see cref="VersionRegex"/> pattern.
+    ///     <strong>Thread safety:</strong> <see cref="Validate.RunSpdxTool(string, string[])"/>
+    ///     temporarily mutates the process-wide current working directory; callers must execute serially.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">Thrown if the test files cannot be created or the log file cannot be read.</exception>
+    /// <exception cref="System.UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        try
+        const string tempDir = Validate.TempDir;
+
+        // Write test workflow file
+        File.WriteAllText($"{tempDir}/workflow.yaml",
+            """
+            steps:
+            - command: query
+              inputs:
+                output: version
+                pattern: (?<value>\d+\.\d+\.\d+)
+                program: dotnet
+                arguments:
+                - '--version'
+
+            - command: print
+              inputs:
+                text:
+                - Dotnet version ${{ version }}
+            """);
+
+        // Allow tests to corrupt fixtures immediately before the command runs
+        PreRunSpdxToolHookForTest?.Invoke();
+
+        // Run the workflow file
+        var exitCode = Validate.RunSpdxTool(
+            tempDir,
+            [
+                "--silent",
+                "--log", "output.log",
+                "run-workflow",
+                "workflow.yaml"
+            ]);
+
+        // Fail if SpdxTool reported an error
+        if (exitCode != 0)
         {
-            // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
-
-            // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
-                """
-                steps:
-                - command: query
-                  inputs:
-                    output: version
-                    pattern: (?<value>\d+\.\d+\.\d+)
-                    program: dotnet
-                    arguments:
-                    - '--version'
-
-                - command: print
-                  inputs:
-                    text:
-                    - Dotnet version ${{ version }}
-                """);
-
-            // Run the workflow file
-            var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
-                [
-                    "--silent",
-                    "--log", "output.log",
-                    "run-workflow",
-                    "workflow.yaml"
-                ]);
-
-            // Fail if SpdxTool reported an error
-            if (exitCode != 0)
-            {
-                return false;
-            }
-
-            // Read the log file
-            var log = File.ReadAllText("validate.tmp/output.log");
-
-            // Verify expected output
-            return VersionRegex().IsMatch(log);
+            return false;
         }
-        finally
+
+        // Fail if log file is absent
+        if (!File.Exists($"{tempDir}/output.log"))
         {
-            // Delete the temporary validation folder
-            Directory.Delete("validate.tmp", true);
+            return false;
         }
+
+        // Read the log file
+        var log = File.ReadAllText($"{tempDir}/output.log");
+
+        // Verify expected output
+        return VersionRegex().IsMatch(log);
     }
+
+    /// <summary>
+    ///     Returns a compiled regular expression that matches a dotnet version output line in the
+    ///     <c>output.log</c> file produced by the query self-test workflow.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="System.Text.RegularExpressions.Regex"/> that matches the line
+    ///     <c>Dotnet version &lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;</c> as emitted by the
+    ///     <c>print</c> step in the query workflow after extracting the dotnet version.
+    /// </returns>
+    [GeneratedRegex(@"Dotnet version \d+\.\d+\.\d+")]
+    private static partial Regex VersionRegex();
 }

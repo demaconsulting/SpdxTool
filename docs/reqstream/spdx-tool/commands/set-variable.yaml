@@ -1,17 +1,77 @@
-# DemaConsulting.SpdxTool set-variable Command Requirements
-#
-# This file contains requirements for the set-variable command.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: set-variable Command
-    requirements:
-      - id: SpdxTool-Workflow-SetVariable
-        title: The tool shall support setting variables within workflows using the set-variable command.
-        tags:
-          - workflow
-        justification: |
-          Workflows need to pass data between steps and parameterize operations.
-          Variables enable dynamic workflow execution based on computed or input values.
-        tests:
-          - SetVariable_InWorkflow_SetsVariable
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: SetVariable Requirements
+            requirements:
+              - id: SpdxTool-Commands-SetVariable
+                title: The tool shall support setting variables within workflows using the set-variable command.
+                tags:
+                  - workflow
+                justification: |
+                  Workflows need to pass data between steps and parameterize operations.
+                  Variables enable dynamic workflow execution based on computed or input values.
+                tests:
+                  - SetVariable_Run_InWorkflow_SetsVariable
+
+              - id: SpdxTool-Commands-SetVariable-CliRejection
+                title: The set-variable command shall reject direct command-line invocation with a usage error.
+                tags:
+                  - workflow
+                justification: |
+                  The set-variable command is meaningful only within a workflow context.
+                  Rejecting CLI invocation prevents misuse and provides a clear error message.
+                tests:
+                  - SetVariable_Run_OnCommandLine_ReportsWorkflowOnlyError
+
+              - id: SpdxTool-Commands-SetVariable-MissingValue
+                title: >-
+                  The set-variable command shall report an error when the value input
+                  is absent from the workflow step.
+                tags:
+                  - workflow
+                justification: |
+                  The value input is required to determine what to assign. Detecting and
+                  reporting its absence early prevents silent no-ops or corrupted variable state.
+                tests:
+                  - SetVariable_Run_MissingValue_ThrowsException
+
+              - id: SpdxTool-Commands-SetVariable-MissingOutput
+                title: >-
+                  The set-variable command shall report an error when the output input
+                  is absent from the workflow step.
+                tags:
+                  - workflow
+                justification: |
+                  The output input names the variable to set. Detecting and reporting its
+                  absence early prevents silent no-ops or corrupted variable state.
+                tests:
+                  - SetVariable_Run_MissingOutput_ThrowsException
+
+              - id: SpdxTool-Commands-SetVariable-ValueExpansion
+                title: >-
+                  The set-variable command shall apply workflow variable expansion to the
+                  value input before assigning it to the output variable.
+                tags:
+                  - workflow
+                justification: |
+                  Variable expansion in the value input allows steps to compose dynamic
+                  strings from previously computed workflow values, which is essential for
+                  parameterized workflows.
+                tests:
+                  - SetVariable_Run_InWorkflow_SetsVariable
+
+              - id: SpdxTool-Commands-SetVariable-LiteralOutput
+                title: >-
+                  The set-variable command shall treat the output input as a literal variable
+                  name without applying workflow variable expansion.
+                tags:
+                  - workflow
+                justification: |
+                  Storing the output key literally ensures that the target variable name is
+                  always predictable and unambiguous, preventing accidental double-expansion
+                  when the output name itself contains template syntax.
+                tests:
+                  - SetVariable_Run_OutputWithVariableSyntax_StoredLiterally

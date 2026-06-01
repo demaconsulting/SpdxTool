@@ -1,34 +1,147 @@
-# DemaConsulting.SpdxTool run-workflow Command Requirements
-#
-# This file contains requirements for the run-workflow command, covering
-# workflow execution and NuGet-based workflow support.
-# It is included by the root requirements.yaml file.
 ---
 sections:
-  - title: run-workflow Command
-    requirements:
-      - id: SpdxTool-Workflow-RunWorkflow
-        title: The tool shall execute workflow files using the run-workflow command.
-        tags:
-          - workflow
-        justification: |
-          Complex SPDX document operations often require multiple steps. Workflows
-          enable users to define and automate multi-step processes in a declarative
-          YAML format.
-        tests:
-          - RunWorkflow_ValidWorkflowFile_ExecutesWorkflow
-          - RunWorkflow_WithDefaultParameters_UsesDefaults
-          - RunWorkflow_WithSpecifiedParameters_UsesSpecified
-          - RunWorkflow_WithOutputs_PopulatesOutputs
-          - RunWorkflow_UrlWorkflow_ExecutesWorkflow
+  - title: SpdxTool Requirements
+    sections:
+      - title: Commands Requirements
+        sections:
+          - title: RunWorkflow Requirements
+            requirements:
+              - id: SpdxTool-Commands-RunWorkflow
+                title: The tool shall execute workflow files using the run-workflow command.
+                tags:
+                  - workflow
+                justification: |
+                  Complex SPDX document operations often require multiple steps. Workflows
+                  enable users to define and automate multi-step processes in a declarative
+                  YAML format.
+                tests:
+                  - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow
+                  - RunWorkflow_Run_WithDefaultParameters_UsesDefaults
+                  - RunWorkflow_Run_WithSpecifiedParameters_UsesSpecified
+                  - RunWorkflow_Run_WithOutputs_PopulatesOutputs
+                  - RunWorkflow_Run_WithMissingOutput_ReportsError
+                  - RunWorkflow_Run_UrlWorkflow_ExecutesWorkflow
 
-      - id: SpdxTool-Workflow-NuGetWorkflow
-        title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
-        tags:
-          - workflow
-        justification: |
-          Users need to reference workflow files stored in NuGet packages so that
-          workflows can be versioned, distributed, and cached locally rather than
-          downloaded on every run.
-        tests:
-          - RunWorkflow_NuGetWorkflow_ExecutesWorkflow
+              - id: SpdxTool-Commands-RunWorkflow-NuGetWorkflow
+                title: The tool shall support running workflow files from NuGet packages using the run-workflow command.
+                tags:
+                  - workflow
+                justification: |
+                  Users need to reference workflow files stored in NuGet packages so that
+                  workflows can be versioned, distributed, and cached locally rather than
+                  downloaded on every run.
+                tests:
+                  - RunWorkflow_Run_NuGetWorkflow_ExecutesWorkflow
+
+              - id: SpdxTool-Commands-RunWorkflow-IntegrityAccepted
+                title: >-
+                  The tool shall execute a workflow when the provided SHA-256 integrity hash
+                  matches the content of the workflow source.
+                tags:
+                  - workflow
+                  - security
+                justification: |
+                  Integrity verification ensures that workflow content has not been tampered
+                  with between publication and execution. A matching hash confirms authenticity
+                  and permits execution.
+                tests:
+                  - RunWorkflow_Run_WithValidIntegrity_ExecutesWorkflow
+                  - RunWorkflow_Run_WithUppercaseIntegrity_ExecutesWorkflow
+
+              - id: SpdxTool-Commands-RunWorkflow-IntegrityRejected
+                title: >-
+                  The tool shall reject a workflow when the provided SHA-256 integrity hash
+                  does not match the content of the workflow source.
+                tags:
+                  - workflow
+                  - security
+                justification: |
+                  Integrity verification ensures that workflow content has not been tampered
+                  with between publication and execution, which is especially important for
+                  workflows loaded from external URLs or NuGet packages.
+                tests:
+                  - RunWorkflow_Run_WithBadIntegrity_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-MissingArguments
+                title: The run-workflow command shall report a usage error when required CLI arguments are missing.
+                tags:
+                  - workflow
+                justification: |
+                  Missing arguments indicate incorrect invocation. A clear error message
+                  guides users to the correct command syntax.
+                tests:
+                  - RunWorkflow_Run_MissingArguments_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-MissingFile
+                title: The run-workflow command shall report an error when the specified workflow file does not exist.
+                tags:
+                  - workflow
+                justification: |
+                  A missing workflow file cannot be executed. A clear error prevents confusing
+                  output or silent failures.
+                tests:
+                  - RunWorkflow_Run_MissingFile_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-UndeclaredParameter
+                title: >-
+                  The run-workflow command shall reject any caller-supplied parameter that is not
+                  declared in the workflow's parameters section.
+                tags:
+                  - workflow
+                justification: |
+                  Undeclared parameters indicate a mismatch between the caller and the workflow
+                  definition. Rejecting them prevents silent data corruption from unrecognized
+                  variable substitutions.
+                tests:
+                  - RunWorkflow_Run_UndeclaredParameter_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-MalformedWorkflow
+                title: >-
+                  The run-workflow command shall report an error when the workflow file content
+                  is malformed.
+                tags:
+                  - workflow
+                justification: |
+                  Malformed workflow files are programming errors that must be surfaced clearly
+                  so users can correct their configuration without debugging silent misbehavior.
+                tests:
+                  - RunWorkflow_Run_InvalidWorkflowFile_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-MalformedArgument
+                title: >-
+                  The run-workflow command shall report an error when a CLI argument does not
+                  follow the key=value format.
+                tags:
+                  - workflow
+                justification: |
+                  Invalid CLI arguments indicate incorrect invocation. A clear error message
+                  guides users to the correct parameter syntax without requiring them to read
+                  source code.
+                tests:
+                  - RunWorkflow_Run_MalformedCliArgument_ReportsError
+
+              - id: SpdxTool-Commands-RunWorkflow-VerboseOutput
+                title: >-
+                  The run-workflow command shall print all workflow output variables when the
+                  --verbose flag is specified on the CLI.
+                tags:
+                  - workflow
+                justification: |
+                  Users debugging complex workflows need visibility into the variable state
+                  produced by a workflow run. The --verbose flag surfaces all output variables
+                  without requiring extra print steps in the workflow definition.
+                tests:
+                  - RunWorkflow_Run_WithVerboseFlag_PrintsOutputs
+
+              - id: SpdxTool-Commands-RunWorkflow-DisplayName
+                title: >-
+                  The run-workflow command shall print the value of the displayName attribute
+                  to the output before executing a workflow step when the attribute is present.
+                tags:
+                  - workflow
+                justification: |
+                  Users need a way to annotate workflow steps with human-readable labels so
+                  that workflow output is easier to follow without embedding extra print commands
+                  in the workflow definition.
+                tests:
+                  - RunWorkflow_Run_WithDisplayName_PrintsLabel
