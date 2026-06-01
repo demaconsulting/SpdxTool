@@ -72,7 +72,7 @@ public class TemporaryDirectoryTests
     {
         using var tempDirectory = new TemporaryDirectory();
 
-        var filePath = tempDirectory.GetFilePath(Path.Combine("sub", "nested", "output.md"));
+        var filePath = tempDirectory.GetFilePath("sub/nested/output.md");
 
         Assert.True(Directory.Exists(Path.GetDirectoryName(filePath)));
     }
