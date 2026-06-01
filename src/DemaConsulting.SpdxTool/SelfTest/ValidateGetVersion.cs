@@ -50,7 +50,7 @@ internal static class ValidateGetVersion
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_GetVersion", "DemaConsulting.SpdxTool.SelfTest.ValidateGetVersion", passed);
     }
 
@@ -74,7 +74,7 @@ internal static class ValidateGetVersion
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        const string tempDir = "validate.tmp";
+        const string tempDir = Validate.TempDir;
 
         // Write test SPDX file
         File.WriteAllText($"{tempDir}/test.spdx.json",

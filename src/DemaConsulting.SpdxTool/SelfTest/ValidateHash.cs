@@ -51,7 +51,7 @@ internal static class ValidateHash
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_Hash", "DemaConsulting.SpdxTool.SelfTest.ValidateHash", passed);
     }
 
@@ -95,11 +95,11 @@ internal static class ValidateHash
     private static bool DoValidateGenerate()
     {
         // Write test file with known content
-        File.WriteAllText("validate.tmp/test-file.txt", "The quick brown fox jumps over the lazy dog");
+        File.WriteAllText($"{Validate.TempDir}/test-file.txt", "The quick brown fox jumps over the lazy dog");
 
         // Run hash generate command to create SHA256 hash
         var exitCode = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "hash",
@@ -115,13 +115,13 @@ internal static class ValidateHash
         }
 
         // Verify hash file was created with expected naming
-        if (!File.Exists("validate.tmp/test-file.txt.sha256"))
+        if (!File.Exists($"{Validate.TempDir}/test-file.txt.sha256"))
         {
             return false;
         }
 
         // Read the generated hash value
-        var hash = File.ReadAllText("validate.tmp/test-file.txt.sha256");
+        var hash = File.ReadAllText($"{Validate.TempDir}/test-file.txt.sha256");
 
         // Verify hash matches expected SHA256 value for the test content
         return hash == "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592";
@@ -148,7 +148,7 @@ internal static class ValidateHash
     {
         // Run hash verify command with correct hash
         var exitCode1 = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "hash",
@@ -164,11 +164,11 @@ internal static class ValidateHash
         }
 
         // Corrupt the hash file with invalid hash value
-        File.WriteAllText("validate.tmp/test-file.txt.sha256", "0000000000000000000000000000000000000000000000000000000000000000");
+        File.WriteAllText($"{Validate.TempDir}/test-file.txt.sha256", "0000000000000000000000000000000000000000000000000000000000000000");
 
         // Run hash verify command with incorrect hash
         var exitCode2 = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "hash",

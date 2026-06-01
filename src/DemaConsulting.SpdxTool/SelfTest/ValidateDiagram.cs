@@ -54,7 +54,7 @@ internal static class ValidateDiagram
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_Diagram", "DemaConsulting.SpdxTool.SelfTest.ValidateDiagram", passed);
     }
 
@@ -77,7 +77,7 @@ internal static class ValidateDiagram
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        const string tempDir = "validate.tmp";
+        const string tempDir = Validate.TempDir;
 
         // Write test SPDX file with packages and relationships
         File.WriteAllText($"{tempDir}/test-diagram.spdx.json",

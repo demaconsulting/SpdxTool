@@ -70,7 +70,7 @@ internal static class ValidateBasic
     /// </exception>
     internal static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_Basic", "DemaConsulting.SpdxTool.SelfTest.ValidateBasic", passed);
     }
 
@@ -110,14 +110,14 @@ internal static class ValidateBasic
     private static bool DoValidateValid()
     {
         // Write test SPDX file that is valid
-        Validate.WriteTestSpdxJsonMinimal("validate.tmp", "test-valid.spdx.json");
+        Validate.WriteTestSpdxJsonMinimal(Validate.TempDir, "test-valid.spdx.json");
 
         // Allow tests to corrupt the fixture immediately before the command runs
         PreRunSpdxToolHookForTest?.Invoke();
 
         // Run validation without NTIA flag on valid document
         var exitCode = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "validate",
@@ -148,7 +148,7 @@ internal static class ValidateBasic
     private static bool DoValidateInvalid()
     {
         // Write test SPDX file that is invalid (missing required SPDXID)
-        File.WriteAllText("validate.tmp/test-invalid.spdx.json",
+        File.WriteAllText($"{Validate.TempDir}/test-invalid.spdx.json",
             """
             {
               "files": [],
@@ -175,7 +175,7 @@ internal static class ValidateBasic
 
         // Run validation on invalid document
         var exitCode = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "--log", "output.log",
@@ -190,7 +190,7 @@ internal static class ValidateBasic
         }
 
         // Read the log file to verify error was reported
-        var log = File.ReadAllText("validate.tmp/output.log");
+        var log = File.ReadAllText($"{Validate.TempDir}/output.log");
 
         // Verify log references the invalid file, confirming validation ran and reported issues
         return log.Contains("Issues in test-invalid.spdx.json");

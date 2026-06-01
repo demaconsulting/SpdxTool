@@ -64,7 +64,7 @@ internal static partial class ValidateQuery
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_Query", "DemaConsulting.SpdxTool.SelfTest.ValidateQuery", passed);
     }
 
@@ -89,7 +89,7 @@ internal static partial class ValidateQuery
     /// <exception cref="System.UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        const string tempDir = "validate.tmp";
+        const string tempDir = Validate.TempDir;
 
         // Write test workflow file
         File.WriteAllText($"{tempDir}/workflow.yaml",

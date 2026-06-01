@@ -82,7 +82,7 @@ internal static class ValidateAddPackage
     /// </exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_AddPackage", "DemaConsulting.SpdxTool.SelfTest.ValidateAddPackage", passed);
     }
 
@@ -101,7 +101,7 @@ internal static class ValidateAddPackage
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        const string tempDir = "validate.tmp";
+        const string tempDir = Validate.TempDir;
 
         // Write test SPDX file
         Validate.WriteTestSpdxJson1Package(tempDir);

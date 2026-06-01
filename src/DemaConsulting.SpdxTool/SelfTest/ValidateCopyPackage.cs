@@ -65,7 +65,7 @@ internal static class ValidateCopyPackage
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_CopyPackage", "DemaConsulting.SpdxTool.SelfTest.ValidateCopyPackage", passed);
     }
 
@@ -88,7 +88,7 @@ internal static class ValidateCopyPackage
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        const string tempDir = "validate.tmp";
+        const string tempDir = Validate.TempDir;
 
         // Write destination SPDX file
         Validate.WriteTestSpdxJson1Package(tempDir, "to.spdx.json");

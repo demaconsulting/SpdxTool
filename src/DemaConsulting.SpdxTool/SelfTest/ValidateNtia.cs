@@ -63,7 +63,7 @@ internal static class ValidateNtia
     /// <exception cref="UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        var passed = Validate.RunInTempDir(Validate.TempDir, DoValidate);
         Validate.RecordResult(context, results, "SpdxTool_Ntia", "DemaConsulting.SpdxTool.SelfTest.ValidateNtia", passed);
     }
 
@@ -107,14 +107,14 @@ internal static class ValidateNtia
     private static bool DoValidateMissingSupplier()
     {
         // Write a valid but non-NTIA-compliant SPDX file (missing supplier field)
-        Validate.WriteTestSpdxJsonMinimal("validate.tmp", "test-ntia.spdx.json");
+        Validate.WriteTestSpdxJsonMinimal(Validate.TempDir, "test-ntia.spdx.json");
 
         // Allow tests to corrupt fixtures immediately before the command runs
         PreRunSpdxToolHookForTest?.Invoke();
 
         // Run validation without NTIA flag - should succeed
         var exitCode1 = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "validate",
@@ -130,7 +130,7 @@ internal static class ValidateNtia
         // Run validation with NTIA flag - should fail due to missing supplier
         // The log file will be written to validate.tmp/output.log since the working directory is changed
         var exitCode2 = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "--log", "output.log",
@@ -146,13 +146,13 @@ internal static class ValidateNtia
         }
 
         // Fail if log file is absent
-        if (!File.Exists("validate.tmp/output.log"))
+        if (!File.Exists($"{Validate.TempDir}/output.log"))
         {
             return false;
         }
 
         // Read the log file and verify it contains the expected error
-        var log = File.ReadAllText("validate.tmp/output.log");
+        var log = File.ReadAllText($"{Validate.TempDir}/output.log");
         if (!log.Contains("NTIA: Package 'Test Package' Missing Supplier"))
         {
             return false;
@@ -177,7 +177,7 @@ internal static class ValidateNtia
     private static bool DoValidateCompliant()
     {
         // Write test SPDX file that is NTIA compliant
-        File.WriteAllText("validate.tmp/test-ntia-valid.spdx.json",
+        File.WriteAllText($"{Validate.TempDir}/test-ntia-valid.spdx.json",
             """
             {
               "files": [],
@@ -213,7 +213,7 @@ internal static class ValidateNtia
 
         // Run validation with NTIA flag on valid document - should succeed
         var exitCode = Validate.RunSpdxTool(
-            "validate.tmp",
+            Validate.TempDir,
             [
                 "--silent",
                 "validate",

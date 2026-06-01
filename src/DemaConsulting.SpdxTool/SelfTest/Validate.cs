@@ -36,6 +36,15 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 public static class Validate
 {
     /// <summary>
+    ///     Temporary working directory used by the self-test steps.
+    /// </summary>
+    /// <remarks>
+    ///     Centralized here so all self-test helpers use the same process-relative folder name
+    ///     when creating and cleaning up temporary fixtures.
+    /// </remarks>
+    internal const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Executes the complete self-test suite using the supplied Program context.
     /// </summary>
     /// <param name="context">The active Program context providing output and error streams.</param>
