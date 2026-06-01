@@ -41,80 +41,38 @@ internal static class ValidateHash
     /// <param name="context">The active Program context providing output and error streams.</param>
     /// <param name="results">The TestResults collection to append the step outcome to.</param>
     /// <remarks>
-    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
-    ///     <c>SpdxTool_Hash</c> with <see cref="TestOutcome.Passed"/> or
-    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
-    ///     throws an exception, the exception propagates uncaught from this method and no
-    ///     <see cref="TestResult"/> is recorded for this step.
+    ///     Runs <see cref="DoValidate"/> inside a temporary directory via
+    ///     <see cref="Validate.RunInTempDir"/> and records the outcome via
+    ///     <see cref="Validate.RecordResult"/>. If <see cref="DoValidate"/> throws an exception,
+    ///     the exception propagates uncaught from this method and no <see cref="TestResult"/> is
+    ///     recorded for this step.
     /// </remarks>
     /// <exception cref="System.IO.IOException">Propagates uncaught from DoValidate when file system operations fail.</exception>
     /// <exception cref="System.UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        // Capture start time before validation begins so the recorded StartTime
-        // reflects when Run was entered, not when DoValidate returned
-        var startTime = DateTime.Now;
-
-        // Perform the validation
-        var passed = DoValidate();
-
-        // Report validation result
-        if (passed)
-        {
-            context.WriteLine("✓ SpdxTool_Hash - Passed");
-        }
-        else
-        {
-            context.WriteError("✗ SpdxTool_Hash - Failed");
-        }
-
-        // Add validation result to test results collection
-        results.Results.Add(
-            new TestResult
-            {
-                Name = "SpdxTool_Hash",
-                ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateHash",
-                ComputerName = Environment.MachineName,
-                StartTime = startTime,
-                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
-            });
+        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        Validate.RecordResult(context, results, "SpdxTool_Hash", "DemaConsulting.SpdxTool.SelfTest.ValidateHash", passed);
     }
 
     /// <summary>
-    ///     Orchestrates the generate and verify sub-tests in a shared temporary directory, returning
-    ///     true only if both succeed.
+    ///     Orchestrates the generate and verify sub-tests. Called by <see cref="Validate.RunInTempDir"/>,
+    ///     which creates and cleans up the temporary directory.
     /// </summary>
     /// <returns>
     ///     <c>true</c> if both <see cref="DoValidateGenerate"/> and <see cref="DoValidateVerify"/>
     ///     return <c>true</c>; otherwise <c>false</c>.
     /// </returns>
     /// <remarks>
-    ///     Creates <c>validate.tmp</c>, delegates to <see cref="DoValidateGenerate"/> and
-    ///     <see cref="DoValidateVerify"/> in sequence (using short-circuit evaluation), then
-    ///     deletes the temporary directory in a <c>finally</c> block only if it exists, guarding against
-    ///     a secondary <see cref="DirectoryNotFoundException"/> when <see cref="Directory.CreateDirectory(string)"/> fails.
+    ///     Uses short-circuit evaluation: <see cref="DoValidateVerify"/> is not called if
+    ///     <see cref="DoValidateGenerate"/> returns <c>false</c>.
     /// </remarks>
-    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or any test file cannot be created, read, or deleted.</exception>
+    /// <exception cref="System.IO.IOException">Thrown if any test file cannot be created, read, or deleted.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        try
-        {
-            // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
-
-            // Run both generation and verification validation tests
-            return DoValidateGenerate() && DoValidateVerify();
-        }
-        finally
-        {
-            // Delete the temporary validation folder if it exists (guards against
-            // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
-            {
-                Directory.Delete("validate.tmp", true);
-            }
-        }
+        // Run both generation and verification validation tests
+        return DoValidateGenerate() && DoValidateVerify();
     }
 
     /// <summary>

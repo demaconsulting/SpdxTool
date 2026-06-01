@@ -54,11 +54,11 @@ internal static class ValidateBasic
     /// <param name="context">The active Program context providing output and error streams.</param>
     /// <param name="results">The TestResults collection to append the step outcome to.</param>
     /// <remarks>
-    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
-    ///     <c>SpdxTool_Basic</c> with <see cref="TestOutcome.Passed"/> or
-    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
-    ///     throws an exception, the exception propagates uncaught from this method and no
-    ///     <see cref="TestResult"/> is recorded for this step.
+    ///     Runs <see cref="DoValidate"/> inside a temporary directory via
+    ///     <see cref="Validate.RunInTempDir"/> and records the outcome via
+    ///     <see cref="Validate.RecordResult"/>. If <see cref="DoValidate"/> throws an exception,
+    ///     the exception propagates uncaught from this method and no <see cref="TestResult"/> is
+    ///     recorded for this step.
     /// </remarks>
     /// <exception cref="System.IO.IOException">
     ///     Propagated from <see cref="DoValidate"/> when the temporary directory or files
@@ -70,68 +70,28 @@ internal static class ValidateBasic
     /// </exception>
     internal static void Run(Context context, TestResults.TestResults results)
     {
-        // Perform the validation
-        var passed = DoValidate();
-
-        // Report validation result to console
-        if (passed)
-        {
-            context.WriteLine("✓ SpdxTool_Basic - Passed");
-        }
-        else
-        {
-            context.WriteError("✗ SpdxTool_Basic - Failed");
-        }
-
-        // Add validation result to test results collection
-        results.Results.Add(
-            new TestResult
-            {
-                Name = "SpdxTool_Basic",
-                ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateBasic",
-                ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
-                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
-            });
+        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        Validate.RecordResult(context, results, "SpdxTool_Basic", "DemaConsulting.SpdxTool.SelfTest.ValidateBasic", passed);
     }
 
     /// <summary>
-    ///     Performs both the valid-document and invalid-document sub-tests in a shared temporary
-    ///     directory.
+    ///     Runs both the valid-document and invalid-document sub-tests. Called by
+    ///     <see cref="Validate.RunInTempDir"/>, which creates and cleans up the temporary directory.
     /// </summary>
     /// <returns>
     ///     <c>true</c> if both <see cref="DoValidateValid"/> and <see cref="DoValidateInvalid"/>
     ///     succeed; otherwise <c>false</c>.
     /// </returns>
     /// <remarks>
-    ///     Creates <c>validate.tmp</c> once and runs both sub-tests within it. The
-    ///     <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it
-    ///     exists, guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the
-    ///     original exception when <see cref="Directory.CreateDirectory(string)"/> fails. Uses
-    ///     short-circuit evaluation: <see cref="DoValidateInvalid"/> is not called if
+    ///     Uses short-circuit evaluation: <see cref="DoValidateInvalid"/> is not called if
     ///     <see cref="DoValidateValid"/> returns <c>false</c>.
     /// </remarks>
-    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="System.IO.IOException">Thrown if the test files cannot be created or deleted.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        try
-        {
-            // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
-
-            // Run validation tests for both valid and invalid documents
-            return DoValidateValid() && DoValidateInvalid();
-        }
-        finally
-        {
-            // Delete the temporary validation folder if it exists (guards against
-            // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
-            {
-                Directory.Delete("validate.tmp", true);
-            }
-        }
+        // Run validation tests for both valid and invalid documents
+        return DoValidateValid() && DoValidateInvalid();
     }
 
     /// <summary>

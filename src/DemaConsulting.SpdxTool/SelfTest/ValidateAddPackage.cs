@@ -37,11 +37,6 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateAddPackage
 {
     /// <summary>
-    ///     Temporary working directory name used throughout this self-test class.
-    /// </summary>
-    private const string TempDir = "validate.tmp";
-
-    /// <summary>
     ///     Optional test hook invoked after fixture files are written and immediately before
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
@@ -71,11 +66,11 @@ internal static class ValidateAddPackage
     /// <param name="context">The active Program context providing output and error streams.</param>
     /// <param name="results">The TestResults collection to append the step outcome to.</param>
     /// <remarks>
-    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
-    ///     <c>SpdxTool_AddPackage</c> with <see cref="TestOutcome.Passed"/> or
-    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
-    ///     throws an exception, the exception propagates uncaught from this method and no
-    ///     <see cref="TestResult"/> is recorded for this step.
+    ///     Runs <see cref="DoValidate"/> inside a temporary directory via
+    ///     <see cref="Validate.RunInTempDir"/> and records the outcome via
+    ///     <see cref="Validate.RecordResult"/>. If <see cref="DoValidate"/> throws an exception,
+    ///     the exception propagates uncaught from this method and no <see cref="TestResult"/> is
+    ///     recorded for this step.
     /// </remarks>
     /// <exception cref="System.IO.IOException">
     ///     Propagated from <see cref="DoValidate"/> when the temporary directory or files
@@ -87,157 +82,118 @@ internal static class ValidateAddPackage
     /// </exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        var passed = DoValidate();
-
-        // Report validation result
-        if (passed)
-        {
-            context.WriteLine("✓ SpdxTool_AddPackage - Passed");
-        }
-        else
-        {
-            context.WriteError("✗ SpdxTool_AddPackage - Failed");
-        }
-
-        // Add validation result to test results collection
-        results.Results.Add(
-            new TestResult
-            {
-                Name = "SpdxTool_AddPackage",
-                ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateAddPackage",
-                ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
-                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
-            });
+        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        Validate.RecordResult(context, results, "SpdxTool_AddPackage", "DemaConsulting.SpdxTool.SelfTest.ValidateAddPackage", passed);
     }
 
     /// <summary>
-    ///     Performs the actual add-package validation in a temporary directory.
+    ///     Performs the actual add-package validation. Called by <see cref="Validate.RunInTempDir"/>,
+    ///     which creates and cleans up the temporary directory.
     /// </summary>
     /// <returns><c>true</c> if the command succeeded and the SPDX document matches expectations; otherwise <c>false</c>.</returns>
     /// <remarks>
-    ///     <para>
-    ///         Creates <c>validate.tmp</c>, writes the test SPDX document and workflow file, invokes
-    ///         <see cref="Validate.RunSpdxTool(string, string[])"/>, then reads and verifies the
-    ///         modified SPDX document using a positional list pattern match — the order of packages
-    ///         and relationships in the deserialized document is significant.
-    ///     </para>
-    ///     <para>
-    ///         The <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it
-    ///         exists, guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the
-    ///         original exception when <see cref="Directory.CreateDirectory(string)"/> fails.
-    ///     </para>
+    ///     Writes the test SPDX document and workflow file, invokes
+    ///     <see cref="Validate.RunSpdxTool(string, string[])"/>, then reads and verifies the
+    ///     modified SPDX document using a positional list pattern match — the order of packages
+    ///     and relationships in the deserialized document is significant.
     /// </remarks>
-    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="System.IO.IOException">Thrown if the test files cannot be created or the SPDX document cannot be read.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        try
-        {
-            // Create the temporary validation folder
-            Directory.CreateDirectory(TempDir);
+        const string tempDir = "validate.tmp";
 
-            // Write test SPDX file
-            File.WriteAllText($"{TempDir}/test.spdx.json",
-                """
-                {
-                  "files": [],
-                  "packages": [    {
-                      "SPDXID": "SPDXRef-Package-1",
-                      "name": "Test Package",
-                      "versionInfo": "1.0.0",
-                      "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                      "licenseConcluded": "MIT"
-                    }
-                  ],
-                  "relationships": [    {
-                      "spdxElementId": "SPDXRef-DOCUMENT",
-                      "relatedSpdxElement": "SPDXRef-Package-1",
-                      "relationshipType": "DESCRIBES"
-                    }
-                  ],
-                  "spdxVersion": "SPDX-2.2",
-                  "dataLicense": "CC0-1.0",
-                  "SPDXID": "SPDXRef-DOCUMENT",
-                  "name": "Test Document",
-                  "documentNamespace": "https://sbom.spdx.org",
-                  "creationInfo": {
-                    "created": "2021-10-01T00:00:00Z",
-                    "creators": [ "Person: Malcolm Nixon" ]
-                  },
-                  "documentDescribes": [ "SPDXRef-Package-1" ]
+        // Write test SPDX file
+        File.WriteAllText($"{tempDir}/test.spdx.json",
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
                 }
-                """);
-
-            // Write test workflow file
-            File.WriteAllText($"{TempDir}/workflow.yaml",
-                """
-                steps:
-                - command: add-package
-                  inputs:
-                    spdx: test.spdx.json
-                    package:
-                      id: SPDXRef-Package-2
-                      name: Test Package 2
-                      version: 2.0.0
-                      download: https://dotnet.microsoft.com/download
-                      purl: pkg:nuget/BogusPackage@2.0.0
-                    relationships:
-                      - type: BUILD_TOOL_OF
-                        element: SPDXRef-Package-1
-                """);
-
-            // Allow tests to corrupt fixtures immediately before the command runs
-            PreRunSpdxToolHookForTest?.Invoke();
-
-            // Run the workflow file
-            var exitCode = Validate.RunSpdxTool(
-                TempDir,
-                [
-                    "--silent",
-                    "run-workflow",
-                    "workflow.yaml"
-                ]);
-
-            // Fail if SpdxTool reported an error
-            if (exitCode != 0)
-            {
-                return false;
-            }
-
-            // Allow tests to overwrite the output file before content verification
-            PostRunSpdxToolHookForTest?.Invoke();
-
-            // Read the SPDX document
-            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText($"{TempDir}/test.spdx.json"));
-
-            // Verify expected SPDX content
-            return doc is
-            {
-                Packages:
-                [
-                { Id: "SPDXRef-Package-1" },
-                { Id: "SPDXRef-Package-2" }
-                ],
-                Relationships:
-                [
-                    _,
-                {
-                    Id: "SPDXRef-Package-2",
-                    RelationshipType: SpdxRelationshipType.BuildToolOf,
-                    RelatedSpdxElement: "SPDXRef-Package-1"
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
                 }
-                ]
-            };
-        }
-        finally
-        {
-            // Delete the temporary validation folder if it exists (guards against
-            // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists(TempDir))
-            {
-                Directory.Delete(TempDir, true);
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
             }
+            """);
+
+        // Write test workflow file
+        File.WriteAllText($"{tempDir}/workflow.yaml",
+            """
+            steps:
+            - command: add-package
+              inputs:
+                spdx: test.spdx.json
+                package:
+                  id: SPDXRef-Package-2
+                  name: Test Package 2
+                  version: 2.0.0
+                  download: https://dotnet.microsoft.com/download
+                  purl: pkg:nuget/BogusPackage@2.0.0
+                relationships:
+                  - type: BUILD_TOOL_OF
+                    element: SPDXRef-Package-1
+            """);
+
+        // Allow tests to corrupt fixtures immediately before the command runs
+        PreRunSpdxToolHookForTest?.Invoke();
+
+        // Run the workflow file
+        var exitCode = Validate.RunSpdxTool(
+            tempDir,
+            [
+                "--silent",
+                "run-workflow",
+                "workflow.yaml"
+            ]);
+
+        // Fail if SpdxTool reported an error
+        if (exitCode != 0)
+        {
+            return false;
         }
+
+        // Allow tests to overwrite the output file before content verification
+        PostRunSpdxToolHookForTest?.Invoke();
+
+        // Read the SPDX document
+        var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText($"{tempDir}/test.spdx.json"));
+
+        // Verify expected SPDX content
+        return doc is
+        {
+            Packages:
+            [
+            { Id: "SPDXRef-Package-1" },
+            { Id: "SPDXRef-Package-2" }
+            ],
+            Relationships:
+            [
+                _,
+            {
+                Id: "SPDXRef-Package-2",
+                RelationshipType: SpdxRelationshipType.BuildToolOf,
+                RelatedSpdxElement: "SPDXRef-Package-1"
+            }
+            ]
+        };
     }
 }

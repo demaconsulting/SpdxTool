@@ -225,4 +225,81 @@ public static class Validate
             Directory.SetCurrentDirectory(cwd);
         }
     }
+
+    /// <summary>
+    ///     Records a self-test result with pass/fail reporting.
+    /// </summary>
+    /// <param name="context">The active Program context providing output and error streams.</param>
+    /// <param name="results">The TestResults collection to append the step outcome to.</param>
+    /// <param name="testName">The short test name used in console output and the TestResult record.</param>
+    /// <param name="className">The fully-qualified class name written to the TestResult record.</param>
+    /// <param name="passed">Whether the test passed.</param>
+    /// <remarks>
+    ///     Writes a Unicode check or cross mark followed by <paramref name="testName"/> and the outcome
+    ///     to <paramref name="context"/>, then appends a <see cref="TestResult"/> to
+    ///     <paramref name="results"/>. <see cref="TestResult.StartTime"/> is set to
+    ///     <see cref="DateTime.Now"/> at the moment this method is called.
+    /// </remarks>
+    internal static void RecordResult(
+        Context context,
+        TestResults.TestResults results,
+        string testName,
+        string className,
+        bool passed)
+    {
+        if (passed)
+        {
+            context.WriteLine($"✓ {testName} - Passed");
+        }
+        else
+        {
+            context.WriteError($"✗ {testName} - Failed");
+        }
+
+        results.Results.Add(
+            new TestResult
+            {
+                Name = testName,
+                ClassName = className,
+                ComputerName = Environment.MachineName,
+                StartTime = DateTime.Now,
+                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
+            });
+    }
+
+    /// <summary>
+    ///     Creates a temporary directory, executes an action within it, and deletes it on completion.
+    /// </summary>
+    /// <param name="tempDir">The temporary directory path to create. Must be a valid writable path.</param>
+    /// <param name="action">The action to execute after the directory is created. Must not be null.</param>
+    /// <returns>The boolean result returned by <paramref name="action"/>.</returns>
+    /// <remarks>
+    ///     Creates <paramref name="tempDir"/>, invokes <paramref name="action"/>, and deletes the
+    ///     directory in a <c>finally</c> block only if it exists — guarding against a secondary
+    ///     <see cref="DirectoryNotFoundException"/> masking the original exception when
+    ///     <see cref="Directory.CreateDirectory(string)"/> fails.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Propagated from <see cref="Directory.CreateDirectory(string)"/>,
+    ///     <paramref name="action"/>, or <see cref="Directory.Delete(string, bool)"/> when file
+    ///     I/O operations fail.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Propagated when the process lacks write permission for <paramref name="tempDir"/>.
+    /// </exception>
+    internal static bool RunInTempDir(string tempDir, Func<bool> action)
+    {
+        try
+        {
+            Directory.CreateDirectory(tempDir);
+            return action();
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+    }
 }

@@ -51,11 +51,11 @@ internal static class ValidateNtia
     ///     Executes the NTIA validation self-test and records the result.
     /// </summary>
     /// <remarks>
-    ///     Calls <see cref="DoValidate"/> and records a <see cref="TestResult"/> named
-    ///     <c>SpdxTool_Ntia</c> with <see cref="TestOutcome.Passed"/> or
-    ///     <see cref="TestOutcome.Failed"/> depending on the return value. If <see cref="DoValidate"/>
-    ///     throws an exception, the exception propagates uncaught from this method and no
-    ///     <see cref="TestResult"/> is recorded for this step.
+    ///     Runs <see cref="DoValidate"/> inside a temporary directory via
+    ///     <see cref="Validate.RunInTempDir"/> and records the outcome via
+    ///     <see cref="Validate.RecordResult"/>. If <see cref="DoValidate"/> throws an exception,
+    ///     the exception propagates uncaught from this method and no <see cref="TestResult"/> is
+    ///     recorded for this step.
     /// </remarks>
     /// <param name="context">The active Program context providing output and error streams. Must not be null.</param>
     /// <param name="results">The TestResults collection to append the step outcome to.</param>
@@ -63,67 +63,28 @@ internal static class ValidateNtia
     /// <exception cref="UnauthorizedAccessException">Propagates uncaught from DoValidate when file system access is denied.</exception>
     public static void Run(Context context, TestResults.TestResults results)
     {
-        // Perform the validation
-        var passed = DoValidate();
-
-        // Report validation result
-        if (passed)
-        {
-            context.WriteLine("✓ SpdxTool_Ntia - Passed");
-        }
-        else
-        {
-            context.WriteError("✗ SpdxTool_Ntia - Failed");
-        }
-
-        // Add validation result to test results collection
-        results.Results.Add(
-            new TestResult
-            {
-                Name = "SpdxTool_Ntia",
-                ClassName = "DemaConsulting.SpdxTool.SelfTest.ValidateNtia",
-                ComputerName = Environment.MachineName,
-                StartTime = DateTime.Now,
-                Outcome = passed ? TestOutcome.Passed : TestOutcome.Failed
-            });
+        var passed = Validate.RunInTempDir("validate.tmp", DoValidate);
+        Validate.RecordResult(context, results, "SpdxTool_Ntia", "DemaConsulting.SpdxTool.SelfTest.ValidateNtia", passed);
     }
 
     /// <summary>
-    ///     Performs both NTIA sub-tests in a shared temporary directory.
+    ///     Runs both NTIA sub-tests. Called by <see cref="Validate.RunInTempDir"/>, which creates
+    ///     and cleans up the temporary directory.
     /// </summary>
     /// <returns>
     ///     <c>true</c> if both <see cref="DoValidateMissingSupplier"/> and
     ///     <see cref="DoValidateCompliant"/> succeed; otherwise <c>false</c>.
     /// </returns>
     /// <remarks>
-    ///     Creates <c>validate.tmp</c> once and runs both sub-tests within it. The
-    ///     <c>validate.tmp</c> directory is deleted in a <c>finally</c> block only if it exists,
-    ///     guarding against a secondary <see cref="DirectoryNotFoundException"/> masking the original
-    ///     exception when <see cref="Directory.CreateDirectory(string)"/> fails. Uses short-circuit evaluation:
-    ///     <see cref="DoValidateCompliant"/> is not called if
+    ///     Uses short-circuit evaluation: <see cref="DoValidateCompliant"/> is not called if
     ///     <see cref="DoValidateMissingSupplier"/> returns <c>false</c>.
     /// </remarks>
-    /// <exception cref="System.IO.IOException">Thrown if the temporary directory or files cannot be created or deleted.</exception>
+    /// <exception cref="System.IO.IOException">Thrown if the test files cannot be created or deleted.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidate()
     {
-        try
-        {
-            // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
-
-            // Run individual validation tests
-            return DoValidateMissingSupplier() && DoValidateCompliant();
-        }
-        finally
-        {
-            // Delete the temporary validation folder if it exists (guards against
-            // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
-            {
-                Directory.Delete("validate.tmp", true);
-            }
-        }
+        // Run individual validation tests
+        return DoValidateMissingSupplier() && DoValidateCompliant();
     }
 
     /// <summary>
