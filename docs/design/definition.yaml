@@ -10,7 +10,7 @@ resource-path:
 input-files:
   - docs/design/title.txt
   - docs/design/introduction.md
-  - docs/design/spdx-tool/spdx-tool.md
+  - docs/design/spdx-tool.md
   - docs/design/spdx-tool/spdx.md
   - docs/design/spdx-tool/commands/commands.md
   - docs/design/spdx-tool/commands/add-package.md

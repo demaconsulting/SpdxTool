@@ -110,36 +110,7 @@ internal static class ValidateBasic
     private static bool DoValidateValid()
     {
         // Write test SPDX file that is valid
-        File.WriteAllText("validate.tmp/test-valid.spdx.json",
-            """
-            {
-              "files": [],
-              "packages": [    {
-                  "SPDXID": "SPDXRef-Package",
-                  "name": "Test Package",
-                  "versionInfo": "1.0.0",
-                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                  "filesAnalyzed": false,
-                  "licenseConcluded": "MIT"
-                }
-              ],
-              "relationships": [    {
-                  "spdxElementId": "SPDXRef-DOCUMENT",
-                  "relatedSpdxElement": "SPDXRef-Package",
-                  "relationshipType": "DESCRIBES"
-                }
-              ],
-              "spdxVersion": "SPDX-2.2",
-              "dataLicense": "CC0-1.0",
-              "SPDXID": "SPDXRef-DOCUMENT",
-              "name": "Test Document",
-              "documentNamespace": "https://sbom.spdx.org",
-              "creationInfo": {
-                "created": "2021-10-01T00:00:00Z",
-                "creators": [ "Person: Malcolm Nixon" ]
-              }
-            }
-            """);
+        Validate.WriteTestSpdxJsonMinimal("validate.tmp", "test-valid.spdx.json");
 
         // Allow tests to corrupt the fixture immediately before the command runs
         PreRunSpdxToolHookForTest?.Invoke();

@@ -106,40 +106,8 @@ internal static class ValidateNtia
     /// <exception cref="System.UnauthorizedAccessException">Thrown if the current user lacks write access to the working directory.</exception>
     private static bool DoValidateMissingSupplier()
     {
-        // Write test SPDX file that is valid but not NTIA compliant
-        // Missing: supplier field for the package
-        File.WriteAllText("validate.tmp/test-ntia.spdx.json",
-            """
-            {
-              "files": [],
-              "packages": [
-                {
-                  "SPDXID": "SPDXRef-Package",
-                  "name": "Test Package",
-                  "versionInfo": "1.0.0",
-                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                  "filesAnalyzed": false,
-                  "licenseConcluded": "MIT"
-                }
-              ],
-              "relationships": [
-                {
-                  "spdxElementId": "SPDXRef-DOCUMENT",
-                  "relatedSpdxElement": "SPDXRef-Package",
-                  "relationshipType": "DESCRIBES"
-                }
-              ],
-              "spdxVersion": "SPDX-2.2",
-              "dataLicense": "CC0-1.0",
-              "SPDXID": "SPDXRef-DOCUMENT",
-              "name": "Test Document",
-              "documentNamespace": "https://sbom.spdx.org",
-              "creationInfo": {
-                "created": "2021-10-01T00:00:00Z",
-                "creators": [ "Person: Malcolm Nixon" ]
-              }
-            }
-            """);
+        // Write a valid but non-NTIA-compliant SPDX file (missing supplier field)
+        Validate.WriteTestSpdxJsonMinimal("validate.tmp", "test-ntia.spdx.json");
 
         // Allow tests to corrupt fixtures immediately before the command runs
         PreRunSpdxToolHookForTest?.Invoke();

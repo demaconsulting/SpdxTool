@@ -89,36 +89,7 @@ internal static class ValidateUpdatePackage
         const string tempDir = "validate.tmp";
 
         // Write test SPDX file
-        File.WriteAllText($"{tempDir}/test.spdx.json",
-            """
-            {
-              "files": [],
-              "packages": [    {
-                  "SPDXID": "SPDXRef-Package-1",
-                  "name": "Test Package",
-                  "versionInfo": "1.0.0",
-                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
-                  "licenseConcluded": "MIT"
-                }
-              ],
-              "relationships": [    {
-                  "spdxElementId": "SPDXRef-DOCUMENT",
-                  "relatedSpdxElement": "SPDXRef-Package-1",
-                  "relationshipType": "DESCRIBES"
-                }
-              ],
-              "spdxVersion": "SPDX-2.2",
-              "dataLicense": "CC0-1.0",
-              "SPDXID": "SPDXRef-DOCUMENT",
-              "name": "Test Document",
-              "documentNamespace": "https://sbom.spdx.org",
-              "creationInfo": {
-                "created": "2021-10-01T00:00:00Z",
-                "creators": [ "Person: Malcolm Nixon" ]
-              },
-              "documentDescribes": [ "SPDXRef-Package-1" ]
-            }
-            """);
+        Validate.WriteTestSpdxJson1Package(tempDir);
 
         // Write test workflow file
         File.WriteAllText($"{tempDir}/workflow.yaml",

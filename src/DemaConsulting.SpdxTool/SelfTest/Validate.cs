@@ -268,6 +268,113 @@ public static class Validate
     }
 
     /// <summary>
+    ///     Writes a single-package SPDX 2.2 document used as the starting fixture for add-package,
+    ///     rename-id, update-package, and copy-package self-tests.
+    /// </summary>
+    /// <param name="tempDir">Path to the directory to write the file into. Must exist on disk.</param>
+    /// <param name="fileName">
+    ///     Filename to write within <paramref name="tempDir"/>. Defaults to <c>test.spdx.json</c>.
+    /// </param>
+    /// <remarks>
+    ///     Produces a minimal SPDX 2.2 document containing one package (<c>SPDXRef-Package-1</c>,
+    ///     "Test Package", version 1.0.0, MIT license) with a single DESCRIBES relationship and a
+    ///     <c>documentDescribes</c> entry. The fixture is shared across multiple self-test steps
+    ///     that each write their own workflow YAML to modify the document.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Thrown when the file cannot be written (disk full, invalid path, etc.).
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Thrown when the process does not have write permission for the file path.
+    /// </exception>
+    internal static void WriteTestSpdxJson1Package(string tempDir, string fileName = "test.spdx.json")
+    {
+        File.WriteAllText($"{tempDir}/{fileName}",
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-1",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-1",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-1" ]
+            }
+            """);
+    }
+
+    /// <summary>
+    ///     Writes a minimal single-package SPDX 2.2 document used as the starting fixture for basic
+    ///     validation and NTIA compliance self-tests.
+    /// </summary>
+    /// <param name="tempDir">Path to the directory to write the file into. Must exist on disk.</param>
+    /// <param name="fileName">Filename to write within <paramref name="tempDir"/>.</param>
+    /// <remarks>
+    ///     Produces a minimal SPDX 2.2 document containing one package (<c>SPDXRef-Package</c>,
+    ///     "Test Package", version 1.0.0, MIT license, <c>filesAnalyzed: false</c>) with a single
+    ///     DESCRIBES relationship but no <c>documentDescribes</c> entry. The document is valid for
+    ///     the <c>validate</c> command but intentionally omits the supplier field so it is not
+    ///     NTIA-compliant, making it suitable as a baseline fixture for both tests.
+    /// </remarks>
+    /// <exception cref="System.IO.IOException">
+    ///     Thrown when the file cannot be written (disk full, invalid path, etc.).
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    ///     Thrown when the process does not have write permission for the file path.
+    /// </exception>
+    internal static void WriteTestSpdxJsonMinimal(string tempDir, string fileName)
+    {
+        File.WriteAllText($"{tempDir}/{fileName}",
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package",
+                  "name": "Test Package",
+                  "versionInfo": "1.0.0",
+                  "downloadLocation": "https://github.com/demaconsulting/SpdxTool",
+                  "filesAnalyzed": false,
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              }
+            }
+            """);
+    }
+
+    /// <summary>
     ///     Creates a temporary directory, executes an action within it, and deletes it on completion.
     /// </summary>
     /// <param name="tempDir">The temporary directory path to create. Must be a valid writable path.</param>
