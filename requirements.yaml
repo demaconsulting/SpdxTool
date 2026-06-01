@@ -45,6 +45,7 @@ includes:
   - docs/reqstream/spdx-tool/spdx/relationship-direction.yaml
   - docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml
   - docs/reqstream/spdx-tool/utility/utility.yaml
+  - docs/reqstream/spdx-tool/utility/temporary-directory.yaml
   - docs/reqstream/spdx-tool/utility/path-helpers.yaml
   - docs/reqstream/spdx-tool/utility/wildcard.yaml
   - docs/reqstream/spdx-tool/platform-requirements.yaml

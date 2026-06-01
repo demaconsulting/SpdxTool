@@ -191,6 +191,6 @@ sections:
               - SpdxTool-Platform-Net8
               - SpdxTool-Platform-Net9
               - SpdxTool-Platform-Net10
-            # net8.0@/net9.0@/net10.0@ prefixes are TFM (target framework moniker) CI dimensions
-            # reflecting the compiled TFM of the test assembly. The dotnet8.x@/dotnet9.x@/dotnet10.x@
-            # prefixes used in child requirements are installed SDK version CI dimensions.
+              # net8.0@/net9.0@/net10.0@ prefixes are TFM (target framework moniker) CI dimensions
+              # reflecting the compiled TFM of the test assembly. The dotnet8.x@/dotnet9.x@/dotnet10.x@
+              # prefixes used in child requirements are installed SDK version CI dimensions.
