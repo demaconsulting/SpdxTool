@@ -140,6 +140,7 @@ reviews:
     title: Review that SpdxTool Utility Subsystem Satisfies Requirements
     paths:
       - docs/reqstream/spdx-tool/utility/utility.yaml
+      - docs/reqstream/spdx-tool/utility/temporary-directory.yaml
       - docs/reqstream/spdx-tool/utility/path-helpers.yaml
       - docs/reqstream/spdx-tool/utility/wildcard.yaml
       - docs/reqstream/spdx-tool/spdx/spdx-helpers.yaml
@@ -147,12 +148,14 @@ reviews:
       - docs/reqstream/spdx-tool/spdx/spdx.yaml
       - docs/verification/spdx-tool/spdx.md
       - docs/design/spdx-tool/utility.md
+      - docs/design/spdx-tool/utility/temporary-directory.md
       - docs/design/spdx-tool/spdx.md
       - docs/design/spdx-tool/utility/path-helpers.md
       - docs/design/spdx-tool/utility/wildcard.md
       - docs/design/spdx-tool/spdx/spdx-helpers.md
       - docs/design/spdx-tool/spdx/relationship-direction.md
       - docs/verification/spdx-tool/utility.md
+      - docs/verification/spdx-tool/utility/temporary-directory.md
       - docs/verification/spdx-tool/utility/path-helpers.md
       - docs/verification/spdx-tool/utility/wildcard.md
       - docs/verification/spdx-tool/spdx/spdx-helpers.md
@@ -162,6 +165,16 @@ reviews:
       - test/DemaConsulting.SpdxTool.Tests/Utility/**
       - test/DemaConsulting.SpdxTool.Tests/Spdx/SpdxHelpersTests.cs
       - test/DemaConsulting.SpdxTool.Tests/Spdx/RelationshipDirectionTests.cs
+
+  # Utility unit review for TemporaryDirectory
+  - id: SpdxTool-Utility-TemporaryDirectory
+    title: Review that SpdxTool Utility TemporaryDirectory Implementation is Correct
+    paths:
+      - docs/reqstream/spdx-tool/utility/temporary-directory.yaml
+      - docs/design/spdx-tool/utility/temporary-directory.md
+      - docs/verification/spdx-tool/utility/temporary-directory.md
+      - src/DemaConsulting.SpdxTool/Utility/TemporaryDirectory.cs
+      - test/DemaConsulting.SpdxTool.Tests/Utility/TemporaryDirectoryTests.cs
 
   # OTS software review
   - id: SpdxTool-OTS

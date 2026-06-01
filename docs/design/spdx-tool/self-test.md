@@ -65,10 +65,11 @@ The heading written at the start of the report uses `Context.Depth` `#` characte
 produces `#`, depth 2 produces `##`). This controls the nesting level of the validation output, allowing
 the report to be embedded at any heading level within a larger Markdown document.
 
-Each step creates a validate.tmp directory, writes inline fixture files (SPDX JSON and/or workflow YAML),
-calls Validate.RunSpdxTool to invoke one or more commands in-process, verifies the result by inspecting exit
-codes or output file content, and deletes the temporary directory in a finally block. The step records its
-outcome as a TestResult entry with a Passed or Failed status.
+Each step creates an isolated temporary working directory through TemporaryDirectory, writes a
+validate.tmp subdirectory with inline fixture files (SPDX JSON and/or workflow YAML), calls
+Validate.RunSpdxTool to invoke one or more commands in-process, verifies the result by inspecting
+exit codes or output file content, and deletes the temporary directory by disposing the helper.
+The step records its outcome as a TestResult entry with a Passed or Failed status.
 
 After all steps complete, Validate.Run tallies total, passed, and failed counts and writes them to the
 Context. If no context errors were recorded it prints "Validation Passed". If Context.ValidationFile is set,

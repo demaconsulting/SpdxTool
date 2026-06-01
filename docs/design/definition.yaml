@@ -46,6 +46,7 @@ input-files:
   - docs/design/spdx-tool/self-test/validate-to-markdown.md
   - docs/design/spdx-tool/self-test/validate-update-package.md
   - docs/design/spdx-tool/utility.md
+  - docs/design/spdx-tool/utility/temporary-directory.md
   - docs/design/spdx-tool-targets.md
   - docs/design/ots.md
   - docs/design/ots/yamldotnet.md

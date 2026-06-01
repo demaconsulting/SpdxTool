@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using System.Runtime.InteropServices;
+using DemaConsulting.SpdxTool.Utility;
 using DemaConsulting.TestResults;
 using DemaConsulting.TestResults.IO;
 
@@ -43,6 +44,16 @@ public static class Validate
     ///     when creating and cleaning up temporary fixtures.
     /// </remarks>
     internal const string TempDir = "validate.tmp";
+
+    /// <summary>
+    ///     Factory used to create the outer temporary directory for each self-test step.
+    /// </summary>
+    /// <remarks>
+    ///     Tests may replace this factory to control the temporary directory path used by
+    ///     <see cref="RunInTempDir(string, Func{bool})"/>. The default factory creates a
+    ///     <see cref="TemporaryDirectory"/> under the current working directory.
+    /// </remarks>
+    internal static Func<TemporaryDirectory> TemporaryDirectoryFactory { get; set; } = () => new TemporaryDirectory();
 
     /// <summary>
     ///     Executes the complete self-test suite using the supplied Program context.
@@ -384,38 +395,39 @@ public static class Validate
     }
 
     /// <summary>
-    ///     Creates a temporary directory, executes an action within it, and deletes it on completion.
+    ///     Creates a temporary directory, executes an action within it, and restores the original
+    ///     current directory on completion.
     /// </summary>
-    /// <param name="tempDir">The temporary directory path to create. Must be a valid writable path.</param>
+    /// <param name="tempDir">The child directory name to create inside the temporary workspace.</param>
     /// <param name="action">The action to execute after the directory is created. Must not be null.</param>
     /// <returns>The boolean result returned by <paramref name="action"/>.</returns>
     /// <remarks>
-    ///     Creates <paramref name="tempDir"/>, invokes <paramref name="action"/>, and deletes the
-    ///     directory in a <c>finally</c> block only if it exists — guarding against a secondary
-    ///     <see cref="DirectoryNotFoundException"/> masking the original exception when
-    ///     <see cref="Directory.CreateDirectory(string)"/> fails.
+    ///     A temporary workspace is created through <see cref="TemporaryDirectoryFactory"/> and
+    ///     set as the current directory before the child directory is created. This preserves the
+    ///     existing <c>validate.tmp</c> relative-path behavior while avoiding process temp-path
+    ///     symlink issues. The original current directory is restored in a <c>finally</c> block.
     /// </remarks>
     /// <exception cref="System.IO.IOException">
-    ///     Propagated from <see cref="Directory.CreateDirectory(string)"/>,
-    ///     <paramref name="action"/>, or <see cref="Directory.Delete(string, bool)"/> when file
-    ///     I/O operations fail.
+    ///     Propagated from <see cref="Directory.CreateDirectory(string)"/> or
+    ///     <paramref name="action"/> when file I/O operations fail.
     /// </exception>
     /// <exception cref="UnauthorizedAccessException">
-    ///     Propagated when the process lacks write permission for <paramref name="tempDir"/>.
+    ///     Propagated when the process lacks write permission for the temporary workspace or
+    ///     <paramref name="tempDir"/>.
     /// </exception>
     internal static bool RunInTempDir(string tempDir, Func<bool> action)
     {
+        var cwd = Directory.GetCurrentDirectory();
+        using var temporaryDirectory = TemporaryDirectoryFactory();
         try
         {
+            Directory.SetCurrentDirectory(temporaryDirectory.DirectoryPath);
             Directory.CreateDirectory(tempDir);
             return action();
         }
         finally
         {
-            if (Directory.Exists(tempDir))
-            {
-                Directory.Delete(tempDir, true);
-            }
+            Directory.SetCurrentDirectory(cwd);
         }
     }
 }

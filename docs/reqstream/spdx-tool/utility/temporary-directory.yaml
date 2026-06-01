@@ -1,0 +1,79 @@
+---
+sections:
+  - title: SpdxTool Requirements
+    sections:
+      - title: Utility Requirements
+        sections:
+          - title: TemporaryDirectory Requirements
+            requirements:
+              - id: SpdxTool-Utility-TemporaryDirectory
+                title: >-
+                  The TemporaryDirectory unit shall create a unique temporary directory under
+                  the current working directory, provide safe file-path resolution inside that
+                  directory, and delete the directory tree when disposed.
+                tags:
+                  - utility
+                justification: |
+                  Self-validation and test code need a disposable temporary workspace that does
+                  not depend on the operating-system temp path. Keeping the directory rooted under
+                  the current working directory avoids symlink-resolution issues while preserving a
+                  predictable cleanup boundary.
+                children:
+                  - SpdxTool-Utility-TemporaryDirectory-CreatesDirectory
+                  - SpdxTool-Utility-TemporaryDirectory-UniquePaths
+                  - SpdxTool-Utility-TemporaryDirectory-FilePaths
+                  - SpdxTool-Utility-TemporaryDirectory-TraversalProtection
+                  - SpdxTool-Utility-TemporaryDirectory-Cleanup
+
+              - id: SpdxTool-Utility-TemporaryDirectory-CreatesDirectory
+                title: The TemporaryDirectory unit shall create the directory on construction.
+                tags:
+                  - utility
+                justification: |
+                  Callers need a ready-to-use working directory immediately after construction so
+                  self-test steps and tests can write fixtures without additional setup.
+                tests:
+                  - TemporaryDirectory_Constructor_CreatesDirectory
+
+              - id: SpdxTool-Utility-TemporaryDirectory-UniquePaths
+                title: The TemporaryDirectory unit shall generate unique directory paths.
+                tags:
+                  - utility
+                justification: |
+                  Unique paths avoid collisions when multiple temporary workspaces are created in
+                  the same process.
+                tests:
+                  - TemporaryDirectory_Constructor_CreatesUniqueDirectories
+
+              - id: SpdxTool-Utility-TemporaryDirectory-FilePaths
+                title: The TemporaryDirectory unit shall resolve file paths within the directory.
+                tags:
+                  - utility
+                justification: |
+                  Self-test helpers need to create nested fixture files without escaping the
+                  temporary workspace.
+                tests:
+                  - TemporaryDirectory_GetFilePath_SimpleFile_ReturnsPathUnderDirectory
+                  - TemporaryDirectory_GetFilePath_NestedPath_CreatesIntermediateDirectories
+
+              - id: SpdxTool-Utility-TemporaryDirectory-TraversalProtection
+                title: The TemporaryDirectory unit shall reject path-traversal attempts.
+                tags:
+                  - utility
+                  - security
+                justification: |
+                  File-path helpers must prevent callers from escaping the temporary workspace by
+                  supplying parent-directory traversal segments.
+                tests:
+                  - TemporaryDirectory_GetFilePath_TraversalAttempt_ThrowsArgumentException
+
+              - id: SpdxTool-Utility-TemporaryDirectory-Cleanup
+                title: The TemporaryDirectory unit shall delete the directory tree when disposed.
+                tags:
+                  - utility
+                justification: |
+                  Temporary workspaces must be cleaned up automatically so tests do not leak files
+                  into the repository checkout or interfere with later runs.
+                tests:
+                  - TemporaryDirectory_Dispose_DeletesDirectory
+                  - TemporaryDirectory_Dispose_AlreadyDeleted_DoesNotThrow

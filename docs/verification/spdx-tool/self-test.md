@@ -11,9 +11,9 @@ verify the installed command-line behavior of `--validate`.
 ### Test Environment
 
 The subsystem runs in the standard test harness using temporary working directories populated
-with local fixture content. `dotnet` must be available on the path for the query-related
-validation path, and the NuGet workflow validation path requires either cached packages or
-network access to restore the referenced package.
+with local fixture content via `TemporaryDirectory`. `dotnet` must be available on the path for
+the query-related validation path, and the NuGet workflow validation path requires either cached
+packages or network access to restore the referenced package.
 
 ### Acceptance Criteria
 

@@ -50,6 +50,7 @@ input-files:
   - docs/verification/spdx-tool/spdx/relationship-direction.md
   - docs/verification/spdx-tool/spdx/spdx-helpers.md
   - docs/verification/spdx-tool/utility.md
+  - docs/verification/spdx-tool/utility/temporary-directory.md
   - docs/verification/spdx-tool/utility/path-helpers.md
   - docs/verification/spdx-tool/utility/wildcard.md
   - docs/verification/spdx-tool-targets.md

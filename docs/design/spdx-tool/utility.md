@@ -3,17 +3,31 @@
 ### Overview
 
 The Utility subsystem provides stateless cross-cutting helper units shared across the
-DemaConsulting.SpdxTool system (namespace DemaConsulting.SpdxTool.Utility). It contains two
+DemaConsulting.SpdxTool system (namespace DemaConsulting.SpdxTool.Utility). It contains three
 units:
 
+- TemporaryDirectory - disposable self-validation temporary folders rooted under the current
+  working directory.
 - PathHelpers - safe path combining that rejects path-traversal sequences.
 - Wildcard - glob-style pattern matching via compiled regular expressions.
 
-Both units are consumed by the Commands subsystem. The subsystem
+TemporaryDirectory is consumed by the SelfTest subsystem and by the test suite. PathHelpers and
+Wildcard are consumed by the Commands subsystem. The subsystem
 has no internal dispatcher; units are invoked directly by their consumers through static method
 calls.
 
 ### Interfaces
+
+**TemporaryDirectory**: Creates a unique temporary directory under the current working directory,
+exposes safe file-path resolution within that directory, and deletes the directory when disposed.
+
+- *Type*: Internal sealed class implementing `IDisposable`.
+- *Role*: Provider.
+- *Contract*: Creates a unique directory under `Environment.CurrentDirectory` on construction,
+  returns file paths under that directory via `GetFilePath`, and removes the directory tree on
+  disposal without surfacing cleanup failures.
+- *Constraints*: The directory is intentionally process-relative to avoid symlink-resolution
+  issues on platforms whose temp paths resolve to a different physical location.
 
 **PathHelpers.SafePathCombine**: Combines a base path with a relative path after validating that
 the relative path contains no ".." components and is not rooted. A secondary check using
@@ -46,6 +60,11 @@ NuGet package cache directory. It ensures that no step in an embedded workflow c
 file outside the package directory by applying both an upfront string check (rejects ".." and
 rooted paths) and a defense-in-depth check using Path.GetFullPath to confirm the resolved path
 stays under the base directory.
+
+TemporaryDirectory is invoked by the self-test orchestration path and by test code that needs an
+isolated, disposable working directory for temporary fixtures. It creates a unique subdirectory
+under the current working directory, uses GUID-based names to avoid collisions, and deletes the
+directory tree on disposal.
 
 Wildcard.IsMatch is invoked by the FindPackage command and other commands that accept glob-style
 name filters to match against SPDX package names or element IDs. The conversion of a wildcard

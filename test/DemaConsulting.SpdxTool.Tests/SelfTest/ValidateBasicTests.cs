@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using DemaConsulting.SpdxTool.SelfTest;
+using DemaConsulting.SpdxTool.Utility;
 using DemaConsulting.TestResults;
 
 namespace DemaConsulting.SpdxTool.Tests.SelfTest;
@@ -77,13 +78,8 @@ public class ValidateBasicTests
     [Fact]
     public void ValidateBasic_Run_ValidationFails_RecordsFailedOutcome()
     {
-        var originalDirectory = Directory.GetCurrentDirectory();
-        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(tempDirectory);
         try
         {
-            Directory.SetCurrentDirectory(tempDirectory);
-
             // Arrange: hook corrupts test-valid.spdx.json immediately before the validate command
             // reads it, causing the validate command to fail with a non-zero exit code
             ValidateBasic.PreRunSpdxToolHookForTest = () =>
@@ -102,8 +98,6 @@ public class ValidateBasicTests
         finally
         {
             ValidateBasic.PreRunSpdxToolHookForTest = null;
-            Directory.SetCurrentDirectory(originalDirectory);
-            Directory.Delete(tempDirectory, true);
         }
     }
 
@@ -116,17 +110,15 @@ public class ValidateBasicTests
     [Fact]
     public void ValidateBasic_Run_IoError_PropagatesException()
     {
-        // Arrange: save original directory and change to a temp directory where validate.tmp
-        // is pre-created as a file, blocking Directory.CreateDirectory("validate.tmp")
-        var originalDirectory = Directory.GetCurrentDirectory();
-        var tempDirectory = Path.Combine(Path.GetTempPath(), $"spdxtool-test-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(tempDirectory);
+        // Arrange: inject a temporary directory that already contains validate.tmp as a file,
+        // blocking Directory.CreateDirectory("validate.tmp")
+        var originalFactory = Validate.TemporaryDirectoryFactory;
+        using var tempDirectory = new TemporaryDirectory();
+        Validate.TemporaryDirectoryFactory = () => tempDirectory;
         try
         {
-            Directory.SetCurrentDirectory(tempDirectory);
-
             // Create validate.tmp as a FILE (not a directory) to block DoValidate
-            File.WriteAllText("validate.tmp", "blocking file");
+            File.WriteAllText(tempDirectory.GetFilePath("validate.tmp"), "blocking file");
 
             using var context = Context.Create(["--validate"]);
             var results = new DemaConsulting.TestResults.TestResults();
@@ -137,8 +129,7 @@ public class ValidateBasicTests
         }
         finally
         {
-            Directory.SetCurrentDirectory(originalDirectory);
-            Directory.Delete(tempDirectory, true);
+            Validate.TemporaryDirectoryFactory = originalFactory;
         }
     }
 }

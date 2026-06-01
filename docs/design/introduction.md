@@ -75,6 +75,7 @@ DemaConsulting.SpdxTool (System)
 │   ├── RelationshipDirection.cs (Unit)
 │   └── SpdxHelpers.cs (Unit)
 ├── Utility (Subsystem)
+│   ├── TemporaryDirectory.cs (Unit)
 │   ├── PathHelpers.cs (Unit)
 │   └── Wildcard.cs (Unit)
 ├── Context.cs (Unit)
@@ -147,6 +148,7 @@ src/DemaConsulting.SpdxTool/
 │   ├── RelationshipDirection.cs    — SPDX relationship direction enumeration
 │   └── SpdxHelpers.cs              — SPDX document utility helpers
 ├── Utility/
+│   ├── TemporaryDirectory.cs       — disposable temporary workspace helper
 │   ├── PathHelpers.cs              — file path utility helpers
 │   └── Wildcard.cs                 — wildcard pattern matching
 ├── Context.cs                      — execution context (output, logging)

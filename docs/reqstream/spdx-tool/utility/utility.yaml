@@ -7,14 +7,16 @@ sections:
           - id: SpdxTool-Utility-SharedHelpers
             title: >-
               The Utility subsystem shall provide shared cross-cutting utilities for
-              safe path operations and wildcard matching consumed by all commands.
+              temporary directories, safe path operations, and wildcard matching.
             justification: |
-              Command implementations that handle user-supplied file paths and filter SPDX content
-              by name need shared utility functions. Centralizing these in the Utility subsystem
-              ensures consistent path-traversal protection and pattern-matching behavior across all
-              commands. This is an intentional rollup requirement; full decomposition is provided by
-              the child requirements SpdxTool-Utility-PathHelpers and SpdxTool-Utility-Wildcard.
+              Command implementations, self-validation steps, and tests need shared utility
+              functions. Centralizing these in the Utility subsystem ensures consistent temporary
+              folder management, path-traversal protection, and pattern-matching behavior across
+              the tool. This is an intentional rollup requirement; full decomposition is provided by
+              the child requirements SpdxTool-Utility-TemporaryDirectory,
+              SpdxTool-Utility-PathHelpers, and SpdxTool-Utility-Wildcard.
             children:
+              - SpdxTool-Utility-TemporaryDirectory
               - SpdxTool-Utility-RejectTraversal
               - SpdxTool-Utility-RejectAbsolutePath
               - SpdxTool-Utility-RejectNullArguments
@@ -22,6 +24,7 @@ sections:
               - SpdxTool-Utility-Wildcard
               - SpdxTool-Utility-Wildcard-NullArgs
             tests:
+              - TemporaryDirectory_Constructor_CreatesDirectory
               - PathHelpers_SafePathCombine_ValidPaths_CombinesCorrectly
               - PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException
               - Wildcard_IsMatch_ExactMatch_MatchesCorrectly

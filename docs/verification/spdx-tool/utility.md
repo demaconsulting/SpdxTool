@@ -3,18 +3,21 @@
 ### Verification Approach
 
 The Utility subsystem is verified with focused unit tests in
-`test/DemaConsulting.SpdxTool.Tests/Utility/`. The tests verify the containment checks used by
-`PathHelpers` and the wildcard-to-regular-expression behavior implemented by `Wildcard`.
+`test/DemaConsulting.SpdxTool.Tests/Utility/`. The tests verify the temporary-directory behavior
+implemented by `TemporaryDirectory`, the containment checks used by `PathHelpers`, and the
+wildcard-to-regular-expression behavior implemented by `Wildcard`.
 
 ### Test Environment
 
 N/A - the subsystem is verified in the standard xUnit v3 environment with no special setup beyond
-the test runner because both utility units are pure in-process helpers.
+the test runner because the utility units are pure in-process helpers.
 
 ### Acceptance Criteria
 
-Verification is acceptable when path traversal and rooted-path inputs are rejected, safe relative
-paths are preserved, and wildcard matching behaves correctly for exact, `*`, and `?` patterns.
+Verification is acceptable when temporary directories are created under the current working
+directory, unique paths are generated, disposal cleans up the directory tree, path traversal and
+rooted-path inputs are rejected, safe relative paths are preserved, and wildcard matching behaves
+correctly for exact, `*`, and `?` patterns.
 
 ### Test Scenarios
 
@@ -22,6 +25,16 @@ paths are preserved, and wildcard matching behaves correctly for exact, `*`, and
 rejected. This scenario is tested by
 `PathHelpers_SafePathCombine_PathTraversalWithDoubleDots_ThrowsArgumentException` and
 `PathHelpers_SafePathCombine_DoubleDotsInMiddle_ThrowsArgumentException`.
+
+**TemporaryDirectoryLifecycle**: temporary directories are created beneath the current working
+directory, produce unique paths, expose safe file resolution, and delete their contents on
+disposal. This scenario is tested by `TemporaryDirectory_Constructor_CreatesDirectory`,
+`TemporaryDirectory_Constructor_CreatesUniqueDirectories`,
+`TemporaryDirectory_GetFilePath_SimpleFile_ReturnsPathUnderDirectory`,
+`TemporaryDirectory_GetFilePath_NestedPath_CreatesIntermediateDirectories`,
+`TemporaryDirectory_GetFilePath_TraversalAttempt_ThrowsArgumentException`,
+`TemporaryDirectory_Dispose_DeletesDirectory`, and
+`TemporaryDirectory_Dispose_AlreadyDeleted_DoesNotThrow`.
 
 **AbsolutePathRejection**: absolute path inputs are rejected regardless of content. This scenario
 is tested by `PathHelpers_SafePathCombine_AbsolutePath_ThrowsArgumentException` and
