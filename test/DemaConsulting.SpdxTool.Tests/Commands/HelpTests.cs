@@ -123,7 +123,7 @@ public class HelpTests
               inputs: {}
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: write the workflow file to disk
@@ -162,7 +162,7 @@ public class HelpTests
                 about: run-workflow
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: write the workflow file to disk so the tool can load it

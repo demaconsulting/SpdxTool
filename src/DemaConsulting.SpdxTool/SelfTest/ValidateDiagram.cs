@@ -35,6 +35,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateDiagram
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Executes the diagram self-test and records the result.
     /// </summary>
     /// <param name="context">
@@ -109,10 +114,10 @@ internal static class ValidateDiagram
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test SPDX file with packages and relationships
-            File.WriteAllText("validate.tmp/test-diagram.spdx.json",
+            File.WriteAllText($"{TempDir}/test-diagram.spdx.json",
                 """
                 {
                   "files": [],
@@ -156,7 +161,7 @@ internal static class ValidateDiagram
 
             // Run the diagram command to generate mermaid diagram
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "diagram",
@@ -171,13 +176,13 @@ internal static class ValidateDiagram
             }
 
             // Verify the mermaid file was created
-            if (!File.Exists("validate.tmp/test-diagram.mermaid.txt"))
+            if (!File.Exists($"{TempDir}/test-diagram.mermaid.txt"))
             {
                 return false;
             }
 
             // Read the generated mermaid content
-            var mermaid = File.ReadAllText("validate.tmp/test-diagram.mermaid.txt");
+            var mermaid = File.ReadAllText($"{TempDir}/test-diagram.mermaid.txt");
 
             // Verify mermaid contains expected diagram syntax and content
             return mermaid.Contains("erDiagram") &&
@@ -189,9 +194,9 @@ internal static class ValidateDiagram
         {
             // Delete the temporary validation folder if it exists (guards against
             // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

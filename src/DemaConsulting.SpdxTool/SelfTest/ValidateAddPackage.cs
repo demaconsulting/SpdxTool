@@ -37,6 +37,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateAddPackage
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Optional test hook invoked after fixture files are written and immediately before
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
@@ -130,10 +135,10 @@ internal static class ValidateAddPackage
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test SPDX file
-            File.WriteAllText("validate.tmp/test.spdx.json",
+            File.WriteAllText($"{TempDir}/test.spdx.json",
                 """
                 {
                   "files": [],
@@ -165,7 +170,7 @@ internal static class ValidateAddPackage
                 """);
 
             // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
+            File.WriteAllText($"{TempDir}/workflow.yaml",
                 """
                 steps:
                 - command: add-package
@@ -187,7 +192,7 @@ internal static class ValidateAddPackage
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "run-workflow",
@@ -204,7 +209,7 @@ internal static class ValidateAddPackage
             PostRunSpdxToolHookForTest?.Invoke();
 
             // Read the SPDX document
-            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/test.spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText($"{TempDir}/test.spdx.json"));
 
             // Verify expected SPDX content
             return doc is
@@ -229,9 +234,9 @@ internal static class ValidateAddPackage
         {
             // Delete the temporary validation folder if it exists (guards against
             // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

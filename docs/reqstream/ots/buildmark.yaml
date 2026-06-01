@@ -11,13 +11,11 @@ sections:
               - ots
             justification: |
               DemaConsulting.BuildMark is a CI pipeline tool that generates build-notes documentation
-              from GitHub Actions metadata. The linked test verifies installation only: it invokes
-              buildmark with the --help flag to confirm the tool is present and responds correctly.
-              Full functional verification of markdown report generation occurs through CI pipeline
-              execution, where the presence of the build-notes artifact in each release provides
-              observable evidence of correct operation.
+              from GitHub Actions metadata. Installation is evidenced by the tool's own self-validation
+              test suite: the linked test exercises BuildMark's markdown report generation capability,
+              confirming the tool is installed and functional in the pipeline environment.
             tests:
-              - BuildMark_Tool_IsInstalled
+              - BuildMark_MarkdownReportGeneration
 
           - id: SpdxTool-OTS-BuildMark-ApiQuery
             title: BuildMark shall query the GitHub Actions API to retrieve workflow run metadata.

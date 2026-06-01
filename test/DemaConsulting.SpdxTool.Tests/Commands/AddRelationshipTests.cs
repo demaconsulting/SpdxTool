@@ -311,7 +311,7 @@ public class AddRelationshipTests
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify the relationships added
-            Assert.Equal(2, doc.Relationships.Count());
+            Assert.Equal(2, doc.Relationships.Length);
             Assert.Equal("SPDXRef-Package-1", doc.Relationships[0].Id);
             Assert.Equal(SpdxRelationshipType.Contains, doc.Relationships[0].RelationshipType);
             Assert.Equal("SPDXRef-Package-2", doc.Relationships[0].RelatedSpdxElement);

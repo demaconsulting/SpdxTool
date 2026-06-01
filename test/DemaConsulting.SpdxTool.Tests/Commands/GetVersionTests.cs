@@ -137,7 +137,7 @@ public class GetVersionTests
     [Fact]
     public void GetVersion_Run_OnCommandLine_ReturnsPackageVersion()
     {
-        var spdxFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var spdxFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the SPDX files
@@ -168,8 +168,8 @@ public class GetVersionTests
     [Fact]
     public void GetVersion_Run_InWorkflow_ReturnsPackageVersion()
     {
-        var spdxFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var spdxFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         const string versionRef = "${{ version }}";
         var workflowContents =
             $"""
@@ -225,7 +225,7 @@ public class GetVersionTests
                 spdx: some.spdx.json
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: write the workflow file
@@ -264,7 +264,7 @@ public class GetVersionTests
                 output: version
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: write the workflow file
@@ -294,7 +294,7 @@ public class GetVersionTests
     [Fact]
     public void GetVersion_Run_PackageNotFound_ReportsError()
     {
-        var spdxFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var spdxFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the SPDX file

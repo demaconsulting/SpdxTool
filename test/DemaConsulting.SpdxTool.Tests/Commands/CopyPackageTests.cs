@@ -166,7 +166,7 @@ public class CopyPackageTests
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal(2, doc.Packages.Length);
             Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.Equal("SPDXRef-Package-2", doc.Packages[1].Id);
         }
@@ -284,12 +284,12 @@ public class CopyPackageTests
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal(2, doc.Packages.Length);
             Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.Equal("SPDXRef-Package-2", doc.Packages[1].Id);
 
             // Assert: Verify the relationship
-            Assert.Equal(2, doc.Relationships.Count());
+            Assert.Equal(2, doc.Relationships.Length);
             Assert.Equal("SPDXRef-Package-2", doc.Relationships[1].Id);
             Assert.Equal(SpdxRelationshipType.ContainedBy, doc.Relationships[1].RelationshipType);
             Assert.Equal("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
@@ -446,14 +446,14 @@ public class CopyPackageTests
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify expected packages
-            Assert.Equal(4, doc.Packages.Count());
+            Assert.Equal(4, doc.Packages.Length);
             Assert.Equal("SPDXRef-MainPackage", doc.Packages[0].Id);
             Assert.Equal("SPDXRef-Application", doc.Packages[1].Id);
             Assert.Equal("SPDXRef-Library", doc.Packages[2].Id);
             Assert.Equal("SPDXRef-Compiler", doc.Packages[3].Id);
 
             // Assert: Verify expected relationships
-            Assert.Equal(4, doc.Relationships.Count());
+            Assert.Equal(4, doc.Relationships.Length);
             Assert.Equal("SPDXRef-DOCUMENT", doc.Relationships[0].Id);
             Assert.Equal(SpdxRelationshipType.Describes, doc.Relationships[0].RelationshipType);
             Assert.Equal("SPDXRef-MainPackage", doc.Relationships[0].RelatedSpdxElement);
@@ -602,12 +602,12 @@ public class CopyPackageTests
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("to.spdx.json"));
 
             // Assert: Verify expected packages
-            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal(2, doc.Packages.Length);
             Assert.Equal("SPDXRef-MainPackage", doc.Packages[0].Id);
             Assert.Equal("SPDXRef-Application", doc.Packages[1].Id);
 
             // Assert: Verify expected files
-            Assert.Equal(2, doc.Files.Count());
+            Assert.Equal(2, doc.Files.Length);
             Assert.Equal("SPDXRef-File1", doc.Files[0].Id);
             Assert.Equal("SPDXRef-File2", doc.Files[1].Id);
 

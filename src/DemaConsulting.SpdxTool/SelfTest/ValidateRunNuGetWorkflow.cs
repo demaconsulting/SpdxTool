@@ -35,6 +35,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateRunNuGetWorkflow
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Optional test hook invoked after fixture files are written and immediately before
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
@@ -110,10 +115,10 @@ internal static class ValidateRunNuGetWorkflow
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test workflow file that runs the GetDotNetVersion workflow from NuGet
-            File.WriteAllText("validate.tmp/workflow.yaml",
+            File.WriteAllText($"{TempDir}/workflow.yaml",
                 """
                 steps:
                 - command: run-workflow
@@ -134,7 +139,7 @@ internal static class ValidateRunNuGetWorkflow
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "run-workflow",
@@ -148,9 +153,9 @@ internal static class ValidateRunNuGetWorkflow
         {
             // Delete the temporary validation folder if it exists (guards against
             // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

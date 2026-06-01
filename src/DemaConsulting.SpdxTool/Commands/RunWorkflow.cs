@@ -431,8 +431,8 @@ public sealed class RunWorkflow : Command
         if (integrity != null)
         {
             var hashBytes = SHA256.HashData(bytes);
-            var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-            if (hash != integrity.ToLowerInvariant())
+            var hash = Convert.ToHexString(hashBytes);
+            if (!string.Equals(hash, integrity, StringComparison.OrdinalIgnoreCase))
             {
                 throw new CommandErrorException($"Integrity check of {source} failed");
             }

@@ -325,10 +325,8 @@ public class ToMarkdownTests
         // Arrange: step node with markdown but no spdx input
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string>();
-        var inputs = new YamlMappingNode();
-        inputs.Add("markdown", "out.md");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode { { "markdown", "out.md" } };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act / Assert: absent spdx input must produce a YamlException
         Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));
@@ -343,10 +341,8 @@ public class ToMarkdownTests
         // Arrange: step node with spdx but no markdown input
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string>();
-        var inputs = new YamlMappingNode();
-        inputs.Add("spdx", "test.spdx.json");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode { { "spdx", "test.spdx.json" } };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act / Assert: absent markdown input must produce a YamlException
         Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));
@@ -361,12 +357,13 @@ public class ToMarkdownTests
         // Arrange: step node with required inputs plus a whitespace-only title
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string>();
-        var inputs = new YamlMappingNode();
-        inputs.Add("spdx", "test.spdx.json");
-        inputs.Add("markdown", "out.md");
-        inputs.Add("title", "   ");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode
+        {
+            { "spdx", "test.spdx.json" },
+            { "markdown", "out.md" },
+            { "title", "   " }
+        };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act / Assert: whitespace title is invalid and must produce a YamlException
         Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));
@@ -381,12 +378,13 @@ public class ToMarkdownTests
         // Arrange: step node with required inputs plus a zero depth value
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string>();
-        var inputs = new YamlMappingNode();
-        inputs.Add("spdx", "test.spdx.json");
-        inputs.Add("markdown", "out.md");
-        inputs.Add("depth", "0");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode
+        {
+            { "spdx", "test.spdx.json" },
+            { "markdown", "out.md" },
+            { "depth", "0" }
+        };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act / Assert: depth of zero is not a positive integer and must produce a YamlException
         Assert.Throws<YamlException>(() => ToMarkdown.Instance.Run(context, step, variables));

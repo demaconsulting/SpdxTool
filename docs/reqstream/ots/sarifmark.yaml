@@ -11,13 +11,11 @@ sections:
               - ots
             justification: |
               DemaConsulting.SarifMark is a CI pipeline tool that converts CodeQL SARIF results into a
-              markdown report. The linked tests verify installation only: they invoke sarifmark to confirm
-              the tool is present and responds correctly. Full functional verification of SARIF reading
-              and markdown report generation occurs through CI pipeline execution, where the presence of
-              the SARIF report artifact in each release provides observable evidence of correct operation.
+              markdown report. Installation is evidenced by the tool's own self-validation test suite:
+              the linked test exercises SarifMark's SARIF reading capability, confirming the tool is
+              installed and functional in the pipeline environment.
             tests:
-              - SarifMark_Tool_IsInstalled
-              - SarifMark_Tool_ReportsVersion
+              - SarifMark_SarifReading
 
           - id: SpdxTool-OTS-SarifMark-SarifReading
             title: SarifMark shall parse the SARIF 2.1 JSON file to extract rule violations and source locations.

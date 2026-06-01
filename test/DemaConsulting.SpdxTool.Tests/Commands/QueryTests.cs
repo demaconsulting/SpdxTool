@@ -149,7 +149,7 @@ public partial class QueryTests
                 - ${{ version }}
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             File.WriteAllText(workflowFile, workflowContents);
@@ -230,7 +230,7 @@ public partial class QueryTests
             - command: query
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write a workflow with a query step that has no inputs

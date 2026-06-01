@@ -11,14 +11,11 @@ sections:
               - ots
             justification: |
               DemaConsulting.VersionMark is a CI pipeline tool that captures and publishes tool-version
-              information as a markdown document. The linked tests verify installation only: they invoke
-              versionmark to confirm the tool is present and responds correctly. Full functional
-              verification of version capture and markdown report generation occurs through CI pipeline
-              execution, where the presence of the versions document in release artifacts provides
-              observable evidence of correct operation.
+              information as a markdown document. Installation is evidenced by the tool's own
+              self-validation test suite: the linked test exercises VersionMark's version-capture
+              capability, confirming the tool is installed and functional in the pipeline environment.
             tests:
-              - VersionMark_Tool_IsInstalled
-              - VersionMark_Tool_ReportsVersion
+              - VersionMark_CapturesVersions
 
           - id: SpdxTool-OTS-VersionMark-VersionReading
             title: VersionMark shall query installed dotnet tool versions by invoking each tool with --version.

@@ -370,7 +370,7 @@ output);
             // Arrange: Write workflow2 and compute its SHA-256 hash
             File.WriteAllText("workflow2.yaml", workflow2);
             var hashBytes = SHA256.HashData(File.ReadAllBytes("workflow2.yaml"));
-            var integrity = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            var integrity = Convert.ToHexString(hashBytes).ToLowerInvariant();
 
             // Arrange: Build workflow1 with the computed integrity hash
             var workflow1 =
@@ -590,7 +590,7 @@ output);
             File.WriteAllText("workflow2.yaml", workflow2);
             var bytes = File.ReadAllBytes("workflow2.yaml");
             var hashBytes = SHA256.HashData(bytes);
-            var integrity = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            var integrity = Convert.ToHexString(hashBytes).ToLowerInvariant();
 
             // Arrange: Write the outer workflow referencing the sub-workflow with its correct hash
             var workflow1 = $"""
@@ -643,7 +643,7 @@ output);
             File.WriteAllText("workflow2.yaml", workflow2);
             var bytes = File.ReadAllBytes("workflow2.yaml");
             var hashBytes = SHA256.HashData(bytes);
-            var integrity = BitConverter.ToString(hashBytes).Replace("-", "").ToUpperInvariant();
+            var integrity = Convert.ToHexString(hashBytes);
 
             // Arrange: Write the outer workflow referencing the sub-workflow with its uppercase hash
             var workflow1 = $"""

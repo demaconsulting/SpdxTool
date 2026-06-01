@@ -38,6 +38,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateCopyPackage
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Optional test hook invoked after fixture files are written and immediately before
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
@@ -119,10 +124,10 @@ internal static class ValidateCopyPackage
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test SPDX file
-            File.WriteAllText("validate.tmp/to.spdx.json",
+            File.WriteAllText($"{TempDir}/to.spdx.json",
                 """
                 {
                   "files": [],
@@ -155,7 +160,7 @@ internal static class ValidateCopyPackage
                 """);
 
             // Write source SPDX file
-            File.WriteAllText("validate.tmp/from.spdx.json",
+            File.WriteAllText($"{TempDir}/from.spdx.json",
                 """
                 {
                   "files": [],
@@ -188,7 +193,7 @@ internal static class ValidateCopyPackage
                 """);
 
             // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
+            File.WriteAllText($"{TempDir}/workflow.yaml",
                 """
                 steps:
                 - command: copy-package
@@ -206,7 +211,7 @@ internal static class ValidateCopyPackage
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "run-workflow",
@@ -220,7 +225,7 @@ internal static class ValidateCopyPackage
             }
 
             // Read the SPDX document
-            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/to.spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText($"{TempDir}/to.spdx.json"));
 
             // Verify expected SPDX content using order-insensitive LINQ checks so that
             // changes to deserializer ordering do not cause false failures
@@ -235,9 +240,9 @@ internal static class ValidateCopyPackage
         {
             // Delete the temporary validation folder if it exists (guards against
             // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

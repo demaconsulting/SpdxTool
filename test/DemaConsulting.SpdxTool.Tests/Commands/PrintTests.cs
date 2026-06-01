@@ -67,7 +67,7 @@ public class PrintTests
                 - ${{ p2 }} is the second parameter.
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the workflow file
@@ -106,7 +106,7 @@ public class PrintTests
               inputs: {}
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the workflow file
@@ -146,7 +146,7 @@ public class PrintTests
                 - ${{ unknown_var }}
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the workflow file
@@ -186,7 +186,7 @@ public class PrintTests
                 - "${{  }}"
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the workflow file
@@ -226,7 +226,7 @@ public class PrintTests
                 - "${{ unclosed"
             """;
 
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
             // Arrange: Write the workflow file

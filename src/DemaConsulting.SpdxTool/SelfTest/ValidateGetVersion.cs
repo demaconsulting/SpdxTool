@@ -35,6 +35,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateGetVersion
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Executes the get-version self-test and records the result.
     /// </summary>
     /// <param name="context">The active Program context providing output and error streams.</param>
@@ -105,10 +110,10 @@ internal static class ValidateGetVersion
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test SPDX file
-            File.WriteAllText("validate.tmp/test.spdx.json",
+            File.WriteAllText($"{TempDir}/test.spdx.json",
                 """
                 {
                   "files": [],
@@ -149,7 +154,7 @@ internal static class ValidateGetVersion
                 """);
 
             // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
+            File.WriteAllText($"{TempDir}/workflow.yaml",
                 """
                 steps:
                 - command: get-version
@@ -165,7 +170,7 @@ internal static class ValidateGetVersion
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "--log", "output.log",
@@ -180,13 +185,13 @@ internal static class ValidateGetVersion
             }
 
             // Fail if log file is absent
-            if (!File.Exists("validate.tmp/output.log"))
+            if (!File.Exists($"{TempDir}/output.log"))
             {
                 return false;
             }
 
             // Read the log file
-            var log = File.ReadAllText("validate.tmp/output.log");
+            var log = File.ReadAllText($"{TempDir}/output.log");
 
             // Verify expected output
             return log.Contains("Found version 2.0.0");
@@ -195,9 +200,9 @@ internal static class ValidateGetVersion
         {
             // Delete the temporary validation folder if it exists (guards against
             // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

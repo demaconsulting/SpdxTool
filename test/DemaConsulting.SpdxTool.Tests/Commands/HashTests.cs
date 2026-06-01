@@ -98,7 +98,7 @@ public class HashTests
     [Fact]
     public void Hash_Run_GenerateOperation_WritesSidecarFile()
     {
-        var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var testFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = testFile + ".sha256";
         try
         {
@@ -159,7 +159,7 @@ public class HashTests
     [Fact]
     public void Hash_Run_VerifyTargetMissing_ReportsError()
     {
-        var targetFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var targetFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = targetFile + ".sha256";
         try
         {
@@ -192,7 +192,7 @@ public class HashTests
     [Fact]
     public void Hash_Run_VerifyOperation_FailsForInvalidHash()
     {
-        var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var testFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = testFile + ".sha256";
         try
         {
@@ -227,7 +227,7 @@ public class HashTests
     [Fact]
     public void Hash_Run_VerifyOperation_SucceedsForValidHash()
     {
-        var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var testFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = testFile + ".sha256";
         try
         {
@@ -262,7 +262,7 @@ public class HashTests
     [Fact]
     public void Hash_Run_VerifyUppercaseDigest_Succeeds()
     {
-        var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var testFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = testFile + ".sha256";
         try
         {
@@ -343,9 +343,9 @@ public class HashTests
     [Fact]
     public void Hash_Run_InWorkflow_GeneratesHash()
     {
-        var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var testFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var hashFile = testFile + ".sha256";
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var workflowContents =
             $"""
             steps:
@@ -390,8 +390,8 @@ public class HashTests
     [Fact]
     public void Hash_Run_InWorkflow_MissingOperation_ReportsError()
     {
-        var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var testFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var workflowContents =
             $"""
             steps:
@@ -432,8 +432,8 @@ public class HashTests
     [Fact]
     public void Hash_Run_InWorkflow_MissingAlgorithm_ReportsError()
     {
-        var testFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var testFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         var workflowContents =
             $"""
             steps:
@@ -474,7 +474,7 @@ public class HashTests
     [Fact]
     public void Hash_Run_InWorkflow_MissingFile_ReportsError()
     {
-        var workflowFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         const string workflowContents =
             """
             steps:

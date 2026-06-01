@@ -21,7 +21,7 @@ test scenarios, reducing duplication in boundary-value and error-path tests.
 ### Integration Pattern
 
 xUnit is referenced as a NuGet package dependency in each test project
-(`DemaConsulting.SpdxTool.Tests`, `DemaConsulting.SpdxTool.Targets.Tests`, and
-`OtsSoftwareTests`). It is not referenced by any production project and is not included in the
-published NuGet packages. No initialization or configuration beyond the project reference is
-required; the xUnit runner is invoked automatically by `dotnet test`.
+(`DemaConsulting.SpdxTool.Tests` and `DemaConsulting.SpdxTool.Targets.Tests`). It is not
+referenced by any production project and is not included in the published NuGet packages. No
+initialization or configuration beyond the project reference is required; the xUnit runner is
+invoked automatically by `dotnet test`.

@@ -271,7 +271,7 @@ public sealed class Hash : Command
             using var stream = new FileStream(file, FileMode.Open, FileAccess.Read);
             using var sha256 = SHA256.Create();
             var hash = sha256.ComputeHash(stream);
-            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            return Convert.ToHexString(hash).ToLowerInvariant();
         }
         catch (Exception ex)
         {

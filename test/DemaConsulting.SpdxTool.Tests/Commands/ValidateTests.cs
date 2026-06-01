@@ -467,7 +467,7 @@ public class ValidateTests
             }
             """;
 
-        var spdxFile = Path.Combine(Path.GetTempPath(), $"validate-unit-{Guid.NewGuid():N}.spdx.json");
+        var spdxFile = Path.Join(Path.GetTempPath(), $"validate-unit-{Guid.NewGuid():N}.spdx.json");
         try
         {
             // Arrange: write a valid SPDX file to a unique temp path
@@ -530,7 +530,7 @@ public class ValidateTests
             }
             """;
 
-        var spdxFile = Path.Combine(Path.GetTempPath(), $"validate-ntia-unit-{Guid.NewGuid():N}.spdx.json");
+        var spdxFile = Path.Join(Path.GetTempPath(), $"validate-ntia-unit-{Guid.NewGuid():N}.spdx.json");
         try
         {
             // Arrange: write an NTIA-compliant SPDX file (includes required supplier field) to a unique temp path

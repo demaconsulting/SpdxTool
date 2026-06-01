@@ -37,6 +37,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static partial class ValidateQuery
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Optional test hook invoked after fixture files are written and immediately before
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
@@ -134,10 +139,10 @@ internal static partial class ValidateQuery
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
+            File.WriteAllText($"{TempDir}/workflow.yaml",
                 """
                 steps:
                 - command: query
@@ -159,7 +164,7 @@ internal static partial class ValidateQuery
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "--log", "output.log",
@@ -174,13 +179,13 @@ internal static partial class ValidateQuery
             }
 
             // Fail if log file is absent
-            if (!File.Exists("validate.tmp/output.log"))
+            if (!File.Exists($"{TempDir}/output.log"))
             {
                 return false;
             }
 
             // Read the log file
-            var log = File.ReadAllText("validate.tmp/output.log");
+            var log = File.ReadAllText($"{TempDir}/output.log");
 
             // Verify expected output
             return VersionRegex().IsMatch(log);
@@ -189,9 +194,9 @@ internal static partial class ValidateQuery
         {
             // Delete the temporary validation folder if it exists (guards against
             // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

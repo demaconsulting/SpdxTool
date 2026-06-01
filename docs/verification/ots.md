@@ -22,10 +22,12 @@ for xUnit.
 
 **CI pipeline tools** (DemaConsulting.BuildMark, DemaConsulting.ReqStream,
 DemaConsulting.VersionMark, DemaConsulting.SarifMark, and DemaConsulting.SonarMark) are verified
-through integration tests in `test/OtsSoftwareTests/` and through their observable pipeline
-outputs. Each tool produces a specific artifact — a markdown report, a traceability matrix, or an
-enforcement exit code — that is inspected as part of the pipeline run. A successful pipeline run
-with the expected artifacts present constitutes passing verification for each CI tool.
+through their own self-validation test suites, which run as part of the `build-docs` CI job, and
+through their observable pipeline outputs. Each tool's `--validate` execution produces a TRX
+result file providing traceable evidence that the tool is installed and functional. Each tool also
+produces a specific artifact — a markdown report, a traceability matrix, or an enforcement exit
+code — that is inspected as part of the pipeline run. A successful pipeline run with the expected
+artifacts present constitutes passing verification for each CI tool.
 
 Individual verification approaches for each OTS item are documented in the OTS verification
 subfolder. OTS requirements are recorded in `docs/reqstream/ots/`. Design documentation is in

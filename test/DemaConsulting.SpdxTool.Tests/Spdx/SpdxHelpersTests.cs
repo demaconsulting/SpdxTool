@@ -103,7 +103,7 @@ public class SpdxHelpersTests
     public void SpdxHelpers_LoadJsonDocument_ValidFile_ReturnsDocument()
     {
         // Arrange: write a minimal SPDX JSON file to a temporary path
-        var spdxFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".spdx.json");
+        var spdxFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName() + ".spdx.json");
         File.WriteAllText(spdxFile, MinimalSpdxJson);
 
         try
@@ -133,7 +133,7 @@ public class SpdxHelpersTests
     {
         // Arrange: deserialize a minimal document and prepare output path
         var doc = Spdx2JsonDeserializer.Deserialize(MinimalSpdxJson);
-        var outputFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".spdx.json");
+        var outputFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName() + ".spdx.json");
 
         // Capture the creators array before the save call
         var creatorsBefore = doc.CreationInformation.Creators.ToArray();

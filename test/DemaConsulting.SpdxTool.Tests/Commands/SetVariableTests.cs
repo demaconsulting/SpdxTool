@@ -53,11 +53,12 @@ public class SetVariableTests
         // Arrange: context, pre-populated variable map, and a YAML step node
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string> { ["p1"] = "Hello", ["p2"] = "World" };
-        var inputs = new YamlMappingNode();
-        inputs.Add("value", "${{ p1 }} and ${{ p2 }}");
-        inputs.Add("output", "p1p2");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode
+        {
+            { "value", "${{ p1 }} and ${{ p2 }}" },
+            { "output", "p1p2" }
+        };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act: run the command directly
         SetVariable.Instance.Run(context, step, variables);
@@ -75,10 +76,8 @@ public class SetVariableTests
         // Arrange: step node with output but no value
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string>();
-        var inputs = new YamlMappingNode();
-        inputs.Add("output", "my-var");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode { { "output", "my-var" } };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act / Assert: absent value input must produce a YamlException
         Assert.Throws<YamlException>(() => SetVariable.Instance.Run(context, step, variables));
@@ -93,10 +92,8 @@ public class SetVariableTests
         // Arrange: step node with value but no output
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string>();
-        var inputs = new YamlMappingNode();
-        inputs.Add("value", "hello");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode { { "value", "hello" } };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act / Assert: absent output input must produce a YamlException
         Assert.Throws<YamlException>(() => SetVariable.Instance.Run(context, step, variables));
@@ -113,11 +110,12 @@ public class SetVariableTests
         //          contains ${{ }} syntax that would resolve if expansion were applied
         using var context = Context.Create([]);
         var variables = new Dictionary<string, string> { ["some_var"] = "expanded_key" };
-        var inputs = new YamlMappingNode();
-        inputs.Add("output", "${{ some_var }}");
-        inputs.Add("value", "test_value");
-        var step = new YamlMappingNode();
-        step.Add("inputs", inputs);
+        var inputs = new YamlMappingNode
+        {
+            { "output", "${{ some_var }}" },
+            { "value", "test_value" }
+        };
+        var step = new YamlMappingNode { { "inputs", inputs } };
 
         // Act: run the command directly
         SetVariable.Instance.Run(context, step, variables);

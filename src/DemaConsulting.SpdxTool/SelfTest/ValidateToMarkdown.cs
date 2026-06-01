@@ -35,6 +35,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateToMarkdown
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Optional test hook invoked after fixture files are written and immediately before
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
@@ -110,10 +115,10 @@ internal static class ValidateToMarkdown
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test SPDX file with packages and relationships
-            File.WriteAllText("validate.tmp/test-markdown.spdx.json",
+            File.WriteAllText($"{TempDir}/test-markdown.spdx.json",
                 """
                 {
                   "files": [],
@@ -160,7 +165,7 @@ internal static class ValidateToMarkdown
 
             // Run the to-markdown command to generate markdown summary
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "to-markdown",
@@ -176,13 +181,13 @@ internal static class ValidateToMarkdown
             }
 
             // Verify the markdown file was created
-            if (!File.Exists("validate.tmp/test-markdown.md"))
+            if (!File.Exists($"{TempDir}/test-markdown.md"))
             {
                 return false;
             }
 
             // Read the generated markdown content
-            var markdown = File.ReadAllText("validate.tmp/test-markdown.md");
+            var markdown = File.ReadAllText($"{TempDir}/test-markdown.md");
 
             // Verify markdown contains expected structure and package information
             return markdown.Contains("Test SBOM Summary") &&
@@ -197,9 +202,9 @@ internal static class ValidateToMarkdown
         {
             // Delete the temporary validation folder if it exists (guards against
             // Directory.CreateDirectory failing before the directory was created)
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

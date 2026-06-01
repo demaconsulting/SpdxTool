@@ -34,6 +34,11 @@ namespace DemaConsulting.SpdxTool.SelfTest;
 internal static class ValidateUpdatePackage
 {
     /// <summary>
+    ///     Temporary working directory name used throughout this self-test class.
+    /// </summary>
+    private const string TempDir = "validate.tmp";
+
+    /// <summary>
     ///     Optional test hook invoked after fixture files are written and immediately before
     ///     <see cref="Validate.RunSpdxTool(string, string[])"/> is called.
     /// </summary>
@@ -113,10 +118,10 @@ internal static class ValidateUpdatePackage
         try
         {
             // Create the temporary validation folder
-            Directory.CreateDirectory("validate.tmp");
+            Directory.CreateDirectory(TempDir);
 
             // Write test SPDX file
-            File.WriteAllText("validate.tmp/test.spdx.json",
+            File.WriteAllText($"{TempDir}/test.spdx.json",
                 """
                 {
                   "files": [],
@@ -148,7 +153,7 @@ internal static class ValidateUpdatePackage
                 """);
 
             // Write test workflow file
-            File.WriteAllText("validate.tmp/workflow.yaml",
+            File.WriteAllText($"{TempDir}/workflow.yaml",
                 """
                 steps:
                 - command: update-package
@@ -174,7 +179,7 @@ internal static class ValidateUpdatePackage
 
             // Run the workflow file
             var exitCode = Validate.RunSpdxTool(
-                "validate.tmp",
+                TempDir,
                 [
                     "--silent",
                     "run-workflow",
@@ -188,13 +193,13 @@ internal static class ValidateUpdatePackage
             }
 
             // Fail if the output SPDX file was not written
-            if (!File.Exists("validate.tmp/test.spdx.json"))
+            if (!File.Exists($"{TempDir}/test.spdx.json"))
             {
                 return false;
             }
 
             // Read the SPDX document
-            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("validate.tmp/test.spdx.json"));
+            var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText($"{TempDir}/test.spdx.json"));
 
             // Find the updated package by SPDX ID to confirm correct package identity;
             // using FirstOrDefault rather than a list pattern makes the check order-insensitive
@@ -222,9 +227,9 @@ internal static class ValidateUpdatePackage
         finally
         {
             // Delete the temporary validation folder
-            if (Directory.Exists("validate.tmp"))
+            if (Directory.Exists(TempDir))
             {
-                Directory.Delete("validate.tmp", true);
+                Directory.Delete(TempDir, true);
             }
         }
     }

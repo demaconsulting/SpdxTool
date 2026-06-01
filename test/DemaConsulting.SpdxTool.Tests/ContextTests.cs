@@ -107,7 +107,7 @@ public class ContextTests
     public void Context_WriteLine_WithLogFile_WritesLineToFile()
     {
         // Arrange: create a temporary file path for the log
-        var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".log");
+        var tempFilePath = Path.Join(Path.GetTempPath(), Path.GetRandomFileName() + ".log");
 
         try
         {

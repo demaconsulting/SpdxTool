@@ -127,12 +127,12 @@ public class AddPackageTests
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal(2, doc.Packages.Length);
             Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.Equal("SPDXRef-Package-2", doc.Packages[1].Id);
 
             // Assert: Verify the relationship
-            Assert.Equal(2, doc.Relationships.Count());
+            Assert.Equal(2, doc.Relationships.Length);
             Assert.Equal("SPDXRef-Package-2", doc.Relationships[1].Id);
             Assert.Equal(SpdxRelationshipType.BuildToolOf, doc.Relationships[1].RelationshipType);
             Assert.Equal("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);
@@ -312,7 +312,7 @@ public class AddPackageTests
             var doc = Spdx2JsonDeserializer.Deserialize(File.ReadAllText("spdx.json"));
 
             // Assert: Verify both packages present
-            Assert.Equal(2, doc.Packages.Count());
+            Assert.Equal(2, doc.Packages.Length);
             Assert.Equal("SPDXRef-Package-1", doc.Packages[0].Id);
             Assert.Equal("SPDXRef-Package-DotNet", doc.Packages[1].Id);
 
@@ -320,7 +320,7 @@ public class AddPackageTests
             Assert.False(string.IsNullOrEmpty(doc.Packages[1].Version));
 
             // Assert: Verify the relationship
-            Assert.Equal(2, doc.Relationships.Count());
+            Assert.Equal(2, doc.Relationships.Length);
             Assert.Equal("SPDXRef-Package-DotNet", doc.Relationships[1].Id);
             Assert.Equal(SpdxRelationshipType.BuildToolOf, doc.Relationships[1].RelationshipType);
             Assert.Equal("SPDXRef-Package-1", doc.Relationships[1].RelatedSpdxElement);

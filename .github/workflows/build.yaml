@@ -532,25 +532,6 @@ jobs:
       # This section captures the versions of all tools used in the build process.
       # Downstream projects: Add any additional tools to capture here.
 
-      - name: Restore OTS software test dependencies
-        run: dotnet restore test/OtsSoftwareTests/OtsSoftwareTests.csproj
-
-      - name: Build OTS software tests
-        run: >
-          dotnet build
-          test/OtsSoftwareTests/OtsSoftwareTests.csproj
-          --no-restore
-          --configuration Release
-
-      - name: Run OTS software verification tests
-        run: >
-          dotnet test
-          test/OtsSoftwareTests/OtsSoftwareTests.csproj
-          --no-build
-          --configuration Release
-          --logger "trx;LogFilePrefix=ots-software"
-          --results-directory artifacts
-
       - name: Capture tool versions for build-docs
         shell: bash
         run: |
