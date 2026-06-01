@@ -12,7 +12,7 @@ input-files:
   - docs/design/introduction.md
   - docs/design/spdx-tool.md
   - docs/design/spdx-tool/spdx.md
-  - docs/design/spdx-tool/commands/commands.md
+  - docs/design/spdx-tool/commands.md
   - docs/design/spdx-tool/commands/add-package.md
   - docs/design/spdx-tool/commands/add-relationship.md
   - docs/design/spdx-tool/commands/copy-package.md
@@ -29,7 +29,7 @@ input-files:
   - docs/design/spdx-tool/commands/to-markdown.md
   - docs/design/spdx-tool/commands/update-package.md
   - docs/design/spdx-tool/commands/validate.md
-  - docs/design/spdx-tool/self-test/self-test.md
+  - docs/design/spdx-tool/self-test.md
   - docs/design/spdx-tool/self-test/validate.md
   - docs/design/spdx-tool/self-test/validate-add-package.md
   - docs/design/spdx-tool/self-test/validate-add-relationship.md
@@ -46,7 +46,7 @@ input-files:
   - docs/design/spdx-tool/self-test/validate-to-markdown.md
   - docs/design/spdx-tool/self-test/validate-update-package.md
   - docs/design/spdx-tool/utility.md
-  - docs/design/spdx-tool-targets/spdx-tool-targets.md
+  - docs/design/spdx-tool-targets.md
   - docs/design/ots.md
   - docs/design/ots/yamldotnet.md
   - docs/design/ots/spdx-model.md
