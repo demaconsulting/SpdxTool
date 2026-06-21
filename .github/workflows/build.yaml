@@ -23,7 +23,7 @@ jobs:
       # Downstream projects: Add any additional dependency installations here.
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -110,7 +110,7 @@ jobs:
       # Downstream projects: Add any additional dependency installations here.
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -250,7 +250,7 @@ jobs:
       # Downstream projects: Add any additional dependency installations here.
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -327,7 +327,7 @@ jobs:
       # Downstream projects: Add any additional dependency installations here.
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             .versionmark.yaml
@@ -434,7 +434,7 @@ jobs:
       # Downstream projects: Add any additional dependency installations here.
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download package
         uses: actions/download-artifact@v8
@@ -498,7 +498,7 @@ jobs:
       # Downstream projects: Add any additional artifact downloads here.
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download all job artifacts
         uses: actions/download-artifact@v8
