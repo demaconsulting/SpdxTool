@@ -192,7 +192,7 @@ jobs:
           --results-directory artifacts
           --
           --report-trx
-          --report-trx-filename ${{ matrix.os }}.trx
+          --report-trx-filename "${{ matrix.os }}_{asm}_{tfm}_{arch}.trx"
           --coverlet
           --coverlet-output-format opencover
 
@@ -475,7 +475,7 @@ jobs:
           --results-directory artifacts
           --
           --report-trx
-          --report-trx-filename targets-${{ matrix.os }}.trx
+          --report-trx-filename "targets-${{ matrix.os }}_{asm}_{tfm}_{arch}.trx"
 
       # === UPLOAD ARTIFACTS ===
       # This section uploads all generated artifacts for use by downstream jobs.
