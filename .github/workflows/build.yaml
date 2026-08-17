@@ -185,13 +185,16 @@ jobs:
       - name: Test
         run: >
           dotnet test
-          test/DemaConsulting.SpdxTool.Tests/DemaConsulting.SpdxTool.Tests.csproj
+          --project test/DemaConsulting.SpdxTool.Tests/DemaConsulting.SpdxTool.Tests.csproj
           --no-build
           --configuration Release
           --property:Version=${{ inputs.version }}
-          --collect "XPlat Code Coverage;Format=opencover"
-          --logger "trx;LogFilePrefix=${{ matrix.os }}"
           --results-directory artifacts
+          --
+          --report-trx
+          --report-trx-filename ${{ matrix.os }}.trx
+          --coverlet
+          --coverlet-output-format opencover
 
       - name: End Sonar Scanner
         env:
@@ -467,10 +470,12 @@ jobs:
       - name: Run targets integration tests
         run: >
           dotnet test
-          test/DemaConsulting.SpdxTool.Targets.Tests/DemaConsulting.SpdxTool.Targets.Tests.csproj
+          --project test/DemaConsulting.SpdxTool.Targets.Tests/DemaConsulting.SpdxTool.Targets.Tests.csproj
           --configuration Release
-          --logger "trx;LogFilePrefix=targets-${{ matrix.os }}"
           --results-directory artifacts
+          --
+          --report-trx
+          --report-trx-filename targets-${{ matrix.os }}.trx
 
       # === UPLOAD ARTIFACTS ===
       # This section uploads all generated artifacts for use by downstream jobs.
