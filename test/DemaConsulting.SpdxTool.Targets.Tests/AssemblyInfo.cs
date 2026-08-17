@@ -20,6 +20,8 @@
 
 // cspell:ignore Xunit
 using Xunit;
+using Xunit.Sdk;
+using Xunit.v3;
 
 // Disable parallelism: tests write to fixed file paths in test fixture directories
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: Parallelization(Mode = ParallelMode.None)]

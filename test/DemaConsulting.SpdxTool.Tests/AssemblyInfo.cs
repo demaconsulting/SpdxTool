@@ -20,6 +20,8 @@
 
 // cspell:ignore Xunit
 using Xunit;
+using Xunit.Sdk;
+using Xunit.v3;
 
 // Disable parallelism: LogTests and IntegrationTests write to fixed file names (output.log, results.trx, results.xml)
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: Parallelization(Mode = ParallelMode.None)]
