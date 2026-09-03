@@ -14,6 +14,8 @@ sections:
                   Users need access to detailed usage information for each command to
                   understand arguments, options, and workflow YAML syntax without consulting
                   external documentation.
+                children:
+                  - SpdxTool-Commands-Help-YamlInvocation
                 tests:
                   - Help_Run_NoArguments_ReportsError
                   - Help_Run_UnknownCommand_ReportsError

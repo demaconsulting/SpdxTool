@@ -14,6 +14,14 @@ sections:
                   Users need human-readable representations of SPDX documents for
                   documentation, reporting, and review purposes. Markdown is a widely
                   supported format for documentation.
+                children:
+                  - SpdxTool-Commands-ToMarkdown-MissingArguments
+                  - SpdxTool-Commands-ToMarkdown-MissingSpdxFile
+                  - SpdxTool-Commands-ToMarkdown-WhitespaceTitle
+                  - SpdxTool-Commands-ToMarkdown-NonPositiveDepth
+                  - SpdxTool-Commands-ToMarkdown-YamlMissingSpdxInput
+                  - SpdxTool-Commands-ToMarkdown-YamlMissingMarkdownInput
+                  - SpdxTool-Commands-ToMarkdown-WorkflowInvocation
                 tests:
                   - ToMarkdown_Run_ValidSpdxFile_GeneratesMarkdown
 

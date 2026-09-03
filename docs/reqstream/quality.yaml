@@ -1,0 +1,87 @@
+---
+# Quality/process requirements grouping SpdxTool's use of off-the-shelf (OTS) test,
+# build, and library dependencies. These requirements exist so that OTS-derived
+# requirements (which describe capabilities SpdxTool relies on from third-party or
+# sibling-repository components, not user-visible SpdxTool functionality) are not
+# reported as orphans by `dotnet reqstream --requirements requirements.yaml --enforce`.
+sections:
+  - title: Quality Requirements
+    requirements:
+      - id: SpdxTool-Quality-TestInfrastructure
+        title: The repository shall rely on xUnit, ReqStream, and TestResults to execute and trace tests.
+        tags: [quality]
+        justification: |
+          Automated testing depends on xUnit's execution/reporting capabilities,
+          requirements traceability depends on ReqStream enforcing that every
+          requirement links to passing test evidence, and TRX/JUnit result files
+          depend on TestResults serialization. This grouping requirement links
+          those OTS requirements to the quality root so they participate in orphan
+          detection without being falsely reported as disconnected from SpdxTool
+          functionality.
+        children:
+          - SpdxTool-OTS-xUnit-Execution
+          - SpdxTool-OTS-xUnit-Reporting
+          - SpdxTool-OTS-ReqStream
+          - SpdxTool-OTS-ReqStream-RequirementsProcessing
+          - SpdxTool-OTS-ReqStream-TrxParsing
+          - SpdxTool-OTS-ReqStream-RequirementsReport
+          - SpdxTool-OTS-ReqStream-JustificationsReport
+          - SpdxTool-OTS-ReqStream-TraceabilityMatrix
+          - SpdxTool-OTS-ReqStream-EnforcementMode
+          - SpdxTool-OTS-TestResults-Trx
+          - SpdxTool-OTS-TestResults-JUnit
+
+      - id: SpdxTool-Quality-BuildAndVersionTooling
+        title: The repository shall rely on BuildMark and VersionMark to document build metadata and tool versions.
+        tags: [quality]
+        justification: |
+          Release documentation depends on BuildMark querying the GitHub Actions
+          API and rendering workflow metadata, and on VersionMark querying and
+          rendering installed dotnet-tool versions. This grouping requirement
+          links those OTS requirements to the quality root so they participate
+          in orphan detection without being falsely reported as disconnected
+          from SpdxTool functionality.
+        children:
+          - SpdxTool-OTS-BuildMark
+          - SpdxTool-OTS-BuildMark-ApiQuery
+          - SpdxTool-OTS-BuildMark-MarkdownReport
+          - SpdxTool-OTS-VersionMark
+          - SpdxTool-OTS-VersionMark-VersionReading
+          - SpdxTool-OTS-VersionMark-MarkdownReport
+
+      - id: SpdxTool-Quality-AnalysisTooling
+        title: The repository shall rely on SarifMark and SonarMark to document code-scanning and quality-gate results.
+        tags: [quality]
+        justification: |
+          Release documentation depends on SarifMark parsing CodeQL SARIF output
+          and rendering findings, and on SonarMark querying the SonarCloud API
+          and rendering quality-gate results. This grouping requirement links
+          those OTS requirements to the quality root so they participate in
+          orphan detection without being falsely reported as disconnected from
+          SpdxTool functionality.
+        children:
+          - SpdxTool-OTS-SarifMark
+          - SpdxTool-OTS-SarifMark-SarifReading
+          - SpdxTool-OTS-SarifMark-MarkdownReport
+          - SpdxTool-OTS-SonarMark
+          - SpdxTool-OTS-SonarMark-ApiQuery
+          - SpdxTool-OTS-SonarMark-MarkdownReport
+
+      - id: SpdxTool-Quality-CoreLibraryDependencies
+        title: The tool shall rely on SpdxModel, YamlDotNet, and NuGet.Caching to implement its core capabilities.
+        tags: [quality]
+        justification: |
+          Every SPDX command depends on the SpdxModel object model, JSON
+          serialization, and validation; workflow parsing depends on
+          YamlDotNet; and the run-workflow command's NuGet-embedded workflow
+          resolution depends on NuGet.Caching. This grouping requirement links
+          those OTS requirements to the quality root so they participate in
+          orphan detection without being falsely reported as disconnected from
+          SpdxTool functionality.
+        children:
+          - SpdxTool-OTS-SpdxModel-ObjectModel
+          - SpdxTool-OTS-SpdxModel-Serialization
+          - SpdxTool-OTS-SpdxModel-NtiaValidation
+          - SpdxTool-OTS-SpdxModel-SchemaValidation
+          - SpdxTool-OTS-YamlDotNet
+          - SpdxTool-OTS-NuGetCaching

@@ -31,6 +31,11 @@ sections:
                   - SpdxTool-SelfTest-RunNuGetWorkflow
                   - SpdxTool-SelfTest-ToMarkdown
                   - SpdxTool-SelfTest-UpdatePackage
+                  - SpdxTool-SelfTest-Orchestrate-SummaryReport
+                  - SpdxTool-SelfTest-Orchestrate-SerializeResults
+                  - SpdxTool-SelfTest-Orchestrate-UnsupportedExtension
+                  - SpdxTool-SelfTest-Orchestrate-SystemInfoHeader
+                  - SpdxTool-SelfTest-Orchestrate-DepthHeading
                 tests:
                   - SelfTest_Validate_ValidContext_Succeeds
                   - SelfTest_Validate_WithDepth_Succeeds

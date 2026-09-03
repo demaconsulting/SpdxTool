@@ -12,6 +12,10 @@ sections:
               help system to enumerate available commands. The registry must correctly
               map command names to their implementations.
             children:
+              - SpdxTool-CommandEntry-Record
+              - SpdxTool-CommandErrorException-RuntimeFailure
+              - SpdxTool-CommandRegistry-Lookup
+              - SpdxTool-CommandUsageException-IncorrectUsage
               - SpdxTool-Commands-AddPackage
               - SpdxTool-Commands-AddRelationship
               - SpdxTool-Commands-CopyPackage
@@ -42,6 +46,8 @@ sections:
               When a command name is provided, the subsystem must locate and execute
               the correct implementation, or report an appropriate error when the
               command is not found.
+            children:
+              - SpdxTool-Command-AbstractContract
             tests:
               - Commands_Dispatch_UnknownCommand_ReportsError
               - CommandsRegistry_Commands_KnownCommandName_ResolvesEntry

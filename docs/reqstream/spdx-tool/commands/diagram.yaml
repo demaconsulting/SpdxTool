@@ -14,6 +14,11 @@ sections:
                   Visual representations of SPDX relationships and package hierarchies
                   help users understand complex dependency graphs. Mermaid is a popular
                   text-based diagramming language.
+                children:
+                  - SpdxTool-Commands-Diagram-Workflow
+                  - SpdxTool-Commands-Diagram-ToolsFilter
+                  - SpdxTool-Commands-Diagram-UnspecifiedVersion
+                  - SpdxTool-Commands-Diagram-Validate
                 tests:
                   - Diagram_Run_ValidSpdxFile_GeneratesDiagram
                   - Diagram_Run_WithToolsOption_GeneratesDiagramWithTools

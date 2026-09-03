@@ -13,6 +13,15 @@ sections:
                 justification: |
                   Workflows often need to extract information from external tools or
                   commands to incorporate into SPDX documents or workflow logic.
+                children:
+                  - SpdxTool-Commands-Query-ValueCaptureGroup
+                  - SpdxTool-Commands-Query-CliOutput
+                  - SpdxTool-Commands-Query-WorkflowOutput
+                  - SpdxTool-Commands-Query-PatternNotFound
+                  - SpdxTool-Commands-Query-MissingArguments
+                  - SpdxTool-Commands-Query-InvalidProgram
+                  - SpdxTool-Commands-Query-InvalidRegexPattern
+                  - SpdxTool-Commands-Query-MissingWorkflowInputs
                 tests:
                   - Query_Run_DotNetVersionOnCommandLine_ReturnsVersion
                   - Query_Run_DotNetVersionInWorkflow_StoresVersion

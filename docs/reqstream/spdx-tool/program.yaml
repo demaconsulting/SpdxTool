@@ -12,6 +12,11 @@ sections:
               Global flags control tool behavior before any command runs. Each flag must be
               recognized and processed so that all invocation modes (help, version, silent,
               logging, self-validation) are accessible to users.
+            children:
+              - SpdxTool-Context-FlagState
+              - SpdxTool-Context-DefaultDepth
+              - SpdxTool-Context-InvalidDepthRejection
+              - SpdxTool-Context-InvalidLogFileRejection
             tests:
               - SpdxTool_Version_ShortFlag_DisplaysVersion
               - SpdxTool_Usage_ShortHelpFlag_DisplaysUsage
@@ -23,6 +28,9 @@ sections:
             justification: |
               Program is the application entry point and must correctly route every invocation
               to the right handler based on the command name that follows the global flags.
+            children:
+              - SpdxTool-Context-CommandArguments
+              - SpdxTool-Commands-Dispatch
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError
               - Commands_Dispatch_UnknownCommand_ReportsError
@@ -31,5 +39,8 @@ sections:
             justification: |
               A non-zero exit code on failure is the standard contract for CLI tools and is
               essential for CI/CD pipelines and scripts to detect and react to failures.
+            children:
+              - SpdxTool-Context-ErrorStatus
+              - SpdxTool-Context-ErrorCount
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError

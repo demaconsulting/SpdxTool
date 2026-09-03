@@ -13,6 +13,13 @@ sections:
                 justification: |
                   Users need to output informational messages during workflow execution
                   for debugging, progress tracking, and user feedback.
+                children:
+                  - SpdxTool-Commands-Print-CliOutput
+                  - SpdxTool-Commands-Print-MissingTextInput
+                  - SpdxTool-Commands-Print-WorkflowVariableExpansion
+                  - SpdxTool-Commands-Print-UndefinedVariable
+                  - SpdxTool-Commands-Print-EmptyVariableName
+                  - SpdxTool-Commands-Print-UnmatchedMacroDelimiter
                 tests:
                   - Print_Run_InWorkflow_PrintsText
 

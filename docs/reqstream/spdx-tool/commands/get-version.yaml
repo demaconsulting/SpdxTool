@@ -13,6 +13,12 @@ sections:
                 justification: |
                   Users need to extract version information from packages for reporting,
                   dependency management, and compatibility checking.
+                children:
+                  - SpdxTool-Commands-GetVersion-MissingArguments
+                  - SpdxTool-Commands-GetVersion-FileNotFound
+                  - SpdxTool-Commands-GetVersion-PackageNotFound
+                  - SpdxTool-Commands-GetVersion-MissingWorkflowSpdx
+                  - SpdxTool-Commands-GetVersion-MissingWorkflowOutput
                 tests:
                   - GetVersion_Run_OnCommandLine_ReturnsPackageVersion
                   - GetVersion_Run_InWorkflow_ReturnsPackageVersion

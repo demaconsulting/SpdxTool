@@ -13,6 +13,16 @@ sections:
                 justification: |
                   Users need to incrementally build SPDX documents by adding new packages
                   that represent software components, libraries, or dependencies.
+                children:
+                  - SpdxTool-Commands-AddPackage-WorkflowOnly
+                  - SpdxTool-Commands-AddPackage-Enhance
+                  - SpdxTool-Commands-AddPackage-ValidateMissingSpdxInput
+                  - SpdxTool-Commands-AddPackage-ValidateMissingPackageInput
+                  - SpdxTool-Commands-AddPackage-ValidateMissingId
+                  - SpdxTool-Commands-AddPackage-ValidateMissingName
+                  - SpdxTool-Commands-AddPackage-ValidateMissingDownload
+                  - SpdxTool-Commands-AddPackage-ValidateEmptyId
+                  - SpdxTool-Commands-AddPackage-ValidateReservedId
                 tests:
                   - AddPackage_Run_InWorkflowWithRelationship_AddsPackageAndRelationship
                   - AddPackage_Run_InWorkflowNoRelationship_AddsPackageOnly

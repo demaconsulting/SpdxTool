@@ -13,6 +13,12 @@ sections:
                 justification: |
                   Workflows need to pass data between steps and parameterize operations.
                   Variables enable dynamic workflow execution based on computed or input values.
+                children:
+                  - SpdxTool-Commands-SetVariable-CliRejection
+                  - SpdxTool-Commands-SetVariable-MissingValue
+                  - SpdxTool-Commands-SetVariable-MissingOutput
+                  - SpdxTool-Commands-SetVariable-ValueExpansion
+                  - SpdxTool-Commands-SetVariable-LiteralOutput
                 tests:
                   - SetVariable_Run_InWorkflow_SetsVariable
 
