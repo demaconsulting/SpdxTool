@@ -1,4 +1,5 @@
 ---
+root-tags: [system, quality]
 includes:
   - docs/reqstream/spdx-tool/spdx-tool.yaml
   - docs/reqstream/spdx-tool/context.yaml
@@ -52,6 +53,7 @@ includes:
   - docs/reqstream/spdx-tool-targets/spdx-tool-targets.yaml
   - docs/reqstream/spdx-tool-targets/targets-single.yaml
   - docs/reqstream/spdx-tool-targets/targets-multi.yaml
+  - docs/reqstream/quality.yaml
   - docs/reqstream/ots/xunit.yaml
   - docs/reqstream/ots/reqstream.yaml
   - docs/reqstream/ots/buildmark.yaml

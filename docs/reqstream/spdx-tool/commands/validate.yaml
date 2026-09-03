@@ -13,6 +13,9 @@ sections:
                 justification: |
                   Users need to verify that SPDX documents conform to the SPDX specification
                   before using them in downstream processes or sharing them with others.
+                children:
+                  - SpdxTool-Commands-Validate-MissingInput
+                  - SpdxTool-Commands-Validate-NtiaMinimum
                 tests:
                   - Validate_DoValidate_ValidSpdxFile_ReturnsNoErrors
                   - Validate_Run_ValidSpdxDocument_Succeeds

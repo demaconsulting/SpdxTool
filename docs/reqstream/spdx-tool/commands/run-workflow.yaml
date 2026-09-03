@@ -14,6 +14,17 @@ sections:
                   Complex SPDX document operations often require multiple steps. Workflows
                   enable users to define and automate multi-step processes in a declarative
                   YAML format.
+                children:
+                  - SpdxTool-Commands-RunWorkflow-NuGetWorkflow
+                  - SpdxTool-Commands-RunWorkflow-IntegrityAccepted
+                  - SpdxTool-Commands-RunWorkflow-IntegrityRejected
+                  - SpdxTool-Commands-RunWorkflow-MissingArguments
+                  - SpdxTool-Commands-RunWorkflow-MissingFile
+                  - SpdxTool-Commands-RunWorkflow-UndeclaredParameter
+                  - SpdxTool-Commands-RunWorkflow-MalformedWorkflow
+                  - SpdxTool-Commands-RunWorkflow-MalformedArgument
+                  - SpdxTool-Commands-RunWorkflow-VerboseOutput
+                  - SpdxTool-Commands-RunWorkflow-DisplayName
                 tests:
                   - RunWorkflow_Run_ValidWorkflowFile_ExecutesWorkflow
                   - RunWorkflow_Run_WithDefaultParameters_UsesDefaults

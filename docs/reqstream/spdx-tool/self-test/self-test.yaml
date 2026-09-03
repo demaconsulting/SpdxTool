@@ -26,6 +26,8 @@ sections:
               - SpdxTool-SelfTest-RunNuGetWorkflow
               - SpdxTool-SelfTest-ToMarkdown
               - SpdxTool-SelfTest-UpdatePackage
+              - SpdxTool-SelfTest-Report
+              - SpdxTool-SelfTest-UnsupportedResultExtension
             tests:
               - SelfTest_Validate_ValidContext_Succeeds
 

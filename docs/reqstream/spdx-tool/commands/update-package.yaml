@@ -13,6 +13,14 @@ sections:
                 justification: |
                   Users need to modify package metadata as software components evolve,
                   such as updating versions, licenses, or other attributes.
+                children:
+                  - SpdxTool-Commands-UpdatePackage-CliRejection
+                  - SpdxTool-Commands-UpdatePackage-MissingSpdxInput
+                  - SpdxTool-Commands-UpdatePackage-MissingPackageInput
+                  - SpdxTool-Commands-UpdatePackage-PackageNotFound
+                  - SpdxTool-Commands-UpdatePackage-PartialUpdate
+                  - SpdxTool-Commands-UpdatePackage-MissingPackageIdInput
+                  - SpdxTool-Commands-UpdatePackage-UnrecognizedField
                 tests:
                   - UpdatePackage_Run_InWorkflow_UpdatesPackage
 

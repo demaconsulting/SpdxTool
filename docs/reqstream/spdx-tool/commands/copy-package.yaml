@@ -13,6 +13,17 @@ sections:
                 justification: |
                   Users need to reuse package information across multiple SPDX documents
                   to avoid duplication and ensure consistency of package metadata.
+                children:
+                  - SpdxTool-Commands-CopyPackage-Enhance
+                  - SpdxTool-Commands-CopyPackage-ValidateMissingSpdxFile
+                  - SpdxTool-Commands-CopyPackage-ValidateInvalidRecursive
+                  - SpdxTool-Commands-CopyPackage-ValidateReservedId
+                  - SpdxTool-Commands-CopyPackage-ValidateWorkflowMissingFrom
+                  - SpdxTool-Commands-CopyPackage-ValidateWorkflowMissingTo
+                  - SpdxTool-Commands-CopyPackage-ValidateWorkflowMissingPackage
+                  - SpdxTool-Commands-CopyPackage-ValidateWorkflowInvalidRecursive
+                  - SpdxTool-Commands-CopyPackage-ValidateWorkflowInvalidFiles
+                  - SpdxTool-Commands-CopyPackage-PackageNotFound
                 tests:
                   - CopyPackage_Run_OnCommandLine_CopiesPackage
                   - CopyPackage_Run_InWorkflow_CopiesPackage

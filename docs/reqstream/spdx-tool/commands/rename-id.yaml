@@ -14,6 +14,16 @@ sections:
                   Users need to modify element IDs to resolve conflicts, follow naming
                   conventions, or reorganize SPDX documents while maintaining referential
                   integrity.
+                children:
+                  - SpdxTool-Commands-RenameId-MissingArguments
+                  - SpdxTool-Commands-RenameId-MissingFile
+                  - SpdxTool-Commands-RenameId-WorkflowInvocation
+                  - SpdxTool-Commands-RenameId-AllCollectionsRename
+                  - SpdxTool-Commands-RenameId-ValidateEmptyOldId
+                  - SpdxTool-Commands-RenameId-ValidateEmptyNewId
+                  - SpdxTool-Commands-RenameId-ValidateSpdxDocumentOldId
+                  - SpdxTool-Commands-RenameId-ValidateSpdxDocumentNewId
+                  - SpdxTool-Commands-RenameId-ValidateDuplicateNewId
                 tests:
                   - RenameId_Run_ValidSpdxFile_RenamesId
 

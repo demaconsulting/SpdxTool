@@ -13,6 +13,13 @@ sections:
                 justification: |
                   Users need to locate specific packages within SPDX documents based on
                   criteria such as name, version, or other attributes to query or modify them.
+                children:
+                  - SpdxTool-Commands-FindPackage-ValidateMissingInput
+                  - SpdxTool-Commands-FindPackage-ValidateMalformedCriteria
+                  - SpdxTool-Commands-FindPackage-LoadError
+                  - SpdxTool-Commands-FindPackage-NoMatch
+                  - SpdxTool-Commands-FindPackage-MultipleMatch
+                  - SpdxTool-Commands-FindPackage-WildcardCriteria
                 tests:
                   - FindPackage_Run_ByNameOnCommandLine_FindsPackage
                   - FindPackage_Run_ByName_FindsPackage

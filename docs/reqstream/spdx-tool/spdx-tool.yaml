@@ -7,10 +7,13 @@ sections:
           - id: SpdxTool-Command-Version
             title: The tool shall display version information when invoked with the -v or --version flag.
             tags:
+              - system
               - cli
             justification: |
               Users need to check the version of the tool they are using for compatibility
               and troubleshooting purposes.
+            children:
+              - SpdxTool-Program-CLIFlagAcceptance
             tests:
               - SpdxTool_Version_ShortFlag_DisplaysVersion
               - SpdxTool_Version_LongFlag_DisplaysVersion
@@ -18,6 +21,7 @@ sections:
           - id: SpdxTool-Command-Help
             title: The tool shall display usage information when invoked with the -h, -?, or --help flag.
             tags:
+              - system
               - cli
             justification: |
               Users need quick access to help documentation to understand how to use the
@@ -30,20 +34,27 @@ sections:
           - id: SpdxTool-Command-InvalidArgs
             title: The tool shall display an error and usage information when invoked without arguments.
             tags:
+              - system
               - cli
             justification: |
               When users invoke the tool without any arguments, they should receive
               guidance on proper usage rather than encountering undefined behavior.
+            children:
+              - SpdxTool-Program-CommandDispatch
+              - SpdxTool-Program-NonZeroExitOnFailure
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError
 
           - id: SpdxTool-Command-Silent
             title: The tool shall silence console output when invoked with the -s or --silent flag.
             tags:
+              - system
               - cli
             justification: |
               In automated scripts and CI/CD pipelines, users may want to suppress
               console output to reduce log noise.
+            children:
+              - SpdxTool-Context-OutputChannels
             tests:
               - SpdxTool_Silent_ShortFlag_SuppressesOutput
               - SpdxTool_Silent_LongFlag_SuppressesOutput
@@ -51,10 +62,13 @@ sections:
           - id: SpdxTool-Command-Log
             title: The tool shall write output to a log file when invoked with the -l or --log flag.
             tags:
+              - system
               - cli
             justification: |
               Users need the ability to capture tool output to files for auditing,
               debugging, and record-keeping purposes.
+            children:
+              - SpdxTool-Context-LogOutput
             tests:
               - SpdxTool_Log_ShortFlag_WritesOutputToFile
               - SpdxTool_Log_LongFlag_WritesOutputToFile
@@ -62,6 +76,7 @@ sections:
           - id: SpdxTool-Command-Validate
             title: The tool shall perform self-validation when invoked with the --validate flag.
             tags:
+              - system
               - cli
             justification: |
               Self-validation ensures that the tool functions correctly after installation
@@ -74,6 +89,7 @@ sections:
           - id: SpdxTool-Command-Depth
             title: The tool shall support depth control for self-validation output.
             tags:
+              - system
               - cli
             justification: |
               Users may want to see detailed hierarchical results during self-validation
@@ -86,6 +102,7 @@ sections:
           - id: SpdxTool-Command-ResultsTrx
             title: The tool shall write self-validation results as TRX when the --result flag uses a .trx extension.
             tags:
+              - system
               - cli
             justification: |
               CI/CD systems and test reporting tools often require test results in
@@ -99,6 +116,7 @@ sections:
           - id: SpdxTool-Command-ResultsJUnit
             title: The tool shall write self-validation results as JUnit XML when the --result flag uses .xml extension.
             tags:
+              - system
               - cli
             justification: |
               Many CI/CD systems and test reporting tools support JUnit XML format.
@@ -112,6 +130,7 @@ sections:
           - id: SpdxTool-Command-ResultShortFlag
             title: The tool shall accept -r as an alias for the --result flag.
             tags:
+              - system
               - cli
             justification: |
               Short flag aliases improve usability in scripts and interactive sessions where
@@ -124,6 +143,7 @@ sections:
           - id: SpdxTool-CommandExecution-SupportedCommands
             title: The tool shall execute the corresponding command operation when invoked with any supported command name.
             tags:
+              - system
               - commands
             justification: |
               The tool's core value is the set of SPDX manipulation commands it provides.
@@ -147,6 +167,13 @@ sections:
               - SpdxTool-Commands-ToMarkdown
               - SpdxTool-Commands-UpdatePackage
               - SpdxTool-Commands-Validate-Validate
+              - SpdxTool-Commands-Registry
+              - SpdxTool-Commands-Dispatch
+              - SpdxTool-Commands-VariableExpansion
+              - SpdxTool-Commands-MapString
+              - SpdxTool-Commands-EnvironmentVariableExpansion
+              - SpdxTool-Spdx-SharedUtilities
+              - SpdxTool-Utility-SharedHelpers
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError
               - CommandsRegistry_Commands_AllExpectedNames_ArePresent
@@ -154,6 +181,7 @@ sections:
           - id: SpdxTool-CommandExecution-WorkflowExecution
             title: The tool shall execute SPDX manipulation workflows defined in YAML workflow files.
             tags:
+              - system
               - commands
               - workflow
             justification: |
@@ -170,6 +198,7 @@ sections:
           - id: SpdxTool-Platform-CrossPlatform
             title: The tool shall support all required target platforms.
             tags:
+              - system
               - platform
             justification: |
               Supporting multiple operating systems ensures the tool is usable across the
@@ -183,6 +212,7 @@ sections:
           - id: SpdxTool-Platform-MultiFramework
             title: The tool shall support all required .NET target frameworks.
             tags:
+              - system
               - platform
             justification: |
               Supporting multiple active .NET LTS and STS releases ensures the tool

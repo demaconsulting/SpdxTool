@@ -22,6 +22,7 @@ sections:
               - SpdxTool-Utility-RejectNullArguments
               - SpdxTool-Utility-ValidPath
               - SpdxTool-Utility-Wildcard
+              - SpdxTool-Utility-Wildcard-Timeout
               - SpdxTool-Utility-Wildcard-NullArgs
             tests:
               - TemporaryDirectory_Constructor_CreatesDirectory

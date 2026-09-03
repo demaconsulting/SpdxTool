@@ -8,6 +8,7 @@ sections:
           The system shall decorate SBOMs during dotnet pack when IsPackable,
           GenerateSBOM, and DecorateSBOM are all true.
         tags:
+          - system
           - msbuild
           - sbom
         justification: |
@@ -24,6 +25,7 @@ sections:
       - id: SpdxToolTargets-SkipDecorationWhenDisabled
         title: The system shall skip SBOM decoration when DecorateSBOM is false.
         tags:
+          - system
           - msbuild
           - sbom
         justification: |
@@ -38,6 +40,7 @@ sections:
       - id: SpdxToolTargets-SkipDecorationWithoutSbom
         title: The system shall skip SBOM decoration when GenerateSBOM is false.
         tags:
+          - system
           - msbuild
           - sbom
         justification: |
@@ -52,6 +55,7 @@ sections:
       - id: SpdxToolTargets-SkipDecorationWhenNotPackable
         title: The system shall skip SBOM decoration when IsPackable is false.
         tags:
+          - system
           - msbuild
           - sbom
         justification: |
@@ -66,6 +70,7 @@ sections:
       - id: SpdxToolTargets-ReportMissingWorkflowFile
         title: The system shall report a clear error when the workflow file is missing.
         tags:
+          - system
           - msbuild
           - sbom
         justification: |
@@ -81,6 +86,7 @@ sections:
         title: The system shall allow the path of the SBOM decoration workflow file to be configured via the SpdxWorkflowFile
           MSBuild property.
         tags:
+          - system
           - msbuild
           - sbom
         justification: |
@@ -94,6 +100,7 @@ sections:
       - id: SpdxToolTargets-ConfigurableToolCommand
         title: The system shall allow the SpdxTool invocation command to be configured via the SpdxToolCommand MSBuild property.
         tags:
+          - system
           - msbuild
           - sbom
         justification: |

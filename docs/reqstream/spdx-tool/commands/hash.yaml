@@ -13,6 +13,15 @@ sections:
                 justification: |
                   Users need to generate SHA-256 hashes for files and record them in sidecar
                   files for later integrity verification.
+                children:
+                  - SpdxTool-Commands-Hash-MissingArguments
+                  - SpdxTool-Commands-Hash-MissingFile
+                  - SpdxTool-Commands-Hash-UnsupportedAlgorithm
+                  - SpdxTool-Commands-Hash-InvalidOperation
+                  - SpdxTool-Commands-Hash-WorkflowInvocation
+                  - SpdxTool-Commands-Hash-WorkflowMissingOperation
+                  - SpdxTool-Commands-Hash-WorkflowMissingAlgorithm
+                  - SpdxTool-Commands-Hash-WorkflowMissingFile
                 tests:
                   - Hash_Run_GenerateOperation_WritesSidecarFile
 
@@ -23,6 +32,10 @@ sections:
                 justification: |
                   Users need to verify that files match their recorded SHA-256 digests to
                   detect corruption or tampering.
+                children:
+                  - SpdxTool-Commands-Hash-VerifyCaseInsensitive
+                  - SpdxTool-Commands-Hash-MissingSidecarFile
+                  - SpdxTool-Commands-Hash-MissingTargetFile
                 tests:
                   - Hash_Run_VerifyOperation_SucceedsForValidHash
                   - Hash_Run_VerifyOperation_FailsForInvalidHash
