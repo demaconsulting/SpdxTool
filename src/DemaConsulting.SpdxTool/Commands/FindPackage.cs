@@ -281,17 +281,36 @@ public sealed class FindPackage : Command
     /// <remarks>
     ///     Includes the package ID, name, version, filename, and download location so a
     ///     workflow author can distinguish between ambiguous matches without re-opening the
-    ///     SPDX document. Optional fields that are absent are rendered as "none". Pure
-    ///     function; no side effects.
+    ///     SPDX document. Optional fields that are absent are rendered as "none". Note that
+    ///     <see cref="SpdxPackage.DownloadLocation"/> defaults to an empty string (not null)
+    ///     when unset, so blank values are treated the same as null via
+    ///     <see cref="DescribeOptionalField"/>. Pure function; no side effects.
     /// </remarks>
     /// <param name="package">Package to describe</param>
     /// <returns>Human-readable description of the package</returns>
     private static string DescribePackage(SpdxPackage package)
     {
         return $"[id={package.Id}, name={package.Name}, " +
-               $"version={package.Version ?? "none"}, " +
-               $"filename={package.FileName ?? "none"}, " +
-               $"download={package.DownloadLocation ?? "none"}]";
+               $"version={DescribeOptionalField(package.Version)}, " +
+               $"filename={DescribeOptionalField(package.FileName)}, " +
+               $"download={DescribeOptionalField(package.DownloadLocation)}]";
+    }
+
+    /// <summary>
+    ///     Describe an optional package field as a human-readable string
+    /// </summary>
+    /// <remarks>
+    ///     Renders null or empty values as "none" so absent fields are reported consistently
+    ///     regardless of whether the underlying SPDX model property defaults to null (as with
+    ///     <see cref="SpdxPackage.Version"/> and <see cref="SpdxPackage.FileName"/>) or an empty
+    ///     string (as with <see cref="SpdxPackage.DownloadLocation"/>). Pure function; no side
+    ///     effects.
+    /// </remarks>
+    /// <param name="value">Field value</param>
+    /// <returns>The value, or "none" if null or empty</returns>
+    private static string DescribeOptionalField(string? value)
+    {
+        return string.IsNullOrEmpty(value) ? "none" : value;
     }
 
     /// <summary>

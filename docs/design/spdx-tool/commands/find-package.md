@@ -86,9 +86,20 @@ the error is actionable without re-inspecting the SPDX document.
 
 **DescribePackage(SpdxPackage)**: Formats a package's id, name, version, filename, and download
 location as a bracketed `[key=value, ...]` summary for inclusion in multiple-match error messages.
-Optional fields that are absent are rendered as `none`.
+Optional fields that are absent are rendered as `none` via `DescribeOptionalField`.
 
 - *Parameters*: `SpdxPackage package` — package to describe.
+- *Returns*: `string`
+- *Preconditions*: None.
+- *Post-conditions*: Pure function; no side effects.
+
+**DescribeOptionalField(string?)**: Renders an optional package field value as `none` when it is
+null or empty. This normalizes the inconsistent defaults across `SpdxPackage` properties: `Version`
+and `FileName` default to null when unset, whereas `DownloadLocation` defaults to an empty string;
+without this normalization an unset download location would render as a blank value instead of
+`none`.
+
+- *Parameters*: `string? value` — field value.
 - *Returns*: `string`
 - *Preconditions*: None.
 - *Post-conditions*: Pure function; no side effects.
