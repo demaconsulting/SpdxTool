@@ -64,7 +64,10 @@ version, filename, and download fields from a YAML inputs map into the criteria 
 - *Post-conditions*: criteria contains any criteria fields present in the map.
 
 **FindPackageByCriteria(string, IReadOnlyDictionary)**: Loads the SPDX document and returns the
-unique package matching all criteria. Throws if zero or more than one package matches.
+unique package matching all criteria. Throws if zero or more than one package matches. The thrown
+`CommandErrorException` message includes the rendered search criteria (via `DescribeCriteria`) and,
+for the multiple-match case, a description of every matching candidate (via `DescribePackage`) so
+the error is actionable without re-inspecting the SPDX document.
 
 - *Parameters*: `string spdxFile` — SPDX JSON file path;
   `IReadOnlyDictionary<string, string> criteria` — search criteria.
@@ -72,6 +75,23 @@ unique package matching all criteria. Throws if zero or more than one package ma
 - *Preconditions*: spdxFile must exist.
 - *Post-conditions*: Returns exactly one matching package. The document is loaded fresh from disk on
   every call; no caching is performed.
+
+**DescribeCriteria(IReadOnlyDictionary)**: Formats the search criteria as a comma-separated list of
+`key=value` pairs, in dictionary enumeration order, for inclusion in error messages.
+
+- *Parameters*: `IReadOnlyDictionary<string, string> criteria` — search criteria.
+- *Returns*: `string`
+- *Preconditions*: None.
+- *Post-conditions*: Pure function; no side effects.
+
+**DescribePackage(SpdxPackage)**: Formats a package's id, name, version, filename, and download
+location as a bracketed `[key=value, ...]` summary for inclusion in multiple-match error messages.
+Optional fields that are absent are rendered as `none`.
+
+- *Parameters*: `SpdxPackage package` — package to describe.
+- *Returns*: `string`
+- *Preconditions*: None.
+- *Post-conditions*: Pure function; no side effects.
 
 **IsPackageMatch(SpdxPackage, IReadOnlyDictionary)**: Tests a single package against all supplied
 criteria using Wildcard.IsMatch for each field.
@@ -94,7 +114,9 @@ contain "=", or when the key part (the substring before "=") is empty.
 inputs are missing.
 
 **CommandErrorException** — thrown by `FindPackageByCriteria` when the SPDX file cannot be loaded,
-when no package matches, or when multiple packages match.
+when no package matches, or when multiple packages match. The no-match and multiple-match messages
+include the rendered search criteria; the multiple-match message additionally lists each matching
+candidate's id, name, version, filename, and download location.
 
 #### Dependencies
 

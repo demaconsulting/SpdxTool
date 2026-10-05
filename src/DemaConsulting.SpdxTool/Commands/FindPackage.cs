@@ -251,10 +251,47 @@ public sealed class FindPackage : Command
         // Return the package
         return matches.Length switch
         {
-            0 => throw new CommandErrorException($"Package not found in {spdxFile} matching search criteria"),
+            0 => throw new CommandErrorException(
+                $"Package not found in {spdxFile} matching search criteria ({DescribeCriteria(criteria)})"),
             1 => matches[0],
-            _ => throw new CommandErrorException($"Multiple packages found in {spdxFile} matching search criteria")
+            _ => throw new CommandErrorException(
+                $"Multiple packages found in {spdxFile} matching search criteria ({DescribeCriteria(criteria)}): " +
+                string.Join("; ", matches.Select(DescribePackage)))
         };
+    }
+
+    /// <summary>
+    ///     Describe the search criteria as a human-readable string
+    /// </summary>
+    /// <remarks>
+    ///     Formats each criterion as <c>key=value</c> joined by commas, in the order the
+    ///     criteria dictionary enumerates them. Used to make ambiguous-match and no-match
+    ///     error messages actionable. Pure function; no side effects.
+    /// </remarks>
+    /// <param name="criteria">Search criteria</param>
+    /// <returns>Comma-separated <c>key=value</c> description of the criteria</returns>
+    private static string DescribeCriteria(IReadOnlyDictionary<string, string> criteria)
+    {
+        return string.Join(", ", criteria.Select(kv => $"{kv.Key}={kv.Value}"));
+    }
+
+    /// <summary>
+    ///     Describe a package as a human-readable string for error messages
+    /// </summary>
+    /// <remarks>
+    ///     Includes the package ID, name, version, filename, and download location so a
+    ///     workflow author can distinguish between ambiguous matches without re-opening the
+    ///     SPDX document. Optional fields that are absent are rendered as "none". Pure
+    ///     function; no side effects.
+    /// </remarks>
+    /// <param name="package">Package to describe</param>
+    /// <returns>Human-readable description of the package</returns>
+    private static string DescribePackage(SpdxPackage package)
+    {
+        return $"[id={package.Id}, name={package.Name}, " +
+               $"version={package.Version ?? "none"}, " +
+               $"filename={package.FileName ?? "none"}, " +
+               $"download={package.DownloadLocation ?? "none"}]";
     }
 
     /// <summary>

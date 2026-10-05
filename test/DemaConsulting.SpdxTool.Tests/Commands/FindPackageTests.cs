@@ -496,9 +496,10 @@ public class FindPackageTests
                 "run-workflow",
                 "workflow.yaml");
 
-            // Assert: Verify error reported
+            // Assert: Verify error reported, including the searched criteria
             Assert.Equal(1, exitCode);
             Assert.Contains("Package not found", output);
+            Assert.Contains("name=Nonexistent Package", output);
         }
         finally
         {
@@ -538,9 +539,14 @@ public class FindPackageTests
                 "run-workflow",
                 "workflow.yaml");
 
-            // Assert: Verify error reported
+            // Assert: Verify error reported, including the searched criteria and both candidates
             Assert.Equal(1, exitCode);
             Assert.Contains("Multiple packages found", output);
+            Assert.Contains("download=https://github.com/demaconsulting/*", output);
+            Assert.Contains("id=SPDXRef-Package-1", output);
+            Assert.Contains("id=SPDXRef-Package-2", output);
+            Assert.Contains("name=Test Package", output);
+            Assert.Contains("name=Another Test Package", output);
         }
         finally
         {
