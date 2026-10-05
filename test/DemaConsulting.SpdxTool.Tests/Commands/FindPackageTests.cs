@@ -539,7 +539,8 @@ public class FindPackageTests
                 "run-workflow",
                 "workflow.yaml");
 
-            // Assert: Verify error reported, including the searched criteria and both candidates
+            // Assert: Verify error reported, including the searched criteria and full details
+            // (id, name, version, filename, download) for both candidates
             Assert.Equal(1, exitCode);
             Assert.Contains("Multiple packages found", output);
             Assert.Contains("download=https://github.com/demaconsulting/*", output);
@@ -547,6 +548,12 @@ public class FindPackageTests
             Assert.Contains("id=SPDXRef-Package-2", output);
             Assert.Contains("name=Test Package", output);
             Assert.Contains("name=Another Test Package", output);
+            Assert.Contains("version=1.0.0", output);
+            Assert.Contains("version=2.0.0", output);
+            Assert.Contains("filename=package1.zip", output);
+            Assert.Contains("filename=package2.tar", output);
+            Assert.Contains("download=https://github.com/demaconsulting/SpdxTool]", output);
+            Assert.Contains("download=https://github.com/demaconsulting/SpdxModel]", output);
         }
         finally
         {
