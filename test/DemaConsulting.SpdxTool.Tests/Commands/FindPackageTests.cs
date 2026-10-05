@@ -496,9 +496,10 @@ public class FindPackageTests
                 "run-workflow",
                 "workflow.yaml");
 
-            // Assert: Verify error reported
+            // Assert: Verify error reported, including the searched criteria
             Assert.Equal(1, exitCode);
             Assert.Contains("Package not found", output);
+            Assert.Contains("name=Nonexistent Package", output);
         }
         finally
         {
@@ -538,9 +539,109 @@ public class FindPackageTests
                 "run-workflow",
                 "workflow.yaml");
 
-            // Assert: Verify error reported
+            // Assert: Verify error reported, including the searched criteria and full details
+            // (id, name, version, filename, download) for both candidates
             Assert.Equal(1, exitCode);
             Assert.Contains("Multiple packages found", output);
+            Assert.Contains("download=https://github.com/demaconsulting/*", output);
+            Assert.Contains("id=SPDXRef-Package-1", output);
+            Assert.Contains("id=SPDXRef-Package-2", output);
+            Assert.Contains("name=Test Package", output);
+            Assert.Contains("name=Another Test Package", output);
+            Assert.Contains("version=1.0.0", output);
+            Assert.Contains("version=2.0.0", output);
+            Assert.Contains("filename=package1.zip", output);
+            Assert.Contains("filename=package2.tar", output);
+            Assert.Contains("download=https://github.com/demaconsulting/SpdxTool]", output);
+            Assert.Contains("download=https://github.com/demaconsulting/SpdxModel]", output);
+        }
+        finally
+        {
+            File.Delete("spdx.json");
+            File.Delete("workflow.yaml");
+        }
+    }
+
+    /// <summary>
+    ///     Test that find-package command reports "none" for missing optional fields of both
+    ///     candidates when multiple packages match the criteria
+    /// </summary>
+    [Fact]
+    public void FindPackage_Run_MultiplePackagesFoundWithMissingOptionalFields_ReportsNone()
+    {
+        // SPDX file where both candidate packages omit versionInfo, packageFileName, and
+        // downloadLocation (the latter of which defaults to an empty string, not null)
+        const string spdxContents =
+            """
+            {
+              "files": [],
+              "packages": [    {
+                  "SPDXID": "SPDXRef-Package-Minimal-1",
+                  "name": "Minimal Package",
+                  "licenseConcluded": "MIT"
+                },
+                {
+                  "SPDXID": "SPDXRef-Package-Minimal-2",
+                  "name": "Minimal Package",
+                  "licenseConcluded": "MIT"
+                }
+              ],
+              "relationships": [    {
+                  "spdxElementId": "SPDXRef-DOCUMENT",
+                  "relatedSpdxElement": "SPDXRef-Package-Minimal-1",
+                  "relationshipType": "DESCRIBES"
+                }
+              ],
+              "spdxVersion": "SPDX-2.2",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": "Test Document",
+              "documentNamespace": "https://sbom.spdx.org",
+              "creationInfo": {
+                "created": "2021-10-01T00:00:00Z",
+                "creators": [ "Person: Malcolm Nixon" ]
+              },
+              "documentDescribes": [ "SPDXRef-Package-Minimal-1" ]
+            }
+            """;
+
+        // Workflow contents - criteria that match both minimal packages by name
+        const string workflowContents =
+            """
+            steps:
+            - command: find-package
+              inputs:
+                output: packageId
+                spdx: spdx.json
+                name: Minimal Package
+            """;
+
+        try
+        {
+            // Arrange: Write the SPDX and workflow files
+            File.WriteAllText("spdx.json", spdxContents);
+            File.WriteAllText("workflow.yaml", workflowContents);
+
+            // Act: Run the command
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                "workflow.yaml");
+
+            // Assert: Verify error reported, with "none" for both candidates' missing
+            // version, filename, and download location (including the empty-string default)
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Multiple packages found", output);
+            Assert.Contains("id=SPDXRef-Package-Minimal-1", output);
+            Assert.Contains("id=SPDXRef-Package-Minimal-2", output);
+            Assert.Contains(
+                "[id=SPDXRef-Package-Minimal-1, name=Minimal Package, version=none, filename=none, download=none]",
+                output);
+            Assert.Contains(
+                "[id=SPDXRef-Package-Minimal-2, name=Minimal Package, version=none, filename=none, download=none]",
+                output);
         }
         finally
         {
