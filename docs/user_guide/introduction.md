@@ -14,6 +14,10 @@ validation, markdown export, and Mermaid diagram generation. A built-in self-val
 evidence of correct tool operation, which is useful in regulated industries where tool qualification
 evidence is required.
 
+![SpdxTool architecture: SPDX files and workflow files flow through the Cli, Commands, and Spdx components to produce
+updated SPDX files, Markdown, and Mermaid diagrams, supported by the Utility and SelfTest components, with the
+SpdxTool.Targets package running workflows during dotnet pack](architecture.svg)
+
 ## Scope
 
 This guide covers installation, configuration, and use of SpdxTool on Windows, Linux, and macOS.

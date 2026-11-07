@@ -70,3 +70,5 @@ number-sections: true
 
 # Standalone document
 standalone: true
+filters:
+  - docs/filters/canvasnet.lua

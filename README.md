@@ -21,6 +21,10 @@ DemaConsulting.SpdxTool is a .NET tool for creating, validating, and manipulatin
 DemaConsulting.SpdxTool.Targets, an MSBuild targets extension that integrates SPDX document
 decoration into the standard `dotnet pack` build workflow.
 
+![SpdxTool architecture: SPDX files and workflow files flow through the Cli, Commands, and Spdx components to produce
+updated SPDX files, Markdown, and Mermaid diagrams, supported by the Utility and SelfTest components, with the
+SpdxTool.Targets package running workflows during dotnet pack][architecture]
+
 ## Features
 
 - Create, validate, and manipulate SPDX (Software Package Data Exchange) documents from the command line.
@@ -225,4 +229,5 @@ Additional information can be found at:
 - [Architecture Documentation](https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md)
 - [SPDX Specification](https://spdx.dev/)
 
+[architecture]: https://raw.githubusercontent.com/demaconsulting/SpdxTool/main/docs/images/architecture.png
 [link-continuous-compliance]: https://demaconsulting.github.io/SpdxTool/articles/continuous-compliance.html
