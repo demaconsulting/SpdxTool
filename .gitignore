@@ -427,6 +427,9 @@ TestResults/
 *.trx
 coverage.opencover.xml
 
+# Generated documentation (build outputs - never committed)
+**/generated/
+
 # VersionMark captures (generated during CI/CD)
 versionmark-*.json
 
