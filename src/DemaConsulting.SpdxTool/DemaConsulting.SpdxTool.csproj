@@ -49,7 +49,7 @@
   <!-- Runtime Dependencies -->
   <ItemGroup>
     <PackageReference Include="DemaConsulting.SpdxModel" Version="2.7.0" />
-    <PackageReference Include="DemaConsulting.NuGet.Caching" Version="1.4.1" />
+    <PackageReference Include="DemaConsulting.NuGet.Caching" Version="1.5.0" />
     <PackageReference Include="DemaConsulting.TestResults" Version="1.10.0" />
     <PackageReference Include="YamlDotNet" Version="18.1.0" />
   </ItemGroup>
