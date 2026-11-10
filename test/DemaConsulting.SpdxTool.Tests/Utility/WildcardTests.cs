@@ -146,7 +146,7 @@ public class WildcardTests
         var input = new string('a', 5000);
         const string Pattern = "*a*a*a*a*a*a*a*a*a*a*b";
 
-        // Act: invoke IsMatch — must complete without throwing regardless of timeout behaviour
+        // Act: invoke IsMatch — must complete without throwing regardless of timeout behavior
         var result = Wildcard.IsMatch(input, Pattern);
 
         // Assert: the call completed and returned false (no 'b' present in input)

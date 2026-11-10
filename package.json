@@ -3,7 +3,6 @@
   "devDependencies": {
     "mermaid": "^11.17.2",
     "mermaid-filter": "1.4.7",
-    "cspell": "10.1.1",
     "markdownlint-cli2": "0.23.2"
   }
 }
