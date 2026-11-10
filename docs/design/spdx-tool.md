@@ -123,7 +123,7 @@ N/A - not a safety-classified software item.
    the log file regardless of the silent state. If `Context.Create` throws
    `InvalidOperationException` (for example, when `--log` is specified without a following
    argument, or `--depth` receives an invalid or negative value), `Main` writes
-   `Error: {message}` in red directly to the console, resets the console colour, and calls
+   `Error: {message}` in red directly to the console, resets the console color, and calls
    `Environment.Exit(1)`. This failure path does not construct a `Context` and does not return
    through `Run`.
 2. If the argument list is empty and --validate was not set, Program records an error

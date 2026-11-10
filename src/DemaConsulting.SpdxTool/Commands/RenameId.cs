@@ -270,9 +270,9 @@ public sealed class RenameId : Command
     /// </summary>
     /// <remarks>
     ///     This is the single consistent replacement primitive called by all collection-update loops
-    ///     in <see cref="Rename(SpdxDocument, string, string)"/>. Centralising the comparison here
+    ///     in <see cref="Rename(SpdxDocument, string, string)"/>. Centralizing the comparison here
     ///     ensures that every collection (packages, files, snippets, relationships, Describes) applies
-    ///     identical comparison semantics and reduces the risk of divergent behaviour across loops.
+    ///     identical comparison semantics and reduces the risk of divergent behavior across loops.
     ///     Stateless and thread-safe.
     /// </remarks>
     /// <param name="id">The current ID to be checked and potentially updated.</param>
