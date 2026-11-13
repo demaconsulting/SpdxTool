@@ -102,4 +102,5 @@ sections:
           This grouping requirement links the SysML2Tools OTS requirements to the
           quality root so they participate in orphan detection.
         children:
-          - SpdxTool-OTS-SysML2Tools
+          - SpdxTool-OTS-SysML2Tools-Lint
+          - SpdxTool-OTS-SysML2Tools-Render

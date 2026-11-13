@@ -332,7 +332,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.x'
+          dotnet-version: |
+            10.x
+            11.x
 
       # Restore tools from manifest (includes spdx-tool)
       - name: Restore tools

@@ -20,19 +20,13 @@ sections:
             tags:
               - ots
             justification: |
-              The rendered diagrams are embedded in the design documentation, so a failure to
-              render must fail the build rather than silently omit a diagram.
+              The rendered diagrams are embedded in the design documentation. Self-validation
+              proves the render command works against known fixtures, but a compiled PDF with a
+              missing image reference does not fail the WeasyPrint build - it simply omits the
+              diagram silently. FileAssert therefore asserts, after the real render step, that
+              each declared view's SVG file actually exists in docs/design/generated and is
+              well-formed XML, which is the only evidence that render succeeded against this
+              project's actual model.
             tests:
               - SysML2Tools_RenderSvgSelfTest
-
-          - id: SpdxTool-OTS-SysML2Tools
-            title: SysML2Tools shall validate the SysML2 model and render its declared views to SVG diagrams.
-            tags:
-              - ots
-            justification: |
-              Composite requirement covering lint and render behaviors. This is a non-requirement
-              grouping node; verification evidence is carried by the atomic child requirements,
-              each of which covers one behavior (lint and render).
-            children:
-              - SpdxTool-OTS-SysML2Tools-Lint
-              - SpdxTool-OTS-SysML2Tools-Render
+              - SysML2Tools_DesignDiagramsSvg
