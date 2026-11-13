@@ -232,7 +232,7 @@ This project maintains high code quality standards:
 
 Additional information can be found at:
 
-- [Architecture Documentation](https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md)
+- [Software Design Documentation](https://github.com/demaconsulting/SpdxTool/blob/main/docs/design/introduction.md)
 - [SPDX Specification](https://spdx.dev/)
 
 [workflow]: https://raw.githubusercontent.com/demaconsulting/SpdxTool/main/docs/images/workflow.png
