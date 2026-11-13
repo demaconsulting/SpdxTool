@@ -94,6 +94,44 @@ from `.github/standards/`. Use this matrix to determine which to load:
 
 Load only the standards relevant to your specific task scope.
 
+# Repository-Specific Standards Exceptions
+
+The files in `.github/standards/` are shared verbatim across repositories. This repository
+applies these accepted exceptions on top of them:
+
+## Self-Test Integration Test Naming (`csharp-testing.md`)
+
+Self-test integration tests whose method names must match a `TestResult.Name` identifier for
+ReqStream traceability are exempt from the 4-segment naming rule. The `TestResult.Name`
+value is the canonical identifier recorded in result files and consumed by ReqStream to link
+xUnit tests to self-test step outcomes; the xUnit method name must match it exactly.
+
+Such tests should document this deviation with an inline `<remarks>` block that reads:
+"This is a deliberate formal deviation: the method name matches the `TestResult.Name` identifier
+required for ReqStream traceability and is therefore exempt from the 4-segment naming rule."
+
+## OTS CI-Pipeline Verification (`requirements-principles.md`)
+
+Off-The-Shelf (OTS) requirements whose compliance can **only** be observed through CI
+pipeline artifact presence (for example, a tool's API-query or markdown-report capability
+that requires live credentials or network access and produces an artifact on every
+successful pipeline run) are formally excepted from the test-link rule, subject to all of
+the following conditions:
+
+1. The requirement is in `docs/reqstream/ots/` (OTS items only — not system, subsystem,
+   or unit requirements).
+2. The requirement is tagged `ci-pipeline-verified`.
+3. The `justification:` field explicitly describes the pipeline artifact that provides
+   compliance evidence (e.g., the build-notes document, SARIF report, or quality report
+   present in every release bundle).
+4. A parent requirement for the same OTS item DOES link to an in-process installation
+   test (e.g., `--help` or `--version`) confirming the tool is present and responsive.
+
+Requirements satisfying all four conditions MAY omit the `tests:` field. ReqStream
+enforcement should exclude these requirements (e.g., by removing the `ci-pipeline-verified`
+tag from the set of tags being enforced, or by using `--filter` to restrict enforcement
+to non-OTS requirements).
+
 # Agent Delegation Guidelines
 
 The default agent should handle simple, straightforward tasks directly.
