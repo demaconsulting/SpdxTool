@@ -1,5 +1,7 @@
 ## SelfTest
 
+![SelfTest Structure](SelfTestView.svg)
+
 ### Overview
 
 The Self-Test subsystem implements the `--validate` self-test suite for DemaConsulting.SpdxTool. Core

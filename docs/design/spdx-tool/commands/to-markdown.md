@@ -1,5 +1,7 @@
 ### ToMarkdown
 
+![ToMarkdown Structure](CommandsView.svg)
+
 #### Purpose
 
 ToMarkdown generates a Markdown summary of an SPDX document and writes it to an output file. The

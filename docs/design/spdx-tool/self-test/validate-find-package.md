@@ -1,5 +1,7 @@
 ### ValidateFindPackage
 
+![ValidateFindPackage Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateFindPackage exercises the find-package command end-to-end within the Self-Test subsystem. It

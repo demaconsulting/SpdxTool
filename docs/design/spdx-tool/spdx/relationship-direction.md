@@ -1,5 +1,7 @@
 ### RelationshipDirection
 
+![RelationshipDirection Structure](SpdxView.svg)
+
 #### Purpose
 
 RelationshipDirection provides an enumeration of the three abstract traversal directions

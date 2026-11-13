@@ -57,35 +57,24 @@ sections:
               - macos@SpdxToolTargets_GenerateSbom_SingleTfm_False_SkipsEntirely
               - macos@SpdxToolTargets_MissingWorkflow_SingleTfm_ReportsError
 
-          - id: SpdxTool-Platform-Net8
-            title: The tool shall run successfully on .NET 8.x.
-            tags:
-              - platform
-            justification: |
-              .NET 8.x is a long-term support (LTS) release of .NET. The tool must
-              support this version to provide stability and compatibility for users
-              who require LTS support.
-            tests:
-              - dotnet8.x@SpdxTool_Basic
-
-          - id: SpdxTool-Platform-Net9
-            title: The tool shall run successfully on .NET 9.x.
-            tags:
-              - platform
-            justification: |
-              .NET 9.x is a current release of .NET. The tool must support this
-              version to enable users to take advantage of the latest .NET features
-              and improvements.
-            tests:
-              - dotnet9.x@SpdxTool_Basic
-
           - id: SpdxTool-Platform-Net10
             title: The tool shall run successfully on .NET 10.x.
             tags:
               - platform
             justification: |
-              .NET 10.x represents forward compatibility. The tool should support
-              future .NET releases to ensure users can upgrade their runtime without
-              losing tool functionality.
+              .NET 10.x is a long-term support (LTS) release and the oldest supported
+              .NET runtime. The tool must support this version to provide stability and
+              compatibility for users who require LTS support.
             tests:
               - dotnet10.x@SpdxTool_Basic
+
+          - id: SpdxTool-Platform-Net11
+            title: The tool shall run successfully on .NET 11.x.
+            tags:
+              - platform
+            justification: |
+              .NET 11.x is the latest release of .NET. The tool must support this
+              version to enable users to take advantage of the latest .NET features
+              and improvements.
+            tests:
+              - dotnet11.x@SpdxTool_Basic

@@ -21,7 +21,8 @@ Successful completion of the full test suite on each pipeline run constitutes pa
 for xUnit.
 
 **CI pipeline tools** (DemaConsulting.BuildMark, DemaConsulting.ReqStream,
-DemaConsulting.VersionMark, DemaConsulting.SarifMark, and DemaConsulting.SonarMark) are verified
+DemaConsulting.VersionMark, DemaConsulting.SarifMark, DemaConsulting.SonarMark, and
+DemaConsulting.SysML2Tools) are verified
 through their own self-validation test suites, which run as part of the `build-docs` CI job, and
 through their observable pipeline outputs. Each tool's `--validate` execution produces a TRX
 result file providing traceable evidence that the tool is installed and functional. Each tool also

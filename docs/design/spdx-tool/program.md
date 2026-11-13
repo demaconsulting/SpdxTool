@@ -1,5 +1,7 @@
 ## Program
 
+![Program Structure](SpdxToolView.svg)
+
 ### Purpose
 
 Program is the application entry point and top-level orchestrator. Main creates a Context from

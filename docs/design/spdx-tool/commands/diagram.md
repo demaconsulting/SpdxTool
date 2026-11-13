@@ -1,5 +1,7 @@
 ### Diagram
 
+![Diagram Structure](CommandsView.svg)
+
 #### Purpose
 
 Diagram generates a Mermaid entity-relationship diagram file from the relationships defined in an

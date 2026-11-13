@@ -14,14 +14,21 @@ validation, markdown export, and Mermaid diagram generation. A built-in self-val
 evidence of correct tool operation, which is useful in regulated industries where tool qualification
 evidence is required.
 
-![SpdxTool architecture: SPDX files and workflow files flow through the Cli, Commands, and Spdx components to produce
-updated SPDX files, Markdown, and Mermaid diagrams, supported by the Utility and SelfTest components, with the
-SpdxTool.Targets package running workflows during dotnet pack](architecture.svg)
+The workflow below shows how SpdxTool is used: start from an SPDX SBOM and a workflow file, run the
+`spdx-tool` command locally, in a CI pipeline, or through the SpdxTool.Targets package during `dotnet pack`,
+and use the updated SBOM, Markdown and Mermaid reports, and exit code as decorated packages, a CI quality
+gate, release documentation, and supply-chain compliance evidence.
+
+![SpdxTool workflow: start from an SPDX 2.x JSON SBOM, other SPDX documents, and workflow YAML files
+(local or from a URL or NuGet package), run spdx-tool commands, run-workflow, or validate, or let the
+SpdxTool.Targets package run a workflow during dotnet pack, get an updated SPDX document, a Markdown
+summary, a Mermaid diagram, and a pass/fail exit code, then use them for decorated packages, a CI
+quality gate, release documentation, and supply-chain compliance](workflow.svg)
 
 ## Scope
 
 This guide covers installation, configuration, and use of SpdxTool on Windows, Linux, and macOS.
-Prerequisites: .NET SDK 8.0 or later. The guide includes:
+Prerequisites: .NET SDK 10.0 or 11.0. The guide includes:
 
 - Installation instructions (local and global)
 - Command-line reference and core command descriptions

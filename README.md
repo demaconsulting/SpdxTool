@@ -21,9 +21,15 @@ DemaConsulting.SpdxTool is a .NET tool for creating, validating, and manipulatin
 DemaConsulting.SpdxTool.Targets, an MSBuild targets extension that integrates SPDX document
 decoration into the standard `dotnet pack` build workflow.
 
-![SpdxTool architecture: SPDX files and workflow files flow through the Cli, Commands, and Spdx components to produce
-updated SPDX files, Markdown, and Mermaid diagrams, supported by the Utility and SelfTest components, with the
-SpdxTool.Targets package running workflows during dotnet pack][architecture]
+The workflow below shows how to use it: start from an SPDX SBOM and a workflow file, run SpdxTool from the
+command line, a CI pipeline, or `dotnet pack`, and use the updated SBOM, reports, and exit code as decorated
+packages, a quality gate, and compliance evidence.
+
+![SpdxTool workflow: start from an SPDX 2.x JSON SBOM, other SPDX documents, and workflow YAML files
+(local or from a URL or NuGet package), run spdx-tool commands, run-workflow, or validate, or let the
+SpdxTool.Targets package run a workflow during dotnet pack, get an updated SPDX document, a Markdown
+summary, a Mermaid diagram, and a pass/fail exit code, then use them for decorated packages, a CI
+quality gate, release documentation, and supply-chain compliance][workflow]
 
 ## Features
 
@@ -32,7 +38,7 @@ SpdxTool.Targets package running workflows during dotnet pack][architecture]
 - Self-validation system generates evidence of tool correctness for regulated environments.
 - MSBuild targets integration automatically decorates SBOMs during `dotnet pack`.
 - Multi-command CLI supporting add-package, validate, copy-package, to-markdown, diagram, and more.
-- Multi-framework support targeting .NET 8, .NET 9, and .NET 10.
+- Multi-framework support targeting .NET 10 and .NET 11.
 - Continuous compliance evidence generated automatically on every CI run.
 
 ## Installation
@@ -226,8 +232,8 @@ This project maintains high code quality standards:
 
 Additional information can be found at:
 
-- [Architecture Documentation](https://github.com/demaconsulting/SpdxTool/blob/main/ARCHITECTURE.md)
+- [Software Design Documentation](https://github.com/demaconsulting/SpdxTool/blob/main/docs/design/introduction.md)
 - [SPDX Specification](https://spdx.dev/)
 
-[architecture]: https://raw.githubusercontent.com/demaconsulting/SpdxTool/main/docs/images/architecture.png
+[workflow]: https://raw.githubusercontent.com/demaconsulting/SpdxTool/main/docs/images/workflow.png
 [link-continuous-compliance]: https://demaconsulting.github.io/SpdxTool/articles/continuous-compliance.html

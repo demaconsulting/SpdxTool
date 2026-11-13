@@ -1,5 +1,7 @@
 ### CommandErrorException
 
+![CommandErrorException Structure](CommandsView.svg)
+
 #### Purpose
 
 CommandErrorException signals that a command has encountered a runtime error from which it

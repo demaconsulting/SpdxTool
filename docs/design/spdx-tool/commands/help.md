@@ -1,5 +1,7 @@
 ### Help
 
+![Help Structure](CommandsView.svg)
+
 #### Purpose
 
 Help displays the extended usage details for a named command by looking it up in CommandsRegistry

@@ -1,5 +1,7 @@
 ## Commands
 
+![Commands Structure](CommandsView.svg)
+
 ### Overview
 
 The Commands subsystem provides all CLI command implementations for the DemaConsulting.SpdxTool.

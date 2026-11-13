@@ -85,3 +85,22 @@ sections:
           - SpdxTool-OTS-SpdxModel-SchemaValidation
           - SpdxTool-OTS-YamlDotNet
           - SpdxTool-OTS-NuGetCaching
+
+      - id: SpdxTool-Quality-ArchitectureTraceability
+        title: >-
+          The project's software structure shall be modeled, validated, and
+          rendered independent of source code, so its architecture can be
+          queried and reviewed without reading implementation.
+        tags: [quality]
+        justification: |
+          Reviewers, auditors, and automated agents need to understand system
+          structure and responsibilities without reading through source code line by
+          line. Maintaining an explicit architecture model that is automatically
+          validated for structural correctness and rendered as diagrams embedded in
+          design documentation ensures the documented architecture remains
+          internally consistent and stays usable as a standalone reference.
+          This grouping requirement links the SysML2Tools OTS requirements to the
+          quality root so they participate in orphan detection.
+        children:
+          - SpdxTool-OTS-SysML2Tools-Lint
+          - SpdxTool-OTS-SysML2Tools-Render

@@ -1,5 +1,7 @@
 ### ValidateAddRelationship
 
+![ValidateAddRelationship Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateAddRelationship exercises the add-relationship command end-to-end within the Self-Test

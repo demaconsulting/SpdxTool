@@ -1,5 +1,7 @@
 ### ValidateRenameId
 
+![ValidateRenameId Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateRenameId exercises the rename-id command end-to-end within the Self-Test subsystem. It

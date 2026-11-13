@@ -1,5 +1,7 @@
 ### ValidateHash
 
+![ValidateHash Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateHash exercises the hash command end-to-end within the Self-Test subsystem. It verifies that

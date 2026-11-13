@@ -218,9 +218,8 @@ sections:
               Supporting multiple active .NET LTS and STS releases ensures the tool
               remains usable as users upgrade their projects and CI/CD environments.
             children:
-              - SpdxTool-Platform-Net8
-              - SpdxTool-Platform-Net9
               - SpdxTool-Platform-Net10
-              # net8.0@/net9.0@/net10.0@ prefixes are TFM (target framework moniker) CI dimensions
-              # reflecting the compiled TFM of the test assembly. The dotnet8.x@/dotnet9.x@/dotnet10.x@
+              - SpdxTool-Platform-Net11
+              # net10.0@/net11.0@ prefixes are TFM (target framework moniker) CI dimensions
+              # reflecting the compiled TFM of the test assembly. The dotnet10.x@/dotnet11.x@
               # prefixes used in child requirements are installed SDK version CI dimensions.

@@ -1,5 +1,7 @@
 ### CommandUsageException
 
+![CommandUsageException Structure](CommandsView.svg)
+
 #### Purpose
 
 CommandUsageException signals that a command was invoked incorrectly (wrong number of

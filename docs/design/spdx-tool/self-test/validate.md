@@ -1,5 +1,7 @@
 ### Validate
 
+![Validate Structure](SelfTestView.svg)
+
 #### Purpose
 
 Validate is the orchestrator for the Self-Test subsystem. It is the entry point invoked by Program when

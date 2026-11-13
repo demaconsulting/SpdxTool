@@ -1,5 +1,7 @@
 # DemaConsulting.SpdxTool.Targets
 
+![DemaConsulting.SpdxTool.Targets Structure](SpdxToolTargetsView.svg)
+
 ## Architecture
 
 `DemaConsulting.SpdxTool.Targets` consists of two MSBuild targets units and no subsystems. The

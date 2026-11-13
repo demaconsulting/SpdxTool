@@ -1,5 +1,7 @@
 ### RenameId
 
+![RenameId Structure](CommandsView.svg)
+
 #### Purpose
 
 RenameId renames an SPDX element ID throughout an SPDX document, updating all package IDs, file

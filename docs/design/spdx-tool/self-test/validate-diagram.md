@@ -1,5 +1,7 @@
 ### ValidateDiagram
 
+![ValidateDiagram Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateDiagram exercises the diagram command end-to-end within the Self-Test subsystem. It verifies

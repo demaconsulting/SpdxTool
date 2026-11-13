@@ -81,7 +81,7 @@ if (-not $skipDotnetTools) {
     dotnet textlint
     if ($LASTEXITCODE -ne 0) { $lintError = $true }
 
-    dotnet reqstream --lint --requirements requirements.yaml
+    dotnet reqstream --lint --enforce --requirements requirements.yaml
     if ($LASTEXITCODE -ne 0) { $lintError = $true }
 
     dotnet versionmark --lint
@@ -89,6 +89,11 @@ if (-not $skipDotnetTools) {
 
     dotnet reviewmark --lint
     if ($LASTEXITCODE -ne 0) { $lintError = $true }
+
+    if (Test-Path docs/sysml2) {
+        dotnet sysml2tools lint 'docs/sysml2/**/*.sysml'
+        if ($LASTEXITCODE -ne 0) { $lintError = $true }
+    }
 }
 
 # [PROJECT-SPECIFIC] Add additional dotnet tool checks here.

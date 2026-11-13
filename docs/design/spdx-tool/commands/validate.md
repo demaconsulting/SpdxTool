@@ -1,5 +1,7 @@
 ### Validate
 
+![Validate Structure](CommandsView.svg)
+
 #### Purpose
 
 Validate loads an SPDX document and checks it for specification compliance issues. Optionally it

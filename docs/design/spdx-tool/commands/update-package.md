@@ -1,5 +1,7 @@
 ### UpdatePackage
 
+![UpdatePackage Structure](CommandsView.svg)
+
 #### Purpose
 
 UpdatePackage updates named metadata fields of an existing package in an SPDX JSON document. The

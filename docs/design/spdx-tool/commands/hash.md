@@ -1,5 +1,7 @@
 ### Hash
 
+![Hash Structure](CommandsView.svg)
+
 #### Purpose
 
 Hash generates or verifies a SHA-256 hash for a file. In generate mode it computes the SHA-256

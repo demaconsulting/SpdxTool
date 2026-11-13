@@ -1,5 +1,7 @@
 ### CopyPackage
 
+![CopyPackage Structure](CommandsView.svg)
+
 #### Purpose
 
 CopyPackage copies a package (and optionally its child packages and associated files) from one SPDX

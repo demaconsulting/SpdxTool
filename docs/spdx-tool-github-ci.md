@@ -32,10 +32,10 @@ use. For example:
 The GitHub Actions workflow file should have a step to ensure dotnet is installed. For example:
 
 ```yaml
-    - name: Setup dotnet 8
+    - name: Setup dotnet 10
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.x
+        dotnet-version: 10.x
 ```
 
 ## Restore DotNet Tools Step

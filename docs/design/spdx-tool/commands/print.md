@@ -1,5 +1,7 @@
 ### Print
 
+![Print Structure](CommandsView.svg)
+
 #### Purpose
 
 Print writes one or more lines of text to the console. In CLI mode each argument is printed as a

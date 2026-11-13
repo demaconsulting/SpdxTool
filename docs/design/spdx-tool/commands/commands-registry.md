@@ -1,5 +1,7 @@
 ### CommandsRegistry
 
+![CommandsRegistry Structure](CommandsView.svg)
+
 #### Purpose
 
 CommandsRegistry is the central static registry that maps command names to their CommandEntry

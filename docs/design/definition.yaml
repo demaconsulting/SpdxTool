@@ -4,15 +4,27 @@
 # Resource paths for finding files and templates
 resource-path:
   - docs/design
+  - docs/design/generated
+  - docs/images
   - docs/template
+embed-resources: true
 
 # Input files in reading order (relative to project root)
 input-files:
   - docs/design/title.txt
   - docs/design/introduction.md
   - docs/design/spdx-tool.md
+  - docs/design/spdx-tool/program.md
+  - docs/design/spdx-tool/context.md
   - docs/design/spdx-tool/spdx.md
+  - docs/design/spdx-tool/spdx/relationship-direction.md
+  - docs/design/spdx-tool/spdx/spdx-helpers.md
   - docs/design/spdx-tool/commands.md
+  - docs/design/spdx-tool/commands/command.md
+  - docs/design/spdx-tool/commands/command-entry.md
+  - docs/design/spdx-tool/commands/commands-registry.md
+  - docs/design/spdx-tool/commands/command-error-exception.md
+  - docs/design/spdx-tool/commands/command-usage-exception.md
   - docs/design/spdx-tool/commands/add-package.md
   - docs/design/spdx-tool/commands/add-relationship.md
   - docs/design/spdx-tool/commands/copy-package.md
@@ -47,6 +59,8 @@ input-files:
   - docs/design/spdx-tool/self-test/validate-update-package.md
   - docs/design/spdx-tool/utility.md
   - docs/design/spdx-tool/utility/temporary-directory.md
+  - docs/design/spdx-tool/utility/path-helpers.md
+  - docs/design/spdx-tool/utility/wildcard.md
   - docs/design/spdx-tool-targets.md
   - docs/design/ots.md
   - docs/design/ots/yamldotnet.md
@@ -59,6 +73,7 @@ input-files:
   - docs/design/ots/versionmark.md
   - docs/design/ots/sarifmark.md
   - docs/design/ots/sonarmark.md
+  - docs/design/ots/sysml2tools.md
 # Template configuration
 template: template.html
 

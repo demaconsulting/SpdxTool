@@ -1,5 +1,7 @@
 ### ValidateUpdatePackage
 
+![ValidateUpdatePackage Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateUpdatePackage exercises the update-package command end-to-end within the Self-Test subsystem.

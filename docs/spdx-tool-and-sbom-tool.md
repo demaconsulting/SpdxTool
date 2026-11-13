@@ -44,7 +44,7 @@ This example workflow:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.x
+        dotnet-version: 10.x
 
     - name: Restore Tools
       run: |

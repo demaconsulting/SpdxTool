@@ -1,5 +1,7 @@
 ### CommandEntry
 
+![CommandEntry Structure](CommandsView.svg)
+
 #### Purpose
 
 CommandEntry is an immutable record that associates a command name and usage metadata with

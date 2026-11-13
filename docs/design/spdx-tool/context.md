@@ -1,5 +1,7 @@
 ## Context
 
+![Context Structure](SpdxToolView.svg)
+
 ### Purpose
 
 Context holds all mutable execution state for a single invocation of SpdxTool. It encapsulates

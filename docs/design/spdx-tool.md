@@ -1,5 +1,7 @@
 # SpdxTool
 
+![SpdxTool Structure](SpdxToolView.svg)
+
 ## Architecture
 
 DemaConsulting.SpdxTool is a cross-platform .NET tool distributed as a NuGet package that
@@ -150,7 +152,7 @@ N/A - not a safety-classified software item.
 
 ## Design Constraints
 
-- **Cross-platform**: The tool targets .NET 8, 9, and 10 and must run on Windows, Linux, and
+- **Cross-platform**: The tool targets .NET 10 and 11 and must run on Windows, Linux, and
   macOS; all file path operations use System.IO.Path APIs to maintain portability.
 - **No global state**: All mutable runtime state is encapsulated in Context and passed explicitly;
   Command subclasses are stateless.

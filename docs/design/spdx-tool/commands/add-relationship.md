@@ -1,5 +1,7 @@
 ### AddRelationship
 
+![AddRelationship Structure](CommandsView.svg)
+
 #### Purpose
 
 AddRelationship adds one or more relationships between SPDX elements in a document. It is available

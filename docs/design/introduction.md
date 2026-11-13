@@ -31,76 +31,30 @@ the internal design of CI pipeline tools.
 
 ## Software Structure
 
-```text
-DemaConsulting.SpdxTool (System)
-├── Commands (Subsystem)
-│   ├── AddPackage.cs (Unit)
-│   ├── AddRelationship.cs (Unit)
-│   ├── Command.cs (Unit)
-│   ├── CommandEntry.cs (Unit)
-│   ├── CommandErrorException.cs (Unit)
-│   ├── CommandsRegistry.cs (Unit)
-│   ├── CommandUsageException.cs (Unit)
-│   ├── CopyPackage.cs (Unit)
-│   ├── Diagram.cs (Unit)
-│   ├── FindPackage.cs (Unit)
-│   ├── GetVersion.cs (Unit)
-│   ├── Hash.cs (Unit)
-│   ├── Help.cs (Unit)
-│   ├── Print.cs (Unit)
-│   ├── Query.cs (Unit)
-│   ├── RenameId.cs (Unit)
-│   ├── RunWorkflow.cs (Unit)
-│   ├── SetVariable.cs (Unit)
-│   ├── ToMarkdown.cs (Unit)
-│   ├── UpdatePackage.cs (Unit)
-│   └── Validate.cs (Unit)
-├── SelfTest (Subsystem)
-│   ├── Validate.cs (Unit)
-│   ├── ValidateAddPackage.cs (Unit)
-│   ├── ValidateAddRelationship.cs (Unit)
-│   ├── ValidateBasic.cs (Unit)
-│   ├── ValidateCopyPackage.cs (Unit)
-│   ├── ValidateDiagram.cs (Unit)
-│   ├── ValidateFindPackage.cs (Unit)
-│   ├── ValidateGetVersion.cs (Unit)
-│   ├── ValidateHash.cs (Unit)
-│   ├── ValidateNtia.cs (Unit)
-│   ├── ValidateQuery.cs (Unit)
-│   ├── ValidateRenameId.cs (Unit)
-│   ├── ValidateRunNuGetWorkflow.cs (Unit)
-│   ├── ValidateToMarkdown.cs (Unit)
-│   └── ValidateUpdatePackage.cs (Unit)
-├── Spdx (Subsystem)
-│   ├── RelationshipDirection.cs (Unit)
-│   └── SpdxHelpers.cs (Unit)
-├── Utility (Subsystem)
-│   ├── TemporaryDirectory.cs (Unit)
-│   ├── PathHelpers.cs (Unit)
-│   └── Wildcard.cs (Unit)
-├── Context.cs (Unit)
-└── Program.cs (Unit)
+The software structure is modeled in SysML2 under `docs/sysml2/` and rendered to the
+diagram below by SysML2Tools as part of the build pipeline. AI agents should query the
+SysML2 model directly (see the `sysml2tools-query` skill) rather than parsing this
+diagram or the prose below. The model contains both systems: **SpdxTool**
+(DemaConsulting.SpdxTool) with its Commands, SelfTest, Spdx, and Utility subsystems and its
+Program and Context units, and **SpdxToolTargets** (DemaConsulting.SpdxTool.Targets) with its
+TargetsSingle (`build/`) and TargetsMulti (`buildMultiTargeting/`) units. The runtime OTS
+packages (DemaConsulting.SpdxModel, DemaConsulting.NuGet.Caching, DemaConsulting.TestResults,
+and YamlDotNet) are modeled as parts of SpdxTool; the test-framework and CI pipeline OTS items
+are documented in `docs/design/ots.md` rather than modeled as parts.
 
-DemaConsulting.SpdxTool.Targets (System)
-├── build/DemaConsulting.SpdxTool.Targets.targets (Unit)
-└── buildMultiTargeting/DemaConsulting.SpdxTool.Targets.targets (Unit)
+![Software Structure](SoftwareStructureView.svg)
 
-OTS Software Items (runtime NuGet package dependencies)
-├── YamlDotNet (OTS)
-├── DemaConsulting.SpdxModel (OTS)
-├── DemaConsulting.NuGet.Caching (OTS)
-└── DemaConsulting.TestResults (OTS)
+The diagram below complements the structure view by showing how data flows at run time:
+Program parses the command line into a Context and dispatches to a command (or, with
+`--validate`, to the SelfTest subsystem); the Commands read SPDX documents and workflow files
+through the Spdx and Utility helpers and write the updated SPDX documents and reports; the
+SpdxTool.Targets MSBuild targets invoke the tool during `dotnet pack`.
 
-OTS Software Items (test framework)
-└── xUnit (OTS)
-
-OTS Software Items (CI pipeline tools)
-├── DemaConsulting.BuildMark (OTS)
-├── DemaConsulting.ReqStream (OTS)
-├── DemaConsulting.VersionMark (OTS)
-├── DemaConsulting.SarifMark (OTS)
-└── DemaConsulting.SonarMark (OTS)
-```
+![SpdxTool architecture: the spdx-tool Program entry point builds a Context and dispatches to
+the Commands, which use the Spdx and Utility helpers to turn SPDX files and workflow files into
+updated SPDX files, Markdown and Mermaid reports, and SHA-256 hash files, while SelfTest runs the
+built-in checks and the SpdxTool.Targets MSBuild targets run a workflow during dotnet
+pack](architecture.svg)
 
 ## Folder Layout
 

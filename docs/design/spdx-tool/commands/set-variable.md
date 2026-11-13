@@ -1,5 +1,7 @@
 ### SetVariable
 
+![SetVariable Structure](CommandsView.svg)
+
 #### Purpose
 
 SetVariable assigns a value to a named variable in the current workflow variable dictionary. It

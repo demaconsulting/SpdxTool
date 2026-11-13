@@ -1,5 +1,7 @@
 ### ValidateQuery
 
+![ValidateQuery Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateQuery exercises the query command end-to-end within the Self-Test subsystem. It verifies that

@@ -18,13 +18,13 @@ words:
   - Dema
   - DEMA
   - demaconsulting
-  - DEMACONSULTINGNUGETKEY
   - devtoolof
   - dotnettool
   - invalidoption
   - MSBUILDDISABLENODEREUSE
   - ncipollo
   - nestings
+  - netstandard
   - noassertion
   - NOASSERTION
   - notools
@@ -34,6 +34,7 @@ words:
   - sarif
   - Sarif
   - SARIF
+  - shopt
   - slnx
   - snupkg
   - sonarscanner
