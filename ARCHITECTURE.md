@@ -443,9 +443,8 @@ Console/Log Output
 
 ### Target Frameworks
 
-- .NET 8.0
-- .NET 9.0
 - .NET 10.0
+- .NET 11.0
 
 Multi-targeting ensures broad compatibility while using latest language features (C# 12).
 

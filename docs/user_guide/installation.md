@@ -4,7 +4,7 @@
 
 Before installing SpdxTool, ensure you have:
 
-- **.NET SDK**: Version 8.0 or later
+- **.NET SDK**: Version 10.0 or 11.0
 - **Operating System**: Windows, Linux, or macOS
 
 ## Installation Methods

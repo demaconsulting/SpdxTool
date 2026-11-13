@@ -92,7 +92,7 @@ steps:
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <GenerateSBOM>true</GenerateSBOM>
     <DecorateSBOM>true</DecorateSBOM>
   </PropertyGroup>
@@ -136,7 +136,7 @@ outer build — not once per target framework:
 
 ```xml
 <PropertyGroup>
-  <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+  <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
   <GenerateSBOM>true</GenerateSBOM>
   <DecorateSBOM>true</DecorateSBOM>
 </PropertyGroup>

@@ -1,0 +1,38 @@
+---
+# SysML2Tools OTS requirements
+sections:
+  - title: OTS Software Requirements
+    sections:
+      - title: SysML2Tools Requirements
+        requirements:
+          - id: SpdxTool-OTS-SysML2Tools-Lint
+            title: SysML2Tools shall validate the SysML2 model for syntax and reference errors.
+            tags:
+              - ots
+            justification: |
+              Linting the model in CI catches broken references and syntax errors in the
+              architecture model before they reach the generated documentation.
+            tests:
+              - SysML2Tools_LintSelfTest
+
+          - id: SpdxTool-OTS-SysML2Tools-Render
+            title: SysML2Tools shall render the declared views to SVG diagrams.
+            tags:
+              - ots
+            justification: |
+              The rendered diagrams are embedded in the design documentation, so a failure to
+              render must fail the build rather than silently omit a diagram.
+            tests:
+              - SysML2Tools_RenderSvgSelfTest
+
+          - id: SpdxTool-OTS-SysML2Tools
+            title: SysML2Tools shall validate the SysML2 model and render its declared views to SVG diagrams.
+            tags:
+              - ots
+            justification: |
+              Composite requirement covering lint and render behaviors. This is a non-requirement
+              grouping node; verification evidence is carried by the atomic child requirements,
+              each of which covers one behavior (lint and render).
+            children:
+              - SpdxTool-OTS-SysML2Tools-Lint
+              - SpdxTool-OTS-SysML2Tools-Render

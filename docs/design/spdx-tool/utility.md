@@ -1,5 +1,7 @@
 ## Utility
 
+![Utility Structure](UtilityView.svg)
+
 ### Overview
 
 The Utility subsystem provides stateless cross-cutting helper units shared across the

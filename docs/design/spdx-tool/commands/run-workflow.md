@@ -1,5 +1,7 @@
 ### RunWorkflow
 
+![RunWorkflow Structure](CommandsView.svg)
+
 #### Purpose
 
 RunWorkflow executes a multi-step SPDX workflow defined in a YAML file, a URL, or a NuGet package.

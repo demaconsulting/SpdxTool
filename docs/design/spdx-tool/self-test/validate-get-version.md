@@ -1,5 +1,7 @@
 ### ValidateGetVersion
 
+![ValidateGetVersion Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateGetVersion exercises the get-version command end-to-end within the Self-Test subsystem. It

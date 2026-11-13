@@ -1,5 +1,7 @@
 ### ValidateBasic
 
+![ValidateBasic Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateBasic exercises the validate command end-to-end within the Self-Test subsystem. It verifies

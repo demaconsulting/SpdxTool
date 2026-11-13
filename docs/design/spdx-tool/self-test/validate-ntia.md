@@ -1,5 +1,7 @@
 ### ValidateNtia
 
+![ValidateNtia Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateNtia exercises the NTIA minimum elements validation within the Self-Test subsystem. It

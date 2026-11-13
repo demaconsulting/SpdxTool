@@ -1,5 +1,7 @@
 ### SpdxHelpers
 
+![SpdxHelpers Structure](SpdxView.svg)
+
 #### Purpose
 
 SpdxHelpers provides two shared document-level helpers used by all commands that read or

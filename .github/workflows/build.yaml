@@ -28,7 +28,9 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.x
+          dotnet-version: |
+            10.x
+            11.x
 
       - name: Restore Tools
         run: >
@@ -118,9 +120,8 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
-            8.x
-            9.x
             10.x
+            11.x
 
       - name: Restore Tools
         run: >
@@ -269,9 +270,8 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
-            8.x
-            9.x
             10.x
+            11.x
 
       - name: Restore Tools
         run: >
@@ -322,7 +322,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        dotnet-version: ['8.x', '9.x', '10.x']
+        dotnet-version: ['10.x', '11.x']
 
     steps:
       # === INSTALL DEPENDENCIES ===
@@ -369,7 +369,7 @@ jobs:
         run: |
           mkdir -p artifacts
           echo "Capturing tool versions..."
-          # Create short job ID: int-windows-8, int-ubuntu-9, int-macos-10, etc.
+          # Create short job ID: int-windows-10, int-ubuntu-11, int-macos-10, etc.
           OS_SHORT=$(echo "${{ matrix.os }}" | sed 's/-latest//')
           DOTNET_SHORT=$(echo "${{ matrix.dotnet-version }}" | sed 's/\.x$//')
           JOB_ID="int-${OS_SHORT}-${DOTNET_SHORT}"
@@ -449,9 +449,8 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
-            8.x
-            9.x
             10.x
+            11.x
 
       - name: Install spdx-tool from package
         shell: bash
@@ -560,7 +559,7 @@ jobs:
           dotnet versionmark --capture --job-id "build-docs" \
             --output "artifacts/versionmark-build-docs.json" -- \
             dotnet git node npm pandoc weasyprint sarifmark sonarmark reqstream \
-            buildmark versionmark reviewmark fileassert canvasnet textlint
+            buildmark versionmark reviewmark fileassert canvasnet textlint sysml2tools
           echo "✓ Tool versions captured"
 
       # === PREPARE DOCUMENT OUTPUT ===
@@ -818,6 +817,21 @@ jobs:
       - name: Create design output directory
         shell: bash
         run: mkdir -p docs/design/generated
+
+      - name: Run SysML2Tools self-validation
+        run: >
+          dotnet sysml2tools
+          --validate
+          --results artifacts/sysml2tools-self-validation.trx
+
+      - name: Render Software Structure diagrams with SysML2Tools
+        shell: pwsh
+        run: >
+          dotnet sysml2tools render
+          --output docs/design/generated --format svg
+          'docs/sysml2/common/**/*.sysml'
+          'docs/sysml2/model/**/*.sysml'
+          'docs/sysml2/views/design-views.sysml'
 
       - name: Generate Design HTML with Pandoc
         shell: bash

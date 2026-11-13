@@ -1,5 +1,7 @@
 ### FindPackage
 
+![FindPackage Structure](CommandsView.svg)
+
 #### Purpose
 
 FindPackage searches an SPDX document for a package that matches a set of key-value criteria (id,

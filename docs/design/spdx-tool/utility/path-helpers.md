@@ -1,5 +1,7 @@
 ### PathHelpers
 
+![PathHelpers Structure](UtilityView.svg)
+
 #### Purpose
 
 PathHelpers provides a single safe path-combination utility for commands that accept

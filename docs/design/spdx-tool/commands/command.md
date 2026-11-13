@@ -1,5 +1,7 @@
 ### Command
 
+![Command Structure](CommandsView.svg)
+
 #### Purpose
 
 Command is the abstract base class for all SpdxTool commands. It defines the execution

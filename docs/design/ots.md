@@ -29,6 +29,7 @@ the deployed product:
 - **DemaConsulting.VersionMark** — captures and publishes tool-version information
 - **DemaConsulting.SarifMark** — converts CodeQL SARIF results to a markdown report
 - **DemaConsulting.SonarMark** — generates a SonarCloud quality report
+- **DemaConsulting.SysML2Tools** — lints the SysML2 architecture model and renders its design views
 
 ## Integration Strategy
 

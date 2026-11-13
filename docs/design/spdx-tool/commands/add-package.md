@@ -1,5 +1,7 @@
 ### AddPackage
 
+![AddPackage Structure](CommandsView.svg)
+
 #### Purpose
 
 AddPackage adds a new package to an existing SPDX JSON document or enhances (merges) an existing

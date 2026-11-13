@@ -1,5 +1,7 @@
 ### ValidateToMarkdown
 
+![ValidateToMarkdown Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateToMarkdown exercises the to-markdown command end-to-end within the Self-Test subsystem. It

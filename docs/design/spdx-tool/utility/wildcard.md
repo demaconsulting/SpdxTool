@@ -1,5 +1,7 @@
 ### Wildcard
 
+![Wildcard Structure](UtilityView.svg)
+
 #### Purpose
 
 Wildcard converts glob-style wildcard patterns (`*` and `?`) into regular expressions and

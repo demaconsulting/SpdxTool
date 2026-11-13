@@ -1,5 +1,7 @@
 ### TemporaryDirectory
 
+![TemporaryDirectory Structure](UtilityView.svg)
+
 #### Purpose
 
 TemporaryDirectory provides an isolated, disposable working folder for self-validation and tests.

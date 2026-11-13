@@ -1,5 +1,7 @@
 ### ValidateCopyPackage
 
+![ValidateCopyPackage Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateCopyPackage exercises the copy-package command end-to-end within the Self-Test subsystem. It

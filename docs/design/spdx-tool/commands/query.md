@@ -1,5 +1,7 @@
 ### Query
 
+![Query Structure](CommandsView.svg)
+
 #### Purpose
 
 Query executes an external program, captures its combined stdout and stderr output, and applies a

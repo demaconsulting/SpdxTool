@@ -1,5 +1,7 @@
 ### ValidateAddPackage
 
+![ValidateAddPackage Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateAddPackage exercises the add-package command end-to-end within the Self-Test subsystem. It

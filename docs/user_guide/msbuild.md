@@ -141,7 +141,7 @@ A complete project file showing typical MSBuild integration:
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <OutputType>Library</OutputType>
 
     <!-- Enable packaging -->
@@ -218,7 +218,7 @@ steps:
 ## Multi-Targeting Projects
 
 The targets package automatically handles multi-targeting projects correctly. When your project targets
-multiple frameworks (e.g., `<TargetFrameworks>net8.0;net9.0</TargetFrameworks>`), the decoration:
+multiple frameworks (e.g., `<TargetFrameworks>net10.0;net11.0</TargetFrameworks>`), the decoration:
 
 - Runs **once** after all framework-specific builds complete
 - Uses the `buildMultiTargeting` targets to prevent duplicate execution
@@ -332,7 +332,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '10.x'
 
       # Restore tools from manifest (includes spdx-tool)
       - name: Restore tools

@@ -1,5 +1,7 @@
 ### ValidateRunNuGetWorkflow
 
+![ValidateRunNuGetWorkflow Structure](SelfTestView.svg)
+
 #### Purpose
 
 ValidateRunNuGetWorkflow exercises the run-workflow command's NuGet package source support within the

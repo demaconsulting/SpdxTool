@@ -12,7 +12,7 @@ behavior against representative SPDX fixtures and to emit CI-consumable TRX or J
 
 ## Test Environment
 
-The system tests run on .NET 8, .NET 9, and .NET 10 with file-system access to local SPDX JSON
+The system tests run on .NET 10 and .NET 11 with file-system access to local SPDX JSON
 fixtures and workflow YAML files. Query and self-test scenarios require `dotnet` on the system
 path, and the NuGet workflow scenario additionally requires either a populated NuGet cache or
 network access to restore the referenced workflow package.
@@ -78,7 +78,7 @@ is tested by `SpdxTool_Basic` on each supported
 platform in the CI matrix (`windows@SpdxTool_Basic`, `ubuntu@SpdxTool_Basic`,
 `macos@SpdxTool_Basic`).
 
-**MultiFrameworkSupport**: the tool runs on .NET 8, .NET 9, and .NET 10. This scenario is tested by
+**MultiFrameworkSupport**: the tool runs on .NET 10 and .NET 11. This scenario is tested by
 `SpdxTool_Version_ShortFlag_DisplaysVersion`
 on each supported target framework.
 

@@ -23,7 +23,8 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 ### Prerequisites
 
-- .NET SDK 8.0, 9.0, or 10.0
+- .NET SDK 10.0 and 11.0 (both are required: the 11.0 SDK builds the `net11.0` target and the
+  .NET 10 runtime runs the `net10.0` tests)
 - Git
 - A code editor (Visual Studio, VS Code, or Rider recommended)
 
@@ -171,7 +172,7 @@ The CI pipeline will also run markdown linting and spell checking on all documen
 dotnet test --configuration Release
 
 # Run tests for a specific framework
-dotnet test --configuration Release --framework net8.0
+dotnet test --configuration Release --framework net10.0
 
 # Run specific unit test
 dotnet test --filter "FullyQualifiedName~YourTestName"

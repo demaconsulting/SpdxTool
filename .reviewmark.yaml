@@ -11,6 +11,7 @@ needs-review:
   - docs/design/**/*.md  # Design documentation
   - docs/verification/**/*.md  # Verification documentation
   - docs/user_guide/**/*.md  # User guide documentation
+  - docs/sysml2/**/*.sysml  # SysML2 architecture model
   - '**/*.cs'  # All C# source and test files
   - '!**/obj/**'  # Exclude build output
   - '!**/bin/**'  # Exclude build output
@@ -36,6 +37,15 @@ reviews:
       - docs/design/introduction.md
       - docs/design/spdx-tool.md
       - docs/design/spdx-tool-targets.md
+
+  # Decomposition review - proves the structural decomposition addresses the stated purpose
+  - id: Decomposition
+    title: Review that SpdxTool Decomposition Addresses the Stated Purpose
+    paths:
+      - requirements.yaml  # root requirements file
+      - docs/reqstream/quality.yaml  # repository quality requirements
+      - docs/design/introduction.md  # design introduction
+      - docs/sysml2/**/*.sysml  # SysML2 model (authoritative structure)
 
   # System architecture review for DemaConsulting.SpdxTool
   - id: SpdxTool-Architecture

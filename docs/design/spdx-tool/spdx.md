@@ -1,5 +1,7 @@
 ## Spdx
 
+![Spdx Structure](SpdxView.svg)
+
 ### Overview
 
 The Spdx subsystem is a logical grouping of stateless SPDX-domain helper units shared across

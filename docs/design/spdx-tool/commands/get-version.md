@@ -1,5 +1,7 @@
 ### GetVersion
 
+![GetVersion Structure](CommandsView.svg)
+
 #### Purpose
 
 GetVersion retrieves the version string of a package from an SPDX document that matches the
