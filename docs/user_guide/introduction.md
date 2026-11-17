@@ -41,5 +41,6 @@ Prerequisites: .NET SDK 10.0 or 11.0. The guide includes:
 ## References
 
 - [REF-1] SPDX Specification, Version 2.3, SPDX Workgroup. <https://spdx.github.io/spdx-spec/v2.3/>
-- [REF-2] NTIA Minimum Elements for a Software Bill of Materials, NTIA. <https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf>
+- [REF-2] NTIA Minimum Elements for a Software Bill of Materials, NTIA.
+  <https://www.ntia.gov/files/ntia/publications/sbom_minimum_elements_report.pdf>
 - [REF-3] SpdxTool releases. <https://github.com/demaconsulting/SpdxTool/releases>
