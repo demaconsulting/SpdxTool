@@ -44,11 +44,11 @@ Enable SBOM generation and decoration in your project file:
 
 ### Properties
 
-| Property           | Default                                          | Description                            |
-| :----------------- | :----------------------------------------------- | :------------------------------------- |
-| `DecorateSBOM`     | `false`                                          | Enable SBOM decoration during pack     |
-| `SpdxWorkflowFile` | `$(MSBuildProjectDirectory)/spdx-workflow.yaml`  | Path to the SpdxTool workflow file     |
-| `SpdxToolCommand`  | `dotnet spdx-tool`                               | Command to invoke SpdxTool             |
+| Property | Default | Description |
+| :--- | :--- | :--- |
+| `DecorateSBOM` | `false` | Enable SBOM decoration during pack |
+| `SpdxWorkflowFile` | `$(MSBuildProjectDirectory)/spdx-workflow.yaml` | Path to the SpdxTool workflow file |
+| `SpdxToolCommand` | `dotnet spdx-tool` | Command to invoke SpdxTool |
 
 ### SpdxToolCommand
 

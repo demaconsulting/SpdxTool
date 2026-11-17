@@ -116,11 +116,11 @@ The SBOM decoration will occur automatically during the packaging process.
 
 The targets package supports three configurable MSBuild properties:
 
-| Property           | Default Value        | Description                                            |
-| :----------------- | :------------------- | :----------------------------------------------------- |
-| `DecorateSBOM`     | `false`              | Opt-in flag to enable SBOM decoration.                 |
-| `SpdxWorkflowFile` | `spdx-workflow.yaml` | Path to the workflow file (relative to project root).  |
-| `SpdxToolCommand`  | `dotnet spdx-tool`   | Command to invoke SpdxTool.                            |
+| Property | Default Value | Description |
+| :--- | :--- | :--- |
+| `DecorateSBOM` | `false` | Opt-in flag to enable SBOM decoration. |
+| `SpdxWorkflowFile` | `spdx-workflow.yaml` | Path to the workflow file (relative to project root). |
+| `SpdxToolCommand` | `dotnet spdx-tool` | Command to invoke SpdxTool. |
 
 ### Example: Custom Configuration
 
