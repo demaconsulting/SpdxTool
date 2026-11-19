@@ -12,6 +12,13 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=demaconsulting_SpdxTool&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=demaconsulting_SpdxTool)
 [![NuGet Version](https://img.shields.io/nuget/v/DemaConsulting.SpdxTool?style=plastic)](https://www.nuget.org/packages/DemaConsulting.SpdxTool)
 
+![SpdxTool banner: the SpdxTool name with the tagline 'Every SBOM, decorated. Every package, traced.' and the
+command 'spdx-tool run-workflow workflow.yaml'. An SPDX JSON SBOM, other SPDX SBOMs to copy packages from,
+workflow YAML steps such as add-package, and dotnet pack of a project flow on curved arrows into the spdx-tool
+.NET tool, and arrows lead out to an updated SBOM with an added package and its DEPENDS_ON relationship, a
+Markdown summary with a package table, a Mermaid diagram of packages and their relationships, and a validation
+result with SPDX and NTIA checks passing and exit code 0][hero]
+
 .NET tool for manipulating SPDX SBOM files
 
 ## Overview
@@ -235,5 +242,6 @@ Additional information can be found at:
 - [Software Design Documentation](https://github.com/demaconsulting/SpdxTool/blob/main/docs/design/introduction.md)
 - [SPDX Specification](https://spdx.dev/)
 
+[hero]: https://raw.githubusercontent.com/demaconsulting/SpdxTool/main/docs/images/hero.png
 [workflow]: https://raw.githubusercontent.com/demaconsulting/SpdxTool/main/docs/images/workflow.png
 [link-continuous-compliance]: https://demaconsulting.github.io/SpdxTool/articles/continuous-compliance.html

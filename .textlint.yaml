@@ -1,5 +1,5 @@
 ---
-# Spell-Checking (TextLint)
+# Spell-Checking with TextLint
 #
 # PURPOSE:
 # - Maintain professional documentation and code quality
@@ -34,9 +34,14 @@
 #     enabled: false
 version: '0.2'
 language: en
+
+# Also check hidden paths such as .github/ and .*.yaml
 enableGlobDot: true
+
+# The files lint.ps1 spell-checks
 files:
-  - '**/*.{md,yaml,yml,json,cs,cpp,hpp,h,txt}'
+  - "**/*.{md,yaml,yml,json,cs,cpp,hpp,h,txt}"
+
 # Project-specific technical terms and tool names
 words:
   - Dema
@@ -72,6 +77,7 @@ words:
   - withtools
   - yamldotnet
   - yamlfix
+
 # Exclude common build artifacts, dependencies, and vendored third-party code
 ignorePaths:
   - '**/.git/**'

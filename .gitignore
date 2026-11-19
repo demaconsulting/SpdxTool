@@ -438,3 +438,7 @@ AGENT_REPORT_*.md
 
 # Agent log files (temporary agent work logs)
 .agent-logs/
+
+# OS
+.DS_Store
+Thumbs.db

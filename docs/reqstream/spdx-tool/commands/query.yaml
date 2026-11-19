@@ -103,8 +103,7 @@ sections:
                   - Query_Run_InvalidRegexPattern_ReportsError
 
               - id: SpdxTool-Commands-Query-MissingWorkflowInputs
-                title: The tool shall report an error when a required workflow input (output, pattern, or program) is absent
-                  from a query step.
+                title: The tool shall report an error when a required workflow input (output, pattern, or program) is absent from a query step.
                 tags:
                   - workflow
                 justification: |

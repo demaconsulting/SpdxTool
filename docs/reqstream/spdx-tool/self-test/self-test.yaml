@@ -32,8 +32,7 @@ sections:
               - SelfTest_Validate_ValidContext_Succeeds
 
           - id: SpdxTool-SelfTest-Report
-            title: The SelfTest subsystem shall report a pass/fail summary of all validation step outcomes to the context
-              output stream.
+            title: The SelfTest subsystem shall report a pass/fail summary of all validation step outcomes to the context output stream.
             justification: |
               Users and CI pipelines need immediate feedback on whether all self-test
               steps passed or failed. Writing the summary to the context output stream

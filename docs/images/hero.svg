@@ -1,0 +1,302 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="640" viewBox="0 0 1600 640">
+  <!-- The README hero banner. SPDX SBOMs, other SPDX documents, workflow YAML files, and dotnet pack
+       flow into the spdx-tool and come out as an updated SPDX SBOM, a Markdown summary, a Mermaid diagram,
+       and a validation result.
+       The definitions and the left panel follow the shared DEMA Consulting hero (CanvasNet and BuildMark).
+       This file is docs/images/hero.svg, beside its rendered docs/images/hero.png (matching base names, per the
+       diagram documentation standard); the files it embeds are in docs/images/hero/. -->
+  <defs>
+    <style>
+      .word { font: bold 92px sans-serif; fill: #ffffff; }
+      .eyebrow { font: bold 25px sans-serif; fill: #a5b4fc; }
+      .tag { font: bold 40px sans-serif; fill: #f8fafc; }
+      .body { font: 25px sans-serif; fill: #cbd5e1; }
+      .cmd { font: 25px monospace; fill: #e2e8f0; }
+      .prompt { fill: #5eead4; }
+      .file { fill: #f9a8d4; }
+      .brandText { fill: url(#brand); }
+      .note { font: italic 25px sans-serif; fill: #94a3b8; }
+      .label { font: bold 25px sans-serif; fill: #f1f5f9; text-anchor: middle; }
+      .engine { font: bold 32px monospace; fill: #ffffff; }
+      .api { font: bold 25px sans-serif; fill: #c4b5fd; }
+      .card { fill: url(#glass); stroke: url(#rim); stroke-width: 1.5; filter: url(#shadow); }
+      .panel { fill: #0a1022; stroke: #ffffff; stroke-opacity: 0.06; }
+      .flow { fill: none; stroke-width: 3; stroke-linecap: round; }
+      .page { fill: #ffffff; filter: url(#paper); }
+    </style>
+
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#070b1f"/>
+      <stop offset="0.55" stop-color="#130f3b"/>
+      <stop offset="1" stop-color="#071a2e"/>
+    </linearGradient>
+    <radialGradient id="glowViolet" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowCyan" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#06b6d4" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#06b6d4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowPink" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#db2777" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#db2777" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="1.2" fill="#a5b4fc" fill-opacity="0.16"/>
+    </pattern>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.5" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#f472b6"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.04"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="engineFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#0b1022"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="paper" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="blur" x="-30%" y="-150%" width="160%" height="400%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="heat" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+
+    <marker id="headPink" viewBox="0 0 10 10" refX="2.5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0,0 L10,5 L0,10 L2.5,5 z" fill="#f472b6"/>
+    </marker>
+    <marker id="headAmber" viewBox="0 0 10 10" refX="2.5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0,0 L10,5 L0,10 L2.5,5 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="headCyan" viewBox="0 0 10 10" refX="2.5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0,0 L10,5 L0,10 L2.5,5 z" fill="#22d3ee"/>
+    </marker>
+    <marker id="headViolet" viewBox="0 0 10 10" refX="2.5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0,0 L10,5 L0,10 L2.5,5 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="headBlue" viewBox="0 0 10 10" refX="2.5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0,0 L10,5 L0,10 L2.5,5 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="headMint" viewBox="0 0 10 10" refX="2.5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0,0 L10,5 L0,10 L2.5,5 z" fill="#5eead4"/>
+    </marker>
+
+    <!-- The text and shapes inside the mini illustrations -->
+    <style>
+      .mini { font: bold 22px sans-serif; }
+      .miniMono { font: bold 22px monospace; }
+      .bar { fill: #cbd5e1; }
+      .ink { fill: #1e293b; }
+      .code { font: bold 22px monospace; fill: #e2e8f0; }
+      .key { fill: #c4b5fd; }
+    </style>
+  </defs>
+
+  <!-- Background: deep gradient, soft glows, and a dot grid -->
+  <rect width="1600" height="640" fill="url(#bg)"/>
+  <ellipse cx="250" cy="170" rx="420" ry="300" fill="url(#glowViolet)"/>
+  <ellipse cx="1070" cy="294" rx="420" ry="220" fill="url(#glowCyan)"/>
+  <ellipse cx="1480" cy="620" rx="380" ry="260" fill="url(#glowPink)"/>
+  <rect width="1600" height="640" fill="url(#dots)"/>
+
+  <!-- Wordmark and tagline -->
+  <image href="hero/dc-logo-dark.svg" x="46" y="54" width="50" height="50"/>
+  <text class="eyebrow" x="100" y="90">DEMA Consulting</text>
+  <text class="word" x="52" y="176">Spdx</text>
+  <text class="word brandText" x="274.9" y="176">Tool</text>
+  <rect x="58" y="200" width="132" height="6" rx="3" fill="url(#brand)"/>
+  <text class="tag" x="56" y="266">Every SBOM, decorated.</text>
+  <text class="tag brandText" x="56" y="316">Every package, traced.</text>
+  <text class="body" x="58" y="368">Add, copy, query, and validate SPDX</text>
+  <text class="body" x="58" y="402">SBOMs from the CLI, YAML workflows,</text>
+  <text class="body" x="58" y="436">or dotnet pack, built on SpdxModel.</text>
+  <rect x="56" y="468" width="480" height="90" rx="12" fill="#0a1022" fill-opacity="0.8" stroke="#a78bfa" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text class="cmd prompt" x="78" y="503">$</text>
+  <text class="cmd" x="108" y="503">spdx-tool run-workflow</text>
+  <text class="cmd file" x="138" y="539">workflow.yaml</text>
+  <text class="note" x="58" y="604">Self-validates for regulated use.</text>
+
+  <!-- Input cards -->
+  <g>
+    <!-- SPDX SBOM: the SPDX 2.x JSON document to work on -->
+    <rect class="card" x="580" y="40" width="236" height="160" rx="16"/>
+    <rect x="642" y="40" width="112" height="3" rx="1.5" fill="#fbbf24"/>
+    <rect class="panel" x="588" y="48" width="220" height="112" rx="10"/>
+    <g transform="translate(588 48)">
+      <path class="page" d="M24 12 L68 12 L84 28 L84 100 L24 100 Z"/>
+      <path d="M68 12 L68 28 L84 28 Z" fill="#cbd5e1"/>
+      <rect x="34" y="40" width="40" height="5" rx="2.5" fill="#fbbf24"/>
+      <rect class="bar" x="34" y="52" width="40" height="5" rx="2.5"/>
+      <rect class="bar" x="34" y="64" width="30" height="5" rx="2.5"/>
+      <rect class="bar" x="34" y="76" width="36" height="5" rx="2.5"/>
+      <rect x="100" y="18" width="104" height="32" rx="7" fill="#fbbf24" fill-opacity="0.16" stroke="#fbbf24" stroke-width="1.5"/>
+      <text class="mini" x="152" y="42" fill="#fde68a" text-anchor="middle">SPDX</text>
+      <rect x="100" y="62" width="104" height="32" rx="7" fill="#ffffff" fill-opacity="0.06" stroke="#fbbf24" stroke-opacity="0.5" stroke-width="1.5"/>
+      <text class="mini" x="152" y="86" fill="#fde68a" text-anchor="middle">.json</text>
+    </g>
+    <text class="label" x="698" y="190">SPDX SBOM</text>
+
+    <!-- Other SBOMs: SPDX documents to copy packages and relationships from -->
+    <rect class="card" x="828" y="40" width="236" height="160" rx="16"/>
+    <rect x="890" y="40" width="112" height="3" rx="1.5" fill="#22d3ee"/>
+    <rect class="panel" x="836" y="48" width="220" height="112" rx="10"/>
+    <g transform="translate(836 48)">
+      <path class="page" d="M40 6 L76 6 L90 20 L90 82 L40 82 Z" opacity="0.55"/>
+      <path class="page" d="M24 22 L60 22 L74 36 L74 102 L24 102 Z"/>
+      <path d="M60 22 L60 36 L74 36 Z" fill="#cbd5e1"/>
+      <rect x="32" y="48" width="32" height="5" rx="2.5" fill="#22d3ee"/>
+      <rect class="bar" x="32" y="60" width="32" height="5" rx="2.5"/>
+      <rect class="bar" x="32" y="72" width="24" height="5" rx="2.5"/>
+      <rect class="bar" x="32" y="84" width="28" height="5" rx="2.5"/>
+      <rect x="112" y="28" width="58" height="52" rx="6" fill="#22d3ee" fill-opacity="0.16" stroke="#22d3ee" stroke-width="2"/>
+      <path d="M112 44 L170 44 M141 28 L141 44" fill="none" stroke="#22d3ee" stroke-width="2"/>
+      <path d="M92 54 L104 54" fill="none" stroke="#a5f3fc" stroke-width="3" stroke-linecap="round"/>
+      <path d="M100 49 L106 54 L100 59" fill="none" stroke="#a5f3fc" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <text class="mini" x="141" y="68" fill="#a5f3fc" text-anchor="middle">pkg</text>
+    </g>
+    <text class="label" x="946" y="190">Other SBOMs</text>
+
+    <!-- Workflow YAML: the steps spdx-tool runs -->
+    <rect class="card" x="1076" y="40" width="236" height="160" rx="16"/>
+    <rect x="1138" y="40" width="112" height="3" rx="1.5" fill="#f472b6"/>
+    <rect class="panel" x="1084" y="48" width="220" height="112" rx="10"/>
+    <text class="code key" x="1098" y="80">steps:</text>
+    <text class="code" x="1098" y="112"><tspan fill="#f9a8d4">-</tspan> command:</text>
+    <text class="code" x="1098" y="144">  add-package</text>
+    <text class="label" x="1194" y="190">Workflow YAML</text>
+
+    <!-- dotnet pack: SpdxTool.Targets runs a workflow while packing -->
+    <rect class="card" x="1324" y="40" width="236" height="160" rx="16"/>
+    <rect x="1386" y="40" width="112" height="3" rx="1.5" fill="#60a5fa"/>
+    <rect class="panel" x="1332" y="48" width="220" height="112" rx="10"/>
+    <text class="code" x="1342" y="86"><tspan fill="#5eead4">&gt;</tspan> dotnet pack</text>
+    <circle cx="1536" cy="79" r="11" fill="#22c55e"/>
+    <path d="M1530.5 79 L1534.5 83 L1541.5 75" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="1338" y="108" width="102" height="36" rx="8" fill="#60a5fa" fill-opacity="0.16" stroke="#60a5fa" stroke-width="1.5"/>
+    <text class="miniMono" x="1389" y="133" fill="#bfdbfe" text-anchor="middle">.csproj</text>
+    <rect x="1444" y="108" width="102" height="36" rx="8" fill="#60a5fa" fill-opacity="0.16" stroke="#60a5fa" stroke-width="1.5"/>
+    <text class="miniMono" x="1495" y="133" fill="#bfdbfe" text-anchor="middle">.nupkg</text>
+    <text class="label" x="1442" y="190">dotnet pack</text>
+  </g>
+
+  <!-- Flows into the engine -->
+  <g class="flow">
+    <path d="M698,206 C698,236 950,226 950,253" stroke="#fbbf24" marker-end="url(#headAmber)"/>
+    <path d="M946,206 C946,236 1030,226 1030,253" stroke="#22d3ee" marker-end="url(#headCyan)"/>
+    <path d="M1194,206 C1194,236 1110,226 1110,253" stroke="#f472b6" marker-end="url(#headPink)"/>
+    <path d="M1442,206 C1442,236 1190,226 1190,253" stroke="#60a5fa" marker-end="url(#headBlue)"/>
+  </g>
+  <g stroke="#0a1022" stroke-width="2">
+    <circle cx="698" cy="206" r="5" fill="#fbbf24"/>
+    <circle cx="946" cy="206" r="5" fill="#22d3ee"/>
+    <circle cx="1194" cy="206" r="5" fill="#f472b6"/>
+    <circle cx="1442" cy="206" r="5" fill="#60a5fa"/>
+  </g>
+  <!-- The engine -->
+  <rect x="860" y="262" width="420" height="64" rx="32" fill="url(#brand)" opacity="0.55" filter="url(#blur)"/>
+  <rect x="860" y="262" width="420" height="64" rx="32" fill="url(#engineFill)" stroke="url(#brand)" stroke-width="2.5"/>
+  <rect x="884" y="276" width="36" height="36" rx="9" fill="url(#brand)"/>
+  <path d="M893 282 L906 282 L912 288 L912 306 L893 306 Z" fill="#ffffff"/>
+  <g fill="#7c3aed">
+    <rect x="897" y="290" width="11" height="2.5" rx="1.2"/>
+    <rect x="897" y="295" width="11" height="2.5" rx="1.2"/>
+    <rect x="897" y="300" width="7" height="2.5" rx="1.2"/>
+  </g>
+  <text class="engine" x="936" y="305">spdx-tool</text>
+  <line x1="1120" y1="278" x2="1120" y2="310" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5"/>
+  <text class="api" x="1140" y="303">.NET tool</text>
+
+  <!-- Flows out of the engine -->
+  <g class="flow" stroke="#5eead4">
+    <path d="M980,330 C980,356 728,356 728,381" marker-end="url(#headMint)"/>
+    <path d="M1040,330 C1040,356 999,356 999,381" marker-end="url(#headMint)"/>
+    <path d="M1100,330 C1100,356 1232,356 1232,381" marker-end="url(#headMint)"/>
+    <path d="M1160,330 C1160,356 1457,356 1457,381" marker-end="url(#headMint)"/>
+  </g>
+  <g fill="#5eead4" stroke="#0a1022" stroke-width="2">
+    <circle cx="980" cy="330" r="5"/>
+    <circle cx="1040" cy="330" r="5"/>
+    <circle cx="1100" cy="330" r="5"/>
+    <circle cx="1160" cy="330" r="5"/>
+  </g>
+
+  <!-- Output tiles -->
+  <g>
+    <!-- The updated SPDX SBOM: a package with an added dependency and its relationship -->
+    <rect class="card" x="580" y="390" width="296" height="210" rx="16"/>
+    <rect class="panel" x="588" y="398" width="280" height="152" rx="10"/>
+    <path class="page" d="M604 406 L834 406 L852 424 L852 542 L604 542 Z"/>
+    <path d="M834 406 L834 424 L852 424 Z" fill="#cbd5e1"/>
+    <rect x="618" y="418" width="18" height="18" rx="3" fill="#7c3aed"/>
+    <text class="mini ink" x="646" y="435">MyApp</text>
+    <rect x="740" y="415" width="80" height="26" rx="13" fill="#7c3aed" fill-opacity="0.14" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="mini" x="780" y="435" fill="#5b21b6" text-anchor="middle">1.2.0</text>
+    <path d="M627 444 L627 470 L640 470" fill="none" stroke="#94a3b8" stroke-width="2.5"/>
+    <text class="mini" x="646" y="478" fill="#16a34a">+</text>
+    <text class="mini ink" x="664" y="478">YamlDotNet</text>
+    <text class="miniMono" x="646" y="522" fill="#7c3aed">DEPENDS_ON</text>
+    <text class="label" x="728" y="585">Updated SBOM</text>
+
+    <!-- The Markdown summary made by to-markdown: a heading and a package table -->
+    <rect class="card" x="889" y="390" width="220" height="210" rx="16"/>
+    <rect class="panel" x="897" y="398" width="204" height="152" rx="10"/>
+    <path class="page" d="M942 408 L1040 408 L1056 424 L1056 542 L942 542 Z"/>
+    <path d="M1040 408 L1040 424 L1056 424 Z" fill="#cbd5e1"/>
+    <text class="mini" x="954" y="436" fill="#7c3aed">#</text>
+    <rect x="974" y="424" width="56" height="8" rx="4" fill="#4f46e5"/>
+    <g fill="none" stroke="#94a3b8" stroke-width="1.5">
+      <rect x="954" y="452" width="90" height="78"/>
+      <path d="M954 471.5 L1044 471.5 M954 491 L1044 491 M954 510.5 L1044 510.5 M994 452 L994 530"/>
+    </g>
+    <rect x="958" y="458" width="30" height="7" rx="3.5" fill="#4f46e5"/>
+    <rect x="998" y="458" width="40" height="7" rx="3.5" fill="#4f46e5"/>
+    <rect class="bar" x="958" y="478" width="30" height="6" rx="3"/>
+    <rect class="bar" x="998" y="478" width="34" height="6" rx="3"/>
+    <rect class="bar" x="958" y="497" width="26" height="6" rx="3"/>
+    <rect class="bar" x="998" y="497" width="40" height="6" rx="3"/>
+    <rect class="bar" x="958" y="517" width="30" height="6" rx="3"/>
+    <rect class="bar" x="998" y="517" width="28" height="6" rx="3"/>
+    <text class="label" x="999" y="585">Markdown</text>
+
+    <!-- The Mermaid diagram made by diagram: packages joined by their relationships -->
+    <rect class="card" x="1122" y="390" width="220" height="210" rx="16"/>
+    <rect class="panel" x="1130" y="398" width="204" height="152" rx="10"/>
+    <g fill="none" stroke="#5eead4" stroke-width="2.5">
+      <path d="M1232 444 L1232 458 L1178 458 L1178 486 M1232 458 L1286 458 L1286 486"/>
+    </g>
+    <path d="M1172 480 L1178 490 L1184 480 Z M1280 480 L1286 490 L1292 480 Z" fill="#5eead4"/>
+    <rect x="1186" y="408" width="92" height="36" rx="8" fill="#7c3aed" fill-opacity="0.3" stroke="#a78bfa" stroke-width="2"/>
+    <text class="mini" x="1232" y="433" fill="#f8fafc" text-anchor="middle">App</text>
+    <rect x="1140" y="492" width="76" height="36" rx="8" fill="#0891b2" fill-opacity="0.3" stroke="#22d3ee" stroke-width="2"/>
+    <text class="mini" x="1178" y="517" fill="#f8fafc" text-anchor="middle">Lib</text>
+    <rect x="1248" y="492" width="76" height="36" rx="8" fill="#db2777" fill-opacity="0.3" stroke="#f472b6" stroke-width="2"/>
+    <text class="mini" x="1286" y="517" fill="#f8fafc" text-anchor="middle">Tool</text>
+    <text class="label" x="1232" y="585">Mermaid</text>
+
+    <!-- The validation result: SPDX and NTIA checks pass and the exit code reports it -->
+    <rect class="card" x="1355" y="390" width="205" height="210" rx="16"/>
+    <rect class="panel" x="1363" y="398" width="189" height="152" rx="10"/>
+    <circle cx="1389" cy="426" r="11" fill="#22c55e"/>
+    <path d="M1383.5 426 L1387.5 430 L1394.5 422" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="mini" x="1410" y="434" fill="#f8fafc">SPDX 2.x</text>
+    <circle cx="1389" cy="462" r="11" fill="#22c55e"/>
+    <path d="M1383.5 462 L1387.5 466 L1394.5 458" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="mini" x="1410" y="470" fill="#f8fafc">NTIA</text>
+    <rect x="1385" y="494" width="144" height="38" rx="8" fill="#ffffff" fill-opacity="0.08" stroke="#5eead4" stroke-opacity="0.6" stroke-width="1.5"/>
+    <text class="miniMono" x="1457" y="520" fill="#bbf7d0" text-anchor="middle">exit 0</text>
+    <text class="label" x="1457" y="585">Validation</text>
+  </g>
+</svg>
