@@ -358,8 +358,7 @@ reviews:
       - src/DemaConsulting.SpdxTool/SelfTest/ValidateAddPackage.cs
       - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateAddPackageTests.cs
   - id: SpdxTool-SelfTest-ValidateAddRelationship
-    title: Review that SpdxTool SelfTest ValidateAddRelationship Implementation is
-      Correct
+    title: Review that SpdxTool SelfTest ValidateAddRelationship Implementation is Correct
     paths:
       - docs/reqstream/spdx-tool/self-test/validate-add-relationship.yaml
       - docs/design/spdx-tool/self-test/validate-add-relationship.md
@@ -439,8 +438,7 @@ reviews:
       - src/DemaConsulting.SpdxTool/SelfTest/ValidateRenameId.cs
       - test/DemaConsulting.SpdxTool.Tests/SelfTest/ValidateRenameIdTests.cs
   - id: SpdxTool-SelfTest-ValidateRunNuGetWorkflow
-    title: Review that SpdxTool SelfTest ValidateRunNuGetWorkflow Implementation is
-      Correct
+    title: Review that SpdxTool SelfTest ValidateRunNuGetWorkflow Implementation is Correct
     paths:
       - docs/reqstream/spdx-tool/self-test/validate-run-nuget-workflow.yaml
       - docs/design/spdx-tool/self-test/validate-run-nuget-workflow.md
