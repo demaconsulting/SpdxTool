@@ -1,4 +1,4 @@
-# SpdxTool
+# ![SpdxTool: SPDX SBOM editing from the CLI or MSBuild][hero]
 
 <!-- IMPORTANT: All links in this file must be absolute URLs.
      This file is distributed in packages and relative links will not resolve. -->
@@ -11,15 +11,6 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=demaconsulting_SpdxTool&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=demaconsulting_SpdxTool)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=demaconsulting_SpdxTool&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=demaconsulting_SpdxTool)
 [![NuGet Version](https://img.shields.io/nuget/v/DemaConsulting.SpdxTool?style=plastic)](https://www.nuget.org/packages/DemaConsulting.SpdxTool)
-
-![SpdxTool banner: the SpdxTool name with the tagline 'Every SBOM, decorated. Every package, traced.' and the
-command 'spdx-tool run-workflow workflow.yaml'. An SPDX JSON SBOM, other SPDX SBOMs to copy packages from,
-workflow YAML steps such as add-package, and dotnet pack of a project flow on curved arrows into the spdx-tool
-.NET tool, and arrows lead out to an updated SBOM with an added package and its DEPENDS_ON relationship, a
-Markdown summary with a package table, a Mermaid diagram of packages and their relationships, and a validation
-result with SPDX and NTIA checks passing and exit code 0][hero]
-
-.NET tool for manipulating SPDX SBOM files
 
 ## Overview
 
