@@ -132,6 +132,15 @@ enforcement should exclude these requirements (e.g., by removing the `ci-pipelin
 tag from the set of tags being enforced, or by using `--filter` to restrict enforcement
 to non-OTS requirements).
 
+## SysML2 package structure (legacy layout, migration pending)
+
+The model in `docs/sysml2/` predates the `sysml2-modeling.md` Package Structure rules: package
+`SpdxTool` is reopened across 49 files and `SpdxToolTargets` across 4 files (both including
+`views/design-views.sysml`, which uses these system packages instead of `SpdxToolDesignViews`), and
+`common/software-items.sysml` declares `SoftwareItemMetadata`. The Package Structure rules and the
+`sysml2tools-query` qualified-name examples apply once the model is migrated in a dedicated PR; until
+then, agents use the existing package names and must not partially restructure the model.
+
 # Agent Delegation Guidelines
 
 The default agent should handle simple, straightforward tasks directly.
@@ -204,7 +213,17 @@ requires it and the modification preserves the documented design intent:
 
 - `.reviewmark.yaml`, `.textlint.yaml`, `.editorconfig`
 - `.lintmark.yaml`, `.yamllint.yaml`
-- `requirements.yaml`, `fix.ps1`, `lint.ps1`
+- `requirements.yaml`
+
+# Project Scripts
+
+`build.ps1`, `lint.ps1`, and `fix.ps1` belong to the project: extend them as it grows. Add project-specific
+steps, update tool versions, and add optional parameters that focus a run (for example one library in a
+multi-library repository, or headless tests without GUI automation). Two rules keep them trustworthy:
+
+- Run with no arguments, each script still does its full job (CI and the agents rely on that); slow or
+  environment-dependent test tiers may be opt-in switches of `build.ps1`.
+- Never remove or weaken a check to make lint or tests pass.
 
 # Continuous Compliance Overview
 
