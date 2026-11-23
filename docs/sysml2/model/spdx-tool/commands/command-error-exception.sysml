@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_CommandErrorException {
     private import SoftwareItemMetadata::*;
 
     part def CommandErrorException {

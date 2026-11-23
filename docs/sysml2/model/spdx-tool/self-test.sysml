@@ -1,4 +1,20 @@
-package SpdxTool {
+package SpdxTool_SelfTestSubsystem {
+    public import SpdxTool_ValidateAddPackage::*;
+    public import SpdxTool_ValidateAddRelationship::*;
+    public import SpdxTool_ValidateBasic::*;
+    public import SpdxTool_ValidateCopyPackage::*;
+    public import SpdxTool_ValidateDiagram::*;
+    public import SpdxTool_ValidateFindPackage::*;
+    public import SpdxTool_ValidateGetVersion::*;
+    public import SpdxTool_ValidateHash::*;
+    public import SpdxTool_ValidateNtia::*;
+    public import SpdxTool_ValidateQuery::*;
+    public import SpdxTool_ValidateRenameId::*;
+    public import SpdxTool_ValidateRunNuGetWorkflow::*;
+    public import SpdxTool_ValidateToMarkdown::*;
+    public import SpdxTool_ValidateUpdatePackage::*;
+    public import SpdxTool_SelfTestValidate::*;
+
     private import SoftwareItemMetadata::*;
 
     part def SelfTestSubsystem {

@@ -1,4 +1,7 @@
 package SpdxToolTargets {
+    public import SpdxToolTargets_TargetsSingle::*;
+    public import SpdxToolTargets_TargetsMulti::*;
+
     private import SoftwareItemMetadata::*;
 
     doc

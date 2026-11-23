@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_Command {
     private import SoftwareItemMetadata::*;
 
     part def Command {

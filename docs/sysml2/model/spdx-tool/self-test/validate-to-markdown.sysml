@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateToMarkdown {
     private import SoftwareItemMetadata::*;
 
     part def ValidateToMarkdown {

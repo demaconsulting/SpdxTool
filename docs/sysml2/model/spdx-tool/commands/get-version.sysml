@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_GetVersion {
     private import SoftwareItemMetadata::*;
 
     part def GetVersion {

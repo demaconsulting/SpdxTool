@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_SetVariable {
     private import SoftwareItemMetadata::*;
 
     part def SetVariable {

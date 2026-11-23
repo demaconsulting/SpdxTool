@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_CommandsRegistry {
     private import SoftwareItemMetadata::*;
 
     part def CommandsRegistry {

@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateDiagram {
     private import SoftwareItemMetadata::*;
 
     part def ValidateDiagram {

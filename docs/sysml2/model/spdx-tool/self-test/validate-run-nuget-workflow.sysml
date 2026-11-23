@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateRunNuGetWorkflow {
     private import SoftwareItemMetadata::*;
 
     part def ValidateRunNuGetWorkflow {

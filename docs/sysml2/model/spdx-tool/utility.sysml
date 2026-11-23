@@ -1,4 +1,8 @@
-package SpdxTool {
+package SpdxTool_UtilitySubsystem {
+    public import SpdxTool_PathHelpers::*;
+    public import SpdxTool_TemporaryDirectory::*;
+    public import SpdxTool_Wildcard::*;
+
     private import SoftwareItemMetadata::*;
 
     part def UtilitySubsystem {

@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateAddRelationship {
     private import SoftwareItemMetadata::*;
 
     part def ValidateAddRelationship {

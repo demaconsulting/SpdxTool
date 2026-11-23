@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateQuery {
     private import SoftwareItemMetadata::*;
 
     part def ValidateQuery {

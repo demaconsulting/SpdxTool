@@ -9,7 +9,7 @@ pipeline evidence:
   tool's built-in self-test suite as part of the `build-docs` CI job, exercising `lint` and
   `render --format svg` against known model fixtures and writing a TRX file consumed by ReqStream
   (`SysML2Tools_LintSelfTest`, `SysML2Tools_RenderSvgSelfTest`).
-- **Pipeline evidence**: `lint.ps1` runs `dotnet sysml2tools lint 'docs/sysml2/**/*.sysml'`
+- **Pipeline evidence**: `lint.ps1` runs `dotnet sysml2tools lint --strict-unresolved 'docs/sysml2/**/*.sysml'`
   against the actual SpdxTool model and fails the build on any syntax or reference error. The
   `build-docs` job runs `dotnet sysml2tools render` to produce one SVG file per declared view under
   `docs/design/generated/`, and FileAssert asserts that every rendered view exists and is a

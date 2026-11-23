@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_PathHelpers {
     private import SoftwareItemMetadata::*;
 
     part def PathHelpers {
