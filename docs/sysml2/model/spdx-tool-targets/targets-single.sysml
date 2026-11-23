@@ -1,4 +1,4 @@
-package SpdxToolTargets {
+package SpdxToolTargets_TargetsSingle {
     private import SoftwareItemMetadata::*;
 
     part def TargetsSingle {

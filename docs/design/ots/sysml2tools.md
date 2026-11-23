@@ -14,7 +14,7 @@ diagrams or hand-maintained prose. SysML2Tools is not a runtime dependency of th
 
 ### Features Used
 
-**Model validation** — `dotnet sysml2tools lint 'docs/sysml2/**/*.sysml'` reports syntax errors
+**Model validation** — `dotnet sysml2tools lint --strict-unresolved 'docs/sysml2/**/*.sysml'` reports syntax errors
 and unresolved references without producing output files.
 
 **View rendering** — `dotnet sysml2tools render --output docs/design/generated --format svg
@@ -35,7 +35,7 @@ required.
 
 It is used in two places in the pipeline:
 
-- **Lint** (`lint.ps1`, quality-checks job and local pre-PR checks): `dotnet sysml2tools lint
+- **Lint** (`lint.ps1`, quality-checks job and local pre-PR checks): `dotnet sysml2tools lint --strict-unresolved
   'docs/sysml2/**/*.sysml'` fails the build if the model contains syntax errors or unresolved
   references.
 - **Render** (`build.yaml`, build-docs job): `dotnet sysml2tools render` renders each declared view

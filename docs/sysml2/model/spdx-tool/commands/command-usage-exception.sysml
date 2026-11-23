@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_CommandUsageException {
     private import SoftwareItemMetadata::*;
 
     part def CommandUsageException {

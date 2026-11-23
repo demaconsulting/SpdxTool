@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateAddPackage {
     private import SoftwareItemMetadata::*;
 
     part def ValidateAddPackage {

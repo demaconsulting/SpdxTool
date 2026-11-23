@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_Wildcard {
     private import SoftwareItemMetadata::*;
 
     part def Wildcard {

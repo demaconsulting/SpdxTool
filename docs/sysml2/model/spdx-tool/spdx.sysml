@@ -1,4 +1,7 @@
-package SpdxTool {
+package SpdxTool_SpdxSubsystem {
+    public import SpdxTool_RelationshipDirection::*;
+    public import SpdxTool_SpdxHelpers::*;
+
     private import SoftwareItemMetadata::*;
 
     part def SpdxSubsystem {

@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateNtia {
     private import SoftwareItemMetadata::*;
 
     part def ValidateNtia {

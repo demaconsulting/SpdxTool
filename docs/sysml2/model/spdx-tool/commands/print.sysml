@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_Print {
     private import SoftwareItemMetadata::*;
 
     part def Print {

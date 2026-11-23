@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_RenameId {
     private import SoftwareItemMetadata::*;
 
     part def RenameId {

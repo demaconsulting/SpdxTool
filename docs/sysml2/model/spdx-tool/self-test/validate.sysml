@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_SelfTestValidate {
     private import SoftwareItemMetadata::*;
 
     part def SelfTestValidate {

@@ -48,6 +48,7 @@ words:
   - DEMA
   - demaconsulting
   - devtoolof
+  - distinguishability
   - dotnettool
   - invalidoption
   - lintmark
@@ -62,12 +63,14 @@ words:
   - rezip
   - Rezip
   - sarif
+  - Sensmetry
   - Sarif
   - SARIF
   - shopt
   - slnx
   - snupkg
   - sonarscanner
+  - Syside
   - SPDXID
   - testtoolof
   - thirdparty

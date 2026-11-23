@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_RunWorkflow {
     private import SoftwareItemMetadata::*;
 
     part def RunWorkflow {

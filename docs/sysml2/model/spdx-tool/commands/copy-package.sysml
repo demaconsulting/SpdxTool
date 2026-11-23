@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_CopyPackage {
     private import SoftwareItemMetadata::*;
 
     part def CopyPackage {

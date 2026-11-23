@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ToMarkdown {
     private import SoftwareItemMetadata::*;
 
     part def ToMarkdown {

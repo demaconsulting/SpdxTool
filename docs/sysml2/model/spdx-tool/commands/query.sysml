@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_Query {
     private import SoftwareItemMetadata::*;
 
     part def Query {

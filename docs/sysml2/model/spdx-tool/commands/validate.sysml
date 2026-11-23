@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_CommandsValidate {
     private import SoftwareItemMetadata::*;
 
     part def CommandsValidate {

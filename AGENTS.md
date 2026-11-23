@@ -132,15 +132,6 @@ enforcement should exclude these requirements (e.g., by removing the `ci-pipelin
 tag from the set of tags being enforced, or by using `--filter` to restrict enforcement
 to non-OTS requirements).
 
-## SysML2 package structure (legacy layout, migration pending)
-
-The model in `docs/sysml2/` predates the `sysml2-modeling.md` Package Structure rules: package
-`SpdxTool` is reopened across 49 files and `SpdxToolTargets` across 4 files (both including
-`views/design-views.sysml`, which uses these system packages instead of `SpdxToolDesignViews`), and
-`common/software-items.sysml` declares `SoftwareItemMetadata`. The Package Structure rules and the
-`sysml2tools-query` qualified-name examples apply once the model is migrated in a dedicated PR; until
-then, agents use the existing package names and must not partially restructure the model.
-
 # Agent Delegation Guidelines
 
 The default agent should handle simple, straightforward tasks directly.
@@ -192,6 +183,17 @@ responsibility - invoke the lint-fix agent once before submitting a pull request
 
 CI runs `lint.ps1` which checks: lintmark, textlint, yamllint, dotnet format,
 reqstream, versionmark, reviewmark, and sysml2tools.
+
+# Efficient Validation (ALL Agents)
+
+Full `build.ps1` and `lint.ps1` runs can take many minutes on large repositories. Spend them
+once, not after every edit:
+
+- **While iterating**, run only the checks covering what you just changed - e.g. a test filter or
+  single test project, one linter on the changed files, one document build
+- **Before handing back**, run the full gates your agent requires once; re-run them only if you
+  change files after they pass
+- Never report a targeted check as the full gate - state which full gates ran in your report
 
 # Scope Discipline (ALL Agents Must Follow)
 

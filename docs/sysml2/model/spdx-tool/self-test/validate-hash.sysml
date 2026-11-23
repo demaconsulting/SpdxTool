@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_ValidateHash {
     private import SoftwareItemMetadata::*;
 
     part def ValidateHash {

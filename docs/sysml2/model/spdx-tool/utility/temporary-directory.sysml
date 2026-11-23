@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_TemporaryDirectory {
     private import SoftwareItemMetadata::*;
 
     part def TemporaryDirectory {

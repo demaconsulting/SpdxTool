@@ -1,7 +1,13 @@
 package SpdxTool {
-    private import SoftwareItemMetadata::*;
+    public import SpdxTool_Program::*;
+    public import SpdxTool_Context::*;
+    public import SpdxTool_CommandsSubsystem::*;
+    public import SpdxTool_SelfTestSubsystem::*;
+    public import SpdxTool_SpdxSubsystem::*;
+    public import SpdxTool_UtilitySubsystem::*;
 
-    import OtsDependencies::*;
+    private import SoftwareItemMetadata::*;
+    private import OtsDependencies::*;
 
     doc
     /*

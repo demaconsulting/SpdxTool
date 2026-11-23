@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_Diagram {
     private import SoftwareItemMetadata::*;
 
     part def Diagram {

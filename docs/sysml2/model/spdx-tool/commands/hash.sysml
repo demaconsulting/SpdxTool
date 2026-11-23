@@ -1,4 +1,4 @@
-package SpdxTool {
+package SpdxTool_Hash {
     private import SoftwareItemMetadata::*;
 
     part def Hash {
