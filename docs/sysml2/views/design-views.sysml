@@ -39,4 +39,9 @@ package SpdxToolDesignViews {
     view UtilityView {
         expose UtilitySubsystem;
     }
+
+    view OtsView : GeneralView {
+        expose OtsDependencies::*;
+        filter not (@SysML::Documentation);
+    }
 }
