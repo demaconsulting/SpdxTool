@@ -89,7 +89,24 @@ Use descriptive branch names:
 
 ### Running Quality Checks
 
-Before submitting your changes, run the following checks:
+The `build.ps1`, `lint.ps1`, and `fix.ps1` scripts require a scope; run `pwsh ./<script> -Help` for the
+switches. While iterating, scope the work to your changes:
+
+```pwsh
+pwsh ./build.ps1 -Changed    # build and test only the projects the changes affect
+pwsh ./fix.ps1 -Changed      # auto-fix only the changed file types
+pwsh ./lint.ps1 -Changed     # run only the lint checks whose inputs changed
+```
+
+Before submitting your changes, run the full gates once:
+
+```pwsh
+pwsh ./build.ps1 -All        # build, unit tests, and self-validation
+pwsh ./fix.ps1 -All          # apply every auto-fixer
+pwsh ./lint.ps1 -All         # every lint check (what CI runs)
+```
+
+The individual steps are:
 
 ```bash
 # Build the project
