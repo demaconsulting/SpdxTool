@@ -25,6 +25,7 @@ The following usage information is printed by running the tool with no arguments
 DemaConsulting.SpdxTool 0.0.0
 
 Usage: spdx-tool [options] <command> [arguments]
+       spdx-tool help [topic]
 
 Options:
   -h, --help                               Show this help message and exit
@@ -35,7 +36,7 @@ Options:
   -r, --result <file>                      Self-validation result file (.trx TRX or .xml JUnit XML)
 
 Commands:
-  help <command>                           Display extended help about a command
+  help                                     Display extended help about a command (workflow only).
   add-package                              Add package to SPDX document (workflow only).
   add-relationship <spdx.json> <args>      Add relationship between elements.
   copy-package <spdx.json> <args>          Copy package between SPDX documents (workflow only).
@@ -51,35 +52,20 @@ Commands:
   to-markdown <spdx.json> <out.md> [args]  Create Markdown summary for SPDX document
   update-package                           Update package in SPDX document (workflow only).
   validate <spdx.json> [ntia]              Validate SPDX document for issues
+
+Run 'spdx-tool help' for topics and examples.
 ```
 
 ## Command Specific Usage
 
-Querying for usage information on a specific command can be performed using the help command. For example:
+The built-in help prints the help topics with `dotnet spdx-tool help`, and the card of a specific
+command with `dotnet spdx-tool help commands <command>`. For example:
 
-```text
-> dotnet spdx-tool help run-workflow
-
-DemaConsulting.SpdxTool 0.1.0-beta.1
-
-This command runs the steps specified in the workflow file/url.
-
-From the command-line this can be used as:
-  spdx-tool run-workflow <workflow.yaml> [parameter=value] [parameter=value]...
-
-From a YAML file this can be used as:
-  - command: run-workflow
-    inputs:
-      file: <workflow.yaml>         # Optional workflow file
-      url: <url>                    # Optional workflow url
-      nuget: <package:version>      # Optional NuGet package
-      integrity: <sha256>           # Optional workflow integrity check
-      parameters:
-        name: <value>               # Optional workflow parameter
-        name: <value>               # Optional workflow parameter
-      outputs:
-        name: <variable>            # Optional output to save to variable
-        name: <variable>            # Optional output to save to variable
+```bash
+dotnet spdx-tool help commands run-workflow
 ```
+
+The card shows the command-line and workflow-step usage of the command, notes on its behavior, and
+runnable examples. `help` must be the first argument.
 
 [nuget-package]: https://www.nuget.org/packages/DemaConsulting.SpdxTool
