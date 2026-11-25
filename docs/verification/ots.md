@@ -8,12 +8,14 @@ than through unit testing of their internal implementation.
 ## Verification Strategy
 
 **Runtime NuGet package dependencies** (YamlDotNet, DemaConsulting.SpdxModel,
-DemaConsulting.NuGet.Caching, and DemaConsulting.TestResults) are verified through integration
-tests in `test/DemaConsulting.SpdxTool.Tests/` and through the SelfTest subsystem. Integration
-tests exercise the APIs consumed by SpdxTool and confirm that the required functionality works in
-the project's runtime environment. The SelfTest subsystem additionally exercises runtime
-dependencies end-to-end as part of the `--validate` self-test suite, providing regression
-coverage on every pipeline run.
+DemaConsulting.NuGet.Caching, DemaConsulting.TestResults, and DemaConsulting.HelpCards) are
+verified through integration tests in `test/DemaConsulting.SpdxTool.Tests/` and through the
+SelfTest subsystem. Integration tests exercise the APIs consumed by SpdxTool and confirm that the
+required functionality works in the project's runtime environment. The SelfTest subsystem
+additionally exercises runtime dependencies end-to-end as part of the `--validate` self-test
+suite, providing regression coverage on every pipeline run. DemaConsulting.HelpCards serves only
+the built-in `help` command, which the self-test suite does not run; it is verified by the help
+tests alone.
 
 **The test framework** (xUnit) is self-validating: any failure in the xUnit infrastructure would
 cause the CI pipeline to fail, making successful test execution its own verification evidence.

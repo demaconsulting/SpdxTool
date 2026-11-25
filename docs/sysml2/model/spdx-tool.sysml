@@ -1,6 +1,7 @@
 package SpdxTool {
     public import SpdxTool_Program::*;
     public import SpdxTool_Context::*;
+    public import SpdxTool_HelpCommand::*;
     public import SpdxTool_CommandsSubsystem::*;
     public import SpdxTool_SelfTestSubsystem::*;
     public import SpdxTool_SpdxSubsystem::*;
@@ -27,6 +28,7 @@ package SpdxTool {
 
         part program : Program;
         part context : Context;
+        part helpCommand : HelpCommand;
         part commands : CommandsSubsystem;
         part selfTest : SelfTestSubsystem;
         part spdx : SpdxSubsystem;
@@ -35,6 +37,7 @@ package SpdxTool {
         part spdxModel : SpdxModel;
         part nuGetCaching : NuGetCaching;
         part testResults : TestResults;
+        part helpCards : HelpCards;
         part yamlDotNet : YamlDotNet;
     }
 }

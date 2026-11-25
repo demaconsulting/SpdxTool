@@ -33,6 +33,16 @@ package OtsDependencies {
         }
     }
 
+    part def HelpCards {
+        doc /* OTS: DemaConsulting.HelpCards, used by HelpCommand to serve the built-in help from Markdown cards embedded in the tool assembly. */
+
+        metadata info : SoftwareInfo {
+            designFiles = ("docs/design/ots/help-cards.md");
+            verificationFiles = ("docs/verification/ots/help-cards.md");
+            requirementFiles = ("docs/reqstream/ots/help-cards.yaml");
+        }
+    }
+
     part def YamlDotNet {
         doc /* OTS: YamlDotNet, used to parse workflow YAML files. */
 

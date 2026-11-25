@@ -15,6 +15,9 @@ distributed as transitive dependencies in the published NuGet packages:
 - **DemaConsulting.SpdxModel** — SPDX document object model and JSON serialization
 - **DemaConsulting.NuGet.Caching** — NuGet package metadata caching for the run-workflow command
 - **DemaConsulting.TestResults** — TRX and JUnit XML serialization for the SelfTest subsystem
+- **DemaConsulting.HelpCards** — built-in help cards for the `help` command, selected because it
+  serves the help from Markdown cards embedded in the tool assembly and ships the test helpers
+  that validate the cards and run their command examples against the built tool
 
 **Test framework** — library consumed only by test projects and never included in the published
 product:

@@ -2,7 +2,7 @@ package SpdxTool_Help {
     private import SoftwareItemMetadata::*;
 
     part def Help {
-        doc /* Command that displays the extended usage details for a named command. */
+        doc /* Workflow step that displays the extended usage details for a named command. */
 
         metadata info : SoftwareInfo {
             sourceFiles = ("src/DemaConsulting.SpdxTool/Commands/Help.cs");

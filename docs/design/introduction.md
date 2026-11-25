@@ -36,11 +36,11 @@ diagram below by SysML2Tools as part of the build pipeline. AI agents should que
 SysML2 model directly (see the `sysml2tools-query` skill) rather than parsing this
 diagram or the prose below. The model contains both systems: **SpdxTool**
 (DemaConsulting.SpdxTool) with its Commands, SelfTest, Spdx, and Utility subsystems and its
-Program and Context units, and **SpdxToolTargets** (DemaConsulting.SpdxTool.Targets) with its
-TargetsSingle (`build/`) and TargetsMulti (`buildMultiTargeting/`) units. The runtime OTS
+Program, Context, and HelpCommand units, and **SpdxToolTargets** (DemaConsulting.SpdxTool.Targets)
+with its TargetsSingle (`build/`) and TargetsMulti (`buildMultiTargeting/`) units. The runtime OTS
 packages (DemaConsulting.SpdxModel, DemaConsulting.NuGet.Caching, DemaConsulting.TestResults,
-and YamlDotNet) are modeled as parts of SpdxTool; the test-framework and CI pipeline OTS items
-are documented in `docs/design/ots.md` rather than modeled as parts.
+DemaConsulting.HelpCards, and YamlDotNet) are modeled as parts of SpdxTool; the test-framework and
+CI pipeline OTS items are documented in `docs/design/ots.md` rather than modeled as parts.
 
 ![Software Structure](SoftwareStructureView.svg)
 
@@ -73,7 +73,7 @@ src/DemaConsulting.SpdxTool/
 │   ├── FindPackage.cs              — find-package command implementation
 │   ├── GetVersion.cs               — get-version command implementation
 │   ├── Hash.cs                     — hash command implementation
-│   ├── Help.cs                     — help command implementation
+│   ├── Help.cs                     — help workflow step implementation
 │   ├── Print.cs                    — print command implementation
 │   ├── Query.cs                    — query command implementation
 │   ├── RenameId.cs                 — rename-id command implementation
@@ -105,7 +105,9 @@ src/DemaConsulting.SpdxTool/
 │   ├── TemporaryDirectory.cs       — disposable temporary workspace helper
 │   ├── PathHelpers.cs              — file path utility helpers
 │   └── Wildcard.cs                 — wildcard pattern matching
+├── Help/                           — built-in help cards, embedded in the assembly
 ├── Context.cs                      — execution context (output, logging)
+├── HelpCommand.cs                  — built-in help command (HelpCards)
 └── Program.cs                      — tool entry point and CLI parsing
 
 src/DemaConsulting.SpdxTool.Targets/

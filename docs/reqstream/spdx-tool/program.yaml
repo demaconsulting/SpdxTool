@@ -34,6 +34,24 @@ sections:
             tests:
               - SpdxTool_Usage_NoArguments_DisplaysError
               - Commands_Dispatch_UnknownCommand_ReportsError
+          - id: SpdxTool-Program-HelpCommand
+            title: >-
+              The tool shall answer the help command before the command-line options are
+              parsed and return its exit code.
+            justification: |
+              The help command must be answered without the banner and without the global options,
+              so that its output is the same for people, scripts, and AI agents. Offering the
+              arguments to the help command first lets spdx-tool help work while every other run
+              continues to the option parser unchanged.
+            tests:
+              - Program_Main_HelpVerb_PrintsHelpIndex
+          - id: SpdxTool-Program-HelpFooter
+            title: The tool shall end its usage information with a pointer to the help command.
+            justification: |
+              The short usage text stays short and still tells a reader where the help topics with
+              worked examples are.
+            tests:
+              - SpdxTool_Program_Run_HelpContext_WritesUsage
           - id: SpdxTool-Program-NonZeroExitOnFailure
             title: The tool shall exit with a non-zero exit code when any error is recorded during execution.
             justification: |

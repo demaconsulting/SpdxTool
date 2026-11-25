@@ -32,7 +32,8 @@ their test methods provide verification evidence.
   `docs/reqstream/spdx-tool/utility/*.yaml`,
   `docs/reqstream/spdx-tool/spdx/*.yaml`,
   `docs/reqstream/spdx-tool/context.yaml`,
-  `docs/reqstream/spdx-tool/program.yaml`, and
+  `docs/reqstream/spdx-tool/program.yaml`,
+  `docs/reqstream/spdx-tool/help-command.yaml`, and
   `docs/reqstream/spdx-tool/platform-requirements.yaml`.
 - OTS requirements are maintained in `docs/reqstream/ots/`.
 - System and unit design descriptions are maintained in `docs/design/spdx-tool.md`,

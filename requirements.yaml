@@ -4,6 +4,7 @@ includes:
   - docs/reqstream/spdx-tool/spdx-tool.yaml
   - docs/reqstream/spdx-tool/context.yaml
   - docs/reqstream/spdx-tool/program.yaml
+  - docs/reqstream/spdx-tool/help-command.yaml
   - docs/reqstream/spdx-tool/self-test/self-test.yaml
   - docs/reqstream/spdx-tool/self-test/validate.yaml
   - docs/reqstream/spdx-tool/self-test/validate-basic.yaml
@@ -65,3 +66,4 @@ includes:
   - docs/reqstream/ots/spdx-model.yaml
   - docs/reqstream/ots/nuget-caching.yaml
   - docs/reqstream/ots/test-results.yaml
+  - docs/reqstream/ots/help-cards.yaml

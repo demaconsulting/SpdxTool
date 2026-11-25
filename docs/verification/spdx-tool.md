@@ -10,6 +10,14 @@ to provide installed-tool evidence across the command surface.
 System-level verification also relies on the self-test subsystem to exercise end-to-end command
 behavior against representative SPDX fixtures and to emit CI-consumable TRX or JUnit results.
 
+The built-in `help` command is verified by running the compiled tool with `help` arguments. The
+command examples of the help cards are verified with the example runner of
+`DemaConsulting.HelpCards`: it gives each card a fresh scratch folder and calls a test delegate for
+each command example. The delegate copies the SPDX documents that the examples read from
+`test/DemaConsulting.SpdxTool.Tests/TestData/HelpExamples/` into that folder, runs the compiled
+tool there with `Runner.RunInDirectory`, and the runner compares the exit code and the output with
+the `exit` and `expect` values of the example.
+
 ## Test Environment
 
 The system tests run on .NET 10 and .NET 11 with file-system access to local SPDX JSON
@@ -22,7 +30,9 @@ network access to restore the referenced workflow package.
 Verification is acceptable when the automated tests in `test/DemaConsulting.SpdxTool.Tests/`
 pass for the supported target frameworks, when direct command invocation reports the expected
 results or errors, and when `--validate` completes successfully and can emit result files in the
-requested format.
+requested format. The `help` command must list the topics with exit code 0 and exit with code 2
+for an unknown topic, and every command example in the help cards must give the exit code and
+output that its card states.
 
 ## Test Scenarios
 
@@ -89,3 +99,16 @@ the `--result` flag. This scenario is tested by
 **SilentLogCombination**: the tool writes output to the log file but not to the console when both
 `--silent` and `--log` are supplied together. This scenario is tested by
 `SpdxTool_Log_SilentFlag_WritesToLogButNotConsole`.
+
+**HelpTopics**: the tool lists its help topics when invoked with `help` as the sole argument, with
+exit code 0 and without the banner. This scenario is tested by
+`SpdxTool_HelpTopics_HelpVerb_ListsTopics`.
+
+**HelpUnknownTopic**: the tool exits with code 2 and names the topic when invoked with
+`help no-such-topic`. This scenario is tested by
+`SpdxTool_HelpTopics_UnknownTopic_ReturnsUsageError`.
+
+**HelpExamples**: every command example of every help card, run against the compiled tool in a
+scratch folder that holds the example SPDX documents, gives the exit code and output fragments that
+its card states, and at least one command example exists. This scenario is tested by
+`SpdxTool_HelpExamples_AllCommandExamples_GiveStatedResults`.

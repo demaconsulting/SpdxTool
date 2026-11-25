@@ -5,8 +5,10 @@
 #### Purpose
 
 Help displays the extended usage details for a named command by looking it up in CommandsRegistry
-and writing each line of its Details array to the console. It is available from both the CLI and
-workflow YAML files.
+and writing each line of its Details array to the console. It is a workflow-only command: on the
+command line, `spdx-tool help` as the first argument is answered by HelpCommand from the built-in
+help cards before the options are parsed, so a `help` that reaches the command dispatcher (after
+global options) is rejected.
 
 #### Data Model
 
@@ -18,13 +20,14 @@ Help maintains three static members and carries no per-invocation state.
 
 #### Key Methods
 
-**Run(Context, string[])**: Validates that exactly one argument is provided and calls ShowUsage.
+**Run(Context, string[])**: Rejects command-line invocation.
 
-- *Parameters*: `Context context` — execution context; `string[] args` — [commandName].
+- *Parameters*: `Context context` — execution context (unused); `string[] args` — arguments
+  (unused).
 - *Returns*: `void`
-- *Preconditions*: args must contain exactly one element; zero or more than one argument triggers a
-  CommandUsageException.
-- *Post-conditions*: The named command's detailed usage text is written to context.
+- *Preconditions*: None.
+- *Post-conditions*: Always throws CommandUsageException with the message
+  `'help' command is only valid in a workflow`.
 
 **Run(Context, YamlMappingNode, Dictionary)**: Reads the about input from the YAML step node and
 calls ShowUsage.
@@ -49,8 +52,8 @@ each line of entry.Details to context.
 
 #### Error Handling
 
-**CommandUsageException** — thrown by Run(Context, string[]) when the argument count is not exactly
-1; thrown by ShowUsage when the requested command name is not present in
+**CommandUsageException** — always thrown by Run(Context, string[]), because the command is
+workflow only; thrown by ShowUsage when the requested command name is not present in
 CommandsRegistry.Commands.
 
 **YamlException** — thrown by Run(Context, YamlMappingNode, Dictionary) when the about input is
