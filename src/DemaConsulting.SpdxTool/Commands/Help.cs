@@ -27,11 +27,12 @@ namespace DemaConsulting.SpdxTool.Commands;
 ///     Command to display extended help about a command
 /// </summary>
 /// <remarks>
-///     Delegates to <see cref="ShowUsage"/> for both CLI and workflow invocations. The CLI overload requires
-///     exactly one argument (the target command name); the workflow overload reads the command name from the
-///     <c>about</c> input. Both paths throw on an unknown command so callers receive a clear error message.
-///     Thread-safe: the instance <c>Run</c> methods delegate exclusively to the static
-///     <see cref="ShowUsage"/> helper and carry no mutable instance state.
+///     Workflow only: the command-line form <c>spdx-tool help</c> is answered by <see cref="HelpCommand"/>
+///     from the help cards before the options are parsed, so a command-line invocation that reaches this
+///     command (after global options) is rejected. The workflow overload reads the command name from the
+///     <c>about</c> input and delegates to <see cref="ShowUsage"/>, which throws on an unknown command so
+///     callers receive a clear error message. Thread-safe: the instance <c>Run</c> methods carry no mutable
+///     instance state.
 /// </remarks>
 public sealed class Help : Command
 {
@@ -50,18 +51,18 @@ public sealed class Help : Command
     /// </summary>
     public static readonly CommandEntry Entry = new(
         Command,
-        "help <command>",
-        "Display extended help about a command",
+        "help",
+        "Display extended help about a command (workflow only).",
         [
             "This command displays extended help information about the specified command.",
-            "",
-            "From the command-line this can be used as:",
-            "  spdx-tool help <command>",
             "",
             "From a YAML file this can be used as:",
             "  - command: help",
             "    inputs:",
-            "      about: <command>"
+            "      about: <command>",
+            "",
+            "From the command-line use the built-in help:",
+            "  spdx-tool help commands <command>"
         ],
         Instance);
 
@@ -73,21 +74,17 @@ public sealed class Help : Command
     }
 
     /// <summary>
-    ///     Runs the help command from the CLI.
+    ///     Rejects CLI invocation of the help command.
     /// </summary>
-    /// <param name="context">Program context used for output.</param>
-    /// <param name="args">Command-line arguments; must contain exactly one element (the command name).</param>
-    /// <exception cref="CommandUsageException">Thrown when args does not contain exactly one argument.</exception>
+    /// <param name="context">Program context (unused).</param>
+    /// <param name="args">Command-line arguments (unused).</param>
+    /// <exception cref="CommandUsageException">
+    ///     Always thrown, because the help command is only valid within a workflow context; the command-line
+    ///     help is answered by <see cref="HelpCommand"/>.
+    /// </exception>
     public override void Run(Context context, string[] args)
     {
-        // Report an error if the number of arguments is not exactly 1
-        if (args.Length != 1)
-        {
-            throw new CommandUsageException("'help' command requires exactly one argument");
-        }
-
-        // Display the command's extended help text
-        ShowUsage(context, args[0]);
+        throw new CommandUsageException("'help' command is only valid in a workflow");
     }
 
     /// <summary>

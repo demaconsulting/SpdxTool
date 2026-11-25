@@ -58,4 +58,9 @@
     </ProjectReference>
   </ItemGroup>
 
+  <!-- Test Data -->
+  <ItemGroup>
+    <None Update="TestData\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

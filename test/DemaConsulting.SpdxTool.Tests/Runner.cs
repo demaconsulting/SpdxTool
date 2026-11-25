@@ -40,7 +40,27 @@ internal static class Runner
     ///     Both stdout and stderr are read concurrently before waiting for the process to exit to
     ///     prevent deadlock when the child process fills either pipe buffer before exiting.
     /// </remarks>
-    public static int Run(out string output, string program, params string[] arguments)
+    public static int Run(out string output, string program, params string[] arguments) =>
+        RunInDirectory(out output, null, program, arguments);
+
+    /// <summary>
+    ///     Run the specified program in a working directory and capture its combined stdout and stderr output.
+    /// </summary>
+    /// <param name="output">Combined stdout and stderr output of the process.</param>
+    /// <param name="workingDirectory">Working directory for the process, or null for the current directory.</param>
+    /// <param name="program">Executable name or path to start.</param>
+    /// <param name="arguments">Command-line arguments passed to the process.</param>
+    /// <returns>The exit code returned by the process.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the process cannot be started.</exception>
+    /// <remarks>
+    ///     Both stdout and stderr are read concurrently before waiting for the process to exit to
+    ///     prevent deadlock when the child process fills either pipe buffer before exiting.
+    /// </remarks>
+    public static int RunInDirectory(
+        out string output,
+        string? workingDirectory,
+        string program,
+        params string[] arguments)
     {
         // Construct the start information
         var startInfo = new ProcessStartInfo(program)
@@ -50,6 +70,12 @@ internal static class Runner
             UseShellExecute = false,
             CreateNoWindow = true
         };
+
+        // Set the working directory if one was provided
+        if (workingDirectory != null)
+        {
+            startInfo.WorkingDirectory = workingDirectory;
+        }
 
         // Add the arguments
         foreach (var argument in arguments)

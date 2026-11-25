@@ -49,6 +49,7 @@
 
   <!-- Runtime Dependencies -->
   <ItemGroup>
+    <PackageReference Include="DemaConsulting.HelpCards" Version="0.1.0-beta.3" />
     <PackageReference Include="DemaConsulting.SpdxModel" Version="3.0.0-beta.1" />
     <PackageReference Include="DemaConsulting.NuGet.Caching" Version="1.5.0" />
     <PackageReference Include="DemaConsulting.TestResults" Version="1.10.0" />
