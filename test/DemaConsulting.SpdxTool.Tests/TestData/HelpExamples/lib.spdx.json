@@ -16,7 +16,9 @@
       "versionInfo": "13.0.3",
       "downloadLocation": "https://example.com/downloads/example-json-library-13.0.3.zip",
       "filesAnalyzed": false,
-      "licenseConcluded": "MIT"
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "Copyright (c) Example Corp"
     }
   ],
   "relationships": [

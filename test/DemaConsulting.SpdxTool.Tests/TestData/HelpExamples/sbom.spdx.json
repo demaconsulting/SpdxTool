@@ -16,7 +16,9 @@
       "versionInfo": "1.0.0",
       "downloadLocation": "https://example.com/downloads/example-application-1.0.0.zip",
       "filesAnalyzed": false,
-      "licenseConcluded": "MIT"
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "Copyright (c) Example Corp"
     },
     {
       "SPDXID": "SPDXRef-Library",
@@ -24,7 +26,9 @@
       "versionInfo": "2.1.0",
       "downloadLocation": "https://example.com/downloads/example-library-2.1.0.zip",
       "filesAnalyzed": false,
-      "licenseConcluded": "Apache-2.0"
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0",
+      "copyrightText": "Copyright (c) Example Corp"
     }
   ],
   "relationships": [

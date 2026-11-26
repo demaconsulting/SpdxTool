@@ -27,7 +27,8 @@ package as `_manifest/spdx_2.2/manifest.spdx.json`.
 ID `SPDXRef-DOCUMENT` is the document itself.
 
 **Packages.** The `packages` list holds the components, each with a
-`name`, a `versionInfo`, a `downloadLocation`, licenses, and optionally
+`name`, a `versionInfo`, a `downloadLocation`, the concluded and
+declared licenses, a `copyrightText`, and optionally
 a `supplier`, a file name, and external references such as a purl.
 
 **Relationships.** The `relationships` list links two elements with a
