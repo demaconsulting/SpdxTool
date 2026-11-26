@@ -19,9 +19,31 @@ spdx-tool [options] <command> [arguments]
   auto-detected from extension)
 - `--depth <level>` — Self-validation report depth level
 
+The usage text that `--help` prints ends with a pointer to the built-in help.
+
+## Built-in Help
+
+The `help` command prints help topics that explain each task with worked examples, and a card for
+every command with its command-line and workflow-step usage, for people and for AI agents that
+have only the installed tool. List the topics, print one, and print the card of a command:
+
+```bash
+dotnet spdx-tool help
+dotnet spdx-tool help getting-started
+dotnet spdx-tool help validate
+```
+
+Add `--search <words>` to find a topic, `--example <name>` to print one example of a topic, and
+`--json` to get any help answer as JSON. `help` is a command, not an option: it must be the first
+argument, no banner is printed, and `--silent` and `--log` do not apply to it. It exits with code
+0 on success, and with code 2 for an unknown topic or a wrong help argument, after printing a
+hint. After global options, as in `spdx-tool --silent help`, `help` is the workflow-only `help`
+command, which exits with code 1. As a workflow step, `command: help` with the input
+`about: <command>` still prints the usage text of a command.
+
 ## Available Commands
 
-- `help <command>` — Display extended help about a command
+- `help` — Display extended help about a command (workflow only)
 - `add-package` — Add package to SPDX document (workflow only)
 - `add-relationship <spdx.json> <args>` — Add relationship between elements
 - `copy-package <spdx.json> <args>` — Copy package between SPDX documents
@@ -37,20 +59,6 @@ spdx-tool [options] <command> [arguments]
 - `to-markdown <spdx.json> <out.md> [args]` — Create Markdown summary for SPDX document
 - `update-package` — Update package in SPDX document (workflow only)
 - `validate <spdx.json> [ntia]` — Validate SPDX document for issues
-
-## Getting Command Help
-
-To get detailed help for any command:
-
-```bash
-dotnet spdx-tool help <command>
-```
-
-For example:
-
-```bash
-dotnet spdx-tool help validate
-```
 
 ## Validate Command
 

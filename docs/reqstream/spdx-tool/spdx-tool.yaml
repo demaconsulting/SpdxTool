@@ -31,6 +31,52 @@ sections:
               - SpdxTool_Usage_LongHelpFlag_DisplaysUsage
               - SpdxTool_Usage_QuestionMarkHelpFlag_DisplaysUsage
 
+          - id: SpdxTool-Command-HelpTopics
+            title: The tool shall list its help topics when run with the help command.
+            tags:
+              - system
+              - cli
+            justification: |
+              Users and AI agents that have only the installed tool must be able to learn how to
+              use it from the tool itself. The short --help usage text points to the topic list,
+              each topic explains a task with worked examples, and every command has its own card.
+            children:
+              - SpdxTool-Program-HelpCommand
+              - SpdxTool-Program-HelpFooter
+              - SpdxTool-HelpCommand-HelpVerb
+              - SpdxTool-HelpCommand-CommandCards
+              - SpdxTool-HelpCommand-ValidCards
+              - SpdxTool-HelpCommand-LineWidth
+            tests:
+              - SpdxTool_HelpTopics_HelpVerb_ListsTopics
+
+          - id: SpdxTool-Command-HelpUnknownTopic
+            title: The tool shall exit with code 2 when the help command names an unknown topic.
+            tags:
+              - system
+              - cli
+            justification: |
+              Scripts and AI agents must be able to tell a mistyped topic from a successful answer,
+              and from the exit code 1 of a failed tool run.
+            children:
+              - SpdxTool-Program-HelpCommand
+            tests:
+              - SpdxTool_HelpTopics_UnknownTopic_ReturnsUsageError
+
+          - id: SpdxTool-Command-HelpExamples
+            title: The tool shall provide help examples that give the result each example states when run.
+            tags:
+              - system
+              - cli
+            justification: |
+              A worked example in the help is only useful when it works. Running every command
+              example against the built tool, and comparing the exit code and output with what the
+              example states, keeps the help in step with the tool.
+            children:
+              - SpdxTool-OTS-HelpCards-Testing
+            tests:
+              - SpdxTool_HelpExamples_AllCommandExamples_GiveStatedResults
+
           - id: SpdxTool-Command-InvalidArgs
             title: The tool shall display an error and usage information when invoked without arguments.
             tags:

@@ -7,19 +7,22 @@ sections:
           - title: Help Requirements
             requirements:
               - id: SpdxTool-Commands-Help-DisplayHelp
-                title: The help command shall display extended usage information for a specified command.
+                title: >-
+                  The help command shall display the extended usage information of the command
+                  named by the about input of a workflow step.
                 tags:
                   - cli
                 justification: |
-                  Users need access to detailed usage information for each command to
+                  Workflow authors need access to detailed usage information for each command to
                   understand arguments, options, and workflow YAML syntax without consulting
-                  external documentation.
+                  external documentation. On the command line, the built-in help cards serve
+                  this purpose.
                 children:
                   - SpdxTool-Commands-Help-YamlInvocation
+                  - SpdxTool-Commands-Help-CliRejection
                 tests:
-                  - Help_Run_NoArguments_ReportsError
+                  - Help_Run_YamlInvocation_DisplaysHelp
                   - Help_Run_UnknownCommand_ReportsError
-                  - Help_Run_RunWorkflowCommand_DisplaysHelp
 
               - id: SpdxTool-Commands-Help-YamlInvocation
                 title: >-
@@ -33,3 +36,14 @@ sections:
                 tests:
                   - Help_Run_YamlInvocation_DisplaysHelp
                   - Help_Run_YamlInvocation_MissingAbout_ReportsError
+
+              - id: SpdxTool-Commands-Help-CliRejection
+                title: The help command shall reject direct command-line invocation with a usage error.
+                tags:
+                  - cli
+                justification: |
+                  On the command line, 'spdx-tool help' as the first argument is answered by the
+                  built-in help cards before the options are parsed. A help command that reaches the
+                  command dispatcher after global options must not offer a second, different help.
+                tests:
+                  - Help_Run_OnCommandLine_ReportsWorkflowOnlyError

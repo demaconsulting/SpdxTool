@@ -9,14 +9,16 @@ exposes a command-line interface for creating, validating, and manipulating SPDX
 The companion system DemaConsulting.SpdxTool.Targets integrates SPDX decoration into the
 dotnet pack workflow via MSBuild targets and is described in the SpdxTool.Targets system design.
 
-The system follows a command-pattern architecture. Program parses global flags and constructs a
-Context, then dispatches to CommandsRegistry. Each registered command is a self-contained Command
-subclass. The --validate global flag bypasses command dispatch and redirects execution to the
-SelfTest subsystem instead.
+The system follows a command-pattern architecture. Program first offers the arguments to
+HelpCommand, which answers the `help` command from the built-in help cards. Otherwise Program
+parses global flags and constructs a Context, then dispatches to CommandsRegistry. Each registered
+command is a self-contained Command subclass. The --validate global flag bypasses command dispatch
+and redirects execution to the SelfTest subsystem instead.
 
 ```mermaid
 flowchart TD
     CLI[CLI Input] --> Program
+    Program -->|help| HC[HelpCommand]
     Program --> Context[Context]
     Program -->|command dispatch| CR[CommandsRegistry]
     Program -->|--validate| ST[SelfTest Subsystem]
@@ -35,7 +37,7 @@ provide SpdxHelpers and RelationshipDirection. The Utility unit group provides P
 Wildcard. The SelfTest subsystem exercises every registered command against embedded SPDX fixtures.
 
 Unit design files for all Commands subsystem units are in the commands subfolder. See also Context
-Design and Program Design for the system-level units.
+Design, Program Design, and HelpCommand Design for the system-level units.
 
 ## External Interfaces
 
@@ -46,9 +48,25 @@ command.
 
 - *Type*: Process entry point.
 - *Role*: Provider.
-- *Contract*: Each registered command name maps to exactly one Command implementation; unrecognized
-  command names are reported as errors and usage information is printed.
-- *Constraints*: Global options must precede the command name on the command line.
+- *Contract*: Accepts the `help` command as the first argument (see *Help Command* below), or
+  global options followed by a command. Each registered command name maps to exactly one Command
+  implementation; unrecognized command names are reported as errors and usage information is
+  printed. The usage information ends with a pointer to the help command.
+- *Constraints*: Global options must precede the command name on the command line. Option errors
+  are found before `--silent` and `--log` take effect, so they are always printed and never logged.
+
+**Help Command**: Built-in help, answered from help cards embedded in the tool assembly.
+
+- *Type*: CLI.
+- *Role*: Provider (the tool answers the `help` command from the shell).
+- *Contract*: `spdx-tool help` prints the topic index, `spdx-tool help <topic>` prints a topic
+  card with its examples, and `spdx-tool help <command>` (or `spdx-tool help commands <command>`)
+  prints the card of a command; HelpCards adds `--example`, `--search`, and `--json`. Returns
+  exit code 0 for success, 2 for a wrong help argument or an unknown topic, and 70 for a defective
+  card catalog.
+- *Constraints*: `help` must be the first argument. It is answered before the options are parsed,
+  so `--silent` and `--log` do not apply and no banner is printed. After global options, `help`
+  reaches the command dispatcher as the workflow-only Help command, which reports a usage error.
 
 **Program.Version**: A public static `string` field on Program that exposes the assembly's
 informational version, read from the `AssemblyInformationalVersionAttribute` at startup.
@@ -110,6 +128,8 @@ must be installed as a .NET tool in the build environment for the target to succ
   and JUnit XML output formats. See *TestResults Integration Design*.
 - **YamlDotNet** - YAML parsing for workflow files and per-step command argument nodes.
   See *YamlDotNet Integration Design*.
+- **DemaConsulting.HelpCards** - loads, validates, and serves the built-in help cards for the
+  `help` command. See *HelpCards Integration Design*.
 
 ## Risk Control Measures
 
@@ -117,7 +137,11 @@ N/A - not a safety-classified software item.
 
 ## Data Flow
 
-1. The user invokes `spdx-tool` at the command line; Program parses global flags and constructs a
+1. The user invokes `spdx-tool` at the command line. Program first offers the arguments to
+   `HelpCommand.TryRun`. When the first argument is `help`, the help command builds the card
+   catalog, writes its answer to the console, and `Main` returns its exit code. Any other first
+   argument returns at once without building the catalog.
+2. Program parses global flags and constructs a
    Context carrying the flag state, an optional log writer, and an error counter. If `--silent` is
    specified, `Context.Silent` is set to `true`, which suppresses all `context.WriteLine` and
    `context.WriteError` calls from writing to the console. If `--log <file>` is specified,
@@ -125,30 +149,29 @@ N/A - not a safety-classified software item.
    the log file regardless of the silent state. If `Context.Create` throws
    `InvalidOperationException` (for example, when `--log` is specified without a following
    argument, or `--depth` receives an invalid or negative value), `Main` writes
-   `Error: {message}` in red directly to the console, resets the console color, and calls
-   `Environment.Exit(1)`. This failure path does not construct a `Context` and does not return
-   through `Run`.
-2. If the argument list is empty and --validate was not set, Program records an error
+   `Error: {message}` in red directly to the console, resets the console color, and returns 1.
+   This failure path does not construct a `Context` and does not return through `Run`.
+3. If the argument list is empty and --validate was not set, Program records an error
    ('Error: Missing arguments') and prints usage information; execution terminates with exit code 1.
-3. If --validate is set, execution is redirected to SelfTest.Validate.Run, which exercises every
+4. If --validate is set, execution is redirected to SelfTest.Validate.Run, which exercises every
    registered command against embedded SPDX fixtures and writes results to the validation file if
    one was specified.
-4. Otherwise, Program looks up the command name in CommandsRegistry.Commands and calls
+5. Otherwise, Program looks up the command name in CommandsRegistry.Commands and calls
    Command.Run(context, args) on the matched entry; an unrecognized name produces an error and
    prints usage information.    CommandUsageException is caught, reported as `Error: {message}`, and usage information
    is printed; CommandErrorException is caught and reported as `Error: {message}` without
    printing usage. Any other unexpected exception from command execution is
    caught by the catch-all handler and reported via context.WriteError using ex.ToString(),
    which includes the full stack trace, to aid debugging of unexpected failures in CI environments.
-5. The selected command reads any required SPDX JSON documents from the file system via
+6. The selected command reads any required SPDX JSON documents from the file system via
    SpdxHelpers.LoadJsonDocument, and YAML workflow files via YamlDotNet.
-6. The command applies the requested transformation or query using SpdxHelpers, PathHelpers, and
+7. The command applies the requested transformation or query using SpdxHelpers, PathHelpers, and
    Wildcard as needed; variable tokens in YAML values are expanded by Command.Expand at execution
    time.
-7. Modified SPDX documents are serialized to JSON and written to the output path by
+8. Modified SPDX documents are serialized to JSON and written to the output path by
    SpdxHelpers.SaveJsonDocument, which stamps the document with the tool creator entry.
-8. Context.ExitCode returns 1 if any errors were recorded during execution; Program exits with
-   that code.
+9. Context.ExitCode returns 1 if any errors were recorded during execution; `Main` returns
+   `Context.ExitCode`, which becomes the process exit code.
 
 ## Design Constraints
 

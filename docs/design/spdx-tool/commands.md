@@ -27,7 +27,7 @@ Contained units:
 - FindPackage — finds a package in an SPDX document by criteria
 - GetVersion — retrieves the version of a package from an SPDX document
 - Hash — computes or verifies SHA-256 file hashes
-- Help — displays extended help for a named command
+- Help — displays extended help for a named command (workflow only)
 - Print — writes text lines to the console
 - Query — executes an external program and extracts a value by regex
 - RenameId — renames an SPDX element ID throughout a document

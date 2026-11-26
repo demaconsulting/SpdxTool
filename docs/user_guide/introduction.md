@@ -32,6 +32,7 @@ Prerequisites: .NET SDK 10.0 or 11.0. The guide includes:
 
 - Installation instructions (local and global)
 - Command-line reference and core command descriptions
+- The built-in `spdx-tool help` command
 - YAML workflow file authoring and execution
 - MSBuild integration via DemaConsulting.SpdxTool.Targets
 - Self-validation for tool qualification

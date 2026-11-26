@@ -1,0 +1,31 @@
+{
+  "spdxVersion": "SPDX-2.2",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "Example Json Library SBOM",
+  "documentNamespace": "https://example.com/spdx/example-json-library-13.0.3",
+  "creationInfo": {
+    "created": "2026-01-01T00:00:00Z",
+    "creators": [ "Organization: Example Corp" ]
+  },
+  "files": [],
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Json",
+      "name": "Example Json Library",
+      "versionInfo": "13.0.3",
+      "downloadLocation": "https://example.com/downloads/example-json-library-13.0.3.zip",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "Copyright (c) Example Corp"
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relatedSpdxElement": "SPDXRef-Json",
+      "relationshipType": "DESCRIBES"
+    }
+  ]
+}

@@ -36,6 +36,8 @@ quality gate, release documentation, and supply-chain compliance][workflow]
 - Self-validation system generates evidence of tool correctness for regulated environments.
 - MSBuild targets integration automatically decorates SBOMs during `dotnet pack`.
 - Multi-command CLI supporting add-package, validate, copy-package, to-markdown, diagram, and more.
+- Built-in help: `spdx-tool help` serves help topics and a card for every command, with runnable
+  examples, search, and JSON output for AI agents.
 - Multi-framework support targeting .NET 10 and .NET 11.
 - Continuous compliance evidence generated automatically on every CI run.
 
@@ -68,10 +70,18 @@ Run a workflow file:
 dotnet spdx-tool run-workflow spdx-workflow.yaml
 ```
 
+List the built-in help topics, then read the card of a command:
+
+```bash
+dotnet spdx-tool help
+dotnet spdx-tool help validate
+```
+
 Full command reference:
 
 ```text
 Usage: spdx-tool [options] <command> [arguments]
+       spdx-tool help [topic]
 
 Options:
   -h, -?, --help                           Show this help message and exit
@@ -83,7 +93,7 @@ Options:
       --depth <level>                      Self-validation report depth level
 
 Commands:
-  help <command>                           Display extended help about a command
+  help                                     Display extended help about a command (workflow only).
   add-package                              Add package to SPDX document (workflow only).
   add-relationship <spdx.json> <args>      Add relationship between elements.
   copy-package <spdx.json> <args>          Copy package between SPDX documents.
@@ -99,6 +109,8 @@ Commands:
   to-markdown <spdx.json> <out.md> [args]  Create Markdown summary for SPDX document
   update-package                           Update package in SPDX document (workflow only).
   validate <spdx.json> [ntia]              Validate SPDX document for issues
+
+Run 'spdx-tool help' for topics and examples.
 ```
 
 ## Building

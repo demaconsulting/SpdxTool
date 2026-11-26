@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using DemaConsulting.SpdxTool.Commands;
+
 namespace DemaConsulting.SpdxTool.Tests.Commands;
 
 /// <summary>
@@ -26,87 +28,56 @@ namespace DemaConsulting.SpdxTool.Tests.Commands;
 public class HelpTests
 {
     /// <summary>
-    ///     Test that help command with no arguments reports an error
+    ///     Test that help command on the command line reports a workflow-only error
     /// </summary>
     [Fact]
-    public void Help_Run_NoArguments_ReportsError()
+    public void Help_Run_OnCommandLine_ReportsWorkflowOnlyError()
     {
-        // Arrange: no setup required — the tool binary is invoked as a self-contained process
+        // Arrange: create a minimal execution context
+        using var context = Context.Create([]);
 
-        // Act: Run the help command with no arguments
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "help");
-
-        // Assert: Verify an error was detected
-        Assert.Equal(1, exitCode);
-        Assert.Contains("'help' command requires exactly one argument", output);
+        // Act / Assert: CLI invocation always throws because the command is workflow-only
+        var exception = Assert.Throws<CommandUsageException>(() => Help.Instance.Run(context, ["run-workflow"]));
+        Assert.Equal("'help' command is only valid in a workflow", exception.Message);
     }
 
     /// <summary>
-    ///     Test that help command with too many arguments reports an error
-    /// </summary>
-    [Fact]
-    public void Help_Run_TooManyArguments_ReportsError()
-    {
-        // Arrange: no setup required — the tool binary is invoked as a self-contained process
-
-        // Act: Run the help command with two arguments
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "help",
-            "run-workflow",
-            "extra-argument");
-
-        // Assert: Verify an error was detected
-        Assert.Equal(1, exitCode);
-        Assert.Contains("'help' command requires exactly one argument", output);
-    }
-
-    /// <summary>
-    ///     Test that help command with unknown command reports an error
+    ///     Test that help command in a YAML workflow step with an unknown command reports an error
     /// </summary>
     [Fact]
     public void Help_Run_UnknownCommand_ReportsError()
     {
-        // Arrange: no setup required — the tool binary is invoked as a self-contained process
+        // Arrange: workflow step asks about a command that does not exist
+        const string workflowContents =
+            """
+            steps:
+            - command: help
+              inputs:
+                about: unknown-command
+            """;
 
-        // Act: Run the help command with an unknown command
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "help",
-            "unknown-command");
+        var workflowFile = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            // Arrange: write the workflow file to disk
+            File.WriteAllText(workflowFile, workflowContents);
 
-        // Assert: Verify an error was detected
-        Assert.Equal(1, exitCode);
-        Assert.Contains("Unknown command: 'unknown-command'", output);
-    }
+            // Act: Run the workflow
+            var exitCode = Runner.Run(
+                out var output,
+                "dotnet",
+                "DemaConsulting.SpdxTool.dll",
+                "run-workflow",
+                workflowFile);
 
-    /// <summary>
-    ///     Test that help command with run-workflow displays help information
-    /// </summary>
-    [Fact]
-    public void Help_Run_RunWorkflowCommand_DisplaysHelp()
-    {
-        // Arrange: no setup required — the tool binary is invoked as a self-contained process
-
-        // Act: Run the help command with the 'run-workflow' command name
-        var exitCode = Runner.Run(
-            out var output,
-            "dotnet",
-            "DemaConsulting.SpdxTool.dll",
-            "help",
-            "run-workflow");
-
-        // Assert: Verify success
-        Assert.Equal(0, exitCode);
-        Assert.Contains("This command runs the steps specified in the workflow file/url.", output);
+            // Assert: Verify an error was detected
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Unknown command: 'unknown-command'", output);
+        }
+        finally
+        {
+            File.Delete(workflowFile);
+        }
     }
 
     /// <summary>

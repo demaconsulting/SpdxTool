@@ -149,6 +149,45 @@ The CI pipeline will also run markdown linting and spell checking on all documen
 - Write clear, concise documentation
 - Update documentation when changing functionality
 
+### Help Cards
+
+The built-in help (`spdx-tool help`) is served from Markdown help cards in
+`src/DemaConsulting.SpdxTool/Help/`, which the DemaConsulting.HelpCards package embeds in the tool assembly.
+`HelpCommand.cs` is the only code that uses the package.
+
+- **One file per topic.** The path below `Help/`, without `.md`, is the card id. `_source.md` names the source
+  (`name:`) and sets `schema: 2`.
+- **Front matter.** Every card has a `title`, a `summary` (at most 80 characters for a topic, 100 otherwise), and
+  exactly one purpose tag: `tutorial`, `reference`, or `troubleshooting`. Add `aliases` for topic names that users
+  commonly guess, such as `examples`, so `help <name>` finds the card.
+- **New topics.** Add the id of every new top-level card to `HelpCommand.RootCardIds`, the one list of topics; a
+  missing or extra topic fails the tests.
+- **Commands.** Every command registered in `CommandsRegistry` has a card `Help/commands/<command>.md` with its
+  command-line and workflow-step usage; a test fails when one is missing. `spdx-tool help <command>` prints that
+  card: HelpCards resolves the first path word only against the topics, so `HelpCommand` inserts `commands`
+  before a first path word that names a registered command. Do not add command names as aliases of a card.
+- **Examples.** Give every task a runnable `command` example, one command per example: no pipes, redirection, or
+  `&&`. Wrap `content` in single quotes and use double quotes inside the command, which bash, PowerShell, and cmd
+  read alike. State the result when it matters with `exit:` (default 0) and `expect:`, a short fragment that must
+  appear somewhere in the console output; `expect` cannot check a file that the command writes. Keep each
+  `description` to about 50 characters.
+- **Getting started.** Say how to install the tool for CI: the .NET version it needs (from `TargetFrameworks`), a
+  local tool manifest with `dotnet tool restore` before `dotnet spdx-tool`, and the global install as the
+  alternative. Mark the install commands as `snippet` examples so that the example runner does not run them.
+- **Input files.** Show complete files only for formats that users author, such as workflow files, and describe
+  SPDX documents in prose. The SPDX documents that the examples read live in
+  `test/DemaConsulting.SpdxTool.Tests/TestData/HelpExamples/`; the example-runner test copies them into
+  `invocation.WorkingDirectory` before every command.
+- **Width.** A printed card may not be wider than 120 characters. Links print as full commands (`[[#name]]` as
+  about 50 characters) and `{{version}}` of a development build as about 46, so keep body lines near 75 characters
+  with at most one link each.
+- **Text.** Cards are linted and spell-checked like any Markdown file: no body line starting with `#`, no wide
+  tables, and every fenced block names its language.
+
+Run `pwsh ./build.ps1 -Changed` after changing a card. The `HelpCommand` unit tests validate every card, with
+warnings treated as errors, and check its printed width; an integration test runs every command example against
+the built tool and compares the result with the card.
+
 ### Error Handling
 
 - Use exceptions for exceptional conditions

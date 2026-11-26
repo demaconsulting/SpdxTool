@@ -29,6 +29,7 @@ input-files:
   - docs/verification/spdx-tool/commands/update-package.md
   - docs/verification/spdx-tool/commands/validate.md
   - docs/verification/spdx-tool/context.md
+  - docs/verification/spdx-tool/help-command.md
   - docs/verification/spdx-tool/program.md
   - docs/verification/spdx-tool/self-test.md
   - docs/verification/spdx-tool/self-test/validate.md
@@ -59,6 +60,7 @@ input-files:
   - docs/verification/ots/spdx-model.md
   - docs/verification/ots/nuget-caching.md
   - docs/verification/ots/test-results.md
+  - docs/verification/ots/help-cards.md
   - docs/verification/ots/xunit.md
   - docs/verification/ots/buildmark.md
   - docs/verification/ots/reqstream.md

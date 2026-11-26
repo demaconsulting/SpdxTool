@@ -28,9 +28,10 @@ namespace DemaConsulting.SpdxTool;
 ///     Entry point and top-level dispatcher for the SPDX tool command-line application.
 /// </summary>
 /// <remarks>
-///     Constructs a Context from the command-line arguments and dispatches execution to the version
-///     reporter, help printer, self-validation suite, or the matching registered command. All mutable
-///     runtime state is held in Context so Program methods are stateless and independently testable.
+///     First offers the arguments to <see cref="HelpCommand"/>, which answers <c>help</c> from the help
+///     cards. Otherwise constructs a Context from the command-line arguments and dispatches execution to
+///     the version reporter, usage printer, self-validation suite, or the matching registered command. All
+///     mutable runtime state is held in Context so Program methods are stateless and independently testable.
 /// </remarks>
 public static class Program
 {
@@ -53,19 +54,35 @@ public static class Program
     ///     Application entry point
     /// </summary>
     /// <param name="args">Command-line arguments. May be empty (triggers error and usage output); must not be null.</param>
+    /// <returns>
+    ///     The exit code: the exit code of the help command when it answered, otherwise
+    ///     context.ExitCode (1 if any errors were recorded, 0 otherwise), or 1 when the arguments are invalid.
+    /// </returns>
     /// <remarks>
-    ///     InvalidOperationException from Context.Create (e.g., missing argument, invalid depth,
-    ///     negative depth) is caught and reported as 'Error: {message}' with exit code 1. All other
-    ///     unhandled exceptions are reported (message only, no stack trace) and re-thrown.
-    ///     Environment.ExitCode is set from context.ExitCode (1 if any errors were recorded, 0 otherwise).
+    ///     <para>
+    ///         The <c>help</c> command is answered first, by <see cref="HelpCommand"/>, before the
+    ///         command-line options are parsed, so the banner, <c>--silent</c>, and <c>--log</c> do not
+    ///         apply to it. Its exit code is returned as is.
+    ///     </para>
+    ///     <para>
+    ///         InvalidOperationException from Context.Create (e.g., missing argument, invalid depth,
+    ///         negative depth) is caught and reported as 'Error: {message}' with exit code 1. All other
+    ///         unhandled exceptions are reported (message only, no stack trace) and re-thrown.
+    ///     </para>
     /// </remarks>
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
         try
         {
+            // Answer the help command before the options are parsed
+            if (HelpCommand.Default.TryRun(args, out var helpExitCode))
+            {
+                return helpExitCode;
+            }
+
             using var context = Context.Create(args);
             Run(context);
-            Environment.ExitCode = context.ExitCode;
+            return context.ExitCode;
         }
         catch (InvalidOperationException e)
         {
@@ -73,7 +90,7 @@ public static class Program
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Error: {e.Message}");
             Console.ResetColor();
-            Environment.Exit(1);
+            return 1;
         }
         catch (Exception e)
         {
@@ -166,7 +183,7 @@ public static class Program
     }
 
     /// <summary>
-    ///     Print usage information
+    ///     Print usage information, ending with a pointer to the built-in help topics
     /// </summary>
     /// <param name="context">Program context</param>
     /// <remarks>
@@ -176,8 +193,9 @@ public static class Program
     public static void PrintUsage(Context context)
     {
         context.WriteLine(
-            """
-            Usage: spdx-tool [options] <command> [arguments]
+            $"""
+            Usage: {HelpCommand.ToolName} [options] <command> [arguments]
+                   {HelpCommand.ToolName} help [topic]
 
             Options:
               -h, -?, --help                           Show this help message and exit
@@ -194,5 +212,8 @@ public static class Program
         {
             context.WriteLine($"  {command.CommandLine,-40} {command.Summary}");
         }
+
+        context.WriteLine("");
+        context.WriteLine(HelpCommand.Default.Footer);
     }
 }
