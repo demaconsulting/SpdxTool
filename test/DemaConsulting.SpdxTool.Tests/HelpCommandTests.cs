@@ -66,31 +66,55 @@ public class HelpCommandTests
     }
 
     /// <summary>
-    ///     Test that every registered command has a help card under <c>help commands</c>.
+    ///     Test that every registered command has a help card, printed by <c>help &lt;command&gt;</c> and by
+    ///     <c>help commands &lt;command&gt;</c>.
     /// </summary>
     [Fact]
     public void HelpCommand_TryRun_EveryRegisteredCommand_PrintsCommandCard()
     {
-        // Arrange: the names of the commands the tool registers
-        var names = CommandsRegistry.Commands.Keys.ToList();
+        // Arrange: the names of the commands the tool registers, asked for with and without the commands topic
+        var requests = CommandsRegistry.Commands.Keys
+            .SelectMany(name => new[] { (Name: name, Args: new[] { "help", name }), (Name: name, Args: new[] { "help", "commands", name }) })
+            .ToList();
 
-        // Act: ask for the card of every command
-        var results = names.Select(name =>
+        // Act: ask for the card of every command both ways
+        var results = requests.Select(request =>
         {
             using var output = new StringWriter();
             using var error = new StringWriter();
-            var answered = HelpCommand.Create(output, error).TryRun(["help", "commands", name], out var exitCode);
-            return (Name: name, Answered: answered, ExitCode: exitCode, Output: output.ToString());
+            var answered = HelpCommand.Create(output, error).TryRun(request.Args, out var exitCode);
+            return (request.Name, Command: string.Join(' ', request.Args), Answered: answered, ExitCode: exitCode, Output: output.ToString());
         }).ToList();
 
-        // Assert: every command has a card, which names the command
+        // Assert: every command has a card, which names the command, and both requests print it
         Assert.NotEmpty(results);
         Assert.All(results, result =>
         {
-            Assert.True(result.Answered, $"The card of command '{result.Name}' was not answered.");
+            Assert.True(result.Answered, $"'{result.Command}' was not answered.");
             Assert.Equal(0, result.ExitCode);
             Assert.Contains($"# {result.Name} command", result.Output);
         });
+    }
+
+    /// <summary>
+    ///     Test that a command name after a help option with a value still prints the card of that command.
+    /// </summary>
+    [Fact]
+    public void HelpCommand_TryRun_CommandNameAfterValueOption_PrintsCommandCard()
+    {
+        // Arrange: a help command that writes to memory
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        var command = HelpCommand.Create(output, error);
+
+        // Act: ask for the card of to-markdown after the --width option and its value
+        var answered = command.TryRun(["help", "--width", "100", "to-markdown"], out var exitCode);
+
+        // Assert: the command answered with the to-markdown card, not the commands overview
+        Assert.True(answered);
+        Assert.Equal(0, exitCode);
+        Assert.Contains("# to-markdown command", output.ToString());
+        Assert.DoesNotContain("# Commands", output.ToString());
     }
 
     /// <summary>

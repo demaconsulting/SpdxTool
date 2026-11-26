@@ -163,8 +163,9 @@ The built-in help (`spdx-tool help`) is served from Markdown help cards in
 - **New topics.** Add the id of every new top-level card to `HelpCommand.RootCardIds`, the one list of topics; a
   missing or extra topic fails the tests.
 - **Commands.** Every command registered in `CommandsRegistry` has a card `Help/commands/<command>.md` with its
-  command-line and workflow-step usage; a test fails when one is missing. The `commands` topic lists the command
-  names as aliases, so `spdx-tool help <command>` prints the commands overview.
+  command-line and workflow-step usage; a test fails when one is missing. `spdx-tool help <command>` prints that
+  card: HelpCards resolves the first path word only against the topics, so `HelpCommand` inserts `commands`
+  before a first path word that names a registered command. Do not add command names as aliases of a card.
 - **Examples.** Give every task a runnable `command` example, one command per example: no pipes, redirection, or
   `&&`. Wrap `content` in single quotes and use double quotes inside the command, which bash, PowerShell, and cmd
   read alike. State the result when it matters with `exit:` (default 0) and `expect:`, a short fragment that must

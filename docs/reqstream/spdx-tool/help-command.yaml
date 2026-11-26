@@ -23,14 +23,16 @@ sections:
 
           - id: SpdxTool-HelpCommand-CommandCards
             title: >-
-              The HelpCommand unit shall answer help commands <command> with a help card for every
-              registered command.
+              The HelpCommand unit shall answer help <command> and help commands <command> with
+              the help card of that command for every registered command.
             justification: |
               The help cards replace the former 'spdx-tool help <command>' usage text, so every
               command that the tool registers needs its own card with its command-line and
-              workflow-step syntax. A command without a card would leave users without its usage.
+              workflow-step syntax. A command without a card would leave users without its usage,
+              and 'spdx-tool help <command>' must keep working for existing users and scripts.
             tests:
               - HelpCommand_TryRun_EveryRegisteredCommand_PrintsCommandCard
+              - HelpCommand_TryRun_CommandNameAfterValueOption_PrintsCommandCard
 
           - id: SpdxTool-HelpCommand-ValidCards
             title: >-

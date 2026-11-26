@@ -74,7 +74,7 @@ List the built-in help topics, then read the card of a command:
 
 ```bash
 dotnet spdx-tool help
-dotnet spdx-tool help commands validate
+dotnet spdx-tool help validate
 ```
 
 Full command reference:

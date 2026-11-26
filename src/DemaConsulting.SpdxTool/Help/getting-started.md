@@ -49,7 +49,7 @@ examples:
     kind: command
     language: shell
     description: Print the help card of a command, here validate.
-    content: '{{tool}} help commands validate'
+    content: '{{tool}} help validate'
     expect: 'validate <spdx.json> [ntia]'
 ---
 {{tool}} {{version}} is a .NET tool.
@@ -83,6 +83,6 @@ of an example application; see [[spdx-documents]].
    `dotnet pack`, see [[msbuild]].
 
 Print any help topic with `{{tool}} help <topic>`, and the card of a
-command with `{{tool}} help commands <command>`, as in the command that
+command with `{{tool}} help <command>`, as in the command that
 [[#topic]] prints.
 Add `--search <words>` to find a topic, and `--json` to get any help answer as JSON.

@@ -62,7 +62,7 @@ public sealed class Help : Command
             "      about: <command>",
             "",
             "From the command-line use the built-in help:",
-            "  spdx-tool help commands <command>"
+            "  spdx-tool help <command>"
         ],
         Instance);
 

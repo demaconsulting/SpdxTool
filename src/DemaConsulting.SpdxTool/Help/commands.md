@@ -3,21 +3,6 @@ title: Commands
 summary: The commands of the tool, which run from the command line or as workflow steps.
 aliases:
   - command
-  - add-package
-  - add-relationship
-  - copy-package
-  - diagram
-  - find-package
-  - get-version
-  - hash
-  - print
-  - query
-  - rename-id
-  - run-workflow
-  - set-variable
-  - to-markdown
-  - update-package
-  - validate
 tags:
   - reference
 order: 3
@@ -30,13 +15,14 @@ examples:
     kind: command
     language: shell
     description: Print the card of one command, here to-markdown.
-    content: '{{tool}} help commands to-markdown'
+    content: '{{tool}} help to-markdown'
     expect: 'to-markdown <spdx.json> <out.md> [title] [depth]'
 ---
 Run a command as `{{tool}} [options] <command> [arguments]`, or as a step
 of a workflow file; see [[workflow-files]]. Each command has its own card,
-listed below. Print one with `{{tool}} help commands <command>`, as the
-command that [[#card]] prints shows.
+listed below. Print one with `{{tool}} help <command>`, as the command
+that [[#card]] prints shows; `{{tool}} help commands <command>` prints
+the same card.
 
 **Workflow only.** `add-package`, `update-package`, `set-variable`, and
 `help` run only as workflow steps. On the command line they print

@@ -30,8 +30,13 @@ immutable and keeps no state between calls.
 **Help cards**: the Markdown files under `src/DemaConsulting.SpdxTool/Help/`, embedded by the
 HelpCards build targets. The root cards are the topics; the `commands` card has one child card per
 command registered in CommandsRegistry, under `Help/commands/`, which holds the command-line and
-workflow-step usage of that command and is printed by `spdx-tool help commands <command>`. The
-rules for writing the cards are in the *Help Cards* section of `CONTRIBUTING.md`.
+workflow-step usage of that command and is printed by `spdx-tool help <command>` and by
+`spdx-tool help commands <command>`. The rules for writing the cards are in the *Help Cards*
+section of `CONTRIBUTING.md`.
+
+**ValueOptions**: `string[]` (private) — the HelpCards help options that take a value
+(`--format`, `--example`, `--search`, `--tag`, `--source`, `--width`), so that their value is not
+taken for the first path word.
 
 ### Key Methods
 
@@ -46,7 +51,24 @@ rules for writing the cards are in the *Help Cards* section of `CONTRIBUTING.md`
   answer was written to the console and the exit code was set (see *Help Command* in the system
   design).
 
-Delegates to `HelpCli.TryRun`, which builds the catalog only after the verb was recognized.
+Arguments that do not start with the `help` verb (compared ignoring case) go to `HelpCli.TryRun`,
+which returns `false` without building the catalog. For the help verb, the arguments after it go to
+`HelpCli.Run` through `ExpandCommandName`.
+
+**ExpandCommandName** (private): Makes `spdx-tool help <command>` print the card of that command.
+
+- *Parameters*: `string[] helpArguments` — the arguments after the help verb.
+- *Returns*: `List<string>` — the arguments for `HelpCli.Run`.
+- *Preconditions*: None.
+- *Post-conditions*: When the first path word (the first argument that is neither an option nor
+  the value of one of `ValueOptions`, or the argument after `--`) names a command registered in
+  CommandsRegistry, ignoring case, `commands` is inserted before it; otherwise the arguments are
+  unchanged.
+
+HelpCards resolves the first word of a path only against the root cards, and an alias is unique
+only among its siblings, so an alias on a command card cannot make `help <command>` find it. The
+command cards therefore carry no aliases, and HelpCommand rewrites the path instead. No command
+name is a root card id, so the rewrite never hides a topic.
 
 **Footer**: Gets the one-line pointer to the help command that ends the usage text, without
 building the catalog.
@@ -79,6 +101,7 @@ the answers through a Context would mean parsing the options a second time just 
   `HelpCatalogBuilder`; see *HelpCards Integration Design*.
 - **Program** — `Program.Version` supplies the version shown in the index and the `{{version}}`
   token.
+- **CommandsRegistry** — the names of the registered commands, which `ExpandCommandName` matches.
 
 ### Callers
 

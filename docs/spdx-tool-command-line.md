@@ -59,10 +59,11 @@ Run 'spdx-tool help' for topics and examples.
 ## Command Specific Usage
 
 The built-in help prints the help topics with `dotnet spdx-tool help`, and the card of a specific
-command with `dotnet spdx-tool help commands <command>`. For example:
+command with `dotnet spdx-tool help <command>`, which is the same as
+`dotnet spdx-tool help commands <command>`. For example:
 
 ```bash
-dotnet spdx-tool help commands run-workflow
+dotnet spdx-tool help run-workflow
 ```
 
 The card shows the command-line and workflow-step usage of the command, notes on its behavior, and

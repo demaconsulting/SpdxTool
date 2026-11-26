@@ -16,8 +16,9 @@ are required; the cards are read from the tool assembly.
 ### Acceptance Criteria
 
 All `HelpCommandTests` test methods pass, confirming that the help verb prints the topic index,
-every registered command has a card, the shipped catalog passes validation with warnings treated
-as errors, and every card prints in lines of at most 120 characters.
+every registered command has a card that `help <command>` and `help commands <command>` print,
+the shipped catalog passes validation with warnings treated as errors, and every card prints in
+lines of at most 120 characters.
 
 ### Test Scenarios
 
@@ -25,9 +26,15 @@ as errors, and every card prints in lines of at most 120 characters.
 command of every root topic. This scenario is tested by
 `HelpCommand_TryRun_HelpVerb_PrintsTopicIndexAndReturnsZero`.
 
-**CommandCards**: `TryRun` called with `["help", "commands", <command>]` for every command
-registered in `CommandsRegistry` answers with exit code 0 and prints the card of that command.
-This scenario is tested by `HelpCommand_TryRun_EveryRegisteredCommand_PrintsCommandCard`.
+**CommandCards**: `TryRun` called with `["help", <command>]` and with
+`["help", "commands", <command>]` for every command registered in `CommandsRegistry` answers with
+exit code 0 and prints the card of that command. This scenario is tested by
+`HelpCommand_TryRun_EveryRegisteredCommand_PrintsCommandCard`.
+
+**CommandNameAfterOption**: `TryRun` called with `["help", "--width", "100", "to-markdown"]`
+answers with exit code 0 and prints the card of `to-markdown`, not the commands overview, which
+shows that the value of a help option is not taken for the command name. This scenario is tested
+by `HelpCommand_TryRun_CommandNameAfterValueOption_PrintsCommandCard`.
 
 **ValidCards**: the catalog configuration from `CreateOptions`, validated with warnings treated as
 errors, reports no defect, which proves that the root cards are exactly `RootCardIds`, that every

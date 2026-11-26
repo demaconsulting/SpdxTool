@@ -115,7 +115,7 @@ complete sample with [[#sample]] and run it with the command that
 - `command`: in each step, the name of a command; see [[commands]].
 - `displayName`: optional; text printed before the step runs.
 - `inputs`: the inputs of the command, shown on its card under
-  `{{tool}} help commands <command>`.
+  `{{tool}} help <command>`.
 
 **Variables.** `${{ name }}` in a value is replaced by the variable
 `name`, and `${{ environment.NAME }}` by the environment variable

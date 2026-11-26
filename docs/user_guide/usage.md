@@ -30,7 +30,7 @@ have only the installed tool. List the topics, print one, and print the card of 
 ```bash
 dotnet spdx-tool help
 dotnet spdx-tool help getting-started
-dotnet spdx-tool help commands validate
+dotnet spdx-tool help validate
 ```
 
 Add `--search <words>` to find a topic, `--example <name>` to print one example of a topic, and

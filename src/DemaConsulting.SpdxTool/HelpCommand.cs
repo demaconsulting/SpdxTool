@@ -20,6 +20,7 @@
 
 using DemaConsulting.HelpCards.Integration;
 using DemaConsulting.HelpCards.Loading;
+using DemaConsulting.SpdxTool.Commands;
 
 namespace DemaConsulting.SpdxTool;
 
@@ -58,6 +59,11 @@ internal sealed class HelpCommand
     ///     The closed tag vocabulary: every card carries one of these purpose tags, and no other tag.
     /// </summary>
     private static readonly string[] PurposeTags = ["tutorial", "reference", "troubleshooting"];
+
+    /// <summary>
+    ///     The help options of HelpCards that take a value, so that the value is not taken for a path word.
+    /// </summary>
+    private static readonly string[] ValueOptions = ["--format", "--example", "--search", "--tag", "--source", "--width"];
 
     /// <summary>
     ///     The cards embedded in the tool assembly; declared before <see cref="Default"/> so that it is
@@ -107,7 +113,7 @@ internal sealed class HelpCommand
             UsageLines =
             [
                 $"{ToolName} help [topic]",
-                $"{ToolName} help commands <command>",
+                $"{ToolName} help <command>",
                 $"{ToolName} help --search <words>"
             ],
             IndexPreamble = $"Start with '{ToolName} help getting-started'.",
@@ -132,5 +138,70 @@ internal sealed class HelpCommand
     ///     <see langword="true"/> when the command was answered; <see langword="false"/> when the tool should
     ///     continue with its own option parser.
     /// </returns>
-    public bool TryRun(string[] args, out int exitCode) => _cli.TryRun(args, out exitCode);
+    /// <remarks>
+    ///     A command card is a child of the <c>commands</c> topic, and HelpCards resolves the first word of a
+    ///     path only against the topics. So that <c>spdx-tool help &lt;command&gt;</c> keeps printing the card of
+    ///     that command, as it printed its usage before the help cards, a first path word that names a registered
+    ///     command is prefixed with <c>commands</c>.
+    /// </remarks>
+    public bool TryRun(string[] args, out int exitCode)
+    {
+        // Leave anything that is not the help verb to the helper, which answers false without any work
+        if (args.Length == 0 || !string.Equals(args[0], "help", StringComparison.OrdinalIgnoreCase))
+        {
+            return _cli.TryRun(args, out exitCode);
+        }
+
+        exitCode = _cli.Run(ExpandCommandName(args[1..]));
+        return true;
+    }
+
+    /// <summary>
+    ///     Inserts <c>commands</c> before the first path word when that word names a registered command.
+    /// </summary>
+    /// <param name="helpArguments">The arguments after the help verb.</param>
+    /// <returns>The arguments to pass to the helper.</returns>
+    private static List<string> ExpandCommandName(string[] helpArguments)
+    {
+        var arguments = helpArguments.ToList();
+        var index = FindFirstPathWord(arguments);
+        if (index >= 0 && CommandsRegistry.Commands.Keys.Any(name =>
+                string.Equals(name, arguments[index], StringComparison.OrdinalIgnoreCase)))
+        {
+            arguments.Insert(index, "commands");
+        }
+
+        return arguments;
+    }
+
+    /// <summary>
+    ///     Finds the first argument that is a path word rather than an option or the value of an option.
+    /// </summary>
+    /// <param name="arguments">The arguments after the help verb.</param>
+    /// <returns>The index of the first path word, or -1 when there is none.</returns>
+    private static int FindFirstPathWord(List<string> arguments)
+    {
+        var index = 0;
+        while (index < arguments.Count)
+        {
+            var argument = arguments[index];
+            if (argument == "--")
+            {
+                // Everything after the end of the options is a path word
+                return index + 1 < arguments.Count ? index + 1 : -1;
+            }
+
+            if (!argument.StartsWith("--", StringComparison.Ordinal))
+            {
+                return index;
+            }
+
+            // A value option takes the next argument as its value, unless that argument is an option
+            var takesValue = ValueOptions.Contains(argument) && index + 1 < arguments.Count &&
+                             !arguments[index + 1].StartsWith("--", StringComparison.Ordinal);
+            index += takesValue ? 2 : 1;
+        }
+
+        return -1;
+    }
 }

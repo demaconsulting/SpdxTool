@@ -60,9 +60,10 @@ command.
 - *Type*: CLI.
 - *Role*: Provider (the tool answers the `help` command from the shell).
 - *Contract*: `spdx-tool help` prints the topic index, `spdx-tool help <topic>` prints a topic
-  card with its examples, and `spdx-tool help commands <command>` prints the card of a command;
-  HelpCards adds `--example`, `--search`, and `--json`. Returns exit code 0 for success, 2 for a
-  wrong help argument or an unknown topic, and 70 for a defective card catalog.
+  card with its examples, and `spdx-tool help <command>` (or `spdx-tool help commands <command>`)
+  prints the card of a command; HelpCards adds `--example`, `--search`, and `--json`. Returns
+  exit code 0 for success, 2 for a wrong help argument or an unknown topic, and 70 for a defective
+  card catalog.
 - *Constraints*: `help` must be the first argument. It is answered before the options are parsed,
   so `--silent` and `--log` do not apply and no banner is printed. After global options, `help`
   reaches the command dispatcher as the workflow-only Help command, which reports a usage error.
